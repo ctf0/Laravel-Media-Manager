@@ -1,0 +1,37 @@
+{
+    "name": "ctf0/media-manager",
+    "description": "media manager for the masses",
+    "homepage": "https://github.com/ctf0/Laravel-Media-Manager",
+    "license": "MIT",
+    "keywords": [
+        "ctf0",
+        "media",
+        "manager",
+        "laravel"
+    ],
+    "authors": [
+       {
+           "name": "Muah",
+           "email": "muah003@gmail.com"
+       }
+   ],
+    "require": {
+        "php": ">=5.6.4",
+       "illuminate/support": "5.4.*|5.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ctf0\\MediaManager\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ctf0\\MediaManager\\MediaManagerServiceProvidor"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

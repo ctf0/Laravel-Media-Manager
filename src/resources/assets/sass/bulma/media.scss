@@ -1,0 +1,51 @@
+@import "../bootstrap_modal";
+@import "../shared-styles";
+
+$turquoise: #00d1b2;
+$green: #23d160;
+$yellow: #ffdd57;
+$red: #ff3860;
+$orange: #ff470f;
+
+// modal
+.is-warning {
+    background-color: $yellow;
+    color: rgba(0, 0, 0, 0.7);
+}
+.is-danger {
+    background-color: $red;
+    color: white;
+}
+.is-info {
+    background-color: $blue;
+    color: white;
+}
+.is-primary {
+    background-color: $turquoise;
+    color: white;
+}
+.is-success {
+    color: white;
+    background-color: $green;
+}
+
+// bulma
+.input {
+    border-color: $gray_7;
+    box-shadow: none;
+}
+table,
+.table {
+    margin-bottom: 0;
+    td,th {
+        vertical-align: middle;
+        border: none !important;
+    }
+    tr:hover {
+        background-color: transparent;
+    }
+}
+.control.is-loading:after {
+    position: static !important;
+}
+
