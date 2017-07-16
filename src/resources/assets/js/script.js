@@ -24,6 +24,7 @@ var manager = new Vue({
 			$('#file_loader').show()
 			this.searchFor = ''
 			this.showFilesOfType('all')
+			this.currentFilterName = null
 
 			if (folders != '/') {
 				var folder_location = '/' + folders.join('/')
@@ -80,6 +81,7 @@ var manager = new Vue({
 				})
 
 				$('#confirm_delete_modal').modal('hide')
+				this.updateFoundCount(files.length);
 				this.selectFirst()
 			})
 		},
@@ -100,7 +102,7 @@ var manager = new Vue({
 							duration: 5
 						})
 						this.removeFromLists(item.name)
-						this.updateFolderCount(destination)
+						this.updateFolderCount(destination, 1)
 
 						// update dirs list after move
 						if (item.type.includes('folder')) {
@@ -115,7 +117,15 @@ var manager = new Vue({
 					}
 				})
 
+				// update folder count when folder is moved into another
+				for (var i = files.length - 1; i >= 0; i--) {
+					if (files[i].items && files[i].items > 0) {
+						this.updateFolderCount(destination, files[i].items)
+					}
+				}
+
 				$('#move_file_modal').modal('hide')
+				this.updateFoundCount(files.length);
 				this.selectFirst()
 			})
 		},
@@ -278,7 +288,6 @@ var manager = new Vue({
 				for (var i = this.filterdList.length - 1; i >= 0; i--) {
 					if (this.filterdList[i].name.includes(name)) {
 						this.filterdList.splice(i, 1)
-						break
 					}
 				}
 			}
@@ -294,13 +303,12 @@ var manager = new Vue({
 			for (var i = this.files.items.length - 1; i >= 0; i--) {
 				if (this.files.items[i].name.includes(name)) {
 					this.files.items.splice(i, 1)
-					break
 				}
 			}
 
 			this.clearSelected()
 		},
-		updateFolderCount(destination) {
+		updateFolderCount(destination, count) {
 			if (destination !== '../') {
 
 				if (destination.includes('/')) {
@@ -310,16 +318,14 @@ var manager = new Vue({
 				if (this.filterdList.length) {
 					for (var i = this.filterdList.length - 1; i >= 0; i--) {
 						if (this.filterdList[i].name.includes(destination)) {
-							this.filterdList[i].items += 1
-							break
+							this.filterdList[i].items += parseInt(count)
 						}
 					}
 				}
 
 				for (var i = this.files.items.length - 1; i >= 0; i--) {
 					if (this.files.items[i].name.includes(destination)) {
-						this.files.items[i].items += 1
-						break
+						this.files.items[i].items += parseInt(count)
 					}
 				}
 			}
@@ -347,6 +353,11 @@ var manager = new Vue({
 					$('#no_files').hide()
 				}
 			})
+		},
+		updateFoundCount(count) {
+			if (this.searchFor) {
+				this.searchItemsCount = parseInt(this.searchItemsCount - count)
+			}
 		},
 		updateDirsList() {
 			$.post(`${media_root_url}/directories`, {
@@ -395,6 +406,9 @@ var manager = new Vue({
 		allFiles(newVal, oldVal) {
 			if (newVal.length < 1) {
 				$('#no_files').fadeIn()
+				if (this.currentFilterName == 'all') {
+					this.currentFilterName = null
+				}
 			} else {
 				$('#no_files').hide()
 			}
