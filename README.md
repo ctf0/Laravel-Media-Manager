@@ -4,8 +4,8 @@
 
 ## Intro
 
-- based on [Voyager](https://github.com/the-control-group/voyager).
-- built using
+- Inspiration by [Voyager](https://github.com/the-control-group/voyager).
+- Built using
     + [Vue](https://vuejs.org/)
     + [jQuery](https://jquery.com/)
     + [dropzone](http://www.dropzonejs.com/)
@@ -124,7 +124,7 @@ return [
 - add `new MediaRoutes();` to your route file, or under any route group ex.`admin`
 
     \>\> **dont forget to update the `root_url`** <<
-    
+
 - to provide as much flexibility as possible, edit the `views/vendor/MediaManager/(framework)/media` file and let it extend from your main layout.
 - add `MIX_MM_FRAMEWORK=bulma` to your `.env` file.
 - run `npm run watch` to compile your `js/css` files.
