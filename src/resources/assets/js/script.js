@@ -894,6 +894,9 @@ $(function() {
 					duration: 5
 				})
 				manager.updateItemName(manager.selectedFile, filename, data.new_filename)
+				if (manager.selectedFileIs('folder')) {
+					manager.updateDirsList()
+				}
 			} else {
 				EventHub.fire('showNotif', {
 					title: 'Error',
