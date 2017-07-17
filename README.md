@@ -29,7 +29,9 @@
 ]
 ```
 
-- publish the package assets with `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
+- publish the package assets with 
+
+`php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
 - install javascript dependencies
 
