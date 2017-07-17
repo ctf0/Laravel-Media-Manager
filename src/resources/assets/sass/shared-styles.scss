@@ -354,6 +354,8 @@ $blue_2: #276cda;
     position: fixed;
     top: 4rem;
     right: 1rem;
+    display: flex;
+    flex-direction: column-reverse;
     bottom: 0;
     z-index: 100;
     overflow: scroll;

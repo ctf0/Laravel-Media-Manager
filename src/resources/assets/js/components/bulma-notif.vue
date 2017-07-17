@@ -147,7 +147,7 @@
                 }
             },
             collectData(data){
-                this.notif_group.unshift({
+                this.notif_group.push({
                     title: data.title,
                     body: data.body,
                     type: data.type,
