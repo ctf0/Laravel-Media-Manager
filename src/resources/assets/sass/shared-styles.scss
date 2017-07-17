@@ -350,13 +350,12 @@ $blue_2: #276cda;
 
 // notification
 .notif-container {
-    padding-bottom: 4rem;
     position: fixed;
-    top: 4rem;
     right: 1rem;
+    padding: 4rem 0;
     display: flex;
     flex-direction: column-reverse;
-    bottom: 0;
+    height: 100vh;
     z-index: 100;
     overflow: scroll;
 }
