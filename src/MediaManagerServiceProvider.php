@@ -20,7 +20,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         // resources
         $this->publishes([
             __DIR__.'/resources/assets' => resource_path('assets/vendor/MediaManager'),
-        ], 'trans');
+        ], 'assets');
 
         // trans
         $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'MediaManager');
