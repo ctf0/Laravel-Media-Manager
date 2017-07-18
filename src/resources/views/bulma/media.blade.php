@@ -185,7 +185,7 @@
         
         {{-- files area --}}
         <div id="content">
-            {{-- directories breadCrump --}}
+            {{-- directories breadCrumb --}}
             <div class="breadcrumb-container">
                 <ol class="breadcrumb">
                     <li @click="goToFolder(0)">
