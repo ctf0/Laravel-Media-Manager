@@ -362,7 +362,7 @@ var manager = new Vue({
 		updateDirsList() {
 			$.post(`${media_root_url}/directories`, {
 				folder_location: manager.folders,
-			}, function(data) {
+			}, (data) => {
 				manager.directories = data
 			})
 		},
@@ -799,11 +799,11 @@ $(function() {
 		$.post(`${media_root_url}/new_folder`, {
 			current_path: manager.files.path,
 			new_folder_name: $('#new_folder_name').val(),
-		}, function(data) {
+		}, (data) => {
 			if (data.success) {
 				EventHub.fire('showNotif', {
 					title: 'Success',
-					body: `Successfully Created "${$('#new_folder_name').val()}" at "${data.new_folder}"`,
+					body: `Successfully Created "${data.new_folder_name}" at "${data.full_path}"`,
 					type: 'success',
 					duration: 5
 				})
@@ -885,7 +885,7 @@ $(function() {
 			folder_location: manager.folders,
 			filename: filename,
 			new_filename: new_filename,
-		}, function(data) {
+		}, (data) => {
 			if (data.success) {
 				EventHub.fire('showNotif', {
 					title: 'Success',
