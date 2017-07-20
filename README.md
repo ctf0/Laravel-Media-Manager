@@ -29,7 +29,7 @@
 ]
 ```
 
-- publish the package assets with 
+- publish the package assets with
 
 `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
@@ -58,6 +58,10 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
     + audio
     + video
     + text
+- sortBy
+    + name
+    + size "still need some work for (kb vs mb)"
+    + last modified
 - items count for
     + all
     + selected

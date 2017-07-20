@@ -148,6 +148,20 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        {{-- showBy --}}
+                        <div class="control">
+                            <div class="select">
+                                <select v-model="showBy">
+                                    <option value="null" disabled>Sort By</option>
+                                    <option value="clear">Non</option>
+                                    <option value="name">Name</option>
+                                    <option value="size">Size</option>
+                                    <option value="last_modified">Last Modified</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         {{-- search --}}
                         <div class="control">
                             <div class="field has-addons">
@@ -212,7 +226,7 @@
                 {{-- files box --}}
                 <div id="left">
                     <ul id="files" class="tile">
-                        <li v-for="(file,index) in filterBy(allFiles, searchFor, 'name')"
+                        <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy)"
                             @click="setSelected(file)" @dblclick="openFolder(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}" :data-folder="file.name" :data-index="index">
                                 <div class="link_icon">

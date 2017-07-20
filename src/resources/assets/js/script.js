@@ -13,6 +13,7 @@ var manager = new Vue({
 		directories: [],
 		filterdList: [],
 		bulkList: [],
+		showBy: null,
 		currentFilterName: null,
 		selectedFile: null,
 		searchItemsCount: null,
@@ -464,6 +465,14 @@ var manager = new Vue({
 			// make sure "no_files" is hidden when search query is cleared
 			if (val == null) {
 				$('#no_files').hide()
+			}
+		},
+		showBy(val) {
+			if (val) {
+				if (val == 'clear') {
+					this.showBy = null
+				}
+				this.selectFirst()
 			}
 		}
 	}
