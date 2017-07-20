@@ -4,7 +4,7 @@
 
 ## Intro
 
-- Inspiration by [Voyager](https://github.com/the-control-group/voyager).
+- Inspired by [Voyager](https://github.com/the-control-group/voyager) & [October](https://github.com/octobercms/october)
 - Built using
     + [Vue](https://vuejs.org/)
     + [jQuery](https://jquery.com/)
@@ -145,7 +145,6 @@ return [
 
 after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
----
 
 ## ToDo "ANY HELP IS DEEPLY APPRECIATED"
 

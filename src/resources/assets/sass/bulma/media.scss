@@ -9,20 +9,20 @@ $orange: #ff470f;
 
 // modal
 .is-warning {
-    background-color: $yellow;
     color: rgba(0, 0, 0, 0.7);
+    background-color: $yellow;
 }
 .is-danger {
-    background-color: $red;
     color: white;
+    background-color: $red;
 }
 .is-info {
-    background-color: $blue;
     color: white;
+    background-color: $blue;
 }
 .is-primary {
-    background-color: $turquoise;
     color: white;
+    background-color: $turquoise;
 }
 .is-success {
     color: white;
@@ -37,7 +37,8 @@ $orange: #ff470f;
 table,
 .table {
     margin-bottom: 0;
-    td,th {
+    td,
+    th {
         vertical-align: middle;
         border: none !important;
     }
@@ -48,4 +49,6 @@ table,
 .control.is-loading:after {
     position: static !important;
 }
-
+.nav-right {
+    overflow: visible;
+}

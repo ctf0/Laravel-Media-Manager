@@ -25,7 +25,7 @@ var manager = new Vue({
 			$('#file_loader').show()
 			this.searchFor = ''
 			this.showFilesOfType('all')
-			this.currentFilterName = null
+			this.showBy = null
 
 			if (folders != '/') {
 				var folder_location = '/' + folders.join('/')
@@ -247,10 +247,12 @@ var manager = new Vue({
 			}
 			if (val == 'all') {
 				this.filterdList = []
+				this.currentFilterName = null
 			} else {
 				this.filterdList = this.files.items.filter((item) => {
 					return this.fileTypeIs(item, val)
 				})
+				this.currentFilterName = val
 			}
 
 			if (!this.isBulkSelecting()) {
@@ -261,7 +263,6 @@ var manager = new Vue({
 				this.updateSearchCount()
 			}
 
-			this.currentFilterName = val
 		},
 		filterDir(dir) {
 			// dont show dirs that have similarity with selected item(s)
@@ -407,9 +408,6 @@ var manager = new Vue({
 		allFiles(newVal, oldVal) {
 			if (newVal.length < 1) {
 				$('#no_files').fadeIn()
-				if (this.currentFilterName == 'all') {
-					this.currentFilterName = null
-				}
 			} else {
 				$('#no_files').hide()
 			}
