@@ -27,7 +27,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ctf0\\MediaManager\\MediaManagerServiceProvidor"
+                "ctf0\\MediaManager\\MediaManagerServiceProvider"
             ]
         }
     },
