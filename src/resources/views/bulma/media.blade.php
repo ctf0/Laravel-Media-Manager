@@ -155,7 +155,6 @@
                                 <select v-model="showBy">
                                     <option value="null" disabled>Sort By</option>
                                     <option value="clear">Non</option>
-                                    <option value="name">Name</option>
                                     <option value="size">Size</option>
                                     <option value="last_modified">Last Modified</option>
                                 </select>
@@ -226,7 +225,7 @@
                 {{-- files box --}}
                 <div id="left">
                     <ul id="files" class="tile">
-                        <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy)"
+                        <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
                             @click="setSelected(file)" @dblclick="openFolder(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}" :data-folder="file.name" :data-index="index">
                                 <div class="link_icon">

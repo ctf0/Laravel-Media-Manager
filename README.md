@@ -4,7 +4,7 @@
 
 ## Intro
 
-- Inspired by [Voyager](https://github.com/the-control-group/voyager) & [October](https://github.com/octobercms/october)
+- Inspired by [Voyager](https://github.com/the-control-group/voyager) & [October](https://github.com/octobercms/october) & [WordPress](https://codex.wordpress.org/Media_Library_Screen)
 - Built using
     + [Vue](https://vuejs.org/)
     + [jQuery](https://jquery.com/)
@@ -59,8 +59,8 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
     + video
     + text
 - sortBy
-    + name
-    + size "still need some work for (kb vs mb)"
+    + name "default"
+    + size
     + last modified
 - items count for
     + all
@@ -145,8 +145,8 @@ return [
 
 after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
-
 ## ToDo "ANY HELP IS DEEPLY APPRECIATED"
 
 * [ ] Add Support To Other Css Frameworks.
-* [ ] Add Support For Editors "tinymce / Ckeditor".
+* [ ] Add Support For Editors "tinymce / Ckeditor/ etc".
+* [ ] Fix `sortBy:size` To Work Properly With (kb vs Mb).

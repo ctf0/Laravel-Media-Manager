@@ -36,7 +36,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view('MediaManager::'.$this->framework.'.media');
+        return view("MediaManager::{$this->framework}.media");
     }
 
     /**

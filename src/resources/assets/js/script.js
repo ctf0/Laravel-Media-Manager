@@ -262,7 +262,6 @@ var manager = new Vue({
 			if (this.searchFor) {
 				this.updateSearchCount()
 			}
-
 		},
 		filterDir(dir) {
 			// dont show dirs that have similarity with selected item(s)

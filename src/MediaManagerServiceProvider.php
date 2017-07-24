@@ -40,7 +40,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         if (File::exists($mix_file) && !str_contains(File::get($mix_file), $search)) {
             $data = "\n// Media-Manager\nmix.js('resources/assets/vendor/MediaManager/js/media.js', 'public/assets/vendor/MediaManager/script.js')\n\t.sass('resources/assets/vendor/MediaManager/sass/' + process.env.MIX_MM_FRAMEWORK + '/media.scss', 'public/assets/vendor/MediaManager/style.css')\n\t.version();";
 
-            File::append(base_path('webpack.mix.js'), $data);
+            File::append($mix_file, $data);
         }
     }
 }
