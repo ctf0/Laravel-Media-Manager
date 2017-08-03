@@ -195,7 +195,7 @@
 
                     {{-- upload --}}
                     <div class="field">
-                        <form class="dz" id="new-upload" action="{{ route('admin.media.upload') }}">
+                        <form class="dz" id="new-upload" action="{{ route('media.upload') }}">
                             <div class="dz-message title is-4">
                                 {{ trans('MediaManager::messages.drag_drop_info') }}
                             </div>
