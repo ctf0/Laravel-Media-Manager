@@ -14,7 +14,7 @@
     <script src="//cdn.jsdelivr.net/jquery.scrollto/2.1.2/jquery.scrollTo.min.js"></script>
 </head>
 <body>
-    <div class="app" v-cloak>
+    <div id="app" v-cloak>
         {{-- notifications --}}
         <div class="notif-container">
             <my-notification></my-notification>
