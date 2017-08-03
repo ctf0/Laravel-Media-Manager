@@ -33,16 +33,6 @@
 
 `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
-- install javascript dependencies
-
-```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
-# or
-npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
-```
-
-- for styling we use ***bulma*** so install it aswell, or [Use another Framework](#use-another-framework)
-
 ## Features
 
 - multi
@@ -127,23 +117,34 @@ return [
 
 ## Usage
 
-- add `new MediaRoutes();` to your route file, or under any route group ex.`admin`
+- package automatically appends routes to `routes/web.php`
+- package automatically appends assets compiling to `webpack.mix.js`
+- add `MIX_MM_FRAMEWORK=bulma` to `.env`
 
-    \>\> **dont forget to update the `root_url`** <<
+#### - Simple
+- visit `http://127.0.0.1:8000/media`
 
-- to provide as much flexibility as possible, edit the `views/vendor/MediaManager/(framework)/media` file and let it extend from your main layout.
-- add `MIX_MM_FRAMEWORK=bulma` to your `.env` file.
-- run `npm run watch` to compile your `js/css` files.
+#### - Advanced
+- install javascript dependencies
 
-#### Use another Framework
+```bash
+yarn add vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
+# or
+npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
+```
 
-- duplicate `views/vendor/MediaManager/bulma` and rename it to the framework you want ex.`bootstrap`
-- duplicate `assets/vendor/MediaManager/js/components/bulma-notif` and rename it to the framework you want ex.`bootstrap-notif`
-- duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
-- set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
-- start editing the new files.
+- for styling we use ***bulma***
 
-after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
+> ***Or Use another Framework***
+>
+> - duplicate `views/vendor/MediaManager/bulma` and rename it to the framework you want ex.`bootstrap`
+> - duplicate `assets/vendor/MediaManager/js/components/bulma-notif` and rename it to the framework you want ex.`bootstrap-notif`
+> - duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
+> - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
+> - start editing the new files.
+> - run `npm run watch` to compile your `js/css` files.
+>
+> after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
 ## ToDo "ANY HELP IS DEEPLY APPRECIATED"
 

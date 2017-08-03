@@ -18,7 +18,8 @@ $blue_2: #276cda;
 
 // manager
 #toolbar {
-    padding: 20px 20px 19px;
+    flex-wrap: wrap;
+    padding: 20px;
     background: $white_gray;
     border-radius: 4px 4px 0 0;
 }
@@ -325,9 +326,6 @@ $blue_2: #276cda;
 }
 .p-r-0 {
   padding-right: 0px !important;
-}
-.m-0 {
-  margin: 0px !important;
 }
 .m-l-50 {
   margin-left: 50px !important;

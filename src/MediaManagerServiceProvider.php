@@ -17,6 +17,11 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__.'/config' => config_path(),
         ], 'config');
 
+        // public
+        $this->publishes([
+            __DIR__.'/dist' => public_path('assets/vendor/MediaManager'),
+        ], 'dist');
+
         // resources
         $this->publishes([
             __DIR__.'/resources/assets' => resource_path('assets/vendor/MediaManager'),
@@ -33,6 +38,15 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/MediaManager'),
         ], 'view');
+
+        // routes
+        $route_file = base_path('routes/web.php');
+        $search   = 'MediaManager';
+        if (File::exists($route_file) && !str_contains(File::get($route_file), $search)) {
+            $data = "\n// Media-Manager\nnew \ctf0\MediaManager\MediaRoutes();";
+
+            File::append($route_file, $data);
+        }
 
         // mix
         $mix_file = base_path('webpack.mix.js');

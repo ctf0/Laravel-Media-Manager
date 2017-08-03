@@ -1,6 +1,5 @@
 @import "../bootstrap_modal";
 @import "../shared-styles";
-
 $turquoise: #00d1b2;
 $green: #23d160;
 $yellow: #ffdd57;
@@ -49,6 +48,9 @@ table,
 .control.is-loading:after {
     position: static !important;
 }
-.nav-right {
-    overflow: visible;
+.level {
+    margin-bottom: 0.75rem !important;
+}
+.modal {
+    z-index: 1050 !important;
 }
