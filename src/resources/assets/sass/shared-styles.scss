@@ -59,7 +59,7 @@ $blue_2: #276cda;
     justify-content: space-between;
     .breadcrumb {
         background: none;
-        margin-bottom: 0;
+        margin-bottom: 0 !important;
         padding: 0;
         border-radius: 0;
         list-style: none;

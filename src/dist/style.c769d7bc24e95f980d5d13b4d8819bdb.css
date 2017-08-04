@@ -337,7 +337,7 @@ button.close {
 
 .breadcrumb-container .breadcrumb {
   background: none;
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
   padding: 0;
   border-radius: 0;
   list-style: none;

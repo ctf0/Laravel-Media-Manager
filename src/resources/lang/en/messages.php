@@ -33,4 +33,5 @@ return [
     'too_many_files'         => 'Too Many Files...',
     'url'                    => 'URL',
     'upload'                 => 'Upload',
+    'not_allowed_file_ext'   => 'Files Of Type ":attr" Are Not Allowed',
 ];

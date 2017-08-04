@@ -16,7 +16,7 @@ class MediaController extends Controller
     private $fileChars;
     private $folderChars;
     private $sanitizedText;
-    private $framework;
+    private $fw;
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class MediaController extends Controller
         $this->fileChars     = config('mediaManager.allowed_fileNames_chars');
         $this->folderChars   = config('mediaManager.allowed_folderNames_chars');
         $this->sanitizedText = config('mediaManager.sanitized_text');
-        $this->framework     = config('mediaManager.framework');
+        $this->fw            = config('mediaManager.framework');
     }
 
     /**
@@ -36,7 +36,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view("MediaManager::{$this->framework}.media");
+        return view("MediaManager::{$this->fw}.media");
     }
 
     /**
@@ -54,8 +54,14 @@ class MediaController extends Controller
         foreach ($request->file as $one) {
             $file_name   = $one->getClientOriginalName();
             $destination = "$upload_path/{$this->cleanName($file_name)}";
+            $file_type   = $one->getMimeType();
 
             try {
+                // stop if "php" or "jar"
+                if (strpos($file_type, "php") || strpos($file_type, "jar")) {
+                    throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
+                }
+
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
                     throw new Exception(trans('MediaManager::messages.error_may_exist'));
