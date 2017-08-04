@@ -149,7 +149,7 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 > after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
 ## Notes
-- if you are using multilocale and you are having issues when switching to different locale other than `en`, [MultiLocale](https://github.com/ctf0/Laravel-Media-Manager/wiki/MultiLocale).
+- if you are using multilocale and you are having issues when switching to different locale other than `en`, check [MultiLocale](https://github.com/ctf0/Laravel-Media-Manager/wiki/MultiLocale).
 
 ## ToDo "ANY HELP IS APPRECIATED"
 
