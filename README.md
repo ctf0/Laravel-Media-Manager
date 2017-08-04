@@ -33,6 +33,11 @@
 
 `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
+- run `php artisan mm:append` to
+    + add package routes to `routes/web.php`
+    + add package assets compiling to `webpack.mix.js`
+    + add `MIX_MM_FRAMEWORK=bulma` to `.env`
+
 ## Features
 
 - multi
@@ -116,11 +121,6 @@ return [
 ```
 
 ## Usage
-
-- run `php artisan mm:append` to
-    + add package routes to `routes/web.php`
-    + add package assets compiling to `webpack.mix.js`
-    + add `MIX_MM_FRAMEWORK=bulma` to `.env`
 
 #### - Simple
 - visit `http://127.0.0.1:8000/media`
