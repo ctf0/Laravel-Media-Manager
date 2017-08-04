@@ -58,7 +58,7 @@ class MediaController extends Controller
 
             try {
                 // stop if "php" or "jar"
-                if (strpos($file_type, "php") || strpos($file_type, "jar")) {
+                if (strpos($file_type, "php") || strpos($file_type, "java-")) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
 
