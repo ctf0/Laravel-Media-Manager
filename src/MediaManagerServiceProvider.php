@@ -2,7 +2,6 @@
 
 namespace ctf0\MediaManager;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
@@ -39,22 +38,9 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__.'/resources/views' => resource_path('views/vendor/MediaManager'),
         ], 'view');
 
-        // routes
-        $route_file = base_path('routes/web.php');
-        $search   = 'MediaManager';
-        if (File::exists($route_file) && !str_contains(File::get($route_file), $search)) {
-            $data = "\n// MediaManager\nnew \ctf0\MediaManager\MediaRoutes();";
-
-            File::append($route_file, $data);
-        }
-
-        // mix
-        $mix_file = base_path('webpack.mix.js');
-        $search   = 'MediaManager';
-        if (File::exists($mix_file) && !str_contains(File::get($mix_file), $search)) {
-            $data = "\n// MediaManager\nmix.js('resources/assets/vendor/MediaManager/js/media.js', 'public/assets/vendor/MediaManager/script.js')\n\t.sass('resources/assets/vendor/MediaManager/sass/' + process.env.MIX_MM_FRAMEWORK + '/media.scss', 'public/assets/vendor/MediaManager/style.css')\n\t.version();";
-
-            File::append($mix_file, $data);
-        }
+        // cmnds
+        $this->commands([
+            Commands\MMAppend::class,
+        ]);
     }
 }

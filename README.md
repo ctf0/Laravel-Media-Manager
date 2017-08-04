@@ -4,7 +4,7 @@
 
 ## Intro
 
-- Inspired by [Voyager](https://github.com/the-control-group/voyager) & [October](https://github.com/octobercms/october) & [WordPress](https://codex.wordpress.org/Media_Library_Screen)
+- Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
 - Built using
     + [Vue](https://vuejs.org/)
     + [jQuery](https://jquery.com/)
@@ -117,12 +117,14 @@ return [
 
 ## Usage
 
-- package automatically appends routes to `routes/web.php`
-- package automatically appends assets compiling to `webpack.mix.js`
-- add `MIX_MM_FRAMEWORK=bulma` to `.env`
+- run `php artisan mm:append` to
+    + add package routes to `routes/web.php`
+    + add package assets compiling to `webpack.mix.js`
+    + add `MIX_MM_FRAMEWORK=bulma` to `.env`
 
 #### - Simple
 - visit `http://127.0.0.1:8000/media`
+- open `views/vendor/MediaManager/bulma/media.blade.php` and make any changes you may need ex.**"use bootstrap instead of bulma"**
 
 #### - Advanced
 - install javascript dependencies
@@ -146,7 +148,10 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 >
 > after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
-## ToDo "ANY HELP IS DEEPLY APPRECIATED"
+## Notes
+- if you are using multilocale and you are having issues when switching to different locale other than `en`, [MultiLocale](https://github.com/ctf0/Laravel-Media-Manager/wiki/MultiLocale).
+
+## ToDo "ANY HELP IS APPRECIATED"
 
 * [ ] Add Support To Other Css Frameworks.
 * [ ] Add Support For Editors "tinymce / Ckeditor/ etc".
