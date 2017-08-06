@@ -415,7 +415,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <h4 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h4>
-                                    <input id="new_filename" class="input" type="text" :value="selectedFile.name" v-if="selectedFile">
+                                    <input id="new_filename" class="input" type="text" :value="fileName(selectedFile.name)" v-if="selectedFile">
                                 </div>
                                 <div class="modal-footer">
                                     <button class="button" data-dismiss="modal">{{ trans('MediaManager::messages.cancel') }}</button>

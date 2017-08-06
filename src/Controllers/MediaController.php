@@ -16,17 +16,19 @@ class MediaController extends Controller
     private $fileChars;
     private $folderChars;
     private $sanitizedText;
+    private $unallowed_mimes;
     private $fw;
 
     public function __construct()
     {
-        $this->fileSystem    = config('mediaManager.storage_disk');
-        $this->storageDisk   = Storage::disk($this->fileSystem);
-        $this->ignoreFiles   = config('mediaManager.ignore_files');
-        $this->fileChars     = config('mediaManager.allowed_fileNames_chars');
-        $this->folderChars   = config('mediaManager.allowed_folderNames_chars');
-        $this->sanitizedText = config('mediaManager.sanitized_text');
-        $this->fw            = config('mediaManager.framework');
+        $this->fileSystem      = config('mediaManager.storage_disk');
+        $this->storageDisk     = Storage::disk($this->fileSystem);
+        $this->ignoreFiles     = config('mediaManager.ignore_files');
+        $this->fileChars       = config('mediaManager.allowed_fileNames_chars');
+        $this->folderChars     = config('mediaManager.allowed_folderNames_chars');
+        $this->sanitizedText   = config('mediaManager.sanitized_text');
+        $this->unallowed_mimes = config('mediaManager.unallowed_mimes');
+        $this->fw              = config('mediaManager.framework');
     }
 
     /**
@@ -57,8 +59,8 @@ class MediaController extends Controller
             $file_type   = $one->getMimeType();
 
             try {
-                // stop if "php" or "jar"
-                if (strpos($file_type, "php") || strpos($file_type, "java-")) {
+                // check for mime type
+                if (str_contains($file_type, $this->unallowed_mimes)) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
 

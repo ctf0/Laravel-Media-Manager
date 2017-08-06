@@ -93,112 +93,107 @@
 </style>
 
 <script>
-    export default {
-        props: {
-            title: '',
-            body: '',
-            icon: {
-                default: true
-            },
-            type: {default: 'info'},
-            duration: null
+export default {
+    props: {
+        title: '',
+        body: '',
+        icon: {
+            default: true
         },
+        type: {default: 'info'},
+        duration: null
+    },
 
-        data() {
-            return {
-                notif_group: [],
-                self_title: this.title,
-                self_body: this.body,
-                self_type: this.type,
-                self_icon: Boolean(this.icon),
-                self_duration: this.duration,
-                self_show: false
-            };
+    data() {
+        return {
+            notif_group: [],
+            self_title: this.title,
+            self_body: this.body,
+            self_type: this.type,
+            self_icon: Boolean(this.icon),
+            self_duration: this.duration,
+            self_show: false
+        }
+    },
+
+    created() {
+        this.checkProp()
+
+        EventHub.listen('showNotif', (data) => {
+            this.collectData(data)
+        })
+    },
+
+    methods: {
+        checkForGroup() {
+            return this.notif_group.length > 1 &&
+                    this.notif_group.filter((item) => item.show == true).length > 1
         },
-
-        created() {
-            this.checkProp();
-
-            EventHub.listen('showNotif', (data)=>{
-                this.collectData(data)
+        closeAll(){
+            this.notif_group.map((item) => {
+                item.show = false
+                item.duration = null
             })
         },
+        checkProp(){
+            if (this.self_title) {
+                this.self_show = true
+            }
 
-        methods: {
-            checkForGroup(){
-                return this.notif_group.length > 1 &&
-                    this.notif_group.filter((item) => item.show == true).length > 1
-            },
-            closeAll(){
-                this.notif_group.map(function(item) {
-                    item.show = false;
-                    item.duration = null;
-                })
-            },
-            checkProp(){
-                if (this.self_title) {
-                    this.self_show = true;
-                }
+            if (this.self_duration !== undefined) {
+                setTimeout(() => {
+                    this.self_show = false
+                }, this.self_duration * 1000)
+            }
+        },
+        collectData(data){
+            this.notif_group.push({
+                title: data.title,
+                body: data.body,
+                type: data.type,
+                icon: data.icon == null ? true : false,
+                duration: data.duration,
+                onClose: data.onClose,
+                show: true
+            })
+        },
+        IsVisible(index){
+            let dur = this.notif_group[index].duration
 
-                if (this.self_duration !== undefined) {
-                    setTimeout(()=>{
-                        this.self_show = false;
-                    }, this.self_duration * 1000);
-                }
-            },
-            collectData(data){
-                this.notif_group.push({
-                    title: data.title,
-                    body: data.body,
-                    type: data.type,
-                    icon: data.icon == null ? true : false,
-                    duration: data.duration,
-                    onClose: data.onClose,
-                    show: true
-                })
-            },
-            IsVisible(index){
-                let dur = this.notif_group[index].duration;
+            if (dur !== undefined) {
+                setTimeout(() => {
+                    this.closeNotif(index)
+                }, dur * 1000)
+            }
 
-                if (dur !== undefined) {
-                    setTimeout(()=>{
-                        this.closeNotif(index);
-                    }, dur * 1000);
-                }
+            return this.notif_group[index].show
+        },
+        closeNotif(index) {
+            this.notif_group[index].show = false
 
-                return this.notif_group[index].show;
-            },
-            closeNotif(index) {
-                this.notif_group[index].show = false;
-
-                if (typeof(this.notif_group[index].onClose) != 'undefined' && typeof this.notif_group[index].onClose === 'function') {
-                    this.notif_group[index].onClose();
-                }
-            },
-            classObj(type){
-                return `notification has-shadow is-${type}`
-            },
-            getIcon(type) {
-                switch(type) {
-                    case 'primary':
-                        return 'track_changes'
-                        break;
-                    case 'success':
-                        return 'check_circle'
-                        break;
-                    case 'info':
-                        return 'live_help'
-                        break;
-                    case 'warning':
-                        return 'power_settings_new'
-                        break;
-                    case 'danger':
-                        return 'add_alert'
-                        break;
-                    default:
-                        return 'error'
-                }
+            if (typeof this.notif_group[index].onClose != 'undefined' && typeof this.notif_group[index].onClose === 'function') {
+                this.notif_group[index].onClose()
+            }
+        },
+        classObj(type){
+            return `notification has-shadow is-${type}`
+        },
+        getIcon(type) {
+            switch(type) {
+            case 'primary':
+                return 'track_changes'
+            case 'success':
+                return 'check_circle'
+            case 'info':
+                return 'live_help'
+            case 'warning':
+                return 'power_settings_new'
+            case 'danger':
+                return 'add_alert'
+            default:
+                return 'error'
             }
         }
     }
+}
 </script>
