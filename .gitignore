@@ -1,0 +1,5 @@
+.DS_Store
+
+# Ignore composer generated files
+composer.lock
+vendor/
