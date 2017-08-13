@@ -17,6 +17,8 @@
     + [bootstrap modal](http://getbootstrap.com/javascript/#modals)
     + [notification-component](https://github.com/ctf0/Notification-Component)
 
+- to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
+
 ## Installation
 
 - `composer require ctf0/media-manager`
