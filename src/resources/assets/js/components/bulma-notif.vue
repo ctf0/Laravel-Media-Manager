@@ -59,6 +59,18 @@
 <style scoped>
     @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
+    /*animation*/
+    .slide-fade-enter-active,
+    .slide-fade-leave-active {
+        transition: all 0.3s ease;
+    }
+    .slide-fade-enter,
+    .slide-fade-leave-to {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    /*notiifcation card*/
     .item {
         width: 330px;
     }
@@ -129,13 +141,13 @@ export default {
             return this.notif_group.length > 1 &&
                     this.notif_group.filter((item) => item.show == true).length > 1
         },
-        closeAll(){
+        closeAll() {
             this.notif_group.map((item) => {
                 item.show = false
                 item.duration = null
             })
         },
-        checkProp(){
+        checkProp() {
             if (this.self_title) {
                 this.self_show = true
             }
@@ -146,7 +158,7 @@ export default {
                 }, this.self_duration * 1000)
             }
         },
-        collectData(data){
+        collectData(data) {
             this.notif_group.push({
                 title: data.title,
                 body: data.body,
@@ -157,7 +169,7 @@ export default {
                 show: true
             })
         },
-        IsVisible(index){
+        IsVisible(index) {
             let dur = this.notif_group[index].duration
 
             if (dur !== undefined) {
@@ -175,11 +187,11 @@ export default {
                 this.notif_group[index].onClose()
             }
         },
-        classObj(type){
+        classObj(type) {
             return `notification has-shadow is-${type}`
         },
         getIcon(type) {
-            switch(type) {
+            switch (type) {
             case 'primary':
                 return 'track_changes'
             case 'success':

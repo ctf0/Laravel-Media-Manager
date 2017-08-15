@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Route;
 
 class MediaRoutes
 {
-    public function __construct()
+    public static function routes()
     {
         Route::group([
-            'as'        => 'media.',
             'prefix'    => 'media',
+            'as'        => 'media.',
         ], function () {
             Route::get('/', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@index', 'as' => 'index']);
             Route::post('upload', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@upload', 'as' => 'upload']);

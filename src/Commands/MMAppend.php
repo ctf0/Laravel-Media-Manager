@@ -40,10 +40,10 @@ class MMAppend extends Command
         $route_file = base_path('routes/web.php');
         $search     = 'MediaManager';
         if (File::exists($route_file) && !str_contains(File::get($route_file), $search)) {
-            $data = "\n// Media-Manager\nnew \ctf0\MediaManager\MediaRoutes();";
+            $data = "\n// Media-Manager\nctf0\MediaManager\MediaRoutes::routes();";
 
             File::append($route_file, $data);
-            $this->comment("['new \ctf0\MediaManager\MediaRoutes()'] added to [web.php]");
+            $this->comment("['ctf0\MediaManager\MediaRoutes::routes();'] added to [web.php]");
         }
 
         // mix
