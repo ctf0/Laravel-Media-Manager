@@ -12,6 +12,8 @@
     {{-- js --}}
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdn.jsdelivr.net/jquery.scrollto/2.1.2/jquery.scrollTo.min.js"></script>
+    {{-- ziggy --}}
+    @routes
 </head>
 <body>
     <div id="app" v-cloak>
@@ -496,7 +498,6 @@
 
     {{-- footer --}}
     <script>
-        const media_root_url = {!! json_encode(config('mediaManager.root_url')) !!}
         const warningClass = 'is-warning'
         const errorClass = 'is-danger'
     </script>

@@ -1,10 +1,3 @@
-$.ajaxSetup({
-    cache: false,
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-})
-
 var manager = new Vue({
     el: '#app',
     data: {
@@ -13,11 +6,30 @@ var manager = new Vue({
         directories: [],
         filterdList: [],
         bulkList: [],
-        showBy: null,
-        currentFilterName: null,
-        selectedFile: null,
-        searchItemsCount: null,
-        searchFor: null
+        showBy: undefined,
+        currentFilterName: undefined,
+        selectedFile: undefined,
+        searchItemsCount: undefined,
+        searchFor: undefined
+    },
+    computed: {
+        allFiles() {
+            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
+                return this.filterdList
+            } else {
+                return this.files.items
+            }
+        },
+        allItemsCount() {
+            if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
+                return this.allFiles.length
+            }
+        },
+        bulkItemsCount() {
+            if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
+                return this.bulkList.length
+            }
+        }
     },
     methods: {
         /*                Main                */
@@ -25,7 +37,7 @@ var manager = new Vue({
             $('#file_loader').show()
             this.searchFor = ''
             this.showFilesOfType('all')
-            this.showBy = null
+            this.showBy = undefined
 
             var folder_location = ''
 
@@ -36,7 +48,7 @@ var manager = new Vue({
             }
 
             // files list
-            $.post(`${media_root_url}/files`, {
+            $.post(route('media.files'), {
                 folder: folder_location
             }, (res) => {
                 this.files = res
@@ -63,7 +75,7 @@ var manager = new Vue({
             return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i]
         },
         confirm_delete(files) {
-            $.post(`${media_root_url}/delete_file_folder`, {
+            $.post(route('media.delete_file_folder'), {
                 folder_location: this.folders,
                 deleted_files: files
             }, (res) => {
@@ -93,7 +105,7 @@ var manager = new Vue({
         move_btn(files) {
             var destination = $('#move_folder_dropdown').val()
 
-            $.post(`${media_root_url}/move_file`, {
+            $.post(route('media.move_file'), {
                 folder_location: this.folders,
                 destination: destination,
                 moved_files: files
@@ -195,7 +207,7 @@ var manager = new Vue({
                 this.folders.push(file.name)
                 this.getFiles(this.folders)
             }
-            manager.currentFilterName = null
+            manager.currentFilterName = undefined
         },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
@@ -251,7 +263,7 @@ var manager = new Vue({
             }
             if (val == 'all') {
                 this.filterdList = []
-                this.currentFilterName = null
+                this.currentFilterName = undefined
             } else {
                 this.filterdList = this.files.items.filter((item) => {
                     return this.fileTypeIs(item, val)
@@ -369,7 +381,7 @@ var manager = new Vue({
             }
         },
         updateDirsList() {
-            $.post(`${media_root_url}/directories`, {
+            $.post(route('media.directories'), {
                 folder_location: manager.folders
             }, (data) => {
                 manager.directories = data
@@ -393,27 +405,6 @@ var manager = new Vue({
             return name.replace(/(.[^.]*)$/, '')
         }
     },
-
-    computed: {
-        allFiles() {
-            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
-                return this.filterdList
-            } else {
-                return this.files.items
-            }
-        },
-        allItemsCount() {
-            if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
-                return this.allFiles.length
-            }
-        },
-        bulkItemsCount() {
-            if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
-                return this.bulkList.length
-            }
-        }
-    },
-
     watch: {
         allFiles(newVal) {
             if (newVal.length < 1) {
@@ -467,18 +458,18 @@ var manager = new Vue({
                 this.clearSelected()
                 this.selectFirst()
             }
-            this.searchItemsCount = null
+            this.searchItemsCount = undefined
         },
         searchItemsCount(val) {
             // make sure "no_files" is hidden when search query is cleared
-            if (val == null) {
+            if (val == undefined) {
                 $('#no_files').hide()
             }
         },
         showBy(val) {
             if (val) {
                 if (val == 'clear') {
-                    this.showBy = null
+                    this.showBy = undefined
                 }
                 this.selectFirst()
             }
@@ -575,7 +566,7 @@ $(function() {
                         if (!manager.selectedFileIs('folder')) {
                             return false
                         }
-                        manager.currentFilterName = null
+                        manager.currentFilterName = undefined
                         manager.folders.push(manager.selectedFile.name)
                         manager.getFiles(manager.folders)
                     }
@@ -593,7 +584,7 @@ $(function() {
                             manager.folders = manager.folders.splice(0, index)
                             manager.getFiles(manager.folders)
                         }
-                        manager.currentFilterName = null
+                        manager.currentFilterName = undefined
                     }
 
                     // go to first / last item
@@ -611,6 +602,34 @@ $(function() {
                     // file upload
                     if (keycode(e) == 'u') {
                         $('#upload').trigger('click')
+                    }
+                }
+
+                // quick view for images / play audio or video
+                if (!manager.isBulkSelecting()) {
+                    if (keycode(e) == 'space' && e.target == document.body) {
+                        // prevent body from scrolling
+                        e.preventDefault()
+
+                        // play audio/video
+                        if (manager.selectedFileIs('video') || manager.selectedFileIs('audio')) {
+                            return $('.player')[0].paused ? $('.player')[0].play() : $('.player')[0].pause()
+                        }
+
+                        // quick view image
+                        if (manager.selectedFileIs('image')) {
+                            if (manager.lightBoxIsActive()) {
+                                $('#vue-lightboxOverlay').trigger('click')
+                            } else {
+                                $('.quickView').trigger('click')
+                            }
+                        }
+                    }
+
+                    // quick view image "esc"
+                    if (keycode(e) == 'esc' && manager.selectedFileIs('image') && manager.lightBoxIsActive()) {
+                        $('#vue-lightboxOverlay').trigger('click')
+                        e.preventDefault()
                     }
                 }
                 /* end of no bulk selection */
@@ -648,31 +667,6 @@ $(function() {
                         }
                     }
                     /* end when lightbox is not active */
-
-                    if (keycode(e) == 'space' && e.target == document.body) {
-                        // prevent body from scrolling
-                        e.preventDefault()
-
-                        // play audio/video
-                        if (manager.selectedFileIs('video') || manager.selectedFileIs('audio')) {
-                            return $('.player')[0].paused ? $('.player')[0].play() : $('.player')[0].pause()
-                        }
-
-                        // quick view image
-                        if (manager.selectedFileIs('image')) {
-                            if (manager.lightBoxIsActive()) {
-                                $('#vue-lightboxOverlay').trigger('click')
-                            } else {
-                                $('.quickView').trigger('click')
-                            }
-                        }
-                    }
-
-                    // quick view image "esc"
-                    if (keycode(e) == 'esc' && manager.selectedFileIs('image') && manager.lightBoxIsActive()) {
-                        $('#vue-lightboxOverlay').trigger('click')
-                        e.preventDefault()
-                    }
                 }
                 /* end of there are files */
 
@@ -819,7 +813,7 @@ $(function() {
     })
 
     $('#new_folder_submit').click(() => {
-        $.post(`${media_root_url}/new_folder`, {
+        $.post(route('media.new_folder'), {
             current_path: manager.files.path,
             new_folder_name: $('#new_folder_name').val()
         }, (data) => {
@@ -904,7 +898,7 @@ $(function() {
         var ext = filename.substring(filename.lastIndexOf('.') + 1)
         var new_filename = $('#new_filename').val() + `.${ext}`
 
-        $.post(`${media_root_url}/rename_file`, {
+        $.post(route('media.rename_file'), {
             folder_location: manager.folders,
             filename: filename,
             new_filename: new_filename

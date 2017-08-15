@@ -17,7 +17,8 @@
    ],
     "require": {
         "php": ">=5.6.4",
-       "illuminate/support": "5.4.*|5.5.*"
+       "illuminate/support": "5.4.*|5.5.*",
+       "tightenco/ziggy": "0.*"
     },
     "autoload": {
         "psr-4": {

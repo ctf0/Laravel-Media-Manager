@@ -16,6 +16,9 @@
     + [vue-lightbox](https://github.com/phecko/vue-lightbox)
     + [bootstrap modal](http://getbootstrap.com/javascript/#modals)
     + [notification-component](https://github.com/ctf0/Notification-Component)
+    + [Ziggy](https://github.com/tightenco/ziggy)
+
+- to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
 
@@ -131,11 +134,6 @@ return [
     'sanitized_text'=> 'sanitized',
 
     /*
-     * media manager root url
-     */
-    'root_url'=> '/media',
-
-    /*
      * css farmework
      */
     'framework'=> env('MIX_MM_FRAMEWORK'),
@@ -170,11 +168,9 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 >
 > after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
-## Notes
-- if you are using multilocale and you are having issues when switching to different locale other than `en`, check [MultiLocale](https://github.com/ctf0/Laravel-Media-Manager/wiki/MultiLocale).
-
 ## ToDo "ANY HELP IS APPRECIATED"
 
 * [ ] Add Support To Other Css Frameworks.
 * [ ] Add Support For Editors "tinymce / Ckeditor/ etc".
 * [ ] Fix `sortBy:size` To Work Properly With (kb vs Mb).
+* [ ] Turn into component instead.

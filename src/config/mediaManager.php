@@ -35,11 +35,6 @@ return [
     'sanitized_text'=> 'sanitized',
 
     /*
-     * media manager root url
-     */
-    'root_url'=> '/media',
-
-    /*
      * css farmework
      */
     'framework'=> env('MIX_MM_FRAMEWORK'),
