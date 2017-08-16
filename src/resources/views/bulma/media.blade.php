@@ -219,7 +219,8 @@
                             <ol class="breadcrumb">
                                 <li @click="goToFolder(0)">
                                     <span class="arrow"></span>
-                                    <a class="p-l-0"><strong>{{ trans('MediaManager::messages.library') }}</strong></a>
+                                    <a v-if="folders.length > 0" class="p-l-0"><strong>{{ trans('MediaManager::messages.library') }}</strong></a>
+                                    <p v-else><strong>{{ trans('MediaManager::messages.library') }}</strong></p>
                                 </li>
 
                                 <template v-for="(folder,index) in folders">
