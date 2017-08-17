@@ -49,6 +49,6 @@ class MediaManagerServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->register(Tightenco\Ziggy\ZiggyServiceProvider::class);
+        $this->app->register(\Tightenco\Ziggy\ZiggyServiceProvider::class);
     }
 }
