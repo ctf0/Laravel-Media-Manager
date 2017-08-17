@@ -21,7 +21,7 @@ return [
      *
      * to add & nest folders in one go use '\/\_\-'
      */
-    'allowed_folderNames_chars'=> '\/\_\-',
+    'allowed_folderNames_chars'=> '\_\-',
 
     /*
      * disallow uploading files with the following mimetypes
