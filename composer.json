@@ -1,6 +1,6 @@
 {
     "name": "ctf0/media-manager",
-    "description": "media manager for the masses",
+    "description": "A Media Manager Built With Vuejs & Laravel",
     "homepage": "https://github.com/ctf0/Laravel-Media-Manager",
     "license": "MIT",
     "keywords": [
