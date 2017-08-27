@@ -1,4 +1,5 @@
 var manager = new Vue({
+    name: 'media-manager',
     el: '#app',
     data: {
         files: [],

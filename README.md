@@ -95,10 +95,9 @@
     | hide image          |                             | space/esc | click        |
 
 ## Config
+**config/mediaManager.php**
 
 ```php
-// config/mediaManager.php
-
 return [
     /*
      * ignore files pattern
