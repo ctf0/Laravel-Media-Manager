@@ -132,8 +132,10 @@ return [
 
     /*
      * css farmework
+     * ex.
+     * MIX_MM_FRAMEWORK=bulma
      */
-    'framework'=> env('MIX_MM_FRAMEWORK'),
+    'framework' => env('MIX_MM_FRAMEWORK'),
 ];
 ```
 

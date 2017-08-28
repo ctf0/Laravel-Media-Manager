@@ -9,19 +9,19 @@ return [
     /*
      * filesystem disk
      */
-    'storage_disk'=> 'public',
+    'storage_disk' => 'public',
 
     /*
      * remove any file special chars except (. _ -)
      */
-    'allowed_fileNames_chars'=> '.\_\-',
+    'allowed_fileNames_chars' => '.\_\-',
 
     /*
      * remove any folder special chars except (_ -)
      *
      * to add & nest folders in one go use '\/\_\-'
      */
-    'allowed_folderNames_chars'=> '\_\-',
+    'allowed_folderNames_chars' => '\_\-',
 
     /*
      * disallow uploading files with the following mimetypes
@@ -32,10 +32,12 @@ return [
     /*
      * when file names gets cleand up
      */
-    'sanitized_text'=> 'sanitized',
+    'sanitized_text' => 'sanitized',
 
     /*
      * css farmework
+     * ex.
+     * MIX_MM_FRAMEWORK=bulma
      */
-    'framework'=> env('MIX_MM_FRAMEWORK'),
+    'framework' => env('MIX_MM_FRAMEWORK'),
 ];
