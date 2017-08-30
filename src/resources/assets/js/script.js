@@ -1,4 +1,4 @@
-var manager = new Vue({
+new Vue({
     name: 'media-manager',
     el: '#app',
     data: {
@@ -32,7 +32,462 @@ var manager = new Vue({
             }
         }
     },
+    mounted() {
+        this.render()
+    },
     methods: {
+        /*                Render                */
+        render() {
+            var manager = this
+
+            this.getFiles('/')
+
+            //********** File Upload **********//
+            $('#new-upload').dropzone({
+                createImageThumbnails: false,
+                parallelUploads: 10,
+                uploadMultiple: true,
+                previewsContainer: '#uploadPreview',
+                processingmultiple() {
+                    $('#uploadProgress').fadeIn()
+                },
+                totaluploadprogress(uploadProgress) {
+                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
+                },
+                successmultiple(files, res) {
+                    res.data.map((item) => {
+                        if (item.success) {
+                            EventHub.fire('showNotif', {
+                                title: 'Success',
+                                body: `Successfully Uploaded "${item.message}"`,
+                                type: 'success',
+                                duration: 5
+                            })
+                        } else {
+                            EventHub.fire('showNotif', {
+                                title: 'Error',
+                                body: item.message,
+                                type: 'danger'
+                            })
+                        }
+                    })
+
+                    manager.getFiles(manager.folders)
+                },
+                errormultiple(files, res) {
+                    EventHub.fire('showNotif', {
+                        title: 'Error',
+                        body: res,
+                        type: 'danger'
+                    })
+                },
+                queuecomplete() {
+                    $('#upload').trigger('click')
+                    $('#uploadProgress').fadeOut(() => {
+                        $('#uploadProgress .progress-bar').css('width', 0)
+                    })
+                }
+            })
+
+            //********** Key Press **********//
+
+            $(document).keydown((e) => {
+
+                var curSelected = parseInt($('#files li .selected').data('index'))
+
+                // when modal isnt visible
+                if (!$('#new_folder_modal').is(':visible') &&
+                    !$('#move_file_modal').is(':visible') &&
+                    !$('#rename_file_modal').is(':visible') &&
+                    !$('#confirm_delete_modal').is(':visible')) {
+
+                    // when search is not focused
+                    if (!$('.input').is(':focus')) {
+
+                        // when no bulk selecting & no light box is active
+                        if (!this.isBulkSelecting() && !this.lightBoxIsActive()) {
+
+                            var cur = ''
+                            var newSelected = ''
+
+                            if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelected !== 0) {
+                                newSelected = curSelected - 1
+                                cur = $('div[data-index="' + newSelected + '"]')
+                                this.scrollToFile(cur)
+                            }
+
+                            if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelected < this.allItemsCount - 1) {
+                                newSelected = curSelected + 1
+                                cur = $('div[data-index="' + newSelected + '"]')
+                                this.scrollToFile(cur)
+                            }
+
+                            // open folder
+                            if (keycode(e) == 'enter') {
+                                if (!this.selectedFileIs('folder')) {
+                                    return false
+                                }
+                                this.currentFilterName = undefined
+                                this.folders.push(this.selectedFile.name)
+                                this.getFiles(this.folders)
+                            }
+
+                            // go up a dir
+                            if (keycode(e) == 'backspace') {
+                                index = parseInt(this.folders.length) - 1
+                                if (index < 0) {
+                                    return false
+                                }
+                                if (index === 0) {
+                                    this.folders = []
+                                    this.getFiles(this.folders)
+                                } else {
+                                    this.folders = this.folders.splice(0, index)
+                                    this.getFiles(this.folders)
+                                }
+                                this.currentFilterName = undefined
+                            }
+
+                            // go to first / last item
+                            if (this.allItemsCount) {
+                                if (keycode(e) == 'home') {
+                                    this.scrollToFile()
+                                }
+                                if (keycode(e) == 'end') {
+                                    var index = this.allItemsCount - 1
+                                    cur = $('div[data-index="' + index + '"]')
+                                    this.scrollToFile(cur)
+                                }
+                            }
+
+                            // file upload
+                            if (keycode(e) == 'u') {
+                                $('#upload').trigger('click')
+                            }
+                        }
+
+                        // quick view for images / play audio or video
+                        if (!this.isBulkSelecting()) {
+                            if (keycode(e) == 'space' && e.target == document.body) {
+                                // prevent body from scrolling
+                                e.preventDefault()
+
+                                // play audio/video
+                                if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                                    return $('.player')[0].paused ? $('.player')[0].play() : $('.player')[0].pause()
+                                }
+
+                                // quick view image
+                                if (this.selectedFileIs('image')) {
+                                    if (this.lightBoxIsActive()) {
+                                        $('#vue-lightboxOverlay').trigger('click')
+                                    } else {
+                                        $('.quickView').trigger('click')
+                                    }
+                                }
+                            }
+
+                            // quick view image "esc"
+                            if (keycode(e) == 'esc' && this.selectedFileIs('image') && this.lightBoxIsActive()) {
+                                $('#vue-lightboxOverlay').trigger('click')
+                                e.preventDefault()
+                            }
+                        }
+                        /* end of no bulk selection */
+
+                        // when there are files
+                        if (this.allItemsCount) {
+
+                            // when lightbox is not active
+                            if (!this.lightBoxIsActive()) {
+                                // bulk select
+                                if (keycode(e) == 'b') {
+                                    $('#blk_slct').trigger('click')
+                                }
+
+                                // add all to bulk list
+                                if (this.isBulkSelecting() && keycode(e) == 'a') {
+                                    $('#blk_slct_all').trigger('click')
+                                }
+
+                                // delete file
+                                if (keycode(e) == 'delete' || keycode(e) == 'd') {
+                                    $('#delete').trigger('click')
+                                }
+
+                                // refresh
+                                if (keycode(e) == 'r') {
+                                    $('#refresh').trigger('click')
+                                }
+
+                                // move file
+                                if (this.checkForFolders()) {
+                                    if (keycode(e) == 'm') {
+                                        $('#move').trigger('click')
+                                    }
+                                }
+                            }
+                            /* end when lightbox is not active */
+                        }
+                        /* end of there are files */
+
+                        // toggle file details box
+                        if (keycode(e) == 't' && !this.lightBoxIsActive()) {
+                            $('.toggle').trigger('click')
+                        }
+                    }
+                    /* end of search is not focused */
+                }
+                /* end of modal isnt visible */
+
+                // when modal is visible
+                if (keycode(e) == 'enter') {
+                    if ($('#confirm_delete_modal').is(':visible')) {
+                        $('#confirm_delete').trigger('click')
+                    }
+
+                    if ($('#rename_file_modal').is(':visible')) {
+                        $('#rename_btn').trigger('click')
+                    }
+
+                    if ($('#new_folder_modal').is(':visible')) {
+                        $('#new_folder_submit').trigger('click')
+                    }
+                }
+                /* end of modal is visible */
+            })
+
+            //********** Toolbar Buttons **********//
+
+            // bulk select
+            $('#blk_slct').click(function() {
+                $(this).toggleClass(errorClass)
+                $('#upload, #new_folder, #refresh, #rename').parent().hide()
+                $(this).closest('.field').toggleClass('has-addons')
+                $('#blk_slct_all').fadeIn()
+
+                // reset when toggled off
+                if (!manager.isBulkSelecting()) {
+                    $('#upload, #new_folder, #refresh, #rename').parent().show()
+                    if ($('#blk_slct_all').hasClass(warningClass)) {
+                        $('#blk_slct_all').trigger('click')
+                    }
+                    $('#blk_slct_all').hide()
+
+                    $('li.bulk-selected').removeClass('bulk-selected')
+                    manager.bulkList = []
+                    manager.selectFirst()
+                }
+
+                manager.clearSelected()
+            })
+
+            // select all files
+            $('#blk_slct_all').click(function() {
+
+                // if no items in bulk list
+                if (manager.bulkList == 0) {
+                    // if no search query
+                    if (!manager.searchFor) {
+                        $(this).addClass(warningClass)
+                        manager.bulkList = manager.allFiles.slice(0)
+                    }
+
+                    // if found search items
+                    if (manager.searchItemsCount) {
+                        $(this).addClass(warningClass)
+                        $('#files li').each(function() {
+                            $(this).trigger('click')
+                        })
+                    }
+                }
+
+                // if having search + having bulk items < search found items
+                else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
+                    manager.bulkList = []
+                    manager.clearSelected()
+
+                    if ($(this).hasClass(warningClass)) {
+                        $(this).removeClass(warningClass)
+                    } else {
+                        $(this).addClass(warningClass)
+                        $('#files li').each(function() {
+                            $(this).trigger('click')
+                        })
+                    }
+                }
+
+                // if NO search + having bulk items < all items
+                else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
+                    if ($(this).hasClass(warningClass)) {
+                        $(this).removeClass(warningClass)
+                        manager.bulkList = []
+                    } else {
+                        $(this).addClass(warningClass)
+                        manager.bulkList = manager.allFiles.slice(0)
+                    }
+
+                    manager.clearSelected()
+                }
+
+                // otherwise
+                else {
+                    $(this).removeClass(warningClass)
+                    manager.bulkList = []
+                    manager.clearSelected()
+                }
+
+                // if we have items in bulk list, select first item
+                if (manager.bulkItemsCount) {
+                    manager.selectedFile = manager.bulkList[0]
+                }
+
+                // toggle styling
+                var toggle_text = $(this).find('span').not('.icon')
+
+                if ($(this).hasClass(warningClass)) {
+                    $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
+                    toggle_text.text('Select Non')
+                } else {
+                    $(this).find('.fa').removeClass('fa-minus').addClass('fa-plus')
+                    toggle_text.text('Select All')
+                }
+            })
+
+            // refresh
+            $('#refresh').click(() => {
+                this.getFiles(this.folders)
+            })
+
+            // upload
+            $('#upload').click(() => {
+                $('#new-upload').fadeToggle('fast')
+            })
+
+            // new folder
+            $('#new_folder').click(() => {
+                $('#new_folder_modal').modal('show')
+            })
+
+            $('#new_folder_modal').on('shown.bs.modal', () => {
+                $('#new_folder_name').focus()
+            })
+
+            $('#new_folder_submit').click(() => {
+                $.post(route('media.new_folder'), {
+                    current_path: this.files.path,
+                    new_folder_name: $('#new_folder_name').val()
+                }, (data) => {
+                    if (data.success) {
+                        EventHub.fire('showNotif', {
+                            title: 'Success',
+                            body: `Successfully Created "${data.new_folder_name}" at "${data.full_path}"`,
+                            type: 'success',
+                            duration: 5
+                        })
+                        this.getFiles(this.folders)
+                    } else {
+                        EventHub.fire('showNotif', {
+                            title: 'Error',
+                            body: data.message,
+                            type: 'danger'
+                        })
+                    }
+
+                    $('#new_folder_name').val('')
+                    $('#new_folder_modal').modal('hide')
+                })
+            })
+
+            // delete
+            $('#delete').click(() => {
+                if (!manager.isBulkSelecting()) {
+                    if (this.selectedFileIs('folder')) {
+                        $('.folder_warning').show()
+                    } else {
+                        $('.folder_warning').hide()
+                    }
+                    $('.confirm_delete').text(this.selectedFile.name)
+                }
+
+                if (this.bulkItemsCount) {
+                    $('.folder_warning').hide()
+                    this.bulkList.some((item) => {
+                        if (item.type.includes('folder')) {
+                            $('.folder_warning').show()
+                        }
+                    })
+                }
+
+                $('#confirm_delete_modal').modal('show')
+            })
+
+            $('#confirm_delete').click(() => {
+                if (this.bulkItemsCount) {
+                    this.confirm_delete(this.bulkList)
+                    $('#blk_slct').trigger('click')
+                } else {
+                    this.confirm_delete([this.selectedFile])
+                }
+            })
+
+            // move
+            $('#move').click(() => {
+                $('#move_file_modal').modal('show')
+            })
+
+            $('#move_btn').click(() => {
+                if (this.bulkItemsCount) {
+                    this.move_btn(this.bulkList)
+                    $('#blk_slct').trigger('click')
+                } else {
+                    this.move_btn([this.selectedFile])
+                }
+            })
+
+            // rename
+            $('#rename').click(() => {
+                $('#rename_file_modal').modal('show')
+            })
+
+            $('#rename_file_modal').on('shown.bs.modal', () => {
+                $('#new_filename').focus()
+            })
+
+            $('#rename_btn').click(() => {
+                var filename = this.selectedFile.name
+                var ext = filename.substring(filename.lastIndexOf('.') + 1)
+                var new_filename = $('#new_filename').val() + `.${ext}`
+
+                $.post(route('media.rename_file'), {
+                    folder_location: this.folders,
+                    filename: filename,
+                    new_filename: new_filename
+                }, (data) => {
+                    if (data.success) {
+                        EventHub.fire('showNotif', {
+                            title: 'Success',
+                            body: `Successfully Renamed "${filename}" to "${data.new_filename}"`,
+                            type: 'success',
+                            duration: 5
+                        })
+                        this.updateItemName(this.selectedFile, filename, data.new_filename)
+                        if (this.selectedFileIs('folder')) {
+                            this.updateDirsList()
+                        }
+                    } else {
+                        EventHub.fire('showNotif', {
+                            title: 'Error',
+                            body: data.message,
+                            type: 'danger'
+                        })
+                    }
+
+                    $('#rename_file_modal').modal('hide')
+                })
+            })
+        },
+
         /*                Main                */
         getFiles(folders) {
             $('#file_loader').show()
@@ -208,7 +663,7 @@ var manager = new Vue({
                 this.folders.push(file.name)
                 this.getFiles(this.folders)
             }
-            manager.currentFilterName = undefined
+            this.currentFilterName = undefined
         },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
@@ -383,9 +838,9 @@ var manager = new Vue({
         },
         updateDirsList() {
             $.post(route('media.directories'), {
-                folder_location: manager.folders
+                folder_location: this.folders
             }, (data) => {
-                manager.directories = data
+                this.directories = data
             })
         },
 
@@ -472,458 +927,11 @@ var manager = new Vue({
                 if (val == 'clear') {
                     this.showBy = undefined
                 }
-                this.selectFirst()
+                if (!this.isBulkSelecting()) {
+                    this.selectFirst()
+                }
             }
         }
     }
 })
 
-$(function() {
-
-    manager.getFiles('/')
-
-    //********** File Upload **********//
-
-    $('#new-upload').dropzone({
-        createImageThumbnails: false,
-        parallelUploads: 10,
-        uploadMultiple: true,
-        previewsContainer: '#uploadPreview',
-        processingmultiple() {
-            $('#uploadProgress').fadeIn()
-        },
-        totaluploadprogress(uploadProgress) {
-            $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
-        },
-        successmultiple(files, res) {
-            res.data.map((item) => {
-                if (item.success) {
-                    EventHub.fire('showNotif', {
-                        title: 'Success',
-                        body: `Successfully Uploaded "${item.message}"`,
-                        type: 'success',
-                        duration: 5
-                    })
-                } else {
-                    EventHub.fire('showNotif', {
-                        title: 'Error',
-                        body: item.message,
-                        type: 'danger'
-                    })
-                }
-            })
-            manager.getFiles(manager.folders)
-        },
-        errormultiple(files, res) {
-            EventHub.fire('showNotif', {
-                title: 'Error',
-                body: res,
-                type: 'danger'
-            })
-        },
-        queuecomplete() {
-            $('#upload').trigger('click')
-            $('#uploadProgress').fadeOut(() => {
-                $('#uploadProgress .progress-bar').css('width', 0)
-            })
-        }
-    })
-
-    //********** Key Press **********//
-
-    $(document).keydown((e) => {
-
-        var curSelected = parseInt($('#files li .selected').data('index'))
-
-        // when modal isnt visible
-        if (!$('#new_folder_modal').is(':visible') &&
-            !$('#move_file_modal').is(':visible') &&
-            !$('#rename_file_modal').is(':visible') &&
-            !$('#confirm_delete_modal').is(':visible')) {
-
-            // when search is not focused
-            if (!$('.input').is(':focus')) {
-
-                // when no bulk selecting & no light box is active
-                if (!manager.isBulkSelecting() && !manager.lightBoxIsActive()) {
-
-                    var cur = ''
-                    var newSelected = ''
-
-                    if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelected !== 0) {
-                        newSelected = curSelected - 1
-                        cur = $('div[data-index="' + newSelected + '"]')
-                        manager.scrollToFile(cur)
-                    }
-
-                    if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelected < manager.allItemsCount - 1) {
-                        newSelected = curSelected + 1
-                        cur = $('div[data-index="' + newSelected + '"]')
-                        manager.scrollToFile(cur)
-                    }
-
-                    // open folder
-                    if (keycode(e) == 'enter') {
-                        if (!manager.selectedFileIs('folder')) {
-                            return false
-                        }
-                        manager.currentFilterName = undefined
-                        manager.folders.push(manager.selectedFile.name)
-                        manager.getFiles(manager.folders)
-                    }
-
-                    // go up a dir
-                    if (keycode(e) == 'backspace') {
-                        index = parseInt(manager.folders.length) - 1
-                        if (index < 0) {
-                            return false
-                        }
-                        if (index === 0) {
-                            manager.folders = []
-                            manager.getFiles(manager.folders)
-                        } else {
-                            manager.folders = manager.folders.splice(0, index)
-                            manager.getFiles(manager.folders)
-                        }
-                        manager.currentFilterName = undefined
-                    }
-
-                    // go to first / last item
-                    if (manager.allItemsCount) {
-                        if (keycode(e) == 'home') {
-                            manager.scrollToFile()
-                        }
-                        if (keycode(e) == 'end') {
-                            var index = manager.allItemsCount - 1
-                            cur = $('div[data-index="' + index + '"]')
-                            manager.scrollToFile(cur)
-                        }
-                    }
-
-                    // file upload
-                    if (keycode(e) == 'u') {
-                        $('#upload').trigger('click')
-                    }
-                }
-
-                // quick view for images / play audio or video
-                if (!manager.isBulkSelecting()) {
-                    if (keycode(e) == 'space' && e.target == document.body) {
-                        // prevent body from scrolling
-                        e.preventDefault()
-
-                        // play audio/video
-                        if (manager.selectedFileIs('video') || manager.selectedFileIs('audio')) {
-                            return $('.player')[0].paused ? $('.player')[0].play() : $('.player')[0].pause()
-                        }
-
-                        // quick view image
-                        if (manager.selectedFileIs('image')) {
-                            if (manager.lightBoxIsActive()) {
-                                $('#vue-lightboxOverlay').trigger('click')
-                            } else {
-                                $('.quickView').trigger('click')
-                            }
-                        }
-                    }
-
-                    // quick view image "esc"
-                    if (keycode(e) == 'esc' && manager.selectedFileIs('image') && manager.lightBoxIsActive()) {
-                        $('#vue-lightboxOverlay').trigger('click')
-                        e.preventDefault()
-                    }
-                }
-                /* end of no bulk selection */
-
-                // when there are files
-                if (manager.allItemsCount) {
-
-                    // when lightbox is not active
-                    if (!manager.lightBoxIsActive()) {
-                        // bulk select
-                        if (keycode(e) == 'b') {
-                            $('#blk_slct').trigger('click')
-                        }
-
-                        // add all to bulk list
-                        if (manager.isBulkSelecting() && keycode(e) == 'a') {
-                            $('#blk_slct_all').trigger('click')
-                        }
-
-                        // delete file
-                        if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                            $('#delete').trigger('click')
-                        }
-
-                        // refresh
-                        if (keycode(e) == 'r') {
-                            $('#refresh').trigger('click')
-                        }
-
-                        // move file
-                        if (manager.checkForFolders()) {
-                            if (keycode(e) == 'm') {
-                                $('#move').trigger('click')
-                            }
-                        }
-                    }
-                    /* end when lightbox is not active */
-                }
-                /* end of there are files */
-
-                // toggle file details box
-                if (keycode(e) == 't' && !manager.lightBoxIsActive()) {
-                    $('.toggle').trigger('click')
-                }
-            }
-            /* end of search is not focused */
-        }
-        /* end of modal isnt visible */
-
-        // when modal is visible
-        if (keycode(e) == 'enter') {
-            if ($('#confirm_delete_modal').is(':visible')) {
-                $('#confirm_delete').trigger('click')
-            }
-
-            if ($('#rename_file_modal').is(':visible')) {
-                $('#rename_btn').trigger('click')
-            }
-
-            if ($('#new_folder_modal').is(':visible')) {
-                $('#new_folder_submit').trigger('click')
-            }
-        }
-        /* end of modal is visible */
-    })
-
-    //********** Toolbar Buttons **********//
-
-    // bulk select
-    $('#blk_slct').click(function() {
-        $(this).toggleClass(errorClass)
-        $('#upload, #new_folder, #refresh, #rename').parent().hide()
-        $(this).closest('.field').toggleClass('has-addons')
-        $('#blk_slct_all').fadeIn()
-
-        // reset when toggled off
-        if (!manager.isBulkSelecting()) {
-            $('#upload, #new_folder, #refresh, #rename').parent().show()
-            if ($('#blk_slct_all').hasClass(warningClass)) {
-                $('#blk_slct_all').trigger('click')
-            }
-            $('#blk_slct_all').hide()
-
-            $('li.bulk-selected').removeClass('bulk-selected')
-            manager.bulkList = []
-            manager.selectFirst()
-        }
-
-        manager.clearSelected()
-    })
-
-    // select all files
-    $('#blk_slct_all').click(function() {
-
-        // if no items in bulk list
-        if (manager.bulkList == 0) {
-            // if no search query
-            if (!manager.searchFor) {
-                $(this).addClass(warningClass)
-                manager.bulkList = manager.allFiles.slice(0)
-            }
-
-            // if found search items
-            if (manager.searchItemsCount) {
-                $(this).addClass(warningClass)
-                $('#files li').each(function() {
-                    $(this).trigger('click')
-                })
-            }
-        }
-
-        // if having search + having bulk items < search found items
-        else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
-            manager.bulkList = []
-            manager.clearSelected()
-
-            if ($(this).hasClass(warningClass)) {
-                $(this).removeClass(warningClass)
-            } else {
-                $(this).addClass(warningClass)
-                $('#files li').each(function() {
-                    $(this).trigger('click')
-                })
-            }
-        }
-
-        // if NO search + having bulk items < all items
-        else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
-            if ($(this).hasClass(warningClass)) {
-                $(this).removeClass(warningClass)
-                manager.bulkList = []
-            } else {
-                $(this).addClass(warningClass)
-                manager.bulkList = manager.allFiles.slice(0)
-            }
-
-            manager.clearSelected()
-        }
-
-        // otherwise
-        else {
-            $(this).removeClass(warningClass)
-            manager.bulkList = []
-            manager.clearSelected()
-        }
-
-        // if we have items in bulk list, select first item
-        if (manager.bulkItemsCount) {
-            manager.selectedFile = manager.bulkList[0]
-        }
-
-        // toggle styling
-        var toggle_text = $(this).find('span').not('.icon')
-
-        if ($(this).hasClass(warningClass)) {
-            $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
-            toggle_text.text('Select Non')
-        } else {
-            $(this).find('.fa').removeClass('fa-minus').addClass('fa-plus')
-            toggle_text.text('Select All')
-        }
-    })
-
-    // refresh
-    $('#refresh').click(() => {
-        manager.getFiles(manager.folders)
-    })
-
-    // upload
-    $('#upload').click(() => {
-        $('#new-upload').fadeToggle('fast')
-    })
-
-    // new folder
-    $('#new_folder').click(() => {
-        $('#new_folder_modal').modal('show')
-    })
-
-    $('#new_folder_modal').on('shown.bs.modal', () => {
-        $('#new_folder_name').focus()
-    })
-
-    $('#new_folder_submit').click(() => {
-        $.post(route('media.new_folder'), {
-            current_path: manager.files.path,
-            new_folder_name: $('#new_folder_name').val()
-        }, (data) => {
-            if (data.success) {
-                EventHub.fire('showNotif', {
-                    title: 'Success',
-                    body: `Successfully Created "${data.new_folder_name}" at "${data.full_path}"`,
-                    type: 'success',
-                    duration: 5
-                })
-                manager.getFiles(manager.folders)
-            } else {
-                EventHub.fire('showNotif', {
-                    title: 'Error',
-                    body: data.message,
-                    type: 'danger'
-                })
-            }
-
-            $('#new_folder_name').val('')
-            $('#new_folder_modal').modal('hide')
-        })
-    })
-
-    // delete
-    $('#delete').click(() => {
-        if (!manager.isBulkSelecting()) {
-            if (manager.selectedFileIs('folder')) {
-                $('.folder_warning').show()
-            } else {
-                $('.folder_warning').hide()
-            }
-            $('.confirm_delete').text(manager.selectedFile.name)
-        }
-
-        if (manager.bulkItemsCount) {
-            $('.folder_warning').hide()
-            manager.bulkList.some((item) => {
-                if (item.type.includes('folder')) {
-                    $('.folder_warning').show()
-                }
-            })
-        }
-
-        $('#confirm_delete_modal').modal('show')
-    })
-
-    $('#confirm_delete').click(() => {
-        if (manager.bulkItemsCount) {
-            manager.confirm_delete(manager.bulkList)
-            $('#blk_slct').trigger('click')
-        } else {
-            manager.confirm_delete([manager.selectedFile])
-        }
-    })
-
-    // move
-    $('#move').click(() => {
-        $('#move_file_modal').modal('show')
-    })
-
-    $('#move_btn').click(() => {
-        if (manager.bulkItemsCount) {
-            manager.move_btn(manager.bulkList)
-            $('#blk_slct').trigger('click')
-        } else {
-            manager.move_btn([manager.selectedFile])
-        }
-    })
-
-    // rename
-    $('#rename').click(() => {
-        $('#rename_file_modal').modal('show')
-    })
-
-    $('#rename_file_modal').on('shown.bs.modal', () => {
-        $('#new_filename').focus()
-    })
-
-    $('#rename_btn').click(() => {
-        var filename = manager.selectedFile.name
-        var ext = filename.substring(filename.lastIndexOf('.') + 1)
-        var new_filename = $('#new_filename').val() + `.${ext}`
-
-        $.post(route('media.rename_file'), {
-            folder_location: manager.folders,
-            filename: filename,
-            new_filename: new_filename
-        }, (data) => {
-            if (data.success) {
-                EventHub.fire('showNotif', {
-                    title: 'Success',
-                    body: `Successfully Renamed "${filename}" to "${data.new_filename}"`,
-                    type: 'success',
-                    duration: 5
-                })
-                manager.updateItemName(manager.selectedFile, filename, data.new_filename)
-                if (manager.selectedFileIs('folder')) {
-                    manager.updateDirsList()
-                }
-            } else {
-                EventHub.fire('showNotif', {
-                    title: 'Error',
-                    body: data.message,
-                    type: 'danger'
-                })
-            }
-
-            $('#rename_file_modal').modal('hide')
-        })
-    })
-})

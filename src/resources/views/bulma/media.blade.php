@@ -217,10 +217,14 @@
                         {{-- directories breadCrumb --}}
                         <div class="breadcrumb-container">
                             <ol class="breadcrumb">
-                                <li @click="goToFolder(0)">
+                                <li>
                                     <span class="arrow"></span>
-                                    <a v-if="folders.length > 0" class="p-l-0"><strong>{{ trans('MediaManager::messages.library') }}</strong></a>
-                                    <p v-else><strong>{{ trans('MediaManager::messages.library') }}</strong></p>
+                                    <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">
+                                        <strong>{{ trans('MediaManager::messages.library') }}</strong>
+                                    </a>
+                                    <p v-else class="p-l-0">
+                                        <strong>{{ trans('MediaManager::messages.library') }}</strong>
+                                    </p>
                                 </li>
 
                                 <template v-for="(folder,index) in folders">
