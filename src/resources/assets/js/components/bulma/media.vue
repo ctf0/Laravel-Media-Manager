@@ -1,17 +1,31 @@
-new Vue({
+<template></template>
+
+<script>
+/* external classes */
+// is-warning
+// is-danger
+// field
+// has-addons
+// fa-plus
+// fa-minus
+// fa fa-angle-double-right
+// fa fa-angle-double-left
+
+export default {
     name: 'media-manager',
-    el: '#app',
-    data: {
-        files: [],
-        folders: [],
-        directories: [],
-        filterdList: [],
-        bulkList: [],
-        showBy: undefined,
-        currentFilterName: undefined,
-        selectedFile: undefined,
-        searchItemsCount: undefined,
-        searchFor: undefined
+    data() {
+        return {
+            files: [],
+            folders: [],
+            directories: [],
+            filterdList: [],
+            bulkList: [],
+            showBy: undefined,
+            currentFilterName: undefined,
+            selectedFile: undefined,
+            searchItemsCount: undefined,
+            searchFor: undefined
+        }
     },
     computed: {
         allFiles() {
@@ -97,9 +111,9 @@ new Vue({
 
                 // when modal isnt visible
                 if (!$('#new_folder_modal').is(':visible') &&
-                    !$('#move_file_modal').is(':visible') &&
-                    !$('#rename_file_modal').is(':visible') &&
-                    !$('#confirm_delete_modal').is(':visible')) {
+                            !$('#move_file_modal').is(':visible') &&
+                            !$('#rename_file_modal').is(':visible') &&
+                            !$('#confirm_delete_modal').is(':visible')) {
 
                     // when search is not focused
                     if (!$('.input').is(':focus')) {
@@ -261,7 +275,7 @@ new Vue({
 
             // bulk select
             $('#blk_slct').click(function() {
-                $(this).toggleClass(errorClass)
+                $(this).toggleClass('is-danger')
                 $('#upload, #new_folder, #refresh, #rename').parent().hide()
                 $(this).closest('.field').toggleClass('has-addons')
                 $('#blk_slct_all').fadeIn()
@@ -269,7 +283,7 @@ new Vue({
                 // reset when toggled off
                 if (!manager.isBulkSelecting()) {
                     $('#upload, #new_folder, #refresh, #rename').parent().show()
-                    if ($('#blk_slct_all').hasClass(warningClass)) {
+                    if ($('#blk_slct_all').hasClass('is-warning')) {
                         $('#blk_slct_all').trigger('click')
                     }
                     $('#blk_slct_all').hide()
@@ -289,13 +303,13 @@ new Vue({
                 if (manager.bulkList == 0) {
                     // if no search query
                     if (!manager.searchFor) {
-                        $(this).addClass(warningClass)
+                        $(this).addClass('is-warning')
                         manager.bulkList = manager.allFiles.slice(0)
                     }
 
                     // if found search items
                     if (manager.searchItemsCount) {
-                        $(this).addClass(warningClass)
+                        $(this).addClass('is-warning')
                         $('#files li').each(function() {
                             $(this).trigger('click')
                         })
@@ -307,10 +321,10 @@ new Vue({
                     manager.bulkList = []
                     manager.clearSelected()
 
-                    if ($(this).hasClass(warningClass)) {
-                        $(this).removeClass(warningClass)
+                    if ($(this).hasClass('is-warning')) {
+                        $(this).removeClass('is-warning')
                     } else {
-                        $(this).addClass(warningClass)
+                        $(this).addClass('is-warning')
                         $('#files li').each(function() {
                             $(this).trigger('click')
                         })
@@ -319,11 +333,11 @@ new Vue({
 
                 // if NO search + having bulk items < all items
                 else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
-                    if ($(this).hasClass(warningClass)) {
-                        $(this).removeClass(warningClass)
+                    if ($(this).hasClass('is-warning')) {
+                        $(this).removeClass('is-warning')
                         manager.bulkList = []
                     } else {
-                        $(this).addClass(warningClass)
+                        $(this).addClass('is-warning')
                         manager.bulkList = manager.allFiles.slice(0)
                     }
 
@@ -332,7 +346,7 @@ new Vue({
 
                 // otherwise
                 else {
-                    $(this).removeClass(warningClass)
+                    $(this).removeClass('is-warning')
                     manager.bulkList = []
                     manager.clearSelected()
                 }
@@ -345,7 +359,7 @@ new Vue({
                 // toggle styling
                 var toggle_text = $(this).find('span').not('.icon')
 
-                if ($(this).hasClass(warningClass)) {
+                if ($(this).hasClass('is-warning')) {
                     $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
                     toggle_text.text('Select Non')
                 } else {
@@ -605,7 +619,7 @@ new Vue({
 
         /*                Bulk                */
         isBulkSelecting() {
-            return $('#blk_slct').hasClass(errorClass)
+            return $('#blk_slct').hasClass('is-danger')
         },
         IsInBulkList(file) {
             return this.bulkList.includes(file)
@@ -621,7 +635,7 @@ new Vue({
                 this.bulkList.splice(this.bulkList.indexOf(file), 1)
 
                 // normal single selction behavior
-                if (!$('#blk_slct_all').hasClass(warningClass)) {
+                if (!$('#blk_slct_all').hasClass('is-warning')) {
                     // select prev item
                     if (this.bulkItemsCount) {
                         this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
@@ -704,9 +718,9 @@ new Vue({
         fileTypeIs(item, val) {
             if (val == 'text') {
                 if (!item.type.includes('folder') &&
-                    !item.type.includes('image') &&
-                    !item.type.includes('video') &&
-                    !item.type.includes('audio')) {
+                            !item.type.includes('image') &&
+                            !item.type.includes('video') &&
+                            !item.type.includes('audio')) {
                     return true
                 }
             } else {
@@ -881,7 +895,7 @@ new Vue({
 
             if (val == 0 && this.isBulkSelecting()) {
                 var toggle_text = $('#blk_slct_all').find('span').not('.icon')
-                $('#blk_slct_all').removeClass(warningClass)
+                $('#blk_slct_all').removeClass('is-warning')
                 $('#blk_slct_all').find('.fa').removeClass('fa-minus').addClass('fa-plus')
                 toggle_text.text('Select All')
             }
@@ -933,5 +947,5 @@ new Vue({
             }
         }
     }
-})
-
+}
+</script>

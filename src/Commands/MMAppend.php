@@ -50,10 +50,10 @@ class MMAppend extends Command
         $mix_file = base_path('webpack.mix.js');
         $search   = 'MediaManager';
         if (File::exists($mix_file) && !str_contains(File::get($mix_file), $search)) {
-            $data = "\n// Media-Manager\nmix.js('resources/assets/vendor/MediaManager/js/media.js', 'public/assets/vendor/MediaManager/script.js')\n\t.sass('resources/assets/vendor/MediaManager/sass/' + process.env.MIX_MM_FRAMEWORK + '/media.scss', 'public/assets/vendor/MediaManager/style.css')\n\t.version();";
+            $data = "\n// Media-Manager\nmix.sass('resources/assets/vendor/MediaManager/sass/' + process.env.MIX_MM_FRAMEWORK + '/media.scss', 'public/assets/vendor/MediaManager/style.css')\n\t.version();";
 
             File::append($mix_file, $data);
-            $this->comment("['mix.js(..).sass(..).version()'] added to [webpack.mix.js]");
+            $this->comment("['mix.sass(..).version()'] added to [webpack.mix.js]");
         }
 
         // fw

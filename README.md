@@ -145,7 +145,8 @@ return [
 
 #### - Simple
 - visit `http://127.0.0.1:8000/media`
-- open `views/vendor/MediaManager/bulma/media.blade.php` and make any changes you may need ex.**"use bootstrap instead of bulma"**
+- open `views/vendor/MediaManager/bulma/media.blade.php` and make any changes you may need.
+    + if you need to use different css framework ex."bootstrap", you'll have to edit the components as well.
 
 #### - Advanced
 - install javascript dependencies
@@ -161,7 +162,7 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 > ***Or Use another Framework***
 >
 > - duplicate `views/vendor/MediaManager/bulma` and rename it to the framework you want ex.`bootstrap`
-> - duplicate `assets/vendor/MediaManager/js/components/bulma-notif` and rename it to the framework you want ex.`bootstrap-notif`
+> - duplicate `assets/vendor/MediaManager/js/components/bulma` and rename it to the framework you want ex.`bootstrap`
 > - duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
 > - start editing the new files.
@@ -169,9 +170,18 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 >
 > after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
+- at last, simply add this one liner to your main js file
+
+```js
+require('./../vendor/MediaManager/js/media')
+
+new Vue({
+    el: '#app'
+})
+```
+
 ## ToDo "ANY HELP IS APPRECIATED"
 
 * [ ] Add Support To Other Css Frameworks.
-* [ ] Add Support For Editors "tinymce / Ckeditor/ etc".
+* [ ] Add Support For Editors usage "tinymce / Ckeditor/ etc".
 * [ ] Fix `sortBy:size` To Work Properly With (kb vs Mb).
-* [ ] Turn into component instead.
