@@ -139,7 +139,6 @@ $blue_2: #276cda;
 #left,
 #right {
     min-height: 400px;
-    max-height: 584px;
     overflow: scroll;
     position: relative;
 }
@@ -224,30 +223,39 @@ $blue_2: #276cda;
 #file_loader{
     position: absolute;
     top: 0;
-    height: 100%;
     bottom: 0;
-    right: 0;
     left: 0;
-    z-index: 9;
+    right: 0;
     background: white;
-    p {
-        width: 100%;
-        position: absolute;
-        top: 50%;
-        font-size: 12px;
-        font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    h3 {
+        margin-left: 10px;
         text-align: center;
-        .icon {
-            vertical-align: middle;
-        }
     }
 }
 #no_files {
     display: none;
-    h3 {
-        margin-top: 55px;
-        text-align: center;
-        color: $gray_6;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    > div {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        h3 {
+            margin-left: 10px;
+        }
+        iframe {
+            width: 5vw;
+        }
     }
 }
 #right {

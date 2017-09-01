@@ -61,6 +61,7 @@ export default {
                 createImageThumbnails: false,
                 parallelUploads: 10,
                 uploadMultiple: true,
+                forceFallback: false,
                 previewsContainer: '#uploadPreview',
                 processingmultiple() {
                     $('#uploadProgress').fadeIn()
@@ -634,15 +635,12 @@ export default {
             } else {
                 this.bulkList.splice(this.bulkList.indexOf(file), 1)
 
-                // normal single selction behavior
-                if (!$('#blk_slct_all').hasClass('is-warning')) {
-                    // select prev item
-                    if (this.bulkItemsCount) {
-                        this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
-                    } else {
-                        // clear slection
-                        this.clearSelected()
-                    }
+                // select prev item
+                if (this.bulkItemsCount) {
+                    this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+                } else {
+                    // clear slection
+                    this.clearSelected()
                 }
             }
         },

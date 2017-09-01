@@ -165,6 +165,7 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 > - duplicate `assets/vendor/MediaManager/js/components/bulma` and rename it to the framework you want ex.`bootstrap`
 > - duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
+> - open `webpack.mix.js` and change `fw` to the framework name ex.`const fw ='bootstrap'`
 > - start editing the new files.
 > - run `npm run watch` to compile your `js/css` files.
 >

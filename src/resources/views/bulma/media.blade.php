@@ -283,18 +283,18 @@
 
                                         {{-- loading data from server --}}
                                         <div id="file_loader">
-                                            <p>
-                                                <span class="control is-loading icon is-medium"></span>
-                                                {{ trans('MediaManager::messages.loading') }}
-                                            </p>
+                                            <div>
+                                                <iframe src="https://lottiefiles.com/iframe/61-octopus" frameborder="0" allowfullscreen></iframe>
+                                                <h3>{{ trans('MediaManager::messages.loading') }}</h3>
+                                            </div>
                                         </div>
 
                                         {{-- no files --}}
                                         <div id="no_files">
-                                            <h3>
-                                                <span class="icon"><i class="fa fa-meh-o"></i></span>
-                                                <span>{{ trans('MediaManager::messages.no_files_in_folder') }}</span>
-                                            </h3>
+                                            <div>
+                                                <iframe src="https://lottiefiles.com/iframe/335-test" frameborder="0" allowfullscreen></iframe>
+                                                <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
+                                            </div>
                                         </div>
                                     </div>
 
