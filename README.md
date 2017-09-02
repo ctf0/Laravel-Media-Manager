@@ -134,8 +134,6 @@ return [
 
     /*
      * css farmework
-     * ex.
-     * MIX_MM_FRAMEWORK=bulma
      */
     'framework' => env('MIX_MM_FRAMEWORK'),
 ];
@@ -146,7 +144,7 @@ return [
 #### - Simple
 - visit `http://127.0.0.1:8000/media`
 - open `views/vendor/MediaManager/bulma/media.blade.php` and make any changes you may need.
-    + if you need to use different css framework ex."bootstrap", you'll have to edit the components as well.
+    + to use a different css framework ex."bootstrap", you'll have to edit the vue-components as well.
 
 #### - Advanced
 - install javascript dependencies
@@ -165,11 +163,8 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 > - duplicate `assets/vendor/MediaManager/js/components/bulma` and rename it to the framework you want ex.`bootstrap`
 > - duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
-> - open `webpack.mix.js` and change `fw` to the framework name ex.`const fw ='bootstrap'`
 > - start editing the new files.
 > - run `npm run watch` to compile your `js/css` files.
->
-> after you are done, maybe you can send me a PR so everyone else can benefit from it :trophy:
 
 - at last, simply add this one liner to your main js file
 
