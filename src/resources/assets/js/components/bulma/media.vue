@@ -1,5 +1,3 @@
-<template></template>
-
 <script>
 /* external classes */
 // is-warning
@@ -20,7 +18,7 @@ export default {
             directories: [],
             filterdList: [],
             bulkList: [],
-            showBy: undefined,
+            showBy: null,
             currentFilterName: undefined,
             selectedFile: undefined,
             searchItemsCount: undefined,
@@ -508,7 +506,7 @@ export default {
             $('#file_loader').show()
             this.searchFor = ''
             this.showFilesOfType('all')
-            this.showBy = undefined
+            this.showBy = null
 
             var folder_location = ''
 
@@ -527,11 +525,11 @@ export default {
                 this.selectFirst()
                 $('#right').fadeIn()
 
-                for (var i = this.allItemsCount - 1; i >= 0; i--) {
-                    if (typeof this.allFiles[i].size !== 'undefined') {
-                        this.allFiles[i].size = this.bytesToSize(this.allFiles[i].size)
+                this.allFiles.map((e) => {
+                    if (typeof e.size !== 'undefined') {
+                        e.size = this.bytesToSize(e.size)
                     }
-                }
+                })
             })
 
             // dirs list
@@ -606,11 +604,11 @@ export default {
                 })
 
                 // update folder count when folder is moved into another
-                for (var i = files.length - 1; i >= 0; i--) {
-                    if (files[i].items && files[i].items > 0) {
-                        this.updateFolderCount(destination, files[i].items)
+                files.map((e) => {
+                    if (e.items && e.items > 0) {
+                        this.updateFolderCount(destination, e.items)
                     }
-                }
+                })
 
                 $('#move_file_modal').modal('hide')
                 this.updateFoundCount(files.length)
@@ -769,29 +767,33 @@ export default {
 
         /*                Operations                */
         removeFromLists(name) {
-            var i = 0
-
             if (this.filterdList.length) {
-                for (i = this.filterdList.length - 1; i >= 0; i--) {
-                    if (this.filterdList[i].name.includes(name)) {
-                        this.filterdList.splice(i, 1)
+                let list = this.filterdList
+
+                list.map((e) => {
+                    if (e.name.includes(name)) {
+                        list.splice(list.indexOf(e), 1)
                     }
-                }
+                })
             }
 
             if (this.directories.length) {
-                for (i = this.directories.length - 1; i >= 0; i--) {
-                    if (this.directories[i].includes(name)) {
-                        this.directories.splice(i, 1)
+                let list = this.directories
+
+                list.map((e) => {
+                    if (e.includes(name)) {
+                        list.splice(list.indexOf(e), 1)
                     }
-                }
+                })
             }
 
-            for (i = this.files.items.length - 1; i >= 0; i--) {
-                if (this.files.items[i].name.includes(name)) {
-                    this.files.items.splice(i, 1)
+            this.files.items.map((e) => {
+                if (e.name.includes(name)) {
+                    let list = this.files.items
+
+                    list.splice(list.indexOf(e), 1)
                 }
-            }
+            })
 
             this.clearSelected()
         },
@@ -802,21 +804,19 @@ export default {
                     destination = destination.split('/').shift()
                 }
 
-                var i = 0
-
                 if (this.filterdList.length) {
-                    for (i = this.filterdList.length - 1; i >= 0; i--) {
-                        if (this.filterdList[i].name.includes(destination)) {
-                            this.filterdList[i].items += parseInt(count)
+                    this.filterdList.map((e) => {
+                        if (e.name.includes(destination)) {
+                            e.items += parseInt(count)
                         }
-                    }
+                    })
                 }
 
-                for (i = this.files.items.length - 1; i >= 0; i--) {
-                    if (this.files.items[i].name.includes(destination)) {
-                        this.files.items[i].items += parseInt(count)
+                this.files.items.map((e) => {
+                    if (e.name.includes(destination)) {
+                        e.items += parseInt(count)
                     }
-                }
+                })
             }
         },
         updateItemName(item, oldName, newName) {
@@ -937,13 +937,14 @@ export default {
         showBy(val) {
             if (val) {
                 if (val == 'clear') {
-                    this.showBy = undefined
+                    this.showBy = null
                 }
                 if (!this.isBulkSelecting()) {
                     this.selectFirst()
                 }
             }
         }
-    }
+    },
+    render () {}
 }
 </script>
