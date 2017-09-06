@@ -12,6 +12,7 @@
     {{-- js --}}
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdn.jsdelivr.net/jquery.scrollto/2.1.2/jquery.scrollTo.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.10.2/bodymovin.min.js"></script>
     {{-- Vue --}}
     <script src="https://unpkg.com/vue"></script>
     {{-- ziggy --}}
@@ -19,6 +20,7 @@
 </head>
 <body>
     <div id="app" v-cloak>
+
         {{-- notifications --}}
         <div class="notif-container">
             <my-notification></my-notification>
@@ -283,18 +285,14 @@
 
                                         {{-- loading data from server --}}
                                         <div id="file_loader">
-                                            <div>
-                                                <iframe src="https://lottiefiles.com/iframe/61-octopus" frameborder="0" allowfullscreen></iframe>
-                                                <h3>{{ trans('MediaManager::messages.loading') }}</h3>
-                                            </div>
+                                            <div id="file_loader_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/octopus.json') }}"></div>
+                                            <h3>{{ trans('MediaManager::messages.loading') }}</h3>
                                         </div>
 
                                         {{-- no files --}}
                                         <div id="no_files">
-                                            <div>
-                                                <iframe src="https://lottiefiles.com/iframe/335-test" frameborder="0" allowfullscreen></iframe>
-                                                <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
-                                            </div>
+                                            <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
+                                            <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
                                         </div>
                                     </div>
 
@@ -507,9 +505,32 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     {{-- footer --}}
-    <script src="{{ mix("assets/vendor/MediaManager/app.js") }}"></script>
+    <script src="{{ mix("path/to/app.js") }}"></script>
+
+    {{-- animations --}}
+    <script>
+        var file_loader = document.getElementById('file_loader_anim')
+        var no_files = document.getElementById('no_files_anim')
+
+        bodymovin.loadAnimation({
+            container: file_loader,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: file_loader.getAttribute('data-json')
+        })
+
+        bodymovin.loadAnimation({
+            container: no_files,
+            renderer: 'svg',
+            loop: false,
+            autoplay: true,
+            path: no_files.getAttribute('data-json')
+        })
+    </script>
 </body>
 </html>

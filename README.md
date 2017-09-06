@@ -74,7 +74,7 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |            button           |  keyboard |    mouse     |
+    |      navigation     |            button           |  keyboard |mouse (click) |
     |---------------------|-----------------------------|-----------|--------------|
     |                     | upload *(toolbar)*          | u         |              |
     |                     | refresh *(toolbar)*         | r         |              |
@@ -82,19 +82,19 @@
     |                     | delete *(toolbar)*          | d/del     |              |
     |                     | bulk select *(toolbar)*     | b         |              |
     |                     | bulk select all *(toolbar)* | a         |              |
-    |                     | toggle *(sidebar)*          | t         | click        |
+    |                     | toggle *(sidebar)*          | t         |              |
     |                     | file rename *(modal)*       | enter     |              |
     |                     | file delete *(modal)*       | enter     |              |
     |                     | create new folder *(modal)* | enter     |              |
     | select next         |                             | right     |              |
     | select prev         |                             | left      |              |
-    | selct first         |                             | home      |              |
+    | select first        |                             | home      |              |
     | select last         |                             | end       |              |
     | open folder         |                             | enter     | double click |
-    | go back to prev dir | folderName *(breadcrumb)*   | backspace | click        |
-    | play/pause          | player controller           | space     |              |
-    | view image          | sidebar image               | space     | click        |
-    | hide image          |                             | space/esc | click        |
+    | go back to prev dir | folderName *(breadcrumb)*   | backspace |              |
+    | play/pause          |player controller *(sidebar)*| space     |              |
+    | view image          | image *(sidebar)*           | space     |              |
+    | hide image          | image *(light-box)*         | space/esc |              |
 
 ## Config
 **config/mediaManager.php**
@@ -109,17 +109,17 @@ return [
     /*
      * filesystem disk
      */
-    'storage_disk'=> 'public',
+    'storage_disk' => 'public',
 
     /*
      * remove any file special chars except (. _ -)
      */
-    'allowed_fileNames_chars'=> '.\_\-',
+    'allowed_fileNames_chars' => '.\_\-',
 
     /*
      * remove any folder special chars except (_ -)
      */
-    'allowed_folderNames_chars'=> '\_\-',
+    'allowed_folderNames_chars' => '\_\-',
 
     /*
      * disallow uploading files with the following mimetypes
@@ -130,7 +130,7 @@ return [
     /*
      * when file names gets cleand up
      */
-    'sanitized_text'=> 'sanitized',
+    'sanitized_text' => 'sanitized',
 
     /*
      * css farmework
@@ -141,13 +141,14 @@ return [
 
 ## Usage
 
-#### - Simple
-- visit `http://127.0.0.1:8000/media`
-- open `views/vendor/MediaManager/bulma/media.blade.php` and make any changes you may need.
-    + to use a different css framework ex."bootstrap", you'll have to edit the vue-components as well.
+- For everyone that hate ***npm*** & possibly the whole js ecosystem **"YOU ARE NOT ALONE"** but maintaining a seperate dist copy is a tedious job for me, so if you need a help installing it, here are some steps to get you going
+    + install npm https://www.npmjs.com/get-npm
+    + (optional) install yarn https://yarnpkg.com/lang/en/docs/install/
+    + follow the steps below :clap: :muscle: :dancers:
 
-#### - Advanced
-- install javascript dependencies
+---
+
+- install dependencies
 
 ```bash
 yarn add vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
@@ -164,11 +165,13 @@ npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
 > - duplicate `assets/vendor/MediaManager/sass/bulma` and rename it to the framework you want ex.`bootstrap`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
 > - start editing the new files.
-> - run `npm run watch` to compile your `js/css` files.
 
-- at last, simply add this one liner to your main js file
+- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
+    + if you are having issues with `npm run production`, [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
 
 ```js
+// ex. "resources/assets/js/app.js"
+
 require('./../vendor/MediaManager/js/media')
 
 new Vue({
@@ -178,6 +181,6 @@ new Vue({
 
 ## ToDo "ANY HELP IS APPRECIATED"
 
-* [ ] Add Support To Other Css Frameworks.
-* [ ] Add Support For Editors usage "tinymce / Ckeditor/ etc".
-* [ ] Fix `sortBy:size` To Work Properly With (kb vs Mb).
+* Add Support To Other Css Frameworks.
+* Add Support For Editors usage "tinymce / Ckeditor/ etc..".
+* Fix `sortBy:size` To Work Properly With (kb vs Mb).
