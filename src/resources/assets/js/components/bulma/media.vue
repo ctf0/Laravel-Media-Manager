@@ -45,12 +45,12 @@ export default {
         }
     },
     mounted() {
-        this.render()
+        this.initManager()
     },
     methods: {
         /*                Render                */
-        render() {
-            var manager = this
+        initManager() {
+            let manager = this
 
             this.getFiles('/')
 
@@ -70,14 +70,14 @@ export default {
                 successmultiple(files, res) {
                     res.data.map((item) => {
                         if (item.success) {
-                            EventHub.fire('showNotif', {
+                            manager.showNotif({
                                 title: 'Success',
                                 body: `Successfully Uploaded "${item.message}"`,
                                 type: 'success',
                                 duration: 5
                             })
                         } else {
-                            EventHub.fire('showNotif', {
+                            manager.showNotif({
                                 title: 'Error',
                                 body: item.message,
                                 type: 'danger'
@@ -88,7 +88,7 @@ export default {
                     manager.getFiles(manager.folders)
                 },
                 errormultiple(files, res) {
-                    EventHub.fire('showNotif', {
+                    this.showNotif({
                         title: 'Error',
                         body: res,
                         type: 'danger'
@@ -106,13 +106,13 @@ export default {
 
             $(document).keydown((e) => {
 
-                var curSelected = parseInt($('#files li .selected').data('index'))
+                let curSelected = parseInt($('#files li .selected').data('index'))
 
                 // when modal isnt visible
                 if (!$('#new_folder_modal').is(':visible') &&
-                            !$('#move_file_modal').is(':visible') &&
-                            !$('#rename_file_modal').is(':visible') &&
-                            !$('#confirm_delete_modal').is(':visible')) {
+                    !$('#move_file_modal').is(':visible') &&
+                    !$('#rename_file_modal').is(':visible') &&
+                    !$('#confirm_delete_modal').is(':visible')) {
 
                     // when search is not focused
                     if (!$('.input').is(':focus')) {
@@ -120,8 +120,8 @@ export default {
                         // when no bulk selecting & no light box is active
                         if (!this.isBulkSelecting() && !this.lightBoxIsActive()) {
 
-                            var cur = ''
-                            var newSelected = ''
+                            let cur = ''
+                            let newSelected = ''
 
                             if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelected !== 0) {
                                 newSelected = curSelected - 1
@@ -137,9 +137,11 @@ export default {
 
                             // open folder
                             if (keycode(e) == 'enter') {
+
                                 if (!this.selectedFileIs('folder')) {
                                     return false
                                 }
+
                                 this.currentFilterName = undefined
                                 this.folders.push(this.selectedFile.name)
                                 this.getFiles(this.folders)
@@ -147,10 +149,13 @@ export default {
 
                             // go up a dir
                             if (keycode(e) == 'backspace') {
+
                                 index = parseInt(this.folders.length) - 1
+
                                 if (index < 0) {
                                     return false
                                 }
+
                                 if (index === 0) {
                                     this.folders = []
                                     this.getFiles(this.folders)
@@ -158,16 +163,19 @@ export default {
                                     this.folders = this.folders.splice(0, index)
                                     this.getFiles(this.folders)
                                 }
+
                                 this.currentFilterName = undefined
                             }
 
                             // go to first / last item
                             if (this.allItemsCount) {
+
                                 if (keycode(e) == 'home') {
                                     this.scrollToFile()
                                 }
+
                                 if (keycode(e) == 'end') {
-                                    var index = this.allItemsCount - 1
+                                    let index = this.allItemsCount - 1
                                     cur = $('div[data-index="' + index + '"]')
                                     this.scrollToFile(cur)
                                 }
@@ -181,13 +189,16 @@ export default {
 
                         // quick view for images / play audio or video
                         if (!this.isBulkSelecting()) {
+
                             if (keycode(e) == 'space' && e.target == document.body) {
                                 // prevent body from scrolling
                                 e.preventDefault()
 
                                 // play audio/video
                                 if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                                    return $('.player')[0].paused ? $('.player')[0].play() : $('.player')[0].pause()
+                                    return $('.player')[0].paused
+                                        ? $('.player')[0].play()
+                                        : $('.player')[0].pause()
                                 }
 
                                 // quick view image
@@ -274,6 +285,7 @@ export default {
 
             // bulk select
             $('#blk_slct').click(function() {
+
                 $(this).toggleClass('is-danger')
                 $('#upload, #new_folder, #refresh, #rename').parent().hide()
                 $(this).closest('.field').toggleClass('has-addons')
@@ -282,9 +294,11 @@ export default {
                 // reset when toggled off
                 if (!manager.isBulkSelecting()) {
                     $('#upload, #new_folder, #refresh, #rename').parent().show()
+
                     if ($('#blk_slct_all').hasClass('is-warning')) {
                         $('#blk_slct_all').trigger('click')
                     }
+
                     $('#blk_slct_all').hide()
 
                     $('li.bulk-selected').removeClass('bulk-selected')
@@ -300,6 +314,7 @@ export default {
 
                 // if no items in bulk list
                 if (manager.bulkList == 0) {
+
                     // if no search query
                     if (!manager.searchFor) {
                         $(this).addClass('is-warning')
@@ -317,6 +332,7 @@ export default {
 
                 // if having search + having bulk items < search found items
                 else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
+
                     manager.bulkList = []
                     manager.clearSelected()
 
@@ -332,6 +348,7 @@ export default {
 
                 // if NO search + having bulk items < all items
                 else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
+
                     if ($(this).hasClass('is-warning')) {
                         $(this).removeClass('is-warning')
                         manager.bulkList = []
@@ -356,7 +373,7 @@ export default {
                 }
 
                 // toggle styling
-                var toggle_text = $(this).find('span').not('.icon')
+                let toggle_text = $(this).find('span').not('.icon')
 
                 if ($(this).hasClass('is-warning')) {
                     $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
@@ -387,12 +404,13 @@ export default {
             })
 
             $('#new_folder_submit').click(() => {
+
                 $.post(route('media.new_folder'), {
                     current_path: this.files.path,
                     new_folder_name: $('#new_folder_name').val()
                 }, (data) => {
                     if (data.success) {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Success',
                             body: `Successfully Created "${data.new_folder_name}" at "${data.full_path}"`,
                             type: 'success',
@@ -400,7 +418,7 @@ export default {
                         })
                         this.getFiles(this.folders)
                     } else {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Error',
                             body: data.message,
                             type: 'danger'
@@ -414,6 +432,7 @@ export default {
 
             // delete
             $('#delete').click(() => {
+
                 if (!manager.isBulkSelecting()) {
                     if (this.selectedFileIs('folder')) {
                         $('.folder_warning').show()
@@ -436,11 +455,12 @@ export default {
             })
 
             $('#confirm_delete').click(() => {
+
                 if (this.bulkItemsCount) {
-                    this.confirm_delete(this.bulkList)
+                    this.delete_file(this.bulkList)
                     $('#blk_slct').trigger('click')
                 } else {
-                    this.confirm_delete([this.selectedFile])
+                    this.delete_file([this.selectedFile])
                 }
             })
 
@@ -450,11 +470,12 @@ export default {
             })
 
             $('#move_btn').click(() => {
+
                 if (this.bulkItemsCount) {
-                    this.move_btn(this.bulkList)
+                    this.move_file(this.bulkList)
                     $('#blk_slct').trigger('click')
                 } else {
-                    this.move_btn([this.selectedFile])
+                    this.move_file([this.selectedFile])
                 }
             })
 
@@ -468,28 +489,32 @@ export default {
             })
 
             $('#rename_btn').click(() => {
-                var filename = this.selectedFile.name
-                var ext = filename.substring(filename.lastIndexOf('.') + 1)
-                var new_filename = $('#new_filename').val() + `.${ext}`
+
+                let filename = this.selectedFile.name
+                let ext = filename.substring(filename.lastIndexOf('.') + 1)
+                let new_filename = $('#new_filename').val() + `.${ext}`
 
                 $.post(route('media.rename_file'), {
                     folder_location: this.folders,
                     filename: filename,
                     new_filename: new_filename
                 }, (data) => {
+
                     if (data.success) {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Success',
                             body: `Successfully Renamed "${filename}" to "${data.new_filename}"`,
                             type: 'success',
                             duration: 5
                         })
+
                         this.updateItemName(this.selectedFile, filename, data.new_filename)
+
                         if (this.selectedFileIs('folder')) {
                             this.updateDirsList()
                         }
                     } else {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Error',
                             body: data.message,
                             type: 'danger'
@@ -508,7 +533,7 @@ export default {
             this.showFilesOfType('all')
             this.showBy = null
 
-            var folder_location = ''
+            let folder_location = ''
 
             if (folders != '/') {
                 folder_location = '/' + folders.join('/')
@@ -520,6 +545,7 @@ export default {
             $.post(route('media.files'), {
                 folder: folder_location
             }, (res) => {
+
                 this.files = res
                 $('#file_loader').hide()
                 this.selectFirst()
@@ -539,18 +565,22 @@ export default {
             if (bytes === 0) {
                 return '0 Bytes'
             }
-            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-            var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+
+            let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+            let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+
             return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i]
         },
-        confirm_delete(files) {
+        delete_file(files) {
+
             $.post(route('media.delete_file_folder'), {
                 folder_location: this.folders,
                 deleted_files: files
             }, (res) => {
+
                 res.data.map((item) => {
                     if (item.success) {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Success',
                             body: `Successfully Deleted "${item.name}"`,
                             type: 'warning',
@@ -558,7 +588,7 @@ export default {
                         })
                         this.removeFromLists(item.name)
                     } else {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Error',
                             body: item.message,
                             type: 'danger'
@@ -571,22 +601,25 @@ export default {
                 this.selectFirst()
             })
         },
-        move_btn(files) {
-            var destination = $('#move_folder_dropdown').val()
+        move_file(files) {
+
+            let destination = $('#move_folder_dropdown').val()
 
             $.post(route('media.move_file'), {
                 folder_location: this.folders,
                 destination: destination,
                 moved_files: files
             }, (res) => {
+
                 res.data.map((item) => {
                     if (item.success) {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Success',
                             body: `Successfully moved "${item.name}" to "${destination}"`,
                             type: 'success',
                             duration: 5
                         })
+
                         this.removeFromLists(item.name)
                         this.updateFolderCount(destination, 1)
 
@@ -595,7 +628,7 @@ export default {
                             this.updateDirsList()
                         }
                     } else {
-                        EventHub.fire('showNotif', {
+                        this.showNotif({
                             title: 'Error',
                             body: item.message,
                             type: 'danger'
@@ -646,7 +679,7 @@ export default {
         /*                Selected                */
         selectFirst() {
             this.$nextTick(() => {
-                var file = $('div[data-index="0"]')
+                let file = $('div[data-index="0"]')
                 if (file.length > 0) {
                     file.trigger('click')
                 }
@@ -667,12 +700,15 @@ export default {
         },
         openFolder(file) {
             if (!this.isBulkSelecting()) {
+
                 if (!this.fileTypeIs(file, 'folder')) {
                     return false
                 }
+
                 this.folders.push(file.name)
                 this.getFiles(this.folders)
             }
+
             this.currentFilterName = undefined
         },
         goToFolder(index) {
@@ -682,11 +718,13 @@ export default {
             }
         },
         scrollToFile(file) {
+
             if (!file) {
                 file = $('div[data-index="0"]')
             }
 
             $(file).trigger('click')
+
             $('#left').scrollTo($(file), 0, {
                 margin: true,
                 offset: -8
@@ -714,9 +752,9 @@ export default {
         fileTypeIs(item, val) {
             if (val == 'text') {
                 if (!item.type.includes('folder') &&
-                            !item.type.includes('image') &&
-                            !item.type.includes('video') &&
-                            !item.type.includes('audio')) {
+                    !item.type.includes('image') &&
+                    !item.type.includes('video') &&
+                    !item.type.includes('audio')) {
                     return true
                 }
             } else {
@@ -727,6 +765,7 @@ export default {
             if (this.currentFilterName == val) {
                 return false
             }
+
             if (val == 'all') {
                 this.filterdList = []
                 this.currentFilterName = undefined
@@ -734,6 +773,7 @@ export default {
                 this.filterdList = this.files.items.filter((item) => {
                     return this.fileTypeIs(item, val)
                 })
+
                 this.currentFilterName = val
             }
 
@@ -741,6 +781,7 @@ export default {
                 this.clearSelected()
                 this.selectFirst()
             }
+
             if (this.searchFor) {
                 this.updateSearchCount()
             }
@@ -748,11 +789,13 @@ export default {
         filterDir(dir) {
             // dont show dirs that have similarity with selected item(s)
             if (this.bulkItemsCount) {
+
                 if (this.bulkList.filter((e) => dir.match(`(/?)${e.name}(/?)`)).length > 0) {
                     return false
                 } else {
                     return true
                 }
+
             } else {
                 return this.selectedFile && !dir.includes(this.selectedFile.name)
             }
@@ -821,13 +864,13 @@ export default {
         },
         updateItemName(item, oldName, newName) {
             // update the main files list
-            var filesIndex = this.files.items[this.files.items.indexOf(item)]
+            let filesIndex = this.files.items[this.files.items.indexOf(item)]
             filesIndex.name = newName
             filesIndex.path = filesIndex.path.replace(oldName, newName)
 
             // if found in the filterd list, then update it aswell
             if (this.filterdList.includes(item)) {
-                var filterIndex = this.filterdList[this.filterdList.indexOf(item)]
+                let filterIndex = this.filterdList[this.filterdList.indexOf(item)]
                 filterIndex.name = newName
                 filesIndex.path = filterIndex.path.replace(oldName, newName)
             }
@@ -862,7 +905,7 @@ export default {
         },
         toggleInfo() {
             $('#right').fadeToggle()
-            var span = $('.toggle').find('span').not('.icon')
+            let span = $('.toggle').find('span').not('.icon')
             span.text(span.text() == 'Close' ? 'Open' : 'Close')
             $('.toggle').find('.fa').toggleClass('fa fa-angle-double-right').toggleClass('fa fa-angle-double-left')
         },
@@ -871,6 +914,14 @@ export default {
         },
         fileName(name) {
             return name.replace(/(.[^.]*)$/, '')
+        },
+        showNotif(data) {
+            EventHub.fire('showNotif', {
+                title: data.title,
+                body: data.body,
+                type: data.type,
+                duration: data.duration || null
+            })
         }
     },
     watch: {
@@ -892,7 +943,7 @@ export default {
             }
 
             if (val == 0 && this.isBulkSelecting()) {
-                var toggle_text = $('#blk_slct_all').find('span').not('.icon')
+                let toggle_text = $('#blk_slct_all').find('span').not('.icon')
                 $('#blk_slct_all').removeClass('is-warning')
                 $('#blk_slct_all').find('.fa').removeClass('fa-minus').addClass('fa-plus')
                 toggle_text.text('Select All')
@@ -926,6 +977,7 @@ export default {
                 this.clearSelected()
                 this.selectFirst()
             }
+
             this.searchItemsCount = undefined
         },
         searchItemsCount(val) {
@@ -939,6 +991,7 @@ export default {
                 if (val == 'clear') {
                     this.showBy = null
                 }
+
                 if (!this.isBulkSelecting()) {
                     this.selectFirst()
                 }
