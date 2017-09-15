@@ -5,7 +5,7 @@
     {{-- FW --}}
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     {{-- bulma --}}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
     {{-- Main styles --}}
     <link rel="stylesheet" href="{{ mix('assets/vendor/MediaManager/style.css') }}"/>
 
@@ -13,8 +13,6 @@
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdn.jsdelivr.net/jquery.scrollto/2.1.2/jquery.scrollTo.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.10.2/bodymovin.min.js"></script>
-    {{-- Vue --}}
-    <script src="https://unpkg.com/vue"></script>
     {{-- ziggy --}}
     @routes
 </head>

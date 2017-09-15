@@ -1,22 +1,10 @@
-# Laravel Media Manager
-
-![Demo](./demo.jpg)
+<p align="center">
+    <img src="demo.jpg">
+</p>
 
 ## Intro
 
 - Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
-- Built using
-    + [Vue](https://vuejs.org/)
-    + [jQuery](https://jquery.com/)
-    + [dropzone](http://www.dropzonejs.com/)
-    + [keycode](https://github.com/timoxley/keycode)
-    + [jquery.scrollTo](https://github.com/flesler/jquery.scrollTo)
-    + [vue-tippy](https://github.com/KABBOUCHI/vue-tippy)
-    + [vue2-filters](https://github.com/freearhey/vue2-filters)
-    + [vue-lightbox](https://github.com/phecko/vue-lightbox)
-    + [bootstrap modal](http://getbootstrap.com/javascript/#modals)
-    + [notification-component](https://github.com/ctf0/Notification-Component)
-    + [Ziggy](https://github.com/tightenco/ziggy)
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
 
@@ -26,7 +14,7 @@
 
 - `composer require ctf0/media-manager`
 
-- add the service provider to `config/app.php`
+- (Laravel < 5.5) add the service provider to `config/app.php`
 
 ```php
 'providers' => [
@@ -38,10 +26,10 @@
 
 `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
-- run `php artisan mm:append` to
-    + add package routes to `routes/web.php`
-    + add package assets compiling to `webpack.mix.js`
-    + add `MIX_MM_FRAMEWORK=bulma` to `.env`
+- after installation, package will auto-add
+    + package routes to `routes/web.php`
+    + package assets compiling to `webpack.mix.js`
+    + `MIX_MM_FRAMEWORK=bulma` to `.env`
 
 ## Features
 

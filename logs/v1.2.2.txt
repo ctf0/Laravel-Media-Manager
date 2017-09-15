@@ -1,0 +1,3 @@
+- add changelog feature so now you can know what was changed/updated/added on each update
+- remove cmnd as we auto-add extra data on package installation
+- update view
