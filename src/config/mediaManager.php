@@ -3,6 +3,8 @@
 return [
     /*
      * ignore files pattern
+     *
+     * ignore any file starts with "."
      */
     'ignore_files' => '/^\..*/',
 
@@ -40,4 +42,11 @@ return [
      * MIX_MM_FRAMEWORK=bulma
      */
     'framework' => env('MIX_MM_FRAMEWORK'),
+
+    /*
+     * display file last modification time as
+     *
+     * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
+     */
+    'last_modified_format' => 'toDateString',
 ];

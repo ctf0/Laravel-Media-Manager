@@ -124,6 +124,11 @@ return [
      * css farmework
      */
     'framework' => env('MIX_MM_FRAMEWORK'),
+
+    /*
+     * display file last modification time as
+     */
+    'last_modified_format' => 'toDateString',
 ];
 ```
 
@@ -171,4 +176,3 @@ new Vue({
 
 * Add Support To Other Css Frameworks.
 * Add Support For Editors usage "tinymce / Ckeditor/ etc..".
-* Fix `sortBy:size` To Work Properly With (kb vs Mb).

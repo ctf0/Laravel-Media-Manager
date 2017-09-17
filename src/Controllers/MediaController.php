@@ -2,32 +2,33 @@
 
 namespace ctf0\MediaManager\Controllers;
 
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Storage;
+use App\Http\Controllers\Controller;
 
 class MediaController extends Controller
 {
-    private $fileSystem;
-    private $storageDisk;
-    private $ignoreFiles;
-    private $fileChars;
-    private $folderChars;
-    private $sanitizedText;
-    private $unallowed_mimes;
-    private $fw;
+    protected $fileSystem;
+    protected $storageDisk;
+    protected $ignoreFiles;
+    protected $fileChars;
+    protected $folderChars;
+    protected $sanitizedText;
+    protected $unallowed_mimes;
+    protected $LMF;
+    protected $fw;
 
     public function __construct()
     {
         $this->fileSystem      = config('mediaManager.storage_disk');
-        $this->storageDisk     = Storage::disk($this->fileSystem);
+        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->ignoreFiles     = config('mediaManager.ignore_files');
         $this->fileChars       = config('mediaManager.allowed_fileNames_chars');
         $this->folderChars     = config('mediaManager.allowed_folderNames_chars');
         $this->sanitizedText   = config('mediaManager.sanitized_text');
         $this->unallowed_mimes = config('mediaManager.unallowed_mimes');
+        $this->LMF             = config('mediaManager.last_modified_format');
         $this->fw              = config('mediaManager.framework');
     }
 
@@ -71,8 +72,8 @@ class MediaController extends Controller
 
                 // check name
                 // because dropzone automatically sanitize the file name
-                if ($file_name == '.'.$one->getClientOriginalExtension()) {
-                    $file_name = $this->sanitizedText.$file_name;
+                if ($file_name == '.' . $one->getClientOriginalExtension()) {
+                    $file_name = $this->sanitizedText . $file_name;
                 }
 
                 $path = $one->storeAs($upload_path, $this->cleanName($file_name), $this->fileSystem);
@@ -86,7 +87,7 @@ class MediaController extends Controller
                 $result[] = [
                     'path'    => '',
                     'success' => false,
-                    'message' => "\"$file_name\" ".$e->getMessage(),
+                    'message' => "\"$file_name\" " . $e->getMessage(),
                 ];
             }
         }
@@ -229,7 +230,7 @@ class MediaController extends Controller
             $destination = "{$request->destination}/$file_name";
             $file_name   = "$folderLocation/$file_name";
             $destination = strpos($destination, '../') == true
-                ? '/'.dirname($folderLocation).'/'.str_replace('../', '', $destination)
+                ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
                 : "$folderLocation/$destination";
 
             try {
@@ -249,7 +250,7 @@ class MediaController extends Controller
             } catch (Exception $e) {
                 $result[] = [
                     'success' => false,
-                    'message' => "\"$file_name\" ".$e->getMessage(),
+                    'message' => "\"$file_name\" " . $e->getMessage(),
                 ];
             }
         }
@@ -312,7 +313,7 @@ class MediaController extends Controller
                     'path'          => $this->storageDisk->url($folder),
                     'size'          => '',
                     'items'         => count($this->storageDisk->allFiles($folder)) + count($this->storageDisk->allDirectories($folder)),
-                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($folder))->toDateString(),
+                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($folder))->{$this->LMF}(),
                 ];
             }
         }
@@ -324,7 +325,7 @@ class MediaController extends Controller
                     'type'          => $this->storageDisk->mimeType($file),
                     'path'          => $this->storageDisk->url($file),
                     'size'          => $this->storageDisk->size($file),
-                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($file))->toDateString(),
+                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($file))->{$this->LMF}(),
                 ];
             }
         }
@@ -343,12 +344,12 @@ class MediaController extends Controller
     protected function cleanName($text, $folder = null)
     {
         $pattern = [
-            '/(script.*?\/script)|[^('.$this->fileChars.')a-zA-Z0-9]+/ius',
+            '/(script.*?\/script)|[^(' . $this->fileChars . ')a-zA-Z0-9]+/ius',
         ];
 
         if ($folder) {
             $pattern = [
-                '/(script.*?\/script)|[^('.$this->folderChars.')a-zA-Z0-9]+/ius',
+                '/(script.*?\/script)|[^(' . $this->folderChars . ')a-zA-Z0-9]+/ius',
             ];
         }
 
