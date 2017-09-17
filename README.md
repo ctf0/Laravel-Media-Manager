@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="demo.jpg">
+    <img src="https://user-images.githubusercontent.com/7388088/30516878-a29c0b4a-9b4b-11e7-9075-a3ae2c2914ff.jpg">
 </p>
 
 ## Intro
@@ -62,27 +62,27 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |            button           |  keyboard |mouse (click) |
-    |---------------------|-----------------------------|-----------|--------------|
-    |                     | upload *(toolbar)*          | u         |              |
-    |                     | refresh *(toolbar)*         | r         |              |
-    |                     | move *(toolbar)*            | m         |              |
-    |                     | delete *(toolbar)*          | d/del     |              |
-    |                     | bulk select *(toolbar)*     | b         |              |
-    |                     | bulk select all *(toolbar)* | a         |              |
-    |                     | toggle *(sidebar)*          | t         |              |
-    |                     | file rename *(modal)*       | enter     |              |
-    |                     | file delete *(modal)*       | enter     |              |
-    |                     | create new folder *(modal)* | enter     |              |
-    | select next         |                             | right     |              |
-    | select prev         |                             | left      |              |
-    | select first        |                             | home      |              |
-    | select last         |                             | end       |              |
-    | open folder         |                             | enter     | double click |
-    | go back to prev dir | folderName *(breadcrumb)*   | backspace |              |
-    | play/pause          |player controller *(sidebar)*| space     |              |
-    | view image          | image *(sidebar)*           | space     |              |
-    | hide image          | image *(light-box)*         | space/esc |              |
+    |      navigation     |             button            |  keyboard | mouse (click) |
+    |---------------------|-------------------------------|-----------|---------------|
+    |                     | upload *(toolbar)*            | u         |               |
+    |                     | refresh *(toolbar)*           | r         |               |
+    |                     | move *(toolbar)*              | m         |               |
+    |                     | delete *(toolbar)*            | d/del     |               |
+    |                     | bulk select *(toolbar)*       | b         |               |
+    |                     | bulk select all *(toolbar)*   | a         |               |
+    |                     | toggle *(sidebar)*            | t         |               |
+    |                     | file rename *(modal)*         | enter     |               |
+    |                     | file delete *(modal)*         | enter     |               |
+    |                     | create new folder *(modal)*   | enter     |               |
+    | select next         |                               | right     |               |
+    | select prev         |                               | left      |               |
+    | select first        |                               | home      |               |
+    | select last         |                               | end       |               |
+    | open folder         |                               | enter     | double click  |
+    | go back to prev dir | folderName *(breadcrumb)*     | backspace |               |
+    | play/pause media    | player controller *(sidebar)* | space     |               |
+    | view image          | image *(sidebar)*             | space     |               |
+    | hide image          | image *(light-box)*           | space/esc |               |
 
 ## Config
 **config/mediaManager.php**
