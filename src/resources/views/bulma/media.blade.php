@@ -260,10 +260,10 @@
                                                         </template>
 
                                                         <span class="icon is-large" v-else>
-                                                            <i v-if="fileTypeIs(file, 'folder')" class="fa fa-folder"></i>
-                                                            <i v-if="fileTypeIs(file, 'video')" class="fa fa-video-camera"></i>
-                                                            <i v-if="fileTypeIs(file, 'audio')" class="fa fa-music"></i>
-                                                            <i v-if="fileTypeIs(file, 'text')" class="fa fa-file-text"></i>
+                                                            <i v-if="fileTypeIs(file, 'folder')" class="fa fa-folder fa-3x"></i>
+                                                            <i v-if="fileTypeIs(file, 'video')" class="fa fa-video-camera fa-3x"></i>
+                                                            <i v-if="fileTypeIs(file, 'audio')" class="fa fa-music fa-3x"></i>
+                                                            <i v-if="fileTypeIs(file, 'text')" class="fa fa-file-text fa-3x"></i>
                                                         </span>
                                                     </div>
                                                     <div class="details">
@@ -273,7 +273,7 @@
                                                                 @{{ file.items }} item(s)
                                                             </template>
                                                             <template v-else>
-                                                                <span class="file_size">@{{ file.size }}</span>
+                                                                <span class="file_size">@{{ bytesToSize(file.size) }}</span>
                                                             </template>
                                                         </small>
                                                     </div>
@@ -335,13 +335,13 @@
                                                         <h4>Title: <span>@{{ selectedFile.name }}</span></h4>
                                                         <h4>Type: <span>@{{ selectedFile.type }}</span></h4>
                                                         <template v-if="!selectedFileIs('folder')">
-                                                            <h4>Size: <span>@{{ selectedFile.size }}</span></h4>
+                                                            <h4>Size: <span>@{{ bytesToSize(selectedFile.size) }}</span></h4>
                                                             <h4>Public URL: <a :href="selectedFile.path" target="_blank">Click Here</a></h4>
                                                         </template>
                                                         <template v-else>
                                                             <h4>items: <span>@{{ selectedFile.items }} Item(s)</span></h4>
                                                         </template>
-                                                        <h4>Last Modified: <span>@{{ selectedFile.last_modified }}</span></h4>
+                                                        <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
                                                     </div>
                                                 </div>
                                             </template>

@@ -308,12 +308,13 @@ class MediaController extends Controller
         foreach ($storageFolders as $folder) {
             if (!preg_grep($pattern, [$folder])) {
                 $files[] = [
-                    'name'          => strpos($folder, '/') > 1 ? str_replace('/', '', strrchr($folder, '/')) : $folder,
-                    'type'          => 'folder',
-                    'path'          => $this->storageDisk->url($folder),
-                    'size'          => '',
-                    'items'         => count($this->storageDisk->allFiles($folder)) + count($this->storageDisk->allDirectories($folder)),
-                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($folder))->{$this->LMF}(),
+                    'name'                   => strpos($folder, '/') > 1 ? str_replace('/', '', strrchr($folder, '/')) : $folder,
+                    'type'                   => 'folder',
+                    'path'                   => $this->storageDisk->url($folder),
+                    'size'                   => '',
+                    'items'                  => count($this->storageDisk->allFiles($folder)) + count($this->storageDisk->allDirectories($folder)),
+                    'last_modified'          => $this->storageDisk->lastModified($folder),
+                    'last_modified_formated' => Carbon::createFromTimestamp($this->storageDisk->lastModified($folder))->{$this->LMF}(),
                 ];
             }
         }
@@ -321,11 +322,12 @@ class MediaController extends Controller
         foreach ($storageFiles as $file) {
             if (!preg_grep($pattern, [$file])) {
                 $files[] = [
-                    'name'          => strpos($file, '/') > 1 ? str_replace('/', '', strrchr($file, '/')) : $file,
-                    'type'          => $this->storageDisk->mimeType($file),
-                    'path'          => $this->storageDisk->url($file),
-                    'size'          => $this->storageDisk->size($file),
-                    'last_modified' => Carbon::createFromTimestamp($this->storageDisk->lastModified($file))->{$this->LMF}(),
+                    'name'                   => strpos($file, '/') > 1 ? str_replace('/', '', strrchr($file, '/')) : $file,
+                    'type'                   => $this->storageDisk->mimeType($file),
+                    'path'                   => $this->storageDisk->url($file),
+                    'size'                   => $this->storageDisk->size($file),
+                    'last_modified'          => $this->storageDisk->lastModified($file),
+                    'last_modified_formated' => Carbon::createFromTimestamp($this->storageDisk->lastModified($file))->{$this->LMF}(),
                 ];
             }
         }

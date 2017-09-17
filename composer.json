@@ -18,7 +18,7 @@
     "require": {
         "php" : "~7.0",
        "illuminate/support": "^5.4",
-       "tightenco/ziggy": "^0.3",
+       "tightenco/ziggy": "^0.4",
        "ctf0/package-changelog": "^1.0"
     },
     "autoload": {

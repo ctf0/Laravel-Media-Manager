@@ -550,12 +550,6 @@ export default {
                 $('#file_loader').hide()
                 this.selectFirst()
                 $('#right').fadeIn()
-
-                this.allFiles.map((e) => {
-                    if (typeof e.size !== 'undefined') {
-                        e.size = this.bytesToSize(e.size)
-                    }
-                })
             })
 
             // dirs list
