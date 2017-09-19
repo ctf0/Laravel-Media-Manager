@@ -2,8 +2,6 @@
     <img src="https://user-images.githubusercontent.com/7388088/30516878-a29c0b4a-9b4b-11e7-9075-a3ae2c2914ff.jpg">
 </p>
 
-## Intro
-
 - Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
@@ -64,25 +62,32 @@
 
     |      navigation     |             button            |  keyboard | mouse (click) |
     |---------------------|-------------------------------|-----------|---------------|
-    |                     | upload *(toolbar)*            | u         |               |
-    |                     | refresh *(toolbar)*           | r         |               |
-    |                     | move *(toolbar)*              | m         |               |
-    |                     | delete *(toolbar)*            | d/del     |               |
-    |                     | bulk select *(toolbar)*       | b         |               |
-    |                     | bulk select all *(toolbar)*   | a         |               |
-    |                     | toggle *(sidebar)*            | t         |               |
-    |                     | file rename *(modal)*         | enter     |               |
-    |                     | file delete *(modal)*         | enter     |               |
-    |                     | create new folder *(modal)*   | enter     |               |
-    | select next         |                               | right     |               |
-    | select prev         |                               | left      |               |
-    | select first        |                               | home      |               |
-    | select last         |                               | end       |               |
+    |                     | upload *(toolbar)*            | u         | *             |
+    |                     | refresh *(toolbar)*           | r         | *             |
+    |                     | move *(toolbar)*              | m         | *             |
+    |                     | delete *(toolbar)*            | d/del     | *             |
+    |                     | bulk select *(toolbar)*       | b         | *             |
+    |                     | bulk select all *(toolbar)*   | a         | *             |
+    |                     | toggle *(sidebar)*            | t         | *             |
+    |                     | file rename *(modal)*         | enter     | *             |
+    |                     | file delete *(modal)*         | enter     | *             |
+    |                     | create new folder *(modal)*   | enter     | *             |
+    | select next         |                               | right     | *             |
+    | select prev         |                               | left      | *             |
+    | select first        |                               | home      | *             |
+    | select last         |                               | end       | *             |
     | open folder         |                               | enter     | double click  |
-    | go back to prev dir | folderName *(breadcrumb)*     | backspace |               |
-    | play/pause media    | player controller *(sidebar)* | space     |               |
-    | view image          | image *(sidebar)*             | space     |               |
-    | hide image          | image *(light-box)*           | space/esc |               |
+    | go back to prev dir | folderName *(breadcrumb)*     | backspace | *             |
+    | play/pause media    | player controller *(sidebar)* | space     | *             |
+    | view image          | image *(sidebar)*             | space     | *             |
+    | hide image          | image *(light-box)*           | space/esc | *             |
+
+- events
+
+    | event-name |            description            |
+    |------------|-----------------------------------|
+    | modal-show | do something when modal is showen |
+    | modal-hide | do something when modal is hidden |
 
 ## Config
 **config/mediaManager.php**
@@ -171,8 +176,3 @@ new Vue({
     el: '#app'
 })
 ```
-
-## ToDo "ANY HELP IS APPRECIATED"
-
-* Add Support To Other Css Frameworks.
-* Add Support For Editors usage "tinymce / Ckeditor/ etc..".

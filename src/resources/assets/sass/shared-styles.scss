@@ -8,17 +8,11 @@ $gray_2: #e0e0e0;
 $gray_3: #f0f0f0;
 $gray_4: #f1f1f1;
 $gray_5: #bbb;
-$gray_6: #949494;
-$gray_7: #b5b5b5;
 $dark-gray_1: #555;
 $dark-gray_2: #444;
-$color_slate_gray_approx: #76838c;
+$slate_gray: #76838c;
 $blue: #3273dc;
 $blue_2: #276cda;
-
-[v-cloak] {
-    display: none;
-}
 
 // manager
 #toolbar {
@@ -54,6 +48,10 @@ $blue_2: #276cda;
     border-radius: 100vw;
 }
 
+.progress {
+    height: 1rem;
+}
+
 #uploadPreview {
     display: none;
 }
@@ -82,7 +80,7 @@ $blue_2: #276cda;
             align-items: center;
             display: flex;
 
-            &:before {
+            &::before {
                 color: $dark-gray_2;
                 padding: 0 0 0 4px;
             }
@@ -135,7 +133,7 @@ $blue_2: #276cda;
         cursor: pointer;
         padding: 0;
         color: $gray_5;
-        background:transparent;
+        background: transparent;
         border-color: transparent !important;
 
         &:focus,
@@ -163,6 +161,7 @@ $blue_2: #276cda;
 #left,
 #right {
     min-height: 400px;
+    max-height: 584px;
     overflow: scroll;
     position: relative;
 }
@@ -202,7 +201,7 @@ $blue_2: #276cda;
 
             .link_icon {
                 flex: 1;
-                color: $color_slate_gray_approx;
+                color: $slate_gray;
                 margin-right: 5px;
                 text-align: center;
 
@@ -237,7 +236,8 @@ $blue_2: #276cda;
                 color: white;
                 border-color: $blue_2;
 
-                h4,i {
+                h4,
+                i {
                     color: white;
                 }
             }
@@ -297,7 +297,6 @@ $blue_2: #276cda;
         text-align: center;
         background: $gray_1;
         border-bottom: 1px solid $gray_4;
-        text-align: center;
 
         i {
             width: 100%;
@@ -311,7 +310,7 @@ $blue_2: #276cda;
     }
 
     .detail_img {
-        border-bottom: 1px solid $gray_4;
+        text-align: center;
 
         img {
             display: block;
@@ -330,7 +329,7 @@ $blue_2: #276cda;
 
         .audio,
         .video {
-            margin-bottom: -5px;
+            margin-bottom: -7px;
             width: 100%;
             height: auto;
         }
@@ -374,11 +373,11 @@ $blue_2: #276cda;
 
 // util
 .p-l-0 {
-    padding-left: 0px !important;
+    padding-left: 0 !important;
 }
 
 .p-r-0 {
-    padding-right: 0px !important;
+    padding-right: 0 !important;
 }
 
 .m-l-50 {
@@ -412,4 +411,45 @@ $blue_2: #276cda;
     bottom: 0;
     z-index: 100;
     overflow: scroll;
+}
+
+// animated.css
+.animated {
+    animation-duration: 600ms;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.fadeInDown {
+    animation-name: fadeInDown;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}
+
+.no-scroll {
+    overflow: hidden;
 }

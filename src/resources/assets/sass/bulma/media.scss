@@ -1,5 +1,5 @@
-@import "../bootstrap_modal";
 @import "../shared-styles";
+$gray_7: #b5b5b5;
 $turquoise: #00d1b2;
 $green: #23d160;
 $yellow: #ffdd57;
@@ -8,24 +8,32 @@ $orange: #ff470f;
 
 // modal
 .is-warning {
-    color: rgba(0, 0, 0, 0.7);
     background-color: $yellow;
 }
+
 .is-danger {
-    color: white;
     background-color: $red;
 }
+
 .is-info {
-    color: white;
     background-color: $blue;
 }
+
 .is-primary {
-    color: white;
     background-color: $turquoise;
 }
+
 .is-success {
-    color: white;
     background-color: $green;
+}
+
+.is-danger,
+.is-info,
+.is-primary,
+.is-success {
+    * {
+        color: white;
+    }
 }
 
 // bulma
@@ -33,24 +41,32 @@ $orange: #ff470f;
     border-color: $gray_7;
     box-shadow: none;
 }
+
 table,
 .table {
     margin-bottom: 0;
+
     td,
     th {
         vertical-align: middle;
         border: none !important;
     }
+
     tr:hover {
         background-color: transparent;
     }
 }
-.control.is-loading:after {
-    position: static !important;
-}
+
 .level {
     margin-bottom: 0.75rem !important;
 }
-.modal {
-    z-index: 1050 !important;
+
+.modal.is-active {
+    padding-top: 5%;
+    align-items: start;
+}
+
+.modal-card-foot {
+    background-color: white;
+    justify-content: flex-end;
 }
