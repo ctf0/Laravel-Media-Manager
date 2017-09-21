@@ -276,9 +276,8 @@
                                                         </span>
                                                     </div>
                                                     <div class="details">
-                                                        <h4>@{{ file.name }}</h4>
-                                                        {{-- <h4 v-if="fileTypeIs(file, 'folder')">@{{ file.name }}</h4> --}}
-                                                        {{-- <h4 v-else>@{{ getFileName(file.name) }}</h4> --}}
+                                                        <h4 v-if="fileTypeIs(file, 'folder')">@{{ file.name }}</h4>
+                                                        <h4 v-else>@{{ getFileName(file.name) }}</h4>
                                                         <small>
                                                             <template v-if="fileTypeIs(file, 'folder')">
                                                                 <span>@{{ file.items }} item(s)</span>
