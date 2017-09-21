@@ -3,12 +3,13 @@
 namespace ctf0\MediaManager\Controllers;
 
 use Exception;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class MediaController extends Controller
 {
+    use OpsTrait;
+
     protected $fileSystem;
     protected $storageDisk;
     protected $ignoreFiles;
@@ -40,6 +41,45 @@ class MediaController extends Controller
     public function index()
     {
         return view("MediaManager::{$this->fw}.media");
+    }
+
+    /**
+     * [files description].
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function get_files(Request $request)
+    {
+        $folder = $request->folder !== '/'
+        ? $request->folder
+        : '';
+
+        return response()->json([
+            'path'   => $folder,
+            'items'  => $this->getData($folder),
+        ]);
+    }
+
+    /**
+     * [get_all_dirs description].
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function get_dirs(Request $request)
+    {
+        $folderLocation = $request->folder_location;
+
+        if (is_array($folderLocation)) {
+            $folderLocation = rtrim(implode('/', $folderLocation), '/');
+        }
+
+        return response()->json(
+            str_replace($folderLocation, '', $this->storageDisk->allDirectories($folderLocation))
+        );
     }
 
     /**
@@ -96,27 +136,6 @@ class MediaController extends Controller
     }
 
     /**
-     * [files description].
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
-    public function files(Request $request)
-    {
-        $folder = $request->folder;
-
-        if ($folder == '/') {
-            $folder = '';
-        }
-
-        return response()->json([
-            'path'   => $folder,
-            'items'  => $this->getFiles($folder),
-        ]);
-    }
-
-    /**
      * [new_folder description].
      *
      * @param Request $request [description]
@@ -139,17 +158,17 @@ class MediaController extends Controller
             $message = trans('MediaManager::messages.error_creating_dir');
         }
 
-        return compact('success', 'message', 'new_folder');
+        return compact('success', 'message', 'new_folder_name', 'full_path');
     }
 
     /**
-     * [delete_file_folder description].
+     * [delete_file description].
      *
      * @param Request $request [description]
      *
      * @return [type] [description]
      */
-    public function delete_file_folder(Request $request)
+    public function delete_file(Request $request)
     {
         $folderLocation  = $request->folder_location;
         $result          = [];
@@ -189,26 +208,6 @@ class MediaController extends Controller
     }
 
     /**
-     * [get_all_dirs description].
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
-    public function get_all_dirs(Request $request)
-    {
-        $folderLocation = $request->folder_location;
-
-        if (is_array($folderLocation)) {
-            $folderLocation = rtrim(implode('/', $folderLocation), '/');
-        }
-
-        return response()->json(
-            str_replace($folderLocation, '', $this->storageDisk->allDirectories($folderLocation))
-        );
-    }
-
-    /**
      * [move_file description].
      *
      * @param Request $request [description]
@@ -225,13 +224,15 @@ class MediaController extends Controller
         }
 
         foreach ($request->moved_files as $one) {
-            $file_type   =$one['type'];
+            $file_type   = $one['type'];
             $file_name   = $one['name'];
+            $file_size   = $one['size'];
+
             $destination = "{$request->destination}/$file_name";
             $file_name   = "$folderLocation/$file_name";
             $destination = strpos($destination, '../') == true
-                ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
-                : "$folderLocation/$destination";
+                            ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
+                            : "$folderLocation/$destination";
 
             try {
                 if (!file_exists($destination)) {
@@ -240,6 +241,7 @@ class MediaController extends Controller
                             'success' => true,
                             'name'    => $one['name'],
                             'type'    => $file_type,
+                            'size'    => $file_size,
                         ];
                     } else {
                         throw new Exception(trans('MediaManager::messages.error_moving'));
@@ -288,81 +290,5 @@ class MediaController extends Controller
         }
 
         return compact('success', 'message', 'new_filename');
-    }
-
-    /**
-     * [getFiles description].
-     *
-     * @param [type] $dir [description]
-     *
-     * @return [type] [description]
-     */
-    public function getFiles($dir)
-    {
-        $files          = [];
-        $storageFiles   = $this->storageDisk->files($dir);
-        $storageFolders = $this->storageDisk->directories($dir);
-
-        $pattern = $this->ignoreFiles;
-
-        foreach ($storageFolders as $folder) {
-            if (!preg_grep($pattern, [$folder])) {
-                $time    = $this->storageDisk->lastModified($folder);
-                $files[] = [
-                    'name'                   => strpos($folder, '/') > 1 ? str_replace('/', '', strrchr($folder, '/')) : $folder,
-                    'type'                   => 'folder',
-                    'path'                   => $this->storageDisk->url($folder),
-                    'size'                   => '',
-                    'items'                  => count($this->storageDisk->allFiles($folder)) + count($this->storageDisk->allDirectories($folder)),
-                    'last_modified'          => $time,
-                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
-                ];
-            }
-        }
-
-        foreach ($storageFiles as $file) {
-            if (!preg_grep($pattern, [$file])) {
-                $time    = $this->storageDisk->lastModified($file);
-                $files[] = [
-                    'name'                   => strpos($file, '/') > 1 ? str_replace('/', '', strrchr($file, '/')) : $file,
-                    'type'                   => $this->storageDisk->mimeType($file),
-                    'path'                   => $this->storageDisk->url($file),
-                    'size'                   => $this->storageDisk->size($file),
-                    'last_modified'          => $time,
-                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
-                ];
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * sanitize input.
-     *
-     * @param [type]     $text   [description]
-     * @param null|mixed $folder
-     *
-     * @return [type] [description]
-     */
-    protected function cleanName($text, $folder = null)
-    {
-        $pattern = [
-            '/(script.*?\/script)|[^(' . $this->fileChars . ')a-zA-Z0-9]+/ius',
-        ];
-
-        if ($folder) {
-            $pattern = [
-                '/(script.*?\/script)|[^(' . $this->folderChars . ')a-zA-Z0-9]+/ius',
-            ];
-        }
-
-        $text = preg_replace($pattern, '', $text);
-
-        if ($text == '') {
-            $text = $this->sanitizedText;
-        }
-
-        return $text;
     }
 }

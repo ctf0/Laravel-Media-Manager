@@ -1,4 +1,0 @@
-- fixed sortBy:size
-- fixed sortBy:last_modified
-- add new option to config https://github.com/ctf0/Laravel-Media-Manager/blob/master/src/config/mediaManager.php#L51
-- update view

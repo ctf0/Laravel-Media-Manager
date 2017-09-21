@@ -1,0 +1,110 @@
+<?php
+
+namespace ctf0\MediaManager\Controllers;
+
+use Carbon\Carbon;
+
+trait OpsTrait
+{
+    /**
+     * [getFiles description].
+     *
+     * @param [type] $dir [description]
+     *
+     * @return [type] [description]
+     */
+    protected function getData($dir)
+    {
+        $files          = [];
+        $storageFiles   = $this->storageDisk->files($dir);
+        $storageFolders = $this->storageDisk->directories($dir);
+
+        $pattern = $this->ignoreFiles;
+
+        foreach ($storageFolders as $folder) {
+            if (!preg_grep($pattern, [$folder])) {
+                $time    = $this->storageDisk->lastModified($folder);
+                $files[] = [
+                    'name'                   => strpos($folder, '/') > 1 ? str_replace('/', '', strrchr($folder, '/')) : $folder,
+                    'type'                   => 'folder',
+                    'path'                   => $this->storageDisk->url($folder),
+                    'size'                   => $this->folderSize($folder),
+                    'items'                  => $this->folderCount($folder),
+                    'last_modified'          => $time,
+                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
+                ];
+            }
+        }
+
+        foreach ($storageFiles as $file) {
+            if (!preg_grep($pattern, [$file])) {
+                $time    = $this->storageDisk->lastModified($file);
+                $files[] = [
+                    'name'                   => strpos($file, '/') > 1 ? str_replace('/', '', strrchr($file, '/')) : $file,
+                    'type'                   => $this->storageDisk->mimeType($file),
+                    'path'                   => $this->storageDisk->url($file),
+                    'size'                   => $this->storageDisk->size($file),
+                    'last_modified'          => $time,
+                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
+                ];
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * sanitize input.
+     *
+     * @param [type]     $text   [description]
+     * @param null|mixed $folder
+     *
+     * @return [type] [description]
+     */
+    protected function cleanName($text, $folder = null)
+    {
+        $pattern = $this->filePattern($this->fileChars);
+
+        if ($folder) {
+            $pattern = $this->filePattern($this->folderChars);
+        }
+
+        $text = preg_replace($pattern, '', $text);
+
+        return $text == '' ? $this->sanitizedText : $text;
+    }
+
+    protected function filePattern($file)
+    {
+        return '/(script.*?\/script)|[^(' . $file . ')a-zA-Z0-9]+/ius';
+    }
+
+    /**
+     * helpers for folder ops.
+     *
+     * @param [type] $folder [description]
+     *
+     * @return [type] [description]
+     */
+    protected function folderCount($folder)
+    {
+        // return count($this->folderFiles($folder)) + count($this->storageDisk->allDirectories($folder));
+        return count($this->folderFiles($folder));
+    }
+
+    protected function folderSize($folder)
+    {
+        $file_size = 0;
+
+        foreach ($this->folderFiles($folder) as $file) {
+            $file_size += $this->storageDisk->size($file);
+        }
+
+        return $file_size;
+    }
+
+    protected function folderFiles($folder)
+    {
+        return $this->storageDisk->allFiles($folder);
+    }
+}

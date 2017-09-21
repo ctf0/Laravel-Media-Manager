@@ -84,10 +84,15 @@
 
 - events
 
-    | event-name |            description            |
-    |------------|-----------------------------------|
-    | modal-show | do something when modal is showen |
-    | modal-hide | do something when modal is hidden |
+    |     event-name     |         description          |
+    |--------------------|------------------------------|
+    | modal-show         | when modal is showen         |
+    | modal-hide         | when modal is hidden         |
+    | no-files-show      | when no files msg is showen  |
+    | no-files-hide      | when no files msg is hidden  |
+    | loading-files-show | when loading files is hidden |
+    | loading-files-hide | when loading files is hidden |
+    | ajax-error-show    | when ajax call fails         |
 
 ## Config
 **config/mediaManager.php**
@@ -134,6 +139,11 @@ return [
      * display file last modification time as
      */
     'last_modified_format' => 'toDateString',
+
+    /**
+     * hide file extension in files list
+     */
+    'hide_ext' => true
 ];
 ```
 
@@ -149,9 +159,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
+yarn add vue dropzone keycode vue-tippy vue2-filters vuemit
 # or
-npm install vue dropzone keycode vue-tippy vue2-filters vue-lightbox vuemit
+npm install vue dropzone keycode vue-tippy vue2-filters vuemit
 ```
 
 - for styling we use ***bulma***

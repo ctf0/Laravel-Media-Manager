@@ -25,9 +25,6 @@ class MediaManagerServiceProvider extends ServiceProvider
     protected function packagePublish()
     {
         // config
-        $this->mergeConfigFrom(
-            __DIR__ . '/config/ziggy.php', 'ziggy'
-        );
         $this->publishes([
             __DIR__ . '/config' => config_path(),
         ], 'config');
@@ -118,7 +115,6 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(\Tightenco\Ziggy\ZiggyServiceProvider::class);
         $this->app->register(\ctf0\PackageChangeLog\PackageChangeLogServiceProvider::class);
     }
 }

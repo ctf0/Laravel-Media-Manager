@@ -1,0 +1,16 @@
+- remove ziggy
+- remove vue-lightbox
+- remove bs-modal
+- add new option to config
+- add events
+- add new animation for ajax call fail
+- add new key into lang for “ajax_error”
+- optimize bm animation
+- show folder content size instead of NaN
+- auto-scroll to first item when adding new folder
+- fix rename issue with folder vs file
+- fix file size conversion
+- update folder size on file move
+- update assets
+- update view
+- update rdme

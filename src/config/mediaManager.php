@@ -49,4 +49,9 @@ return [
      * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
      */
     'last_modified_format' => 'toDateString',
+
+    /*
+     * hide file extension in files list
+     */
+    'hide_ext' => true,
 ];

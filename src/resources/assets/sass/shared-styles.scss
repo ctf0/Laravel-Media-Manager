@@ -48,10 +48,6 @@ $blue_2: #276cda;
     border-radius: 100vw;
 }
 
-.progress {
-    height: 1rem;
-}
-
 #uploadPreview {
     display: none;
 }
@@ -250,7 +246,7 @@ $blue_2: #276cda;
     @extend .selected;
 }
 
-.image {
+.img {
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
@@ -260,7 +256,8 @@ $blue_2: #276cda;
 
 // loaders
 #file_loader,
-#no_files {
+#no_files,
+#ajax_error {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -270,6 +267,14 @@ $blue_2: #276cda;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#ajax_error {
+    flex-direction: column;
+
+    h3 {
+        margin-top: 1rem;
+    }
 }
 
 #no_files {
@@ -282,7 +287,8 @@ $blue_2: #276cda;
     width: 15vw;
 }
 
-#no_files_anim {
+#no_files_anim,
+#ajax_error_anim {
     width: 5vw;
 }
 // end loaders
@@ -361,14 +367,17 @@ $blue_2: #276cda;
     }
 }
 
-.confirm_delete,
-.confirm_delete_icon {
+.confirm_delete_text * {
     color: $blue;
     font-weight: 500;
 }
 
 .folder_warning {
     margin-top: 15px;
+}
+
+.file_size {
+    font-weight: bold;
 }
 
 // util
@@ -384,24 +393,6 @@ $blue_2: #276cda;
     margin-left: 50px !important;
 }
 
-// Lightbox
-.lb-outerContainer {
-    background-color: transparent !important;
-
-    .lb-container {
-        padding: 0;
-
-        .lb-image {
-            border-radius: 4px;
-            border: none;
-        }
-    }
-}
-
-.lb-dataContainer {
-    display: none;
-}
-
 // notification
 .notif-container {
     padding: 0 0 4rem;
@@ -413,43 +404,11 @@ $blue_2: #276cda;
     overflow: scroll;
 }
 
-// animated.css
-.animated {
-    animation-duration: 600ms;
-    animation-fill-mode: both;
-    animation-timing-function: cubic-bezier(1, 0, 0, 1);
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translate3d(0, -100%, 0);
-    }
-
-    to {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-.fadeInDown {
-    animation-name: fadeInDown;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.fadeIn {
-    animation-name: fadeIn;
-}
-
+// for modal
 .no-scroll {
     overflow: hidden;
+}
+
+.pointer {
+    cursor: pointer;
 }

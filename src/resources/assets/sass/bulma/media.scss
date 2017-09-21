@@ -1,4 +1,7 @@
+@import "../animated";
+@import "../progress";
 @import "../shared-styles";
+
 $gray_7: #b5b5b5;
 $turquoise: #00d1b2;
 $green: #23d160;
@@ -46,6 +49,10 @@ table,
 .table {
     margin-bottom: 0;
 
+    td {
+        padding: 0;
+    }
+
     td,
     th {
         vertical-align: middle;
@@ -62,8 +69,13 @@ table,
 }
 
 .modal.is-active {
-    padding-top: 5%;
+    padding-top: 3%;
     align-items: start;
+}
+
+#img_modal {
+    padding: 0;
+    align-items: center;
 }
 
 .modal-card-foot {
