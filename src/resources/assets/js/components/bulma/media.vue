@@ -127,16 +127,22 @@ export default {
                         if (!this.lightBoxIsActive()) {
                             // when no bulk selecting
                             if (!this.isBulkSelecting()) {
+
                                 let cur = ''
                                 let newSelected = ''
+                                let index = ''
 
                                 if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelected !== 0) {
+                                    e.preventDefault()
+
                                     newSelected = curSelected - 1
                                     cur = $('div[data-index="' + newSelected + '"]')
                                     this.scrollToFile(cur)
                                 }
 
                                 if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelected < this.allItemsCount - 1) {
+                                    e.preventDefault()
+
                                     newSelected = curSelected + 1
                                     cur = $('div[data-index="' + newSelected + '"]')
                                     this.scrollToFile(cur)
@@ -149,7 +155,7 @@ export default {
 
                                 // go up a dir
                                 if (keycode(e) == 'backspace') {
-                                    let index = parseInt(this.folders.length) - 1
+                                    index = parseInt(this.folders.length) - 1
 
                                     if (index < 0) {
                                         return false
@@ -161,11 +167,15 @@ export default {
                                 // go to first / last item
                                 if (this.allItemsCount) {
                                     if (keycode(e) == 'home') {
+                                        e.preventDefault()
+
                                         this.scrollToFile()
                                     }
 
                                     if (keycode(e) == 'end') {
-                                        let index = this.allItemsCount - 1
+                                        e.preventDefault()
+
+                                        index = this.allItemsCount - 1
                                         cur = $('div[data-index="' + index + '"]')
                                         this.scrollToFile(cur)
                                     }
@@ -178,7 +188,6 @@ export default {
 
                                 // play-pause for media
                                 if (keycode(e) == 'space' && e.target == document.body) {
-                                    // prevent body from scrolling
                                     e.preventDefault()
 
                                     if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
@@ -239,6 +248,7 @@ export default {
                 // when modal is visible
                 else {
                     if (keycode(e) == 'enter') {
+                        e.preventDefault()
                         $('.modal.is-active').find('.submit').trigger('click')
                     }
 
@@ -354,7 +364,7 @@ export default {
 
             // upload
             $('#upload').click(() => {
-                $('#new-upload').fadeToggle('fast')
+                $('#dz').fadeToggle('fast')
             })
 
             // delete

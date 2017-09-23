@@ -11,7 +11,7 @@ export default {
                 title: data.title,
                 body: data.body,
                 type: data.type,
-                duration: data.duration !== undefined ? data.duration : null
+                duration: data.duration !== undefined ? data.duration : undefined
             })
         },
         checkForFolders() {

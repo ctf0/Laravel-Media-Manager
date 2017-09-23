@@ -5,7 +5,7 @@
     {{-- FW --}}
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     {{-- bulma --}}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.5.3/css/bulma.min.css">
     {{-- Main styles --}}
     <link rel="stylesheet" href="{{ mix('assets/vendor/MediaManager/style.css') }}"/>
 </head>
@@ -89,7 +89,7 @@
                                 {{-- ====================================================================== --}}
 
                                 {{-- right toolbar --}}
-                                <div class="level-right">
+                                <div class="level-right is-hidden-touch">
                                     <div class="level-item">
                                         <div class="field is-grouped">
                                             {{-- multi --}}
@@ -173,7 +173,7 @@
                                                 </div>
 
                                                 {{-- showBy --}}
-                                                <div class="control">
+                                                <div class="control has-icons-left">
                                                     <div class="select">
                                                         <select v-model="showBy">
                                                             <option disabled value="undefined">Sort By</option>
@@ -182,13 +182,19 @@
                                                             <option value="last_modified">Last Modified</option>
                                                         </select>
                                                     </div>
+                                                    <div class="icon is-small is-left">
+                                                        <i class="fa fa-bell-o"></i>
+                                                    </div>
                                                 </div>
 
                                                 {{-- search --}}
                                                 <div class="control">
                                                     <div class="field has-addons">
-                                                        <p class="control">
-                                                            <input class="input" type="text" placeholder="Find ..." v-model="searchFor">
+                                                        <p class="control has-icons-left">
+                                                            <input class="input" type="text" placeholder="..." v-model="searchFor">
+                                                            <span class="icon is-small is-left">
+                                                                <i class="fa fa-search"></i>
+                                                            </span>
                                                         </p>
                                                         <p class="control">
                                                             <button class="button is-black" :disabled="!searchFor" @click="resetInput('searchFor')" v-tippy title="Clear Search" data-arrow="true">
@@ -206,19 +212,21 @@
                             {{-- ====================================================================== --}}
 
                             {{-- upload --}}
-                            <div class="field">
-                                <form class="dz" id="new-upload" action="{{ route('media.upload') }}">
-                                    <div class="dz-message title is-4">
-                                        {{ trans('MediaManager::messages.drag_drop_info') }}
+                            <div class="field m-0">
+                                <div id="dz">
+                                    <form class="dz" id="new-upload" action="{{ route('media.upload') }}">
+                                        <div class="dz-message title is-4">
+                                            {{ trans('MediaManager::messages.drag_drop_info') }}
+                                        </div>
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+                                    </form>
+
+                                    <div id="uploadPreview" class="dropzone-previews"></div>
+
+                                    <div id="uploadProgress" class="progress">
+                                        <div class="progress-bar is-success progress-bar-striped active"></div>
                                     </div>
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
-                                </form>
-
-                                <div id="uploadPreview" class="dropzone-previews"></div>
-
-                                <div id="uploadProgress" class="progress">
-                                    <div class="progress-bar is-success progress-bar-striped active"></div>
                                 </div>
                             </div>
 
@@ -227,36 +235,34 @@
                             {{-- files area --}}
                             <div id="content">
                                 {{-- directories breadCrumb --}}
-                                <div class="breadcrumb-container">
-                                    <ol class="breadcrumb">
-                                        <li>
-                                            <span class="arrow"></span>
-                                            <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">
-                                                <strong>{{ trans('MediaManager::messages.library') }}</strong>
-                                            </a>
-                                            <p v-else class="p-l-0">
-                                                <strong>{{ trans('MediaManager::messages.library') }}</strong>
-                                            </p>
-                                        </li>
-
-                                        <template v-for="(folder,index) in folders">
-                                            <li @click="goToFolder(index+1)">
-                                                <span class="arrow"></span>
-                                                <p v-if="isLastItem(folder, folders)">@{{ folder }}</p>
-                                                <a v-else v-tippy title="backspace" data-arrow="true">@{{ folder }}</a>
+                                <div class="breadcrumb-container level is-mobile">
+                                    <div class="level-left">
+                                        <ol class="breadcrumb">
+                                            <li>
+                                                <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">{{ trans('MediaManager::messages.library') }}</a>
+                                                <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
                                             </li>
-                                        </template>
-                                    </ol>
 
-                                    <div class="toggle button" @click="toggleInfo()" v-tippy title="t" data-arrow="true">
-                                        <span>Close</span>
-                                        <span class="icon"><i class="fa fa-angle-double-right"></i></span>
+                                            <template v-for="(folder,index) in folders">
+                                                <li @click="goToFolder(index+1)">
+                                                    <p v-if="isLastItem(folder, folders)">@{{ folder }}</p>
+                                                    <a v-else v-tippy title="backspace" data-arrow="true">@{{ folder }}</a>
+                                                </li>
+                                            </template>
+                                        </ol>
+                                    </div>
+
+                                    <div class="level-right is-hidden-touch">
+                                        <div class="toggle" @click="toggleInfo()" v-tippy title="t" data-arrow="true">
+                                            <span>Close</span>
+                                            <span class="icon"><i class="fa fa-angle-double-right"></i></span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {{-- ====================================================================== --}}
 
-                                <div class="flex">
+                                <div class="manager-container">
                                     {{-- files box --}}
                                     <div id="left">
                                         <ul id="files" class="tile">
@@ -316,7 +322,7 @@
                                     {{-- ====================================================================== --}}
 
                                     {{-- info box --}}
-                                    <div id="right">
+                                    <div id="right" class="is-hidden-touch">
                                         <div class="right_none_selected" v-if="!selectedFile">
                                             <i class="fa fa-mouse-pointer"></i>
                                             <p>{{ trans('MediaManager::messages.nothing_selected') }}</p>
@@ -547,7 +553,6 @@
     {{-- footer --}}
     <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.10.2/bodymovin.min.js"></script>
     <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
     <script src="{{ mix("path/to/app.js") }}"></script>
 
     {{-- animations --}}

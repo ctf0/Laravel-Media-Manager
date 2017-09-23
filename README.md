@@ -159,9 +159,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vuemit
+yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif
 # or
-npm install vue dropzone keycode vue-tippy vue2-filters vuemit
+npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif --save
 ```
 
 - for styling we use ***bulma***

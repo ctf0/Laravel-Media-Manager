@@ -1,0 +1,9 @@
+- remove jquery.scrollTo
+- fix notif not showing up
+- now using any of the shortcuts dont scroll the window
+- make sure the shortcuts used with more than element dont run twice
+- clean styles
+- remove notif-comp file and use the npm package instead
+- some cosmetics for the manager
+- update view
+- update assets

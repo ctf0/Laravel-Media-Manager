@@ -53,12 +53,16 @@ export default {
                 file = $('div[data-index="0"]')
             }
 
-            $(file).trigger('click')
+            let container = $('#left')
+            let offset = parseInt(container.css('padding-top')) + parseInt(file.css('margin-top'))
 
-            $('#left').scrollTo($(file), 0, {
-                margin: true,
-                offset: -8
-            })
+            file.trigger('click')
+            file[0].scrollIntoView(false)
+
+            // respect container & file offset when scrolling
+            if (file[0].offsetTop > container.height()) {
+                container[0].scrollTop += offset
+            }
         }
     }
 }

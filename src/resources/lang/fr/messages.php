@@ -12,7 +12,7 @@ return [
     'delete_confirm'            => 'Oui, Supprimez-le',
     'delete_folder_question'    => 'La suppression d\'un dossier supprimera tous les fichiers et dossiers contenus à l\'intérieur',
     'destination_folder'        => 'Dossier de destination',
-    'drag_drop_info'            => 'Faites glisser et déposez des fichiers ou cliquez ci-dessous pour télécharger',
+    'drag_drop_info'            => 'Faites glisser et déposez des fichiers ou cliquez pour télécharger',
     'error_already_exists'      => 'Désolé, il existe déjà un fichier / dossier avec ce nom existant dans ce dossier.',
     'error_creating_dir'        => 'Désolé, quelque chose semble avoir mal tourné avec la création du répertoire. Veuillez vérifier vos autorisations',
     'error_deleting_file'       => 'Désolé, quelque chose semble avoir mal retourné ce fichier. Veuillez vérifiez vos autorisations',

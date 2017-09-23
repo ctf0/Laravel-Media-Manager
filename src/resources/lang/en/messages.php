@@ -12,7 +12,7 @@ return [
     'delete_confirm'            => 'Yes, Delete it!',
     'delete_folder_question'    => 'Deleting a folder will remove all files and folders contained inside',
     'destination_folder'        => 'Destination Folder',
-    'drag_drop_info'            => 'Drag and drop files or click below to upload',
+    'drag_drop_info'            => 'Drag and drop files or click to upload',
     'error_already_exists'      => 'Sorry there is already a file/folder with that existing name in that folder.',
     'error_creating_dir'        => 'Sorry something seems to have gone wrong with creating the directory, please check your permissions',
     'error_deleting_file'       => 'Sorry something seems to have gone wrong deleting this file, please check your permissions',

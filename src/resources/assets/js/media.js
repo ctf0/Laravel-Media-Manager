@@ -15,7 +15,7 @@ Vue.use(require('vue2-filters'))
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/' + process.env.MIX_MM_FRAMEWORK + '/media.vue'))
-Vue.component('MyNotification', require('./components/' + process.env.MIX_MM_FRAMEWORK + '/notifs.vue'))
+Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */
 require('./events')
