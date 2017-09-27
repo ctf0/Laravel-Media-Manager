@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/30516878-a29c0b4a-9b4b-11e7-9075-a3ae2c2914ff.jpg">
+    <img src="https://user-images.githubusercontent.com/7388088/30937714-e6537c94-a3d7-11e7-83e8-3052addc7ba0.png">
 </p>
 
 - Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
@@ -53,6 +53,7 @@
     + selected
     + search found
 - protection against overwriting (files / folders)
+- autoplay media files "if selected filter is audio/video"
 - file name sanitization for
     + upload
     + rename

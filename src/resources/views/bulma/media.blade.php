@@ -39,7 +39,7 @@
                                             <div class="control">
                                                 <div class="field has-addons">
                                                     <div class="control">
-                                                        <button class="button" id="upload" v-tippy title="u" data-arrow="true">
+                                                        <button class="button" id="upload" v-tippy="{arrow: true}" title="u">
                                                             <span class="icon is-small"><i class="fa fa-cloud-upload"></i></span>
                                                             <span>{{ trans('MediaManager::messages.upload') }}</span>
                                                         </button>
@@ -54,7 +54,7 @@
                                             </div>
 
                                             <div class="control">
-                                                <button class="button is-light" id="refresh" v-tippy title="r" data-arrow="true" @click="getFiles(folders)">
+                                                <button class="button is-light" id="refresh" v-tippy="{arrow: true}" title="r" @click="getFiles(folders)">
                                                     <span class="icon is-small"><i class="fa fa-refresh"></i></span>
                                                 </button>
                                             </div>
@@ -62,7 +62,7 @@
                                             <div class="control">
                                                 <div class="field has-addons">
                                                     <div class="control">
-                                                        <button class="button is-info" id="move" v-tippy title="m" data-arrow="true" @click="toggleModal('#move_file_modal')">
+                                                        <button class="button is-info" id="move" v-tippy="{arrow: true}" title="m" @click="toggleModal('#move_file_modal')">
                                                             <span class="icon is-small"><i class="fa fa-share"></i></span>
                                                             <span>{{ trans('MediaManager::messages.move') }}</span>
                                                         </button>
@@ -74,7 +74,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="control">
-                                                        <button class="button is-info" id="delete" v-tippy title="d / del" data-arrow="true" @click="toggleModal('#confirm_delete_modal')">
+                                                        <button class="button is-info" id="delete" v-tippy="{arrow: true}" title="d / del" @click="toggleModal('#confirm_delete_modal')">
                                                             <span class="icon is-small"><i class="fa fa-trash"></i></span>
                                                             <span>{{ trans('MediaManager::messages.delete') }}</span>
                                                         </button>
@@ -96,13 +96,13 @@
                                             <div class="control">
                                                 <div class="field">
                                                     <div class="control">
-                                                        <button id="blk_slct_all" class="button" v-tippy title="a" data-arrow="true">
+                                                        <button id="blk_slct_all" class="button" v-tippy="{arrow: true}" title="a">
                                                             <span class="icon is-small"><i class="fa fa-plus"></i></span>
                                                             <span>Select All</span>
                                                         </button>
                                                     </div>
                                                     <div class="control">
-                                                        <button id="blk_slct" class="button" :disabled="!allItemsCount" v-tippy title="b" data-arrow="true">
+                                                        <button id="blk_slct" class="button" :disabled="!allItemsCount" v-tippy="{arrow: true}" title="b">
                                                             <span class="icon is-small"><i class="fa fa-puzzle-piece"></i></span>
                                                             <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
                                                         </button>
@@ -116,7 +116,7 @@
                                                     <div class="field has-addons">
                                                         <div class="control">
                                                             <button @click="showFilesOfType('image')"
-                                                                v-tippy title="Filter By Image" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Filter By Image"
                                                                 class="button"
                                                                 :class="{'is-info': filterNameIs('image')}"
                                                                 :disabled="!btnFilter('image')">
@@ -125,7 +125,7 @@
                                                         </div>
                                                         <div class="control">
                                                             <button @click="showFilesOfType('video')"
-                                                                v-tippy title="Filter By Video" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Filter By Video"
                                                                 class="button"
                                                                 :class="{'is-info': filterNameIs('video')}"
                                                                 :disabled="!btnFilter('video')">
@@ -134,7 +134,7 @@
                                                         </div>
                                                         <div class="control">
                                                             <button @click="showFilesOfType('audio')"
-                                                                v-tippy title="Filter By Audio" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Filter By Audio"
                                                                 class="button"
                                                                 :class="{'is-info': filterNameIs('audio')}"
                                                                 :disabled="!btnFilter('audio')">
@@ -143,7 +143,7 @@
                                                         </div>
                                                         <div class="control">
                                                             <button @click="showFilesOfType('folder')"
-                                                                v-tippy title="Filter By Folder" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Filter By Folder"
                                                                 class="button"
                                                                 :class="{'is-info': filterNameIs('folder')}"
                                                                 :disabled="!btnFilter('folder')">
@@ -152,7 +152,7 @@
                                                         </div>
                                                         <div class="control">
                                                             <button @click="showFilesOfType('text')"
-                                                                v-tippy title="Filter By Text" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Filter By Text"
                                                                 class="button"
                                                                 :class="{'is-info': filterNameIs('text')}"
                                                                 :disabled="!btnFilter('text')">
@@ -162,7 +162,7 @@
 
                                                         <div class="control">
                                                             <button @click="showFilesOfType('all')"
-                                                                v-tippy title="Clear Filter" data-arrow="true"
+                                                                v-tippy="{arrow: true}" title="Clear Filter"
                                                                 class="button"
                                                                 :class="{'is-danger': btnFilter('all')}"
                                                                 :disabled="!btnFilter('all')">
@@ -191,13 +191,13 @@
                                                 <div class="control">
                                                     <div class="field has-addons">
                                                         <p class="control has-icons-left">
-                                                            <input class="input" type="text" placeholder="..." v-model="searchFor">
+                                                            <input class="input" type="text" placeholder="Find" v-model="searchFor">
                                                             <span class="icon is-small is-left">
                                                                 <i class="fa fa-search"></i>
                                                             </span>
                                                         </p>
                                                         <p class="control">
-                                                            <button class="button is-black" :disabled="!searchFor" @click="resetInput('searchFor')" v-tippy title="Clear Search" data-arrow="true">
+                                                            <button class="button is-black" :disabled="!searchFor" @click="resetInput('searchFor')" v-tippy="{arrow: true}" title="Clear Search">
                                                                 <span class="icon is-small"><i class="fa fa-times"></i></span>
                                                             </button>
                                                         </p>
@@ -246,14 +246,14 @@
                                             <template v-for="(folder,index) in folders">
                                                 <li @click="goToFolder(index+1)">
                                                     <p v-if="isLastItem(folder, folders)">@{{ folder }}</p>
-                                                    <a v-else v-tippy title="backspace" data-arrow="true">@{{ folder }}</a>
+                                                    <a v-else v-tippy="{arrow: true}" title="backspace">@{{ folder }}</a>
                                                 </li>
                                             </template>
                                         </ol>
                                     </div>
 
                                     <div class="level-right is-hidden-touch">
-                                        <div class="toggle" @click="toggleInfo()" v-tippy title="t" data-arrow="true">
+                                        <div class="toggle" @click="toggleInfo()" v-tippy="{arrow: true}" title="t">
                                             <span>Close</span>
                                             <span class="icon"><i class="fa fa-angle-double-right"></i></span>
                                         </div>
@@ -342,10 +342,10 @@
                                                             </div>
                                                             <button class="modal-close is-large" aria-label="close" @click="toggleModal()"></button>
                                                         </div>
-                                                        <img :src="selectedFile.path" v-tippy title="space" data-arrow="true" class="pointer" @click="toggleModal('#img_modal')"/>
+                                                        <img :src="selectedFile.path" v-tippy="{position: 'right',arrow: true}" title="space" class="pointer" @click="toggleModal('#img_modal')"/>
                                                     </template>
                                                     <template v-if="selectedFileIs('video')">
-                                                        <video controls class="video player" :key="selectedFile.name" v-tippy title="space" data-arrow="true">
+                                                        <video controls class="video player" :key="selectedFile.name" v-tippy="{position: 'right', arrow: true}" title="space">
                                                             <source :src="selectedFile.path" type="video/mp4">
                                                             <source :src="selectedFile.path" type="video/ogg">
                                                             <source :src="selectedFile.path" type="video/webm">
@@ -353,7 +353,7 @@
                                                         </video>
                                                     </template>
                                                     <template v-if="selectedFileIs('audio')">
-                                                        <audio controls class="audio player" :key="selectedFile.name" v-tippy title="space" data-arrow="true">
+                                                        <audio controls class="audio player" :key="selectedFile.name" v-tippy="{position: 'right', arrow: true}" title="space">
                                                             <source :src="selectedFile.path" type="audio/ogg">
                                                             <source :src="selectedFile.path" type="audio/mpeg">
                                                             Your browser does not support the audio element.

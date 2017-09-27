@@ -59,7 +59,31 @@ export default {
         this.getFiles('/')
     },
     mounted() {
+        this.$tippy.forceUpdateHtml()
         this.initManager()
+    },
+    updated() {
+
+        // autoplay media
+        // last item will keep repeating unless we added the constrain "!last" below
+        // but now it wont play
+
+        if (this.filterNameIs('audio') || this.filterNameIs('video')) {
+            $('.player').bind('ended', () => {
+                // nav to next
+                $('#files li .selected').trigger($.Event('keydown', {keyCode: keycode('right')}))
+
+                let last = $('#files li:last-of-type').find('div.selected').length
+
+                // play navigated to
+                if (!last) {
+                    this.$nextTick(() => {
+                        $('.player')[0].play()
+                    })
+                }
+
+            })
+        }
     },
     methods: {
         initManager() {
@@ -117,7 +141,8 @@ export default {
 
             $(document).keydown((e) => {
 
-                let curSelected = parseInt($('#files li .selected').data('index'))
+                let curSelected = $('#files li .selected')
+                let curSelectedIndex = parseInt(curSelected.data('index'))
 
                 // when modal isnt visible
                 if (!$('.modal').hasClass('is-active')) {
@@ -132,18 +157,18 @@ export default {
                                 let newSelected = ''
                                 let index = ''
 
-                                if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelected !== 0) {
+                                if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
                                     e.preventDefault()
 
-                                    newSelected = curSelected - 1
+                                    newSelected = curSelectedIndex - 1
                                     cur = $('div[data-index="' + newSelected + '"]')
                                     this.scrollToFile(cur)
                                 }
 
-                                if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelected < this.allItemsCount - 1) {
+                                if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
                                     e.preventDefault()
 
-                                    newSelected = curSelected + 1
+                                    newSelected = curSelectedIndex + 1
                                     cur = $('div[data-index="' + newSelected + '"]')
                                     this.scrollToFile(cur)
                                 }
