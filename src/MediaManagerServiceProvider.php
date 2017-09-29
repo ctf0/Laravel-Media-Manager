@@ -74,7 +74,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         $search   = 'MediaManager';
 
         if ($this->checkExist($mix_file, $search)) {
-            $data = "\n// Media-Manager\nrequire('dotenv').config()\nmix.sass('resources/assets/vendor/MediaManager/sass/' + process.env.MIX_MM_FRAMEWORK + '/media.scss', 'public/assets/vendor/MediaManager/style.css').version();";
+            $data = "\n// Media-Manager\nrequire('dotenv').config()\nmix.sass('resources/assets/vendor/MediaManager/sass/media-' + process.env.MIX_MM_FRAMEWORK + '.scss', 'public/assets/vendor/MediaManager/style.css').version();";
 
             File::append($mix_file, $data);
         }

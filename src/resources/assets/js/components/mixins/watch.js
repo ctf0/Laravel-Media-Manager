@@ -55,7 +55,9 @@ export default {
                 }
             }
 
-            this.selectFirst()
+            if (!this.isBulkSelecting()) {
+                this.selectFirst()
+            }
         },
         showBy(val) {
             if (val) {

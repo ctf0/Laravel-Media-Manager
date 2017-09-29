@@ -14,7 +14,7 @@ Vue.use(require('vue-tippy'))
 Vue.use(require('vue2-filters'))
 
 /*                Components                */
-Vue.component('MediaManager', require('./components/' + process.env.MIX_MM_FRAMEWORK + '/media.vue'))
+Vue.component('MediaManager', require('./components/media-' + process.env.MIX_MM_FRAMEWORK + '.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */

@@ -1,6 +1,6 @@
-@import "../animated";
-@import "../progress";
-@import "../shared-styles";
+@import "./shared/animated";
+@import "./shared/progress";
+@import "./shared/manager";
 
 $gray_7: #b5b5b5;
 $turquoise: #00d1b2;
