@@ -40,7 +40,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view("MediaManager::{$this->fw}.media");
+        return view("MediaManager::media-{$this->fw}");
     }
 
     /**

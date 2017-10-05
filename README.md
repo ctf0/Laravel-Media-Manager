@@ -169,7 +169,7 @@ npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif --save
 
 > ***Or Use another Framework***
 >
-> - duplicate `views/vendor/MediaManager/bulma` and rename it to the framework you want ex.`bootstrap`
+> - duplicate `views/vendor/MediaManager/media-bulma` and rename it to the framework you want ex.`media-bootstrap`
 > - duplicate `assets/vendor/MediaManager/js/components/media-bulma.vue` and rename it to the framework you want ex.`media-bootstrap.vue`
 > - duplicate `assets/vendor/MediaManager/sass/media-bulma.scss` and rename it to the framework you want ex.`media-bootstrap.scss`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
