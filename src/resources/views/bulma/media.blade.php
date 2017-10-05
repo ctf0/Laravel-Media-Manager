@@ -54,7 +54,9 @@
                                             </div>
 
                                             <div class="control">
-                                                <button class="button is-light" id="refresh" v-tippy="{arrow: true}" title="r" @click="getFiles(folders)">
+                                                <button class="button is-light" id="refresh"
+                                                    v-tippy="{arrow: true}" title="r"
+                                                    @click="getFiles(folders)">
                                                     <span class="icon is-small"><i class="fa fa-refresh"></i></span>
                                                 </button>
                                             </div>
@@ -62,7 +64,9 @@
                                             <div class="control">
                                                 <div class="field has-addons">
                                                     <div class="control">
-                                                        <button class="button is-info" id="move" v-tippy="{arrow: true}" title="m" @click="toggleModal('#move_file_modal')">
+                                                        <button class="button is-info" id="move"
+                                                            v-tippy="{arrow: true}" title="m"
+                                                            @click="toggleModal('#move_file_modal')">
                                                             <span class="icon is-small"><i class="fa fa-share"></i></span>
                                                             <span>{{ trans('MediaManager::messages.move') }}</span>
                                                         </button>
@@ -74,7 +78,9 @@
                                                         </button>
                                                     </div>
                                                     <div class="control">
-                                                        <button class="button is-info" id="delete" v-tippy="{arrow: true}" title="d / del" @click="toggleModal('#confirm_delete_modal')">
+                                                        <button class="button is-info" id="delete"
+                                                            v-tippy="{arrow: true}" title="d / del"
+                                                            @click="toggleModal('#confirm_delete_modal')">
                                                             <span class="icon is-small"><i class="fa fa-trash"></i></span>
                                                             <span>{{ trans('MediaManager::messages.delete') }}</span>
                                                         </button>
@@ -197,7 +203,9 @@
                                                             </span>
                                                         </p>
                                                         <p class="control">
-                                                            <button class="button is-black" :disabled="!searchFor" @click="resetInput('searchFor')" v-tippy="{arrow: true}" title="Clear Search">
+                                                            <button class="button is-black" :disabled="!searchFor"
+                                                                v-tippy="{arrow: true}" title="Clear Search"
+                                                                @click="resetInput('searchFor')" >
                                                                 <span class="icon is-small"><i class="fa fa-times"></i></span>
                                                             </button>
                                                         </p>
@@ -239,7 +247,9 @@
                                     <div class="level-left">
                                         <ol class="breadcrumb">
                                             <li>
-                                                <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">{{ trans('MediaManager::messages.library') }}</a>
+                                                <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">
+                                                    {{ trans('MediaManager::messages.library') }}
+                                                </a>
                                                 <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
                                             </li>
 
@@ -268,7 +278,8 @@
                                         <ul id="files" class="tile">
                                             <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
                                                 @click="setSelected(file)" @dblclick="openFolder(file)">
-                                                <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}" :data-folder="file.name" :data-index="index">
+                                                <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
+                                                    :data-folder="file.name" :data-index="index">
                                                     <div class="link_icon">
                                                         <template v-if="fileTypeIs(file, 'image')">
                                                             <div class="img" :style="{ 'background-image': 'url(' + encodeURI(file.path) + ')' }"></div>
@@ -278,6 +289,7 @@
                                                             <i v-if="fileTypeIs(file, 'folder')" class="fa fa-folder fa-3x"></i>
                                                             <i v-if="fileTypeIs(file, 'video')" class="fa fa-video-camera fa-3x"></i>
                                                             <i v-if="fileTypeIs(file, 'audio')" class="fa fa-music fa-3x"></i>
+                                                            <i v-if="fileTypeIs(file, 'pdf')" class="fa fa-file-pdf-o fa-3x"></i>
                                                             <i v-if="fileTypeIs(file, 'text')" class="fa fa-file-text fa-3x"></i>
                                                         </span>
                                                     </div>
@@ -342,24 +354,33 @@
                                                             </div>
                                                             <button class="modal-close is-large" aria-label="close" @click="toggleModal()"></button>
                                                         </div>
-                                                        <img :src="selectedFile.path" v-tippy="{position: 'right',arrow: true}" title="space" class="pointer" @click="toggleModal('#img_modal')"/>
+                                                        <img :src="selectedFile.path"
+                                                            v-tippy="{position: 'right', arrow: true}"
+                                                            title="space" class="pointer"
+                                                            @click="toggleModal('#img_modal')"/>
                                                     </template>
+
                                                     <template v-if="selectedFileIs('video')">
-                                                        <video controls class="video player" :key="selectedFile.name" v-tippy="{position: 'right', arrow: true}" title="space">
+                                                        <video controls class="video player" :key="selectedFile.name"
+                                                            v-tippy="{position: 'right', arrow: true}" title="space">
                                                             <source :src="selectedFile.path" type="video/mp4">
                                                             <source :src="selectedFile.path" type="video/ogg">
                                                             <source :src="selectedFile.path" type="video/webm">
                                                             Your browser does not support the video tag.
                                                         </video>
                                                     </template>
+
                                                     <template v-if="selectedFileIs('audio')">
-                                                        <audio controls class="audio player" :key="selectedFile.name" v-tippy="{position: 'right', arrow: true}" title="space">
+                                                        <audio controls class="audio player" :key="selectedFile.name"
+                                                            v-tippy="{position: 'right', arrow: true}" title="space">
                                                             <source :src="selectedFile.path" type="audio/ogg">
                                                             <source :src="selectedFile.path" type="audio/mpeg">
                                                             Your browser does not support the audio element.
                                                         </audio>
                                                     </template>
+
                                                     <i v-if="selectedFileIs('folder')" class="fa fa-folder"></i>
+                                                    <i v-if="selectedFileIs('pdf')" class="fa fa-file-pdf-o"></i>
                                                     <i v-if="selectedFileIs('text')" class="fa fa-file-text-o"></i>
                                                 </div>
 
@@ -406,11 +427,17 @@
                                             <button class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
-                                            <input class="input" type="text" placeholder="{{ trans('MediaManager::messages.new_folder_name') }}" v-model="new_folder_name">
+                                            <input class="input" type="text"
+                                                placeholder="{{ trans('MediaManager::messages.new_folder_name') }}"
+                                                v-model="new_folder_name">
                                         </section>
                                         <footer class="modal-card-foot">
-                                            <button type="reset" class="button" @click="toggleModal()">{{ trans('MediaManager::messages.cancel') }}</button>
-                                            <button type="submit" class="button is-info submit">{{ trans('MediaManager::messages.create_new_folder') }}</button>
+                                            <button type="reset" class="button" @click="toggleModal()">
+                                                {{ trans('MediaManager::messages.cancel') }}
+                                            </button>
+                                            <button type="submit" class="button is-info submit">
+                                                {{ trans('MediaManager::messages.create_new_folder') }}
+                                            </button>
                                         </footer>
                                     </div>
                                 {{ Form::close() }}
@@ -423,17 +450,24 @@
                                         <header class="modal-card-head is-warning">
                                             <p class="modal-card-title">
                                                 <span class="icon"><i class="fa fa-i-cursor"></i></span>
-                                                <span> {{ trans('MediaManager::messages.rename_file_folder') }}</span>
+                                                <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
                                             </p>
                                             <button class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h4>
-                                            <input class="input" type="text" v-if="selectedFile" v-model="new_filename" @focus="new_filename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
+                                            <input class="input" type="text"
+                                                v-if="selectedFile"
+                                                v-model="new_filename"
+                                                @focus="new_filename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
                                         </section>
                                         <footer class="modal-card-foot">
-                                            <button type="reset" class="button" @click="toggleModal()">{{ trans('MediaManager::messages.cancel') }}</button>
-                                            <button type="submit" class="button is-warning submit">{{ trans('MediaManager::messages.rename') }}</button>
+                                            <button type="reset" class="button" @click="toggleModal()">
+                                                {{ trans('MediaManager::messages.cancel') }}
+                                            </button>
+                                            <button type="submit" class="button is-warning submit">
+                                                {{ trans('MediaManager::messages.rename') }}
+                                            </button>
                                         </footer>
                                     </div>
                                 {{ Form::close() }}
@@ -469,8 +503,12 @@
                                             </div>
                                         </section>
                                         <footer class="modal-card-foot">
-                                            <button type="reset" class="button" @click="toggleModal()">{{ trans('MediaManager::messages.cancel') }}</button>
-                                            <button type="submit" class="button is-warning submit">{{ trans('MediaManager::messages.move') }}</button>
+                                            <button type="reset" class="button" @click="toggleModal()">
+                                                {{ trans('MediaManager::messages.cancel') }}
+                                            </button>
+                                            <button type="submit" class="button is-warning submit">
+                                                {{ trans('MediaManager::messages.move') }}
+                                            </button>
                                         </footer>
                                     </div>
                                 {{ Form::close() }}
@@ -498,6 +536,7 @@
                                                                 <i v-if="fileTypeIs(item, 'image')" class="fa fa-image fa-lg"></i>
                                                                 <i v-if="fileTypeIs(item, 'video')" class="fa fa-video-camera fa-lg"></i>
                                                                 <i v-if="fileTypeIs(item, 'audio')" class="fa fa-music fa-lg"></i>
+                                                                <i v-if="fileTypeIs(item, 'pdf')" class="fa fa-file-pdf fa-lg"></i>
                                                                 <i v-if="fileTypeIs(item, 'text')" class="fa fa-file-text fa-lg"></i>
                                                             </span>
                                                         </td>
@@ -522,6 +561,7 @@
                                                                 <i v-if="selectedFileIs('image')" class="fa fa-image fa-lg"></i>
                                                                 <i v-if="selectedFileIs('video')" class="fa fa-video-camera fa-lg"></i>
                                                                 <i v-if="selectedFileIs('audio')" class="fa fa-music fa-lg"></i>
+                                                                <i v-if="selectedFileIs('pdf')" class="fa fa-file-pdf-o"></i>
                                                                 <i v-if="selectedFileIs('text')" class="fa fa-file-text fa-lg"></i>
                                                             </span>
                                                         </td>
@@ -535,8 +575,12 @@
                                             </h5>
                                         </section>
                                         <footer class="modal-card-foot">
-                                            <button type="reset" class="button" @click="toggleModal()">{{ trans('MediaManager::messages.cancel') }}</button>
-                                            <button type="submit" class="button is-danger submit">{{ trans('MediaManager::messages.delete_confirm') }}</button>
+                                            <button type="reset" class="button" @click="toggleModal()">
+                                                {{ trans('MediaManager::messages.cancel') }}
+                                            </button>
+                                            <button type="submit" class="button is-danger submit">
+                                                {{ trans('MediaManager::messages.delete_confirm') }}
+                                            </button>
                                         </footer>
                                     </div>
                                 {{ Form::close() }}

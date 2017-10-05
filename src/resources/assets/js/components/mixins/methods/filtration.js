@@ -17,7 +17,8 @@ export default {
                 if (!item.type.includes('folder') &&
                     !item.type.includes('image') &&
                     !item.type.includes('video') &&
-                    !item.type.includes('audio')) {
+                    !item.type.includes('audio') &&
+                    !item.type.includes('pdf')) {
                     return true
                 }
             }
@@ -34,6 +35,10 @@ export default {
                 this.resetInput('currentFilterName')
             } else {
                 this.filterdList = this.files.items.filter((item) => {
+                    if (val == 'text') {
+                        return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
+                    }
+
                     return this.fileTypeIs(item, val)
                 })
 
