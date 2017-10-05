@@ -561,7 +561,7 @@
                                                                 <i v-if="selectedFileIs('image')" class="fa fa-image fa-lg"></i>
                                                                 <i v-if="selectedFileIs('video')" class="fa fa-video-camera fa-lg"></i>
                                                                 <i v-if="selectedFileIs('audio')" class="fa fa-music fa-lg"></i>
-                                                                <i v-if="selectedFileIs('pdf')" class="fa fa-file-pdf-o"></i>
+                                                                <i v-if="selectedFileIs('pdf')" class="fa fa-file-pdf-o fa-lg"></i>
                                                                 <i v-if="selectedFileIs('text')" class="fa fa-file-text fa-lg"></i>
                                                             </span>
                                                         </td>
