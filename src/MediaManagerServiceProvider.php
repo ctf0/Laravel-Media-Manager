@@ -2,13 +2,17 @@
 
 namespace ctf0\MediaManager;
 
-use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
-    public function boot()
+    protected $file;
+
+    public function boot(Filesystem $file)
     {
+        $this->file = $file;
+
         $this->packagePublish();
 
         // append extra data
@@ -66,7 +70,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         if ($this->checkExist($route_file, $search)) {
             $data = "\n// Media-Manager\nctf0\MediaManager\MediaRoutes::routes();";
 
-            File::append($route_file, $data);
+            $this->file->append($route_file, $data);
         }
 
         // mix
@@ -76,7 +80,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         if ($this->checkExist($mix_file, $search)) {
             $data = "\n// Media-Manager\nrequire('dotenv').config()\nmix.sass('resources/assets/vendor/MediaManager/sass/media-' + process.env.MIX_MM_FRAMEWORK + '.scss', 'public/assets/vendor/MediaManager/style.css').version();";
 
-            File::append($mix_file, $data);
+            $this->file->append($mix_file, $data);
         }
 
         // fw
@@ -86,7 +90,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         if ($this->checkExist($env_file, $search)) {
             $data = "\nMIX_MM_FRAMEWORK=bulma";
 
-            File::append($env_file, $data);
+            $this->file->append($env_file, $data);
         }
 
         // run check once
@@ -105,7 +109,7 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function checkExist($file, $search)
     {
-        return File::exists($file) && !str_contains(File::get($file), $search);
+        return $this->file->exists($file) && !str_contains($this->file->get($file), $search);
     }
 
     /**

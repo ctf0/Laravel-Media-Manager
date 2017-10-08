@@ -2,6 +2,8 @@
     <img src="https://user-images.githubusercontent.com/7388088/30937714-e6537c94-a3d7-11e7-83e8-3052addc7ba0.png">
 </p>
 
+# Media Manager
+
 - Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
@@ -187,3 +189,5 @@ new Vue({
     el: '#app'
 })
 ```
+
+- now visit `localhost:8000/media`

@@ -47,20 +47,10 @@ export default {
                 new_folder_name: this.new_folder_name
             }, (data) => {
                 if (data.success) {
-                    this.showNotif({
-                        title: 'Success',
-                        body: `Successfully Created "${data.new_folder_name}" at "${data.full_path}"`,
-                        type: 'success',
-                        duration: 3
-                    })
-
+                    this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
                     this.getFiles(this.folders)
                 } else {
-                    this.showNotif({
-                        title: 'Error',
-                        body: data.message,
-                        type: 'danger'
-                    })
+                    this.showNotif(data.message, 'danger')
                 }
 
                 this.resetInput('new_folder_name')
@@ -84,24 +74,14 @@ export default {
                 new_filename: new_filename
             }, (data) => {
                 if (data.success) {
-                    this.showNotif({
-                        title: 'Success',
-                        body: `Successfully Renamed "${filename}" to "${data.new_filename}"`,
-                        type: 'success',
-                        duration: 3
-                    })
-
+                    this.showNotif(`Successfully Renamed "${filename}" to "${data.new_filename}"`)
                     this.updateItemName(this.selectedFile, filename, data.new_filename)
 
                     if (this.selectedFileIs('folder')) {
                         this.updateDirsList()
                     }
                 } else {
-                    this.showNotif({
-                        title: 'Error',
-                        body: data.message,
-                        type: 'danger'
-                    })
+                    this.showNotif(data.message, 'danger')
                 }
 
                 this.toggleModal()
@@ -144,13 +124,7 @@ export default {
             }, (res) => {
                 res.data.map((item) => {
                     if (item.success) {
-                        this.showNotif({
-                            title: 'Success',
-                            body: `Successfully moved "${item.name}" to "${destination}"`,
-                            type: 'success',
-                            duration: 3
-                        })
-
+                        this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
                         this.removeFromLists(item.name)
                         this.updateFolderCount(destination, 1, item.size)
 
@@ -159,11 +133,7 @@ export default {
                             this.updateDirsList()
                         }
                     } else {
-                        this.showNotif({
-                            title: 'Error',
-                            body: item.message,
-                            type: 'danger'
-                        })
+                        this.showNotif(item.message, 'danger')
                     }
                 })
 
@@ -189,20 +159,10 @@ export default {
             }, (res) => {
                 res.data.map((item) => {
                     if (item.success) {
-                        this.showNotif({
-                            title: 'Success',
-                            body: `Successfully Deleted "${item.name}"`,
-                            type: 'warning',
-                            duration: 3
-                        })
-
+                        this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
                         this.removeFromLists(item.name)
                     } else {
-                        this.showNotif({
-                            title: 'Error',
-                            body: item.message,
-                            type: 'danger'
-                        })
+                        this.showNotif(item.message, 'danger')
                     }
                 })
 

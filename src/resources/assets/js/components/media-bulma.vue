@@ -105,29 +105,16 @@ export default {
                 successmultiple(files, res) {
                     res.data.map((item) => {
                         if (item.success) {
-                            manager.showNotif({
-                                title: 'Success',
-                                body: `Successfully Uploaded "${item.message}"`,
-                                type: 'success',
-                                duration: 5
-                            })
+                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
                         } else {
-                            manager.showNotif({
-                                title: 'Error',
-                                body: item.message,
-                                type: 'danger'
-                            })
+                            manager.showNotif(item.message, 'danger')
                         }
                     })
 
                     manager.getFiles(manager.folders)
                 },
                 errormultiple(files, res) {
-                    this.showNotif({
-                        title: 'Error',
-                        body: res,
-                        type: 'danger'
-                    })
+                    this.showNotif(res, 'danger')
                 },
                 queuecomplete() {
                     $('#upload').trigger('click')

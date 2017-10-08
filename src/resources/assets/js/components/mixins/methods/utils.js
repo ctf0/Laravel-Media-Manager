@@ -6,12 +6,29 @@ export default {
         lightBoxIsActive() {
             return $('#img_modal').hasClass('is-active')
         },
-        showNotif(data) {
+        showNotif(msg, s = 'success') {
+
+            let title = ''
+            let duration = null
+
+            switch (s) {
+            case 'danger':
+                title = 'Error'
+                break
+            case 'warning':
+                title = 'Warning'
+                duration = 3
+                break
+            default:
+                title = 'Success'
+                duration = 3
+            }
+
             EventHub.fire('showNotif', {
-                title: data.title,
-                body: data.body,
-                type: data.type,
-                duration: data.duration !== undefined ? data.duration : undefined
+                title: title,
+                body: msg,
+                type: s,
+                duration: duration
             })
         },
         checkForFolders() {
