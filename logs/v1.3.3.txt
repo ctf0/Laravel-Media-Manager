@@ -1,0 +1,7 @@
+- add media autoplay
+- fix issue for bulk select and search
+- some changes to assets structure
+- better ux for pdf
+- change views folder structure
+- cleanup shownotif
+- update readme
