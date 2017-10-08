@@ -435,7 +435,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-info submit">
+                                            <button type="submit" class="button is-info submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.create_new_folder') }}
                                             </button>
                                         </footer>
@@ -465,7 +465,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-warning submit">
+                                            <button type="submit" class="button is-warning submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.rename') }}
                                             </button>
                                         </footer>
@@ -506,7 +506,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-warning submit">
+                                            <button type="submit" class="button is-warning submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.move') }}
                                             </button>
                                         </footer>
@@ -578,7 +578,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-danger submit">
+                                            <button type="submit" class="button is-danger submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.delete_confirm') }}
                                             </button>
                                         </footer>

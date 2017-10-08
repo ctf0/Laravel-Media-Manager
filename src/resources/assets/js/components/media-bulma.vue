@@ -22,6 +22,7 @@ export default {
     props: ['filesRoute', 'dirsRoute', 'hideExt'],
     data() {
         return {
+            is_loading: false,
             files: [],
             folders: [],
             directories: [],
@@ -63,11 +64,9 @@ export default {
         this.initManager()
     },
     updated() {
-
         // autoplay media
         // last item will keep repeating unless we added the constrain "!last" below
         // but now it wont play
-
         if (this.filterNameIs('audio') || this.filterNameIs('video')) {
             $('.player').bind('ended', () => {
                 // nav to next

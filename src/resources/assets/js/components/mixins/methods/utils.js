@@ -80,6 +80,9 @@ export default {
             $(selector).addClass('is-active')
             $(selector).find('input').focus()
         },
+        toggleLoading() {
+            return this.is_loading = !this.is_loading
+        },
         noScroll(s) {
             if (s == 'add') {
                 return $('html').addClass('no-scroll')

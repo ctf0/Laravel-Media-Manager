@@ -42,10 +42,14 @@ export default {
 
         /*                Tool-Bar                */
         NewFolderForm(event) {
+            this.toggleLoading()
+
             $.post(event.target.action, {
                 current_path: this.files.path,
                 new_folder_name: this.new_folder_name
             }, (data) => {
+                this.toggleLoading()
+
                 if (data.success) {
                     this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
                     this.getFiles(this.folders)
@@ -62,6 +66,8 @@ export default {
             })
         },
         RenameFileForm(event) {
+            this.toggleLoading()
+
             let filename = this.selectedFile.name
             let changed = this.new_filename
 
@@ -73,6 +79,8 @@ export default {
                 filename: filename,
                 new_filename: new_filename
             }, (data) => {
+                this.toggleLoading()
+
                 if (data.success) {
                     this.showNotif(`Successfully Renamed "${filename}" to "${data.new_filename}"`)
                     this.updateItemName(this.selectedFile, filename, data.new_filename)
@@ -115,6 +123,8 @@ export default {
 
         /*                Ops                */
         move_file(files, routeUrl) {
+            this.toggleLoading()
+
             let destination = $('#move_folder_dropdown').val()
 
             $.post(routeUrl, {
@@ -122,6 +132,8 @@ export default {
                 destination: destination,
                 moved_files: files
             }, (res) => {
+                this.toggleLoading()
+
                 res.data.map((item) => {
                     if (item.success) {
                         this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
@@ -153,10 +165,14 @@ export default {
             })
         },
         delete_file(files, routeUrl) {
+            this.toggleLoading()
+
             $.post(routeUrl, {
                 folder_location: this.folders,
                 deleted_files: files
             }, (res) => {
+                this.toggleLoading()
+
                 res.data.map((item) => {
                     if (item.success) {
                         this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
