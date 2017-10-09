@@ -424,7 +424,7 @@
                                                 <span class="icon"><i class="fa fa-folder"></i></span>
                                                 <span>{{ trans('MediaManager::messages.add_new_folder') }}</span>
                                             </p>
-                                            <button class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <input class="input" type="text"
@@ -435,7 +435,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-info submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
+                                            <button type="submit" class="button is-info" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.create_new_folder') }}
                                             </button>
                                         </footer>
@@ -452,7 +452,7 @@
                                                 <span class="icon"><i class="fa fa-i-cursor"></i></span>
                                                 <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
                                             </p>
-                                            <button class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h4>
@@ -465,7 +465,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-warning submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
+                                            <button type="submit" class="button is-warning" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.rename') }}
                                             </button>
                                         </footer>
@@ -482,7 +482,7 @@
                                                 <span class="icon"><i class="fa fa-share"></i></span>
                                                 <span>{{ trans('MediaManager::messages.move_file_folder') }}</span>
                                             </p>
-                                            <button class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.destination_folder') }}</h4>
@@ -506,7 +506,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-warning submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
+                                            <button type="submit" class="button is-warning" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.move') }}
                                             </button>
                                         </footer>
@@ -523,7 +523,7 @@
                                                 <span class="icon"><i class="fa fa-warning"></i></span>
                                                 <span>{{ trans('MediaManager::messages.are_you_sure') }}</span>
                                             </p>
-                                            <button class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.are_you_sure_delete') }}</h4>
@@ -578,7 +578,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-danger submit" :disabled="is_loading" :class="{'is-loading': is_loading}">
+                                            <button type="submit" class="button is-danger" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.delete_confirm') }}
                                             </button>
                                         </footer>

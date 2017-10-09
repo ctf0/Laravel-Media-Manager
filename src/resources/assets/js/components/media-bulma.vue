@@ -260,7 +260,7 @@ export default {
                 else {
                     if (keycode(e) == 'enter') {
                         e.preventDefault()
-                        $('.modal.is-active').find('.submit').trigger('click')
+                        $('.modal.is-active').find('button[type="submit"]').trigger('click')
                     }
 
                     if (this.lightBoxIsActive() && keycode(e) == 'space') {

@@ -42,11 +42,17 @@ export default {
 
         /*                Tool-Bar                */
         NewFolderForm(event) {
+            let folder_name = this.new_folder_name
+
+            if (!folder_name) {
+                return this.showNotif('Maybe You Should Add Something First', 'warning')
+            }
+
             this.toggleLoading()
 
             $.post(event.target.action, {
                 current_path: this.files.path,
-                new_folder_name: this.new_folder_name
+                new_folder_name: folder_name
             }, (data) => {
                 this.toggleLoading()
 
@@ -66,10 +72,15 @@ export default {
             })
         },
         RenameFileForm(event) {
+            let changed = this.new_filename
+
+            if (!changed) {
+                return this.showNotif('Maybe You Should Add Something First', 'warning')
+            }
+
             this.toggleLoading()
 
             let filename = this.selectedFile.name
-            let changed = this.new_filename
 
             let ext = filename.lastIndexOf('.') > 0 ? filename.substring(filename.lastIndexOf('.') + 1) : null
             let new_filename = ext == null ? changed : `${changed}.${ext}`
