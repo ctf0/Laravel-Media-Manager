@@ -140,6 +140,7 @@ return [
 
     /*
      * display file last modification time as
+     * http://carbon.nesbot.com/docs/#api-formatting
      */
     'last_modified_format' => 'toDateString',
 
