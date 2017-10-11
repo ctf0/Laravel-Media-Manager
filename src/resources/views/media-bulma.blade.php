@@ -220,7 +220,7 @@
                             {{-- ====================================================================== --}}
 
                             {{-- upload --}}
-                            <div class="field m-0">
+                            <div class="field is-marginless">
                                 <div id="dz">
                                     <form class="dz" id="new-upload" action="{{ route('media.upload') }}">
                                         <div class="dz-message title is-4">
@@ -352,7 +352,7 @@
                                                                     <img :src="selectedFile.path">
                                                                 </p>
                                                             </div>
-                                                            <button class="modal-close is-large" aria-label="close" @click="toggleModal()"></button>
+                                                            <button class="modal-close is-large" @click="toggleModal()"></button>
                                                         </div>
                                                         <img :src="selectedFile.path"
                                                             v-tippy="{position: 'right', arrow: true}"
@@ -424,7 +424,7 @@
                                                 <span class="icon"><i class="fa fa-folder"></i></span>
                                                 <span>{{ trans('MediaManager::messages.add_new_folder') }}</span>
                                             </p>
-                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <input class="input" type="text"
@@ -452,7 +452,7 @@
                                                 <span class="icon"><i class="fa fa-i-cursor"></i></span>
                                                 <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
                                             </p>
-                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h4>
@@ -482,7 +482,7 @@
                                                 <span class="icon"><i class="fa fa-share"></i></span>
                                                 <span>{{ trans('MediaManager::messages.move_file_folder') }}</span>
                                             </p>
-                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.destination_folder') }}</h4>
@@ -523,7 +523,7 @@
                                                 <span class="icon"><i class="fa fa-warning"></i></span>
                                                 <span>{{ trans('MediaManager::messages.are_you_sure') }}</span>
                                             </p>
-                                            <button type="button" class="delete" aria-label="close" @click="toggleModal()"></button>
+                                            <button type="button" class="delete" @click="toggleModal()"></button>
                                         </header>
                                         <section class="modal-card-body">
                                             <h4 class="title">{{ trans('MediaManager::messages.are_you_sure_delete') }}</h4>

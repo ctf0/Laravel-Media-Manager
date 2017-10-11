@@ -53,10 +53,10 @@ export default {
                 return 'N/A'
             }
 
-            let k = 1000,
-                dm = 2,
-                sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-                i = Math.floor(Math.log(bytes) / Math.log(k))
+            let k = 1000
+            let dm = 2
+            let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+            let i = Math.floor(Math.log(bytes) / Math.log(k))
 
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
         },

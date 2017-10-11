@@ -17,10 +17,10 @@ $blue_2: #276cda;
 // toolbar
 #toolbar {
     flex-wrap: wrap;
+    margin: 0;
     padding: 1rem;
     border: 1px solid $gray_2;
     border-bottom: 0;
-    margin: 0;
     border-radius: 4px 4px 0 0;
     background: $white_gray;
 }
@@ -62,11 +62,11 @@ $blue_2: #276cda;
 
 // breadcrump
 .breadcrumb-container {
+    margin: 0 !important;
     padding: 0.5rem 1rem;
     border: 1px solid $gray_2;
     border-top: 0;
     background: $gray_3;
-    margin: 0 !important;
 
     .breadcrumb {
         margin-bottom: 0 !important;
@@ -368,8 +368,4 @@ $blue_2: #276cda;
 
 .m-l-50 {
     margin-left: 50px !important;
-}
-
-.m-0 {
-    margin: 0 !important;
 }

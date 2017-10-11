@@ -2,6 +2,7 @@ export default {
     watch: {
         allFiles(val) {
             if (val.length < 1) {
+                this.resetInput('selectedFile')
                 return this.noFiles('show')
             }
 

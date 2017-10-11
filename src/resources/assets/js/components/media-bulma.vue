@@ -85,6 +85,44 @@ export default {
         }
     },
     methods: {
+        navigation(e, curSelectedIndex) {
+            e.preventDefault()
+
+            let cur = ''
+            let newSelected = ''
+
+            // go to prev image
+            if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
+                newSelected = curSelectedIndex - 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to next image
+            if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
+                newSelected = curSelectedIndex + 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to last item
+            if (keycode(e) == 'end') {
+                newSelected = this.allItemsCount - 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to first item
+            if (keycode(e) == 'home') {
+                this.scrollToFile()
+            }
+
+            if (!this.selectedFileIs('image')) {
+                this.noScroll()
+            }
+        },
+
+        // init
         initManager() {
             let manager = this
 
@@ -129,78 +167,42 @@ export default {
 
                 let curSelected = $('#files li .selected')
                 let curSelectedIndex = parseInt(curSelected.data('index'))
+                let newSelected = ''
 
                 // when modal isnt visible
                 if (!$('.modal').hasClass('is-active')) {
                     // when search is not focused
                     if (!$('.input').is(':focus')) {
-                        // lightbox is not active
-                        if (!this.lightBoxIsActive()) {
-                            // when no bulk selecting
-                            if (!this.isBulkSelecting()) {
+                        // when no bulk selecting
+                        if (!this.isBulkSelecting()) {
 
-                                let cur = ''
-                                let newSelected = ''
-                                let index = ''
+                            // open folder
+                            if (keycode(e) == 'enter' && this.selectedFile) {
+                                this.openFolder(this.selectedFile)
+                            }
 
-                                if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
+                            // go up a dir
+                            if (keycode(e) == 'backspace' && this.folders.length) {
+                                newSelected = parseInt(this.folders.length) - 1
+
+                                if (newSelected < 0) {
+                                    return false
+                                }
+
+                                this.goToFolder(newSelected)
+                            }
+
+                            // when there are files
+                            if (this.allItemsCount) {
+                                this.navigation(e, curSelectedIndex)
+
+                                if (
+                                    keycode(e) == 'space' && e.target == document.body &&
+                                    (this.selectedFileIs('video') || this.selectedFileIs('audio') || this.selectedFileIs('image'))
+                                ) {
                                     e.preventDefault()
 
-                                    newSelected = curSelectedIndex - 1
-                                    cur = $('div[data-index="' + newSelected + '"]')
-                                    this.scrollToFile(cur)
-                                }
-
-                                if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
-                                    e.preventDefault()
-
-                                    newSelected = curSelectedIndex + 1
-                                    cur = $('div[data-index="' + newSelected + '"]')
-                                    this.scrollToFile(cur)
-                                }
-
-                                // open folder
-                                if (keycode(e) == 'enter') {
-                                    this.openFolder(this.selectedFile)
-                                }
-
-                                // go up a dir
-                                if (keycode(e) == 'backspace') {
-                                    index = parseInt(this.folders.length) - 1
-
-                                    if (index < 0) {
-                                        return false
-                                    }
-
-                                    this.goToFolder(index)
-                                }
-
-                                // go to first / last item
-                                if (this.allItemsCount) {
-                                    if (keycode(e) == 'home') {
-                                        e.preventDefault()
-
-                                        this.scrollToFile()
-                                    }
-
-                                    if (keycode(e) == 'end') {
-                                        e.preventDefault()
-
-                                        index = this.allItemsCount - 1
-                                        cur = $('div[data-index="' + index + '"]')
-                                        this.scrollToFile(cur)
-                                    }
-                                }
-
-                                // file upload
-                                if (keycode(e) == 'u') {
-                                    $('#upload').trigger('click')
-                                }
-
-                                // play-pause for media
-                                if (keycode(e) == 'space' && e.target == document.body) {
-                                    e.preventDefault()
-
+                                    // play-pause media
                                     if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
                                         return $('.player')[0].paused
                                             ? $('.player')[0].play()
@@ -213,44 +215,49 @@ export default {
                                         this.toggleModal('#img_modal')
                                     }
                                 }
-                            }
-                            /* end of no bulk selection */
-
-                            // when there are files
-                            if (this.allItemsCount) {
-                                // bulk select
-                                if (keycode(e) == 'b') {
-                                    $('#blk_slct').trigger('click')
-                                }
-
-                                // add all to bulk list
-                                if (this.isBulkSelecting() && keycode(e) == 'a') {
-                                    $('#blk_slct_all').trigger('click')
-                                }
-
-                                // delete file
-                                if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                                    $('#delete').trigger('click')
-                                }
 
                                 // refresh
                                 if (keycode(e) == 'r') {
                                     $('#refresh').trigger('click')
                                 }
-
-                                // move file
-                                if (this.checkForFolders() && keycode(e) == 'm') {
-                                    $('#move').trigger('click')
-                                }
                             }
-                            /* end of there are files */
+                            // end of when there are files
 
-                            // toggle file details sidebar
-                            if (keycode(e) == 't') {
-                                $('.toggle').trigger('click')
+                            // file upload
+                            if (keycode(e) == 'u') {
+                                $('#upload').trigger('click')
                             }
                         }
-                        /* end of no lightbox is active */
+                        /* end of no bulk selection */
+
+                        // with or without bulk selection
+                        if (this.allItemsCount) {
+                            // bulk select
+                            if (keycode(e) == 'b') {
+                                $('#blk_slct').trigger('click')
+                            }
+
+                            // add all to bulk list
+                            if (this.isBulkSelecting() && keycode(e) == 'a') {
+                                $('#blk_slct_all').trigger('click')
+                            }
+
+                            // delete file
+                            if (keycode(e) == 'delete' || keycode(e) == 'd') {
+                                $('#delete').trigger('click')
+                            }
+
+                            // move file
+                            if (this.checkForFolders() && keycode(e) == 'm') {
+                                $('#move').trigger('click')
+                            }
+                        }
+                        /* end of with or without bulk selection */
+
+                        // toggle file details sidebar
+                        if (keycode(e) == 't') {
+                            $('.toggle').trigger('click')
+                        }
                     }
                     /* end of search is not focused */
                 }
@@ -263,11 +270,17 @@ export default {
                         $('.modal.is-active').find('button[type="submit"]').trigger('click')
                     }
 
-                    if (this.lightBoxIsActive() && keycode(e) == 'space') {
-                        e.preventDefault()
-                        this.toggleModal()
+                    if (this.lightBoxIsActive()) {
+                        // hide lb
+                        if (keycode(e) == 'space') {
+                            e.preventDefault()
+                            this.toggleModal()
+                        }
+
+                        this.navigation(e, curSelectedIndex)
                     }
 
+                    // hide lb
                     if (keycode(e) == 'esc') {
                         this.toggleModal()
                     }
