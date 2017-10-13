@@ -55,17 +55,16 @@ export default {
                 new_folder_name: folder_name
             }, (data) => {
                 this.toggleLoading()
-
-                if (data.success) {
-                    this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
-                    this.getFiles(this.folders)
-                } else {
-                    this.showNotif(data.message, 'danger')
-                }
-
                 this.resetInput('new_folder_name')
                 this.toggleModal()
                 this.scrollToFile()
+
+                if (!data.success) {
+                    return this.showNotif(data.message, 'danger')
+                }
+
+                this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
+                this.getFiles(this.folders)
 
             }).fail(() => {
                 this.ajaxError()
@@ -91,19 +90,18 @@ export default {
                 new_filename: new_filename
             }, (data) => {
                 this.toggleLoading()
+                this.toggleModal()
 
-                if (data.success) {
-                    this.showNotif(`Successfully Renamed "${filename}" to "${data.new_filename}"`)
-                    this.updateItemName(this.selectedFile, filename, data.new_filename)
-
-                    if (this.selectedFileIs('folder')) {
-                        this.updateDirsList()
-                    }
-                } else {
-                    this.showNotif(data.message, 'danger')
+                if (!data.success) {
+                    return this.showNotif(data.message, 'danger')
                 }
 
-                this.toggleModal()
+                this.showNotif(`Successfully Renamed "${filename}" to "${data.new_filename}"`)
+                this.updateItemName(this.selectedFile, filename, data.new_filename)
+
+                if (this.selectedFileIs('folder')) {
+                    this.updateDirsList()
+                }
 
             }).fail(() => {
                 this.ajaxError()
@@ -146,17 +144,17 @@ export default {
                 this.toggleLoading()
 
                 res.data.map((item) => {
-                    if (item.success) {
-                        this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
-                        this.removeFromLists(item.name)
-                        this.updateFolderCount(destination, 1, item.size)
+                    if (!item.success) {
+                        return this.showNotif(item.message, 'danger')
+                    }
 
-                        // update dirs list after move
-                        if (item.type.includes('folder')) {
-                            this.updateDirsList()
-                        }
-                    } else {
-                        this.showNotif(item.message, 'danger')
+                    this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
+                    this.removeFromLists(item.name)
+                    this.updateFolderCount(destination, 1, item.size)
+
+                    // update dirs list after move
+                    if (item.type.includes('folder')) {
+                        this.updateDirsList()
                     }
                 })
 
@@ -185,12 +183,12 @@ export default {
                 this.toggleLoading()
 
                 res.data.map((item) => {
-                    if (item.success) {
-                        this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
-                        this.removeFromLists(item.name)
-                    } else {
-                        this.showNotif(item.message, 'danger')
+                    if (!item.success) {
+                        return this.showNotif(item.message, 'danger')
                     }
+
+                    this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
+                    this.removeFromLists(item.name)
                 })
 
                 this.toggleModal()

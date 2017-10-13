@@ -5,7 +5,7 @@
     {{-- FW --}}
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     {{-- bulma --}}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.5.3/css/bulma.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
     {{-- Main styles --}}
     <link rel="stylesheet" href="{{ mix('assets/vendor/MediaManager/style.css') }}"/>
 </head>
@@ -64,7 +64,7 @@
                                             <div class="control">
                                                 <div class="field has-addons">
                                                     <div class="control">
-                                                        <button class="button is-info" id="move"
+                                                        <button class="button is-link" id="move"
                                                             v-tippy="{arrow: true}" title="m"
                                                             @click="toggleModal('#move_file_modal')">
                                                             <span class="icon is-small"><i class="fa fa-share"></i></span>
@@ -72,13 +72,13 @@
                                                         </button>
                                                     </div>
                                                     <div class="control">
-                                                        <button class="button is-info" id="rename" @click="toggleModal('#rename_file_modal')">
+                                                        <button class="button is-link" id="rename" @click="toggleModal('#rename_file_modal')">
                                                             <span class="icon is-small"><i class="fa fa-i-cursor"></i></span>
                                                             <span>{{ trans('MediaManager::messages.rename') }}</span>
                                                         </button>
                                                     </div>
                                                     <div class="control">
-                                                        <button class="button is-info" id="delete"
+                                                        <button class="button is-link" id="delete"
                                                             v-tippy="{arrow: true}" title="d / del"
                                                             @click="toggleModal('#confirm_delete_modal')">
                                                             <span class="icon is-small"><i class="fa fa-trash"></i></span>
@@ -124,7 +124,7 @@
                                                             <button @click="showFilesOfType('image')"
                                                                 v-tippy="{arrow: true}" title="Filter By Image"
                                                                 class="button"
-                                                                :class="{'is-info': filterNameIs('image')}"
+                                                                :class="{'is-link': filterNameIs('image')}"
                                                                 :disabled="!btnFilter('image')">
                                                                 <span class="icon is-small"><i class="fa fa-image"></i></span>
                                                             </button>
@@ -133,7 +133,7 @@
                                                             <button @click="showFilesOfType('video')"
                                                                 v-tippy="{arrow: true}" title="Filter By Video"
                                                                 class="button"
-                                                                :class="{'is-info': filterNameIs('video')}"
+                                                                :class="{'is-link': filterNameIs('video')}"
                                                                 :disabled="!btnFilter('video')">
                                                                 <span class="icon is-small"><i class="fa fa-video-camera"></i></span>
                                                             </button>
@@ -142,7 +142,7 @@
                                                             <button @click="showFilesOfType('audio')"
                                                                 v-tippy="{arrow: true}" title="Filter By Audio"
                                                                 class="button"
-                                                                :class="{'is-info': filterNameIs('audio')}"
+                                                                :class="{'is-link': filterNameIs('audio')}"
                                                                 :disabled="!btnFilter('audio')">
                                                                 <span class="icon is-small"><i class="fa fa-music"></i></span>
                                                             </button>
@@ -151,7 +151,7 @@
                                                             <button @click="showFilesOfType('folder')"
                                                                 v-tippy="{arrow: true}" title="Filter By Folder"
                                                                 class="button"
-                                                                :class="{'is-info': filterNameIs('folder')}"
+                                                                :class="{'is-link': filterNameIs('folder')}"
                                                                 :disabled="!btnFilter('folder')">
                                                                 <span class="icon is-small"><i class="fa fa-folder"></i></span>
                                                             </button>
@@ -160,7 +160,7 @@
                                                             <button @click="showFilesOfType('text')"
                                                                 v-tippy="{arrow: true}" title="Filter By Text"
                                                                 class="button"
-                                                                :class="{'is-info': filterNameIs('text')}"
+                                                                :class="{'is-link': filterNameIs('text')}"
                                                                 :disabled="!btnFilter('text')">
                                                                 <span class="icon is-small"><i class="fa fa-file-text"></i></span>
                                                             </button>
@@ -419,7 +419,7 @@
                                 {{ Form::open(['route' => 'media.new_folder', '@submit.prevent'=>'NewFolderForm($event)']) }}
                                     <div class="modal-background pointer" @click="toggleModal()"></div>
                                     <div class="modal-card animated fadeInDown">
-                                        <header class="modal-card-head is-info">
+                                        <header class="modal-card-head is-link">
                                             <p class="modal-card-title">
                                                 <span class="icon"><i class="fa fa-folder"></i></span>
                                                 <span>{{ trans('MediaManager::messages.add_new_folder') }}</span>
@@ -435,7 +435,7 @@
                                             <button type="reset" class="button" @click="toggleModal()">
                                                 {{ trans('MediaManager::messages.cancel') }}
                                             </button>
-                                            <button type="submit" class="button is-info" :disabled="is_loading" :class="{'is-loading': is_loading}">
+                                            <button type="submit" class="button is-link" :disabled="is_loading" :class="{'is-loading': is_loading}">
                                                 {{ trans('MediaManager::messages.create_new_folder') }}
                                             </button>
                                         </footer>

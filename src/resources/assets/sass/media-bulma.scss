@@ -1,7 +1,6 @@
 @import "./shared/animated";
 @import "./shared/progress";
 @import "./shared/manager";
-
 $gray_7: #b5b5b5;
 $turquoise: #00d1b2;
 $green: #23d160;
@@ -18,7 +17,7 @@ $orange: #ff470f;
     background-color: $red;
 }
 
-.is-info {
+.is-link {
     background-color: $blue;
 }
 
@@ -31,7 +30,7 @@ $orange: #ff470f;
 }
 
 .is-danger,
-.is-info,
+.is-link,
 .is-primary,
 .is-success {
     * {
@@ -65,11 +64,11 @@ table,
 }
 
 .modal.is-active {
-    padding-top: 3%;
     align-items: start;
+    padding-top: 3%;
 }
 
 .modal-card-foot {
-    background-color: white;
     justify-content: flex-end;
+    background-color: white;
 }

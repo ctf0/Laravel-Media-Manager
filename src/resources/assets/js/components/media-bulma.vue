@@ -86,13 +86,14 @@ export default {
     },
     methods: {
         navigation(e, curSelectedIndex) {
-            e.preventDefault()
 
             let cur = ''
             let newSelected = ''
 
             // go to prev image
             if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
+                e.preventDefault()
+
                 newSelected = curSelectedIndex - 1
                 cur = $('div[data-index="' + newSelected + '"]')
                 this.scrollToFile(cur)
@@ -100,6 +101,8 @@ export default {
 
             // go to next image
             if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
+                e.preventDefault()
+
                 newSelected = curSelectedIndex + 1
                 cur = $('div[data-index="' + newSelected + '"]')
                 this.scrollToFile(cur)
@@ -107,6 +110,8 @@ export default {
 
             // go to last item
             if (keycode(e) == 'end') {
+                e.preventDefault()
+
                 newSelected = this.allItemsCount - 1
                 cur = $('div[data-index="' + newSelected + '"]')
                 this.scrollToFile(cur)
@@ -114,6 +119,7 @@ export default {
 
             // go to first item
             if (keycode(e) == 'home') {
+                e.preventDefault()
                 this.scrollToFile()
             }
 
