@@ -18,8 +18,19 @@ import Watchers from './mixins/watch'
 
 export default {
     name: 'media-manager',
-    mixins: [Form, FileFiltration, BulkSelect, SelectedFile, Utilities, Watchers],
-    props: ['filesRoute', 'dirsRoute', 'hideExt'],
+    mixins: [
+        Form,
+        FileFiltration,
+        BulkSelect,
+        SelectedFile,
+        Utilities,
+        Watchers
+    ],
+    props: [
+        'filesRoute',
+        'dirsRoute',
+        'hideExt'
+    ],
     data() {
         return {
             is_loading: false,

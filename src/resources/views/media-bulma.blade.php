@@ -24,7 +24,7 @@
                     <media-manager inline-template
                         files-route="{{ route('media.files') }}"
                         dirs-route="{{ route('media.directories') }}"
-                        :hide-ext="{{ config('mediaManager.hide_ext') }}">
+                        :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}">
                         <div>
 
                             {{-- top toolbar --}}
@@ -277,9 +277,11 @@
                                     <div id="left">
                                         <ul id="files" class="tile">
                                             <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
-                                                @click="setSelected(file)" @dblclick="openFolder(file)">
+                                                @click="setSelected(file)"
+                                                @dblclick="openFolder(file)">
                                                 <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
-                                                    :data-folder="file.name" :data-index="index">
+                                                    :data-folder="file.name"
+                                                    :data-index="index">
                                                     <div class="link_icon">
                                                         <template v-if="fileTypeIs(file, 'image')">
                                                             <div class="img" :style="{ 'background-image': 'url(' + encodeURI(file.path) + ')' }"></div>
@@ -397,6 +399,9 @@
                                                             <h4>Public URL: <a :href="selectedFile.path" target="_blank">Click Here</a></h4>
                                                         </template>
                                                         <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
+                                                        <template v-if="!selectedFileIs('folder')">
+                                                            <h4>Download File: <a :href="selectedFile.path" download><span class="icon has-text-link"><i class="fa fa-download fa-lg"></i></span></a></h4>
+                                                        </template>
                                                     </div>
                                                 </div>
                                             </template>
