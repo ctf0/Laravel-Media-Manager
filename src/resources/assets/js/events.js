@@ -22,7 +22,7 @@ EventHub.listen('no-files-hide', () => {
 
 // A J A X  - E R R O R //
 EventHub.listen('ajax-error-show', () => {
-    bm(document.getElementById('ajax_error_anim'), 'ajax_error_anim')
+    bm(document.getElementById('ajax_error_anim'))
 })
 
 /**
