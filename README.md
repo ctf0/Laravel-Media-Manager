@@ -63,27 +63,27 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |            button           |  keyboard |  mouse (click)  |
-    |---------------------|-----------------------------|-----------|-----------------|
-    |                     | upload *(toolbar)*          | u         | *               |
-    |                     | refresh *(toolbar)*         | r         | *               |
-    |                     | move *(toolbar)*            | m         | *               |
-    |                     | delete *(toolbar)*          | d/del     | *               |
-    |                     | bulk select *(toolbar)*     | b         | *               |
-    |                     | bulk select all *(toolbar)* | a         | *               |
-    |                     | file rename *(modal)*       | enter     | *               |
-    |                     | file delete *(modal)*       | enter     | *               |
-    |                     | create new folder *(modal)* | enter     | *               |
-    |                     | toggle *(sidebar)*          | t         | *               |
-    |                     | play/pause media            | space     | * *(sidebar)*   |
-    |                     | view image                  | space     | * *(sidebar)*   |
-    |                     | hide image                  | space/esc | * *(light-box)* |
-    | select next         |                             | right     | *               |
-    | select prev         |                             | left      | *               |
-    | select first        |                             | home      | *               |
-    | select last         |                             | end       | *               |
-    | open folder         |                             | enter     | double click    |
-    | go back to prev dir | folderName *(breadcrumb)*   | backspace | *               |
+    |      navigation     |            button            |  keyboard | mouse (click) |
+    |---------------------|------------------------------|-----------|---------------|
+    |                     | upload *(toolbar)*           | u         | *             |
+    |                     | refresh *(toolbar)*          | r         | *             |
+    |                     | move *(toolbar)*             | m         | *             |
+    |                     | delete *(toolbar)*           | d/del     | *             |
+    |                     | bulk select *(toolbar)*      | b         | *             |
+    |                     | bulk select all *(toolbar)*  | a         | *             |
+    |                     | file rename *(modal)*        | enter     | *             |
+    |                     | file delete *(modal)*        | enter     | *             |
+    |                     | create new folder *(modal)*  | enter     | *             |
+    |                     | toggle *(sidebar)*           | t         | *             |
+    |                     | play/pause media *(sidebar)* | space     | *             |
+    |                     | view image *(sidebar)*       | space     | *             |
+    |                     | hide image *(light-box)*     | space/esc | *             |
+    | select next         |                              | right     | *             |
+    | select prev         |                              | left      | *             |
+    | select first        |                              | home      | *             |
+    | select last         |                              | end       | *             |
+    | open folder         |                              | enter     | double click  |
+    | go back to prev dir | folderName *(breadcrumb)*    | backspace | *             |
 
 - events
 
@@ -99,7 +99,7 @@
     |         | loading-files-hide                  | when loading files is hidden |
     |         | ajax-error-show                     | when ajax call fails         |
     | Laravel |                                     |                              |
-    |         | MMFileUploaded($file_path)          | get uploade file full path   |
+    |         | MMFileUploaded($file_path)          | get uploaded file full path  |
     |         | MMFileDeleted($file_path)           | get deleted file full path   |
     |         | MMFolderDeleted($file_path)         | get deleted folder full path |
     |         | MMFileRenamed($old_path, $new_path) | get renamed file/folder path |
