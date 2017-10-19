@@ -19,6 +19,7 @@ export default {
             }, (res) => {
                 this.files = res
                 this.loadingFiles('hide')
+                this.noFiles('hide')
                 this.selectFirst()
                 $('#right').fadeIn()
 
@@ -57,7 +58,6 @@ export default {
                 this.toggleLoading()
                 this.resetInput('new_folder_name')
                 this.toggleModal()
-                this.scrollToFile()
 
                 if (!data.success) {
                     return this.showNotif(data.message, 'danger')

@@ -52,7 +52,7 @@ class MediaController extends Controller
      */
     public function get_files(Request $request)
     {
-        $folder = $request->folder !== '/'
+        $folder = '/' !== $request->folder
         ? $request->folder
         : '';
 
@@ -92,34 +92,39 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $upload_path = $request->upload_path;
+        $files       = $request->file;
         $result      = [];
 
-        foreach ($request->file as $one) {
-            $file_name   = $one->getClientOriginalName();
-            $destination = "$upload_path/{$this->cleanName($file_name)}";
-            $file_type   = $one->getMimeType();
-
+        foreach ($files as $one) {
             try {
                 // check for mime type
+                $file_type = $one->getMimeType();
+
                 if (str_contains($file_type, $this->unallowed_mimes)) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
+
+                $file_name   = $one->getClientOriginalName();
+                $destination = "$upload_path/{$this->cleanName($file_name)}";
 
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
                     throw new Exception(trans('MediaManager::messages.error_may_exist'));
                 }
 
-                // check name
                 // because dropzone automatically sanitize the file name
                 if ($file_name == '.' . $one->getClientOriginalExtension()) {
                     $file_name = $this->sanitizedText . $file_name;
                 }
 
-                $path = $one->storeAs($upload_path, $this->cleanName($file_name), $this->fileSystem);
+                // save file
+                $saved_name = $one->storeAs($upload_path, $this->cleanName($file_name), $this->fileSystem);
+
+                // fire event
+                event('MMFileUploaded', $this->getFilePath($this->fileSystem, $saved_name));
 
                 $result[] = [
-                    'path'    => preg_replace('/^public\//', '', $path),
+                    'path'    => preg_replace('/^public\//', '', $saved_name),
                     'success' => true,
                     'message' => $file_name,
                 ];
@@ -187,12 +192,15 @@ class MediaController extends Controller
 
             $file_name = "$folderLocation/$file_name";
 
-            if ($type == 'folder') {
+            if ('folder' == $type) {
                 if (!$this->storageDisk->deleteDirectory($file_name)) {
                     $result[] = [
                         'success' => false,
                         'message' => trans('MediaManager::messages.error_deleting_folder'),
                     ];
+                } else {
+                    // fire event
+                    event('MMFolderDeleted', $this->getFilePath($this->fileSystem, $file_name));
                 }
             } else {
                 if (!$this->storageDisk->delete($file_name)) {
@@ -200,6 +208,9 @@ class MediaController extends Controller
                         'success' => false,
                         'message' => trans('MediaManager::messages.error_deleting_file'),
                     ];
+                } else {
+                    // fire event
+                    event('MMFileDeleted', $this->getFilePath($this->fileSystem, $file_name));
                 }
             }
         }
@@ -229,14 +240,14 @@ class MediaController extends Controller
             $file_size   = $one['size'];
 
             $destination = "{$request->destination}/$file_name";
-            $file_name   = "$folderLocation/$file_name";
-            $destination = strpos($destination, '../') == true
+            $old_path    = "$folderLocation/$file_name";
+            $new_path    = true == strpos($destination, '../')
                             ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
                             : "$folderLocation/$destination";
 
             try {
-                if (!file_exists($destination)) {
-                    if ($this->storageDisk->move($file_name, $destination)) {
+                if (!file_exists($new_path)) {
+                    if ($this->storageDisk->move($old_path, $new_path)) {
                         $result[] = [
                             'success' => true,
                             'name'    => $one['name'],
@@ -252,7 +263,7 @@ class MediaController extends Controller
             } catch (Exception $e) {
                 $result[] = [
                     'success' => false,
-                    'message' => "\"$file_name\" " . $e->getMessage(),
+                    'message' => "\"$old_path\" " . $e->getMessage(),
                 ];
             }
         }
@@ -282,6 +293,12 @@ class MediaController extends Controller
             if ($this->storageDisk->move("$folderLocation/$filename", "$folderLocation/$new_filename")) {
                 $message = '';
                 $success = true;
+
+                // fire event
+                event('MMFileRenamed', [
+                    'old' => $this->getFilePath($this->fileSystem, "$folderLocation/$filename"),
+                    'new' => $this->getFilePath($this->fileSystem, "$folderLocation/$new_filename"),
+                ]);
             } else {
                 $message = trans('MediaManager::messages.error_moving');
             }

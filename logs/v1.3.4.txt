@@ -1,3 +1,0 @@
-- fix pressing enter not working correctly because “selectedFile” is not cleared after last dir
-- more optimization for keyboard events so now it fires only when needed.
-- you can now use “left/right/home/end” when image lightBox is active

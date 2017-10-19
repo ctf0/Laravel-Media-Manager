@@ -602,7 +602,7 @@
     {{-- footer --}}
     <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.10.2/bodymovin.min.js"></script>
     <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="{{ mix("path/to/app.js") }}"></script>
+    <script src="{{ asset("path/to/app.js") }}"></script>
 
     {{-- animations --}}
     {{-- moved to events @ js/events.js --}}

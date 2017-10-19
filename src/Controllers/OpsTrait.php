@@ -71,7 +71,7 @@ trait OpsTrait
 
         $text = preg_replace($pattern, '', $text);
 
-        return $text == '' ? $this->sanitizedText : $text;
+        return '' == $text ? $this->sanitizedText : $text;
     }
 
     protected function filePattern($file)
@@ -106,5 +106,28 @@ trait OpsTrait
     protected function folderFiles($folder)
     {
         return $this->storageDisk->allFiles($folder);
+    }
+
+    /**
+     * get file path from storange.
+     *
+     * @param [type] $disk [description]
+     * @param [type] $name [description]
+     *
+     * @return [type] [description]
+     */
+    protected function getFilePath($disk, $name)
+    {
+        $config = config("filesystems.disks.$disk");
+        $url    = app('filesystem')->disk($disk)->url($name);
+        $dir    = str_replace(array_get($config, 'url'), '', $url);
+        $root   = array_get($config, 'root');
+
+        // for other disks without root ex."cloud"
+        if (!$root) {
+            return preg_replace('/(.*\/\/.*?)\//', '', $url);
+        }
+
+        return $root . $dir;
     }
 }

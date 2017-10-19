@@ -232,13 +232,13 @@ export default {
                                         this.toggleModal('#img_modal')
                                     }
                                 }
-
-                                // refresh
-                                if (keycode(e) == 'r') {
-                                    $('#refresh').trigger('click')
-                                }
                             }
                             // end of when there are files
+
+                            // refresh
+                            if (keycode(e) == 'r') {
+                                $('#refresh').trigger('click')
+                            }
 
                             // file upload
                             if (keycode(e) == 'u') {

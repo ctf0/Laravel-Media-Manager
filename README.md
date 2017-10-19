@@ -63,39 +63,46 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |             button            |  keyboard | mouse (click) |
-    |---------------------|-------------------------------|-----------|---------------|
-    |                     | upload *(toolbar)*            | u         | *             |
-    |                     | refresh *(toolbar)*           | r         | *             |
-    |                     | move *(toolbar)*              | m         | *             |
-    |                     | delete *(toolbar)*            | d/del     | *             |
-    |                     | bulk select *(toolbar)*       | b         | *             |
-    |                     | bulk select all *(toolbar)*   | a         | *             |
-    |                     | toggle *(sidebar)*            | t         | *             |
-    |                     | file rename *(modal)*         | enter     | *             |
-    |                     | file delete *(modal)*         | enter     | *             |
-    |                     | create new folder *(modal)*   | enter     | *             |
-    | select next         |                               | right     | *             |
-    | select prev         |                               | left      | *             |
-    | select first        |                               | home      | *             |
-    | select last         |                               | end       | *             |
-    | open folder         |                               | enter     | double click  |
-    | go back to prev dir | folderName *(breadcrumb)*     | backspace | *             |
-    | play/pause media    | player controller *(sidebar)* | space     | *             |
-    | view image          | image *(sidebar)*             | space     | *             |
-    | hide image          | image *(light-box)*           | space/esc | *             |
+    |      navigation     |            button           |  keyboard |  mouse (click)  |
+    |---------------------|-----------------------------|-----------|-----------------|
+    |                     | upload *(toolbar)*          | u         | *               |
+    |                     | refresh *(toolbar)*         | r         | *               |
+    |                     | move *(toolbar)*            | m         | *               |
+    |                     | delete *(toolbar)*          | d/del     | *               |
+    |                     | bulk select *(toolbar)*     | b         | *               |
+    |                     | bulk select all *(toolbar)* | a         | *               |
+    |                     | file rename *(modal)*       | enter     | *               |
+    |                     | file delete *(modal)*       | enter     | *               |
+    |                     | create new folder *(modal)* | enter     | *               |
+    |                     | toggle *(sidebar)*          | t         | *               |
+    |                     | play/pause media            | space     | * *(sidebar)*   |
+    |                     | view image                  | space     | * *(sidebar)*   |
+    |                     | hide image                  | space/esc | * *(light-box)* |
+    | select next         |                             | right     | *               |
+    | select prev         |                             | left      | *               |
+    | select first        |                             | home      | *               |
+    | select last         |                             | end       | *               |
+    | open folder         |                             | enter     | double click    |
+    | go back to prev dir | folderName *(breadcrumb)*   | backspace | *               |
 
 - events
 
-    |     event-name     |         description          |
-    |--------------------|------------------------------|
-    | modal-show         | when modal is showen         |
-    | modal-hide         | when modal is hidden         |
-    | no-files-show      | when no files msg is showen  |
-    | no-files-hide      | when no files msg is hidden  |
-    | loading-files-show | when loading files is hidden |
-    | loading-files-hide | when loading files is hidden |
-    | ajax-error-show    | when ajax call fails         |
+    |   type  |              event-name             |         description          |
+    |---------|-------------------------------------|------------------------------|
+    | JS      |                                     |                              |
+    |         | modal-show                          | when modal is showen         |
+    |         | modal-show                          | when modal is showen         |
+    |         | modal-hide                          | when modal is hidden         |
+    |         | no-files-show                       | when no files msg is showen  |
+    |         | no-files-hide                       | when no files msg is hidden  |
+    |         | loading-files-show                  | when loading files is hidden |
+    |         | loading-files-hide                  | when loading files is hidden |
+    |         | ajax-error-show                     | when ajax call fails         |
+    | Laravel |                                     |                              |
+    |         | MMFileUploaded($file_path)          | get uploade file full path   |
+    |         | MMFileDeleted($file_path)           | get deleted file full path   |
+    |         | MMFolderDeleted($file_path)         | get deleted folder full path |
+    |         | MMFileRenamed($old_path, $new_path) | get renamed file/folder path |
 
 ## Config
 **config/mediaManager.php**
