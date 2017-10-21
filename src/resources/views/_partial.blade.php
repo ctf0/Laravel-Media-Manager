@@ -381,7 +381,11 @@
                                     </template>
                                     <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
                                     <template v-if="!selectedFileIs('folder')">
-                                        <h4>Download File: <a :href="selectedFile.path" download><span class="icon has-text-link"><i class="fa fa-download fa-lg"></i></span></a></h4>
+                                        <h4>Download File:
+                                            <a :href="selectedFile.path" download @click="downloadFiles($event)">
+                                                <span class="icon has-text-link"><i class="fa fa-download fa-lg"></i></span>
+                                            </a>
+                                        </h4>
                                     </template>
                                 </div>
                             </div>

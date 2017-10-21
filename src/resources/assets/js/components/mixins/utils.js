@@ -1,3 +1,5 @@
+require('./../download.min')
+
 export default {
     methods: {
         isLastItem(item, list) {
@@ -111,6 +113,19 @@ export default {
         ajaxError() {
             EventHub.fire('ajax-error-show')
             $('#ajax_error').show()
+        },
+
+        // download
+        downloadFiles(e) {
+            if (this.isBulkSelecting()) {
+                e.preventDefault()
+
+                this.bulkList.forEach((e) => {
+                    downloadFile(e.path)
+                })
+
+                this.showNotif('All Done', 'success')
+            }
         }
     }
 }

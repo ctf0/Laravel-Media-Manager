@@ -8,7 +8,6 @@
 // fa-minus
 // fa fa-angle-double-right
 // fa fa-angle-double-left
-
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
