@@ -98,6 +98,7 @@
     |         | loading-files-show                  | when loading files is hidden |
     |         | loading-files-hide                  | when loading files is hidden |
     |         | ajax-error-show                     | when ajax call fails         |
+    |         | file_selected                       | get selected file url        |
     | Laravel |                                     |                              |
     |         | MMFileUploaded($file_path)          | get uploaded file full path  |
     |         | MMFileDeleted($file_path)           | get deleted file full path   |

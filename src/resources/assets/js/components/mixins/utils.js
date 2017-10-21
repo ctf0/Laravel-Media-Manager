@@ -70,15 +70,15 @@ export default {
         },
         toggleModal(selector = null) {
             if (!selector) {
-                EventHub.fire('modal-hide')
                 this.noScroll()
-                return $('.modal').removeClass('is-active')
+                $('.mm-modal').removeClass('is-active')
+                return EventHub.fire('modal-hide')
             }
 
-            EventHub.fire('modal-show')
             this.noScroll('add')
             $(selector).addClass('is-active')
             $(selector).find('input').focus()
+            EventHub.fire('modal-show')
         },
         toggleLoading() {
             return this.is_loading = !this.is_loading

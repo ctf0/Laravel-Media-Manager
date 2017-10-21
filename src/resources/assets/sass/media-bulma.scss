@@ -9,24 +9,27 @@ $red: #ff3860;
 $orange: #ff470f;
 
 // modal
-.is-warning {
-    background-color: $yellow;
-}
+.modal-card-head,
+.progress-bar {
+    &.is-warning {
+        background-color: $yellow;
+    }
 
-.is-danger {
-    background-color: $red;
-}
+    &.is-danger {
+        background-color: $red;
+    }
 
-.is-link {
-    background-color: $blue;
-}
+    &.is-link {
+        background-color: $blue;
+    }
 
-.is-primary {
-    background-color: $turquoise;
-}
+    &.is-primary {
+        background-color: $turquoise;
+    }
 
-.is-success {
-    background-color: $green;
+    &.is-success {
+        background-color: $green;
+    }
 }
 
 .is-danger,
@@ -54,8 +57,8 @@ table,
 
     td,
     th {
-        vertical-align: middle;
         border: none !important;
+        vertical-align: middle;
     }
 
     tr:hover {
@@ -69,6 +72,6 @@ table,
 }
 
 .modal-card-foot {
-    justify-content: flex-end;
     background-color: white;
+    justify-content: flex-end;
 }

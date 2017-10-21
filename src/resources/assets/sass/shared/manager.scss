@@ -16,13 +16,13 @@ $blue_2: #276cda;
 
 // toolbar
 #toolbar {
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 1rem;
+    background: $white_gray;
     border: 1px solid $gray_2;
     border-bottom: 0;
     border-radius: 4px 4px 0 0;
-    background: $white_gray;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 1rem;
 }
 
 #blk_slct_all {
@@ -36,12 +36,12 @@ $blue_2: #276cda;
 }
 
 .dz {
-    min-height: 150px;
-    padding: 45px;
-    cursor: pointer;
+    background: white;
     border: 2px dashed $blue;
     border-radius: 5px;
-    background: white;
+    cursor: pointer;
+    min-height: 150px;
+    padding: 45px;
 
     .dz-message {
         font-weight: 400;
@@ -51,9 +51,9 @@ $blue_2: #276cda;
 }
 
 #uploadProgress {
+    border-radius: 100vw;
     display: none;
     margin-top: 10px;
-    border-radius: 100vw;
 }
 
 #uploadPreview {
@@ -62,11 +62,11 @@ $blue_2: #276cda;
 
 // breadcrump
 .breadcrumb-container {
-    margin: 0 !important;
-    padding: 0.5rem 1rem;
+    background: $gray_3;
     border: 1px solid $gray_2;
     border-top: 0;
-    background: $gray_3;
+    margin: 0 !important;
+    padding: 0.5rem 1rem;
 
     .breadcrumb {
         margin-bottom: 0 !important;
@@ -74,15 +74,15 @@ $blue_2: #276cda;
 
         li {
             &::before {
-                padding: 0 0 0 4px;
                 color: $dark-gray_2;
+                padding: 0 0 0 4px;
             }
         }
 
         a {
+            color: $blue;
             font-weight: bold;
             padding: 0 0.5em;
-            color: $blue;
 
             &:hover {
                 color: $dark-gray_1;
@@ -96,10 +96,10 @@ $blue_2: #276cda;
     }
 
     .toggle {
-        display: flex;
         align-items: center;
-        cursor: pointer;
         color: $gray_5;
+        cursor: pointer;
+        display: flex;
 
         span:not(.icon) {
             font-size: 0.8rem;
@@ -112,19 +112,19 @@ $blue_2: #276cda;
 
 // manager
 .manager-container {
-    display: flex;
-    border: 1px solid $gray_2;
-    border-top: 0;
-    border-radius: 0 0 4px 4px;
     background-color: $off_white_1;
+    border: 1px solid $gray_2;
+    border-radius: 0 0 4px 4px;
+    border-top: 0;
+    display: flex;
 }
 
 #left,
 #right {
-    position: relative;
-    overflow: scroll;
     min-height: 400px;
-    max-height: 584px;
+    overflow: scroll;
+    position: relative;
+    // max-height: 584px;
 }
 
 #left {
@@ -134,34 +134,34 @@ $blue_2: #276cda;
     #files {
         display: flex;
         flex-wrap: wrap;
-        margin: 0;
         list-style: none;
+        margin: 0;
         user-select: none;
 
         li {
-            display: flex;
             align-items: stretch;
+            display: flex;
             flex: 1;
-            min-width: 200px;
             max-width: 250px;
             min-height: 90px;
+            min-width: 200px;
 
             .file_link {
-                display: flex;
-                overflow: hidden;
-                width: 100%;
-                margin: 10px;
-                padding: 10px;
-                cursor: pointer;
+                background: $off_white_2;
                 border: 1px solid $off_white_3;
                 border-radius: 3px;
-                background: $off_white_2;
+                cursor: pointer;
+                display: flex;
+                margin: 10px;
+                overflow: hidden;
+                padding: 10px;
+                width: 100%;
 
                 .link_icon {
+                    color: $slate_gray;
                     flex: 1;
                     margin-right: 5px;
                     text-align: center;
-                    color: $slate_gray;
 
                     i {
                         position: relative;
@@ -169,25 +169,26 @@ $blue_2: #276cda;
                     }
 
                     .img {
-                        width: 100%;
-                        height: 100%;
-                        background-repeat: no-repeat;
                         background-position: center;
+                        background-repeat: no-repeat;
                         background-size: cover;
+                        border-radius: 3px;
+                        height: 100%;
+                        width: 100%;
                     }
                 }
 
                 .details {
-                    overflow: hidden;
                     flex: 2;
+                    overflow: hidden;
 
                     h4 {
                         font-size: 14px;
-                        overflow: hidden;
-                        margin-top: 10px;
                         margin-bottom: 0;
-                        white-space: nowrap;
+                        margin-top: 10px;
+                        overflow: hidden;
                         text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
 
                     small {
@@ -198,9 +199,9 @@ $blue_2: #276cda;
                 &.selected,
                 &.bulk-selected,
                 &:hover {
-                    color: white;
-                    border-color: $blue_2;
                     background: $blue;
+                    border-color: $blue_2;
+                    color: white;
 
                     h4,
                     i {
@@ -213,20 +214,20 @@ $blue_2: #276cda;
 }
 
 #right {
+    border-left: 1px solid $gray_4;
     display: none;
     flex: 1;
-    border-left: 1px solid $gray_4;
 
     .right_none_selected {
+        background: $gray_1;
+        border-bottom: 1px solid $gray_4;
         display: block;
         text-align: center;
-        border-bottom: 1px solid $gray_4;
-        background: $gray_1;
 
         i {
             font-size: 30px;
-            width: 100%;
             padding: 50px;
+            width: 100%;
         }
 
         p {
@@ -242,17 +243,17 @@ $blue_2: #276cda;
         }
 
         i {
-            font-size: 70px;
-            width: 100%;
-            padding: 30px;
             background: $gray_3;
+            font-size: 70px;
+            padding: 30px;
+            width: 100%;
         }
 
         .audio,
         .video {
-            width: 100%;
             height: auto;
             margin-bottom: -7px;
+            width: 100%;
         }
 
         .audio {
@@ -261,14 +262,14 @@ $blue_2: #276cda;
     }
 
     .detail_info {
+        border-top: 1px solid $gray_2;
         padding: 10px;
         word-break: break-all;
-        border-top: 1px solid $gray_2;
 
         h4 {
+            color: $gray_5;
             font-size: 13px;
             margin-right: 8px;
-            color: $gray_5;
         }
 
         span {
@@ -291,15 +292,15 @@ $blue_2: #276cda;
 #file_loader,
 #no_files,
 #ajax_error {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
     align-items: center;
-    justify-content: center;
     background: white;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 #ajax_error {
@@ -332,8 +333,8 @@ $blue_2: #276cda;
 }
 
 .confirm_delete_text * {
-    font-weight: 500;
     color: $blue;
+    font-weight: 500;
 }
 
 .folder_warning {
@@ -362,8 +363,8 @@ $blue_2: #276cda;
 }
 
 .m-v-15 {
-    margin-top: 15px !important;
     margin-bottom: 15px !important;
+    margin-top: 15px !important;
 }
 
 .m-l-50 {

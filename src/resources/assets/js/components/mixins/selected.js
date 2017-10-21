@@ -10,6 +10,10 @@ export default {
             $('div[data-folder="' + file.name + '"]').addClass('selected')
             this.selectedFile = file
 
+            if (!this.selectedFileIs('folder')) {
+                EventHub.fire('file_selected', this.selectedFile.path)
+            }
+
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }

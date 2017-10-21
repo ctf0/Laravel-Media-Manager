@@ -9,11 +9,11 @@
 // fa fa-angle-double-right
 // fa fa-angle-double-left
 
-import Form from './mixins/methods/form'
-import FileFiltration from './mixins/methods/filtration'
-import BulkSelect from './mixins/methods/bulk'
-import SelectedFile from './mixins/methods/selected'
-import Utilities from './mixins/methods/utils'
+import Form from './mixins/form'
+import FileFiltration from './mixins/filtration'
+import BulkSelect from './mixins/bulk'
+import SelectedFile from './mixins/selected'
+import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
 
 export default {
@@ -187,7 +187,7 @@ export default {
                 let newSelected = ''
 
                 // when modal isnt visible
-                if (!$('.modal').hasClass('is-active')) {
+                if (!$('.mm-modal').hasClass('is-active')) {
                     // when search is not focused
                     if (!$('.input').is(':focus')) {
                         // when no bulk selecting
@@ -284,7 +284,7 @@ export default {
                 else {
                     if (keycode(e) == 'enter') {
                         e.preventDefault()
-                        $('.modal.is-active').find('button[type="submit"]').trigger('click')
+                        $('.mm-modal.is-active').find('button[type="submit"]').trigger('click')
                     }
 
                     if (this.lightBoxIsActive()) {
