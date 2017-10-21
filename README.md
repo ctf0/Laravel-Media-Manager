@@ -38,6 +38,8 @@
     - move
     - delete
 - bulk selection.
+- download selected "including bulk selection"
+- use manager from modal with ease
 - auto scroll to selected item when using (left, right, home, end)
 - search
 - filter by type

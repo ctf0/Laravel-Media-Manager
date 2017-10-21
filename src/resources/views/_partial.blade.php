@@ -1,5 +1,5 @@
 {{-- styles --}}
-<link rel="stylesheet" href="{{ mix('assets/vendor/MediaManager/style.css') }}"/>
+<link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
 
 {{-- component --}}
 <media-manager inline-template
