@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>Media Manager</title>
-    {{-- FW --}}
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     {{-- bulma --}}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
 </head>
@@ -27,6 +25,7 @@
     </div>
 
     {{-- footer --}}
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="{{ asset("path/to/app.js") }}"></script>
 </body>

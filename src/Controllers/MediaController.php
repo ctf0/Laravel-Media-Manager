@@ -98,27 +98,25 @@ class MediaController extends Controller
         foreach ($files as $one) {
             try {
                 // check for mime type
+                $original  = $one->getClientOriginalName();
                 $file_type = $one->getMimeType();
+                $file_ext  = $one->getClientOriginalExtension();
+                $get_name  = str_replace(".$file_ext", '', $original);
 
                 if (str_contains($file_type, $this->unallowed_mimes)) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
 
-                $file_name   = $one->getClientOriginalName();
-                $destination = "$upload_path/{$this->cleanName($file_name)}";
+                $file_name   = $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
+                $destination = "$upload_path/$file_name";
 
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
                     throw new Exception(trans('MediaManager::messages.error_may_exist'));
                 }
 
-                // because dropzone automatically sanitize the file name
-                if ($file_name == '.' . $one->getClientOriginalExtension()) {
-                    $file_name = $this->sanitizedText . $file_name;
-                }
-
                 // save file
-                $saved_name = $one->storeAs($upload_path, $this->cleanName($file_name), $this->fileSystem);
+                $saved_name = $one->storeAs($upload_path, $file_name, $this->fileSystem);
 
                 // fire event
                 event('MMFileUploaded', $this->getFilePath($this->fileSystem, $saved_name));

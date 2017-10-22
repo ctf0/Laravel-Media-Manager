@@ -1,4 +1,4 @@
-require('./../download.min')
+require('./../../vendor/download.min')
 
 export default {
     methods: {
@@ -116,16 +116,17 @@ export default {
         },
 
         // download
-        downloadFiles(e) {
+        // DownloadJS v0.5.2
+        saveFile(path) {
             if (this.isBulkSelecting()) {
-                e.preventDefault()
-
-                this.bulkList.forEach((e) => {
-                    downloadFile(e.path)
+                this.bulkList.forEach((item) => {
+                    downloadFile(item.path)
                 })
 
-                this.showNotif('All Done', 'success')
+                return this.showNotif('All Done')
             }
+
+            downloadFile(path)
         }
     }
 }

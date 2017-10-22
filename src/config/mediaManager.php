@@ -34,7 +34,7 @@ return [
     /*
      * when file names gets cleand up
      */
-    'sanitized_text' => 'sanitized',
+    'sanitized_text' => uniqid(),
 
     /*
      * css farmework

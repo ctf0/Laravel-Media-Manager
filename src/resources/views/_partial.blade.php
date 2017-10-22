@@ -261,11 +261,11 @@
                             @click="setSelected(file)"
                             @dblclick="openFolder(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
-                                :data-folder="file.name"
+                                :data-item="file.name"
                                 :data-index="index">
                                 <div class="link_icon">
                                     <template v-if="fileTypeIs(file, 'image')">
-                                        <div class="img" :style="{ 'background-image': 'url(' + encodeURI(file.path) + ')' }"></div>
+                                        <div class="img" :style="{ 'background-image': 'url(' + file.path + ')' }"></div>
                                     </template>
 
                                     <span class="icon is-large" v-else>
@@ -382,7 +382,7 @@
                                     <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
                                     <template v-if="!selectedFileIs('folder')">
                                         <h4>Download File:
-                                            <a :href="selectedFile.path" download @click="downloadFiles($event)">
+                                            <a :href="selectedFile.path" @click.prevent="saveFile(selectedFile.path)">
                                                 <span class="icon has-text-link"><i class="fa fa-download fa-lg"></i></span>
                                             </a>
                                         </h4>
@@ -581,3 +581,4 @@
 
 {{-- scripts --}}
 <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.10.2/bodymovin.min.js"></script>
+<script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>

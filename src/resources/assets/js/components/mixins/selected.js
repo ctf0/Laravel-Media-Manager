@@ -7,7 +7,7 @@ export default {
         },
         setSelected(file) {
             this.clearSelected()
-            $('div[data-folder="' + file.name + '"]').addClass('selected')
+            $('div[data-item="' + file.name + '"]').addClass('selected')
             this.selectedFile = file
 
             if (!this.selectedFileIs('folder')) {

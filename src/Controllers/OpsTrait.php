@@ -76,7 +76,7 @@ trait OpsTrait
 
     protected function filePattern($file)
     {
-        return '/(script.*?\/script)|[^(' . $file . ')a-zA-Z0-9]+/ius';
+        return '/(script.*?\/script)|[^(' . $file . ')a-zA-Z0-9]|\(|\)+/ius';
     }
 
     /**

@@ -2,16 +2,15 @@
 
 namespace ctf0\MediaManager;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
     protected $file;
 
-    public function boot(Filesystem $file)
+    public function boot()
     {
-        $this->file = $file;
+        $this->file = app('files');
 
         $this->packagePublish();
 
@@ -68,7 +67,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         $search     = 'MediaManager';
 
         if ($this->checkExist($route_file, $search)) {
-            $data = "\n// Media-Manager\nctf0\MediaManager\MediaRoutes::routes();";
+            $data = "\n// MediaManager\nctf0\MediaManager\MediaRoutes::routes();";
 
             $this->file->append($route_file, $data);
         }
@@ -78,7 +77,15 @@ class MediaManagerServiceProvider extends ServiceProvider
         $search   = 'MediaManager';
 
         if ($this->checkExist($mix_file, $search)) {
-            $data = "\n// Media-Manager\nrequire('dotenv').config()\nmix.sass('resources/assets/vendor/MediaManager/sass/media-' + process.env.MIX_MM_FRAMEWORK + '.scss', 'public/assets/vendor/MediaManager/style.css').version();";
+            $data =
+<<<EOT
+
+// MediaManager
+require('dotenv').config()
+mix.js('resources/assets/vendor/MediaManager/js/manager.js', 'public/assets/vendor/MediaManager')
+    .sass('resources/assets/vendor/MediaManager/sass/media-' + process.env.MIX_MM_FRAMEWORK + '.scss', 'public/assets/vendor/MediaManager/style.css')
+    .version();
+EOT;
 
             $this->file->append($mix_file, $data);
         }
