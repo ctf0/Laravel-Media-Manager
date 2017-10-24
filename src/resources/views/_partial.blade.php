@@ -5,7 +5,8 @@
 <media-manager inline-template
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
-    :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}">
+    :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
+    restrict="{{ isset($path) ?: null }}">
     <div>
 
         {{-- top toolbar --}}
@@ -228,7 +229,7 @@
                 <div class="level-left">
                     <ol class="breadcrumb">
                         <li>
-                            <a v-if="folders.length > 0" class="p-l-0" @click="goToFolder(0)">
+                            <a v-if="folders.length > 0 && !isBulkSelecting()" class="p-l-0" @click="goToFolder(0)">
                                 {{ trans('MediaManager::messages.library') }}
                             </a>
                             <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>

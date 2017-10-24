@@ -28,7 +28,8 @@ export default {
     props: [
         'filesRoute',
         'dirsRoute',
-        'hideExt'
+        'hideExt',
+        'restrict'
     ],
     data() {
         return {
@@ -67,6 +68,10 @@ export default {
         }
     },
     created() {
+        if (this.restrict) {
+            return this.restrictAccess()
+        }
+
         this.getFiles('/')
     },
     mounted() {
@@ -74,70 +79,9 @@ export default {
         this.initManager()
     },
     updated() {
-        // autoplay media
-        // last item will keep repeating unless we added the constrain "!last" below
-        // but now it wont play
-        if (this.filterNameIs('audio') || this.filterNameIs('video')) {
-            $('.player').bind('ended', () => {
-                // nav to next
-                $('#files li .selected').trigger($.Event('keydown', {keyCode: keycode('right')}))
-
-                let last = $('#files li:last-of-type').find('div.selected').length
-
-                // play navigated to
-                if (!last) {
-                    this.$nextTick(() => {
-                        $('.player')[0].play()
-                    })
-                }
-
-            })
-        }
+        this.autoPlay()
     },
     methods: {
-        navigation(e, curSelectedIndex) {
-
-            let cur = ''
-            let newSelected = ''
-
-            // go to prev image
-            if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
-                e.preventDefault()
-
-                newSelected = curSelectedIndex - 1
-                cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
-            }
-
-            // go to next image
-            if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
-                e.preventDefault()
-
-                newSelected = curSelectedIndex + 1
-                cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
-            }
-
-            // go to last item
-            if (keycode(e) == 'end') {
-                e.preventDefault()
-
-                newSelected = this.allItemsCount - 1
-                cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
-            }
-
-            // go to first item
-            if (keycode(e) == 'home') {
-                e.preventDefault()
-                this.scrollToFile()
-            }
-
-            if (!this.selectedFileIs('image')) {
-                this.noScroll()
-            }
-        },
-
         // init
         initManager() {
             let manager = this
@@ -429,6 +373,89 @@ export default {
                     })
                 }
             })
+        },
+
+        /**
+         * keyboard navigation
+         * @param  {[type]} e                [description]
+         * @param  {[type]} curSelectedIndex [description]
+         */
+        navigation(e, curSelectedIndex) {
+            let cur = ''
+            let newSelected = ''
+
+            // go to prev image
+            if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
+                e.preventDefault()
+
+                newSelected = curSelectedIndex - 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to next image
+            if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
+                e.preventDefault()
+
+                newSelected = curSelectedIndex + 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to last item
+            if (keycode(e) == 'end') {
+                e.preventDefault()
+
+                newSelected = this.allItemsCount - 1
+                cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to first item
+            if (keycode(e) == 'home') {
+                e.preventDefault()
+                this.scrollToFile()
+            }
+
+            if (!this.selectedFileIs('image')) {
+                this.noScroll()
+            }
+        },
+
+        /**
+         * autoplay media
+         *
+         * last item will keep repeating unless we added the constrain "!last" below
+         * but now it wont play
+         */
+        autoPlay() {
+            if (this.filterNameIs('audio') || this.filterNameIs('video')) {
+                $('.player').bind('ended', () => {
+                    // nav to next
+                    $('#files li .selected').trigger($.Event('keydown', {keyCode: keycode('right')}))
+
+                    let last = $('#files li:last-of-type').find('div.selected').length
+
+                    // play navigated to
+                    if (!last) {
+                        this.$nextTick(() => {
+                            $('.player')[0].play()
+                        })
+                    }
+                })
+            }
+        },
+
+        /**
+         * access a pre-defined folder
+         */
+        restrictAccess() {
+            let path = this.restrict
+            let arr = path.split('/')
+            this.folders.push(...arr)
+            this.getFiles(this.folders)
+
+            this.resetInput('folders', [])
         }
     },
     render() {}
