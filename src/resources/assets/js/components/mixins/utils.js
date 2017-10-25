@@ -34,9 +34,9 @@ export default {
             })
         },
         checkForFolders() {
-            return $('#move_folder_dropdown').val() !== null
-                ? true
-                : false
+            return setTimeout(() => {
+                $('#move_folder_dropdown').val() !== null ? true : false
+            }, 10)
         },
         moveUpCheck() {
             return this.folders.length && !this.restrictAndLast()

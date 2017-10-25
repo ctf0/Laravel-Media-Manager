@@ -83,6 +83,9 @@ export default {
     updated() {
         this.autoPlay()
     },
+    beforeDestroy() {
+        $(document).unbind()
+    },
     methods: {
         // init
         initManager() {
