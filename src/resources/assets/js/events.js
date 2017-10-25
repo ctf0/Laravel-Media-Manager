@@ -4,7 +4,9 @@ EventHub.listen('modal-hide', () => {})
 
 // F I L E - L O A D I N G //
 EventHub.listen('loading-files-show', () => {
-    bm(document.getElementById('file_loader_anim'), 'file_loader_anim')
+    setTimeout(() => {
+        bm(document.getElementById('file_loader_anim'), 'file_loader_anim')
+    }, 100)
 })
 
 EventHub.listen('loading-files-hide', () => {

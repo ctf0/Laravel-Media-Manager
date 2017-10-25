@@ -38,6 +38,9 @@ export default {
                 ? true
                 : false
         },
+        moveUpCheck() {
+            return this.folders.length && !this.restrictAndLast()
+        },
         resetInput(input, val = undefined) {
             this[input] = val
         },

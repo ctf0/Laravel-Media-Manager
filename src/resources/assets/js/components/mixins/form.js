@@ -17,18 +17,30 @@ export default {
             $.post(this.filesRoute, {
                 folder: folder_location
             }, (res) => {
+                if (res.error) {
+                    if (this.checkForRestriction()) {
+                        EventHub.fire('get-folders', false)
+                    }
+                    this.loadingFiles('hide')
+                    this.noFiles('show')
+                    return this.showNotif(res.error, 'danger')
+                }
+
+                if (this.checkForRestriction()) {
+                    EventHub.fire('get-folders', true)
+                }
+
                 this.files = res
                 this.loadingFiles('hide')
                 this.noFiles('hide')
                 this.selectFirst()
                 $('#right').fadeIn()
 
+                // dirs list
+                this.updateDirsList()
             }).fail(() => {
                 this.ajaxError()
             })
-
-            // dirs list
-            this.updateDirsList()
         },
         updateDirsList() {
             $.post(this.dirsRoute, {

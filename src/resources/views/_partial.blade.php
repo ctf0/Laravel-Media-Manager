@@ -6,7 +6,7 @@
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
-    restrict="{{ isset($path) ?: null }}">
+    restrict-path="{{ isset($path) ? $path : null }}">
     <div>
 
         {{-- top toolbar --}}
@@ -228,7 +228,7 @@
             <div class="breadcrumb-container level is-mobile">
                 <div class="level-left">
                     <ol class="breadcrumb">
-                        <li>
+                        <li v-if="!checkForRestriction()">
                             <a v-if="folders.length > 0 && !isBulkSelecting()" class="p-l-0" @click="goToFolder(0)">
                                 {{ trans('MediaManager::messages.library') }}
                             </a>
@@ -297,13 +297,13 @@
                     {{-- ====================================================================== --}}
 
                     {{-- loading data from server --}}
-                    <div id="file_loader">
+                    <div id="file_loader" style="display: none;">
                         <div id="file_loader_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/octopus.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.loading') }}</h3>
                     </div>
 
                     {{-- no files --}}
-                    <div id="no_files">
+                    <div id="no_files" style="display: none;">
                         <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
                     </div>
@@ -480,7 +480,7 @@
                         <div class="control has-icons-left">
                             <span class="select is-fullwidth">
                                 <select id="move_folder_dropdown">
-                                    <option v-if="folders.length" value="../">../</option>
+                                    <option v-if="moveUpCheck()" value="../">../</option>
                                     <option v-if="filterDirList(dir)"
                                         v-for="(dir,index) in directories"
                                         :key="index" :value="dir">

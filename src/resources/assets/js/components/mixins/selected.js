@@ -46,6 +46,10 @@ export default {
             if (!this.isBulkSelecting()) {
                 this.noFiles('hide')
 
+                if (this.checkForRestriction() && index == 0) {
+                    return false
+                }
+
                 this.folders = this.folders.splice(0, index)
                 this.getFiles(this.folders)
 

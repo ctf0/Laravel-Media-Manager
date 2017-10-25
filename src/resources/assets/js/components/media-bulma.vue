@@ -12,6 +12,7 @@ import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
 import SelectedFile from './mixins/selected'
+import Restriction from './mixins/restriction'
 import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
 
@@ -22,6 +23,7 @@ export default {
         FileFiltration,
         BulkSelect,
         SelectedFile,
+        Restriction,
         Utilities,
         Watchers
     ],
@@ -29,7 +31,7 @@ export default {
         'filesRoute',
         'dirsRoute',
         'hideExt',
-        'restrict'
+        'restrictPath'
     ],
     data() {
         return {
@@ -68,7 +70,7 @@ export default {
         }
     },
     created() {
-        if (this.restrict) {
+        if (this.checkForRestriction()) {
             return this.restrictAccess()
         }
 
@@ -444,18 +446,6 @@ export default {
                     }
                 })
             }
-        },
-
-        /**
-         * access a pre-defined folder
-         */
-        restrictAccess() {
-            let path = this.restrict
-            let arr = path.split('/')
-            this.folders.push(...arr)
-            this.getFiles(this.folders)
-
-            this.resetInput('folders', [])
         }
     },
     render() {}

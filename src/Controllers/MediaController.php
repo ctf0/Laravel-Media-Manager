@@ -53,8 +53,12 @@ class MediaController extends Controller
     public function get_files(Request $request)
     {
         $folder = '/' !== $request->folder
-        ? $request->folder
-        : '';
+            ? $request->folder
+            : '';
+
+        if ($folder && !$this->storageDisk->exists($folder)) {
+            return response()->json(['error' => trans('MediaManager::messages.error_doesnt_exist', ['attr'=>$folder])]);
+        }
 
         return response()->json([
             'path'   => $folder,
@@ -112,7 +116,7 @@ class MediaController extends Controller
 
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
-                    throw new Exception(trans('MediaManager::messages.error_may_exist'));
+                    throw new Exception(trans('MediaManager::messages.error_already_exists'));
                 }
 
                 // save file
@@ -301,7 +305,7 @@ class MediaController extends Controller
                 $message = trans('MediaManager::messages.error_moving');
             }
         } else {
-            $message = trans('MediaManager::messages.error_may_exist');
+            $message = trans('MediaManager::messages.error_already_exists');
         }
 
         return compact('success', 'message', 'new_filename');
