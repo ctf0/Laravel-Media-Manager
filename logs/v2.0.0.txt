@@ -1,0 +1,12 @@
+- use manager from modal “check wiki”
+- you can now download all selected files, thanx to https://github.com/PixelsCommander/Download-File-JS
+- now the manager will have its own script file so you only load it when needed instead of merging it with your main script, better loading time for users.
+- fix pattern for names with `()`
+- fix file names cleanup not working properly
+- change config sanitized text to `uniqid()` instead for better ux
+- add new “folder restriction” feature “check wiki”
+- changed js structure instead of the bazillion folders everywhere
+- fix move btn not updating correctly on first load
+- remove event listener on destroy
+- update assets
+- update read me

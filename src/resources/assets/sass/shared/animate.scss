@@ -1,18 +1,18 @@
 .animated {
     animation-duration: 600ms;
-    animation-fill-mode: both;
     animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    animation-fill-mode: both;
 }
 
 @keyframes fadeInDown {
     from {
-        opacity: 0;
         transform: translate3d(0, -100%, 0);
+        opacity: 0;
     }
 
     to {
-        opacity: 1;
         transform: none;
+        opacity: 1;
     }
 }
 

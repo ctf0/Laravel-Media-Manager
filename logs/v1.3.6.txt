@@ -1,5 +1,0 @@
-- fix refresh button when no files are avail
-- fix refresh shortcut button not working when there are no files
-- add events for file/folder “upload/delete/rename” which will give you the full path to the file/folder so you can hook into them easily.
-- fixed error when adding new folder & not triggering refresh after
-- update readme
