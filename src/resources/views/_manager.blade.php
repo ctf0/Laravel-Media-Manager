@@ -329,9 +329,9 @@
                         <template v-if="selectedFile">
                             <div class="detail_img">
                                 <template v-if="selectedFileIs('image')">
-                                    <div class="modal animated fadeIn mm-modal" id="img_modal">
+                                    <div class="modal mm-animated fadeIn mm-modal" id="img_modal">
                                         <div class="modal-background pointer" @click="toggleModal()"></div>
-                                        <div class="modal-content animated fadeInDown">
+                                        <div class="modal-content mm-animated fadeInDown">
                                             <p class="image">
                                                 <img :src="selectedFile.path">
                                             </p>
@@ -406,10 +406,10 @@
         {{-- ====================================================================== --}}
 
         {{-- modals --}}
-        <div class="modal animated fadeIn mm-modal" id="new_folder_modal">
+        <div class="modal mm-animated fadeIn mm-modal" id="new_folder_modal">
             {{ Form::open(['route' => 'media.new_folder', '@submit.prevent'=>'NewFolderForm($event)']) }}
                 <div class="modal-background pointer" @click="toggleModal()"></div>
-                <div class="modal-card animated fadeInDown">
+                <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-link">
                         <p class="modal-card-title">
                             <span class="icon"><i class="fa fa-folder"></i></span>
@@ -434,10 +434,10 @@
             {{ Form::close() }}
         </div>
 
-        <div class="modal animated fadeIn mm-modal" id="rename_file_modal">
+        <div class="modal mm-animated fadeIn mm-modal" id="rename_file_modal">
             {{ Form::open(['route' => 'media.rename_file', '@submit.prevent'=>'RenameFileForm($event)']) }}
                 <div class="modal-background pointer" @click="toggleModal()"></div>
-                <div class="modal-card animated fadeInDown">
+                <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
                             <span class="icon"><i class="fa fa-i-cursor"></i></span>
@@ -464,10 +464,10 @@
             {{ Form::close() }}
         </div>
 
-        <div class="modal animated fadeIn mm-modal" id="move_file_modal">
+        <div class="modal mm-animated fadeIn mm-modal" id="move_file_modal">
             {{ Form::open(['route' => 'media.move_file', '@submit.prevent'=>'MoveFileForm($event)']) }}
                 <div class="modal-background pointer" @click="toggleModal()"></div>
-                <div class="modal-card animated fadeInDown">
+                <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
                             <span class="icon"><i class="fa fa-share"></i></span>
@@ -505,10 +505,10 @@
             {{ Form::close() }}
         </div>
 
-        <div class="modal animated fadeIn mm-modal" id="confirm_delete_modal">
+        <div class="modal mm-animated fadeIn mm-modal" id="confirm_delete_modal">
             {{ Form::open(['route' => 'media.delete_file', '@submit.prevent'=>'DeleteFileForm($event)']) }}
                 <div class="modal-background pointer" @click="toggleModal()"></div>
-                <div class="modal-card animated fadeInDown">
+                <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-danger">
                         <p class="modal-card-title">
                             <span class="icon"><i class="fa fa-warning"></i></span>

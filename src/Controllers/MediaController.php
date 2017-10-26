@@ -30,7 +30,6 @@ class MediaController extends Controller
         $this->sanitizedText   = config('mediaManager.sanitized_text');
         $this->unallowed_mimes = config('mediaManager.unallowed_mimes');
         $this->LMF             = config('mediaManager.last_modified_format');
-        $this->fw              = config('mediaManager.framework');
     }
 
     /**
@@ -40,7 +39,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view("MediaManager::media-{$this->fw}");
+        return view('MediaManager::media');
     }
 
     /**

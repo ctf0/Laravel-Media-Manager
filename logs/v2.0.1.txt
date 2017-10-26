@@ -1,0 +1,7 @@
+- add `_modal` partial
+- renamed `_partial` to `_manager`
+- renamed `media-bulma` to `media`
+- updated `media` view with the correct html headers
+- renamed `animated` to `mm-animated` to avoid conflict with container page `animated`
+- update wiki
+- update readme

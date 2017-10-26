@@ -183,14 +183,14 @@ npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif --save
 
 > ***Or Use another Framework***
 >
-> - duplicate `views/vendor/MediaManager/media-bulma` and rename it to the framework you want ex.`media-bootstrap`
+> - edit `views/vendor/MediaManager` files.
 > - duplicate `assets/vendor/MediaManager/js/components/media-bulma.vue` and rename it to the framework you want ex.`media-bootstrap.vue`
 > - duplicate `assets/vendor/MediaManager/sass/media-bulma.scss` and rename it to the framework you want ex.`media-bootstrap.scss`
 > - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
 > - start editing the new files.
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
-    + if you are having issues with `npm run production`, [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
+    + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
 
 ```js
 // ex. "resources/assets/js/app.js"
