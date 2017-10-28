@@ -65,6 +65,11 @@ export default {
 
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
         },
+        getExtension(name) {
+            let index = name.lastIndexOf('.')
+
+            return index > 0 ? name.substring(index + 1) : null
+        },
 
         /*                Toggle                */
         toggleInfo() {

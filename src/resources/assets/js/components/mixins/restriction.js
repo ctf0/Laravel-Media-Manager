@@ -1,6 +1,6 @@
 export default {
     methods: {
-        checkForRestriction() {
+        checkForRestrictedPath() {
             return this.restrictPath !== ''
         },
         restrictAccess() {
@@ -16,7 +16,10 @@ export default {
             })
         },
         restrictAndLast() {
-            return this.checkForRestriction() && this.folders.length < 2
+            return this.checkForRestrictedPath() && this.folders.length < 2
+        },
+        checkForRestrictedExt(file) {
+            return this.restrictExt.includes(this.getExtension(file.name))
         }
     }
 }

@@ -31,7 +31,8 @@ export default {
         'filesRoute',
         'dirsRoute',
         'hideExt',
-        'restrictPath'
+        'restrictPath',
+        'restrictExt'
     ],
     data() {
         return {
@@ -70,7 +71,7 @@ export default {
         }
     },
     created() {
-        if (this.checkForRestriction()) {
+        if (this.checkForRestrictedPath()) {
             return this.restrictAccess()
         }
 

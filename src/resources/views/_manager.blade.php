@@ -6,7 +6,8 @@
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
-    restrict-path="{{ isset($path) ? $path : null }}">
+    restrict-path="{{ isset($path) ? $path : null }}"
+    restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}">
     <div>
 
         {{-- top toolbar --}}
@@ -228,7 +229,7 @@
             <div class="breadcrumb-container level is-mobile">
                 <div class="level-left">
                     <ol class="breadcrumb">
-                        <li v-if="!checkForRestriction()">
+                        <li v-if="!checkForRestrictedPath()">
                             <a v-if="folders.length > 0 && !isBulkSelecting()" class="p-l-0" @click="goToFolder(0)">
                                 {{ trans('MediaManager::messages.library') }}
                             </a>
@@ -236,7 +237,7 @@
                         </li>
 
                         <template v-for="(folder,index) in folders">
-                            <li @click="goToFolder(index+1)">
+                            <li @click="folders.length > 1 ? goToFolder(index+1) : false">
                                 <p v-if="isLastItem(folder, folders)">@{{ folder }}</p>
                                 <a v-else v-tippy="{arrow: true}" title="backspace">@{{ folder }}</a>
                             </li>
@@ -259,8 +260,10 @@
                 <div id="left">
                     <ul id="files" class="tile">
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
+                            :key="index"
                             @click="setSelected(file)"
-                            @dblclick="openFolder(file)">
+                            @dblclick="openFolder(file)"
+                            v-if="!checkForRestrictedExt(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
                                 :data-item="file.name"
                                 :data-index="index">

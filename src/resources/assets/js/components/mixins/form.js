@@ -18,7 +18,7 @@ export default {
                 folder: folder_location
             }, (res) => {
                 if (res.error) {
-                    if (this.checkForRestriction()) {
+                    if (this.checkForRestrictedPath()) {
                         EventHub.fire('get-folders', false)
                     }
                     this.loadingFiles('hide')
@@ -26,7 +26,7 @@ export default {
                     return this.showNotif(res.error, 'danger')
                 }
 
-                if (this.checkForRestriction()) {
+                if (this.checkForRestrictedPath()) {
                     EventHub.fire('get-folders', true)
                 }
 
@@ -93,7 +93,7 @@ export default {
 
             let filename = this.selectedFile.name
 
-            let ext = filename.lastIndexOf('.') > 0 ? filename.substring(filename.lastIndexOf('.') + 1) : null
+            let ext = this.getExtension(filename)
             let new_filename = ext == null ? changed : `${changed}.${ext}`
 
             $.post(event.target.action, {

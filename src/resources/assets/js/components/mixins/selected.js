@@ -46,7 +46,7 @@ export default {
             if (!this.isBulkSelecting()) {
                 this.noFiles('hide')
 
-                if (this.checkForRestriction() && index == 0) {
+                if (this.checkForRestrictedPath() && index == 0) {
                     return false
                 }
 

@@ -38,7 +38,8 @@
     - move
     - delete
 - bulk selection.
-- restrict access to [specific folder](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
+- restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
+- restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/File-Extension-Restriction)
 - download selected "including bulk selection"
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left, right, home, end)
