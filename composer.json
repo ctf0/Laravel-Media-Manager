@@ -7,7 +7,9 @@
         "ctf0",
         "media",
         "manager",
-        "laravel"
+        "laravel",
+        "gui",
+        "MediaManager"
     ],
     "authors": [
        {

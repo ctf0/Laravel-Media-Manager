@@ -332,7 +332,7 @@
                         <template v-if="selectedFile">
                             <div class="detail_img">
                                 <template v-if="selectedFileIs('image')">
-                                    <div class="modal mm-animated fadeIn mm-modal" id="img_modal">
+                                    <div class="modal mm-animated fadeIn mm-modal" id="preview_modal">
                                         <div class="modal-background pointer" @click="toggleModal()"></div>
                                         <div class="modal-content mm-animated fadeInDown">
                                             <p class="image">
@@ -344,7 +344,7 @@
                                     <img :src="selectedFile.path"
                                         v-tippy="{position: 'right', arrow: true}"
                                         title="space" class="pointer"
-                                        @click="toggleModal('#img_modal')"/>
+                                        @click="toggleModal('#preview_modal')"/>
                                 </template>
 
                                 <template v-if="selectedFileIs('video')">

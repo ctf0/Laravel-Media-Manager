@@ -6,7 +6,7 @@ export default {
             return item == list[list.length - 1]
         },
         lightBoxIsActive() {
-            return $('#img_modal').hasClass('is-active')
+            return $('#preview_modal').hasClass('is-active')
         },
         showNotif(msg, s = 'success') {
 

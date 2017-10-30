@@ -178,7 +178,7 @@ export default {
                                     // "show" image quick view
                                     if (this.selectedFileIs('image')) {
                                         this.noScroll('add')
-                                        this.toggleModal('#img_modal')
+                                        this.toggleModal('#preview_modal')
                                     }
                                 }
                             }
