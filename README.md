@@ -108,6 +108,7 @@
     |         | MMFileDeleted($file_path)           | get deleted file full path   |
     |         | MMFolderDeleted($file_path)         | get deleted folder full path |
     |         | MMFileRenamed($old_path, $new_path) | get renamed file/folder path |
+    |         | MMFileMoved($old_path, $new_path)   | get moved file/folder path   |
 
 ## Config
 **config/mediaManager.php**

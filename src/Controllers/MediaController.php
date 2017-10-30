@@ -255,6 +255,19 @@ class MediaController extends Controller
                             'type'    => $file_type,
                             'size'    => $file_size,
                         ];
+
+                        $pattern= [
+                            '/[a-zA-Z]+\/\.\.\/\//'=> '',
+                            '/\/\//'               => '/',
+                        ];
+
+                        $final = preg_replace(array_keys($pattern), array_values($pattern), $new_path);
+
+                        // fire event
+                        event('MMFileMoved', [
+                            'old' => $this->getFilePath($this->fileSystem, $old_path),
+                            'new' => $this->getFilePath($this->fileSystem, $final),
+                        ]);
                     } else {
                         throw new Exception(trans('MediaManager::messages.error_moving'));
                     }
