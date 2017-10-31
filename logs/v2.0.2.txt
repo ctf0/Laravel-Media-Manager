@@ -1,0 +1,7 @@
+- add support for file restriction using extension
+- add MMFileMoved event
+- change preview modal name
+- fix folder count “+1” on folder move update
+- update assets
+- update readme
+- update wiki

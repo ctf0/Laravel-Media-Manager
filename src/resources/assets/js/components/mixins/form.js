@@ -162,18 +162,17 @@ export default {
 
                     this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
                     this.removeFromLists(item.name)
-                    this.updateFolderCount(destination, 1, item.size)
 
-                    // update dirs list after move
-                    if (item.type.includes('folder')) {
+                    // update folder count when folder is moved into another
+                    if (this.fileTypeIs(item, 'folder')) {
+                        if (item.items > 0) {
+                            this.updateFolderCount(destination, item.items, item.size)
+                        }
+
+                        // update dirs list after move
                         this.updateDirsList()
-                    }
-                })
-
-                // update folder count when folder is moved into another
-                files.map((e) => {
-                    if (e.items && e.items > 0) {
-                        this.updateFolderCount(destination, e.items)
+                    } else {
+                        this.updateFolderCount(destination, 1, item.size)
                     }
                 })
 

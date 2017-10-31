@@ -236,9 +236,10 @@ class MediaController extends Controller
         }
 
         foreach ($request->moved_files as $one) {
-            $file_type   = $one['type'];
-            $file_name   = $one['name'];
-            $file_size   = $one['size'];
+            $file_type    = $one['type'];
+            $file_name    = $one['name'];
+            $file_size    = $one['size'];
+            $file_items   = isset($one['items']) ? $one['items'] : 0;
 
             $destination = "{$request->destination}/$file_name";
             $old_path    = "$folderLocation/$file_name";
@@ -246,27 +247,27 @@ class MediaController extends Controller
                             ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
                             : "$folderLocation/$destination";
 
+            $pattern = [
+                '/[[:alnum:]]+\/\.\.\/\//' => '',
+                '/\/\//'                   => '/',
+            ];
+            $new_path = preg_replace(array_keys($pattern), array_values($pattern), $new_path);
+
             try {
                 if (!file_exists($new_path)) {
                     if ($this->storageDisk->move($old_path, $new_path)) {
                         $result[] = [
                             'success' => true,
                             'name'    => $one['name'],
+                            'items'   => $file_items,
                             'type'    => $file_type,
                             'size'    => $file_size,
                         ];
 
-                        $pattern= [
-                            '/[a-zA-Z]+\/\.\.\/\//'=> '',
-                            '/\/\//'               => '/',
-                        ];
-
-                        $final = preg_replace(array_keys($pattern), array_values($pattern), $new_path);
-
                         // fire event
                         event('MMFileMoved', [
                             'old' => $this->getFilePath($this->fileSystem, $old_path),
-                            'new' => $this->getFilePath($this->fileSystem, $final),
+                            'new' => $this->getFilePath($this->fileSystem, $new_path),
                         ]);
                     } else {
                         throw new Exception(trans('MediaManager::messages.error_moving'));
