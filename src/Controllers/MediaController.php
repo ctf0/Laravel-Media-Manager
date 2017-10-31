@@ -201,7 +201,10 @@ class MediaController extends Controller
                     ];
                 } else {
                     // fire event
-                    event('MMFolderDeleted', $this->getFilePath($this->fileSystem, $file_name));
+                    event('MMFileDeleted', [
+                        'file_path' => $this->getFilePath($this->fileSystem, $file_name),
+                        'is_folder' => true,
+                    ]);
                 }
             } else {
                 if (!$this->storageDisk->delete($file_name)) {
@@ -211,7 +214,10 @@ class MediaController extends Controller
                     ];
                 } else {
                     // fire event
-                    event('MMFileDeleted', $this->getFilePath($this->fileSystem, $file_name));
+                    event('MMFileDeleted', [
+                        'file_path' => $this->getFilePath($this->fileSystem, $file_name),
+                        'is_folder' => false,
+                    ]);
                 }
             }
         }
@@ -266,8 +272,8 @@ class MediaController extends Controller
 
                         // fire event
                         event('MMFileMoved', [
-                            'old' => $this->getFilePath($this->fileSystem, $old_path),
-                            'new' => $this->getFilePath($this->fileSystem, $new_path),
+                            'old_path' => $this->getFilePath($this->fileSystem, $old_path),
+                            'new_path' => $this->getFilePath($this->fileSystem, $new_path),
                         ]);
                     } else {
                         throw new Exception(trans('MediaManager::messages.error_moving'));
@@ -311,8 +317,8 @@ class MediaController extends Controller
 
                 // fire event
                 event('MMFileRenamed', [
-                    'old' => $this->getFilePath($this->fileSystem, "$folderLocation/$filename"),
-                    'new' => $this->getFilePath($this->fileSystem, "$folderLocation/$new_filename"),
+                    'old_path' => $this->getFilePath($this->fileSystem, "$folderLocation/$filename"),
+                    'new_path' => $this->getFilePath($this->fileSystem, "$folderLocation/$new_filename"),
                 ]);
             } else {
                 $message = trans('MediaManager::messages.error_moving');

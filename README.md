@@ -91,24 +91,23 @@
 
 - events
 
-    |   type  |              event-name             |         description          |
-    |---------|-------------------------------------|------------------------------|
-    | JS      |                                     |                              |
-    |         | modal-show                          | when modal is showen         |
-    |         | modal-show                          | when modal is showen         |
-    |         | modal-hide                          | when modal is hidden         |
-    |         | no-files-show                       | when no files msg is showen  |
-    |         | no-files-hide                       | when no files msg is hidden  |
-    |         | loading-files-show                  | when loading files is hidden |
-    |         | loading-files-hide                  | when loading files is hidden |
-    |         | ajax-error-show                     | when ajax call fails         |
-    |         | file_selected                       | get selected file url        |
-    | Laravel |                                     |                              |
-    |         | MMFileUploaded($file_path)          | get uploaded file full path  |
-    |         | MMFileDeleted($file_path)           | get deleted file full path   |
-    |         | MMFolderDeleted($file_path)         | get deleted folder full path |
-    |         | MMFileRenamed($old_path, $new_path) | get renamed file/folder path |
-    |         | MMFileMoved($old_path, $new_path)   | get moved file/folder path   |
+    |   type  |               event-name              |               description                |
+    |---------|---------------------------------------|------------------------------------------|
+    | JS      |                                       |                                          |
+    |         | modal-show                            | when modal is showen                     |
+    |         | modal-show                            | when modal is showen                     |
+    |         | modal-hide                            | when modal is hidden                     |
+    |         | no-files-show                         | when no files msg is showen              |
+    |         | no-files-hide                         | when no files msg is hidden              |
+    |         | loading-files-show                    | when loading files is hidden             |
+    |         | loading-files-hide                    | when loading files is hidden             |
+    |         | ajax-error-show                       | when ajax call fails                     |
+    |         | file_selected                         | get selected file url                    |
+    | Laravel |                                       |                                          |
+    |         | MMFileUploaded($file_path)            | get uploaded file full path              |
+    |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
+    |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |
+    |         | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" path   |
 
 ## Config
 **config/mediaManager.php**

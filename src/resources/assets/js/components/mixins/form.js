@@ -17,11 +17,13 @@ export default {
             $.post(this.filesRoute, {
                 folder: folder_location
             }, (res) => {
+                this.loadingFiles('hide')
+
                 if (res.error) {
                     if (this.checkForRestrictedPath()) {
                         EventHub.fire('get-folders', false)
                     }
-                    this.loadingFiles('hide')
+
                     this.noFiles('show')
                     return this.showNotif(res.error, 'danger')
                 }
@@ -31,7 +33,6 @@ export default {
                 }
 
                 this.files = res
-                this.loadingFiles('hide')
                 this.noFiles('hide')
                 this.selectFirst()
                 $('#right').fadeIn()

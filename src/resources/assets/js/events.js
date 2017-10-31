@@ -10,7 +10,9 @@ EventHub.listen('loading-files-show', () => {
 })
 
 EventHub.listen('loading-files-hide', () => {
-    bodymovin.destroy('file_loader_anim')
+    setTimeout(() => {
+        bodymovin.destroy('file_loader_anim')
+    }, 100)
 })
 
 // N O - F I L E S //

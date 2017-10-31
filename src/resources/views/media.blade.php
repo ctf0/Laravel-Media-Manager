@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
 </head>
 <body>
-    <div id="app" v-cloak>
-
+    <section id="app" v-cloak>
         {{-- notifications --}}
         <div class="notif-container">
             <my-notification></my-notification>
@@ -26,8 +25,7 @@
                 </div>
             </div>
         </div>
-
-    </div>
+    </section>
 
     {{-- footer --}}
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
