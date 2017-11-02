@@ -262,8 +262,7 @@
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
                             :key="index"
                             @click="setSelected(file)"
-                            @dblclick="openFolder(file)"
-                            v-if="!checkForRestrictedExt(file)">
+                            @dblclick="openFolder(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
                                 :data-item="file.name"
                                 :data-index="index">

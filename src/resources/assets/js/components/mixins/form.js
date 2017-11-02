@@ -33,6 +33,13 @@ export default {
                 }
 
                 this.files = res
+
+                if (this.restrictExt.length) {
+                    this.files.items = this.files.items.filter((e) => {
+                        return !this.checkForRestrictedExt(e)
+                    })
+                }
+
                 this.noFiles('hide')
                 this.selectFirst()
                 $('#right').fadeIn()
