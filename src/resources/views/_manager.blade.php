@@ -17,60 +17,60 @@
             <div class="level-left">
                 {{-- manager --}}
                 <div class="level-item">
-                    <div class="field is-grouped">
-
+                    <div class="field has-addons">
                         <div class="control">
-                            <div class="field has-addons">
-                                <div class="control">
-                                    <button class="button" id="upload" v-tippy="{arrow: true}" title="u">
-                                        <span class="icon is-small"><i class="fa fa-cloud-upload"></i></span>
-                                        <span>{{ trans('MediaManager::messages.upload') }}</span>
-                                    </button>
-                                </div>
-                                <div class="control">
-                                    <button class="button" id="new_folder" @click="toggleModal('#new_folder_modal')">
-                                        <span class="icon is-small"><i class="fa fa-folder"></i></span>
-                                        <span>{{ trans('MediaManager::messages.add_folder') }}</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="control">
-                            <button class="button is-light" id="refresh"
-                                v-tippy="{arrow: true}" title="r"
-                                @click="getFiles(folders)">
-                                <span class="icon is-small"><i class="fa fa-refresh"></i></span>
+                            <button class="button" id="upload" v-tippy="{arrow: true}" title="u">
+                                <span class="icon is-small"><i class="fa fa-cloud-upload"></i></span>
+                                <span>{{ trans('MediaManager::messages.upload') }}</span>
                             </button>
                         </div>
 
                         <div class="control">
-                            <div class="field has-addons">
-                                <div class="control">
-                                    <button class="button is-link" id="move"
-                                        v-tippy="{arrow: true}" title="m"
-                                        @click="toggleModal('#move_file_modal')">
-                                        <span class="icon is-small"><i class="fa fa-share"></i></span>
-                                        <span>{{ trans('MediaManager::messages.move') }}</span>
-                                    </button>
-                                </div>
-                                <div class="control">
-                                    <button class="button is-link" id="rename" @click="toggleModal('#rename_file_modal')">
-                                        <span class="icon is-small"><i class="fa fa-i-cursor"></i></span>
-                                        <span>{{ trans('MediaManager::messages.rename') }}</span>
-                                    </button>
-                                </div>
-                                <div class="control">
-                                    <button class="button is-link" id="delete"
-                                        v-tippy="{arrow: true}" title="d / del"
-                                        @click="toggleModal('#confirm_delete_modal')">
-                                        <span class="icon is-small"><i class="fa fa-trash"></i></span>
-                                        <span>{{ trans('MediaManager::messages.delete') }}</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <button class="button" id="new_folder" @click="toggleModal('#new_folder_modal')">
+                                <span class="icon is-small"><i class="fa fa-folder"></i></span>
+                                <span>{{ trans('MediaManager::messages.add_folder') }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="level-item">
+                    <div class="control">
+                        <button class="button is-light" id="refresh"
+                            v-tippy="{arrow: true}" title="r"
+                            @click="getFiles(folders)">
+                            <span class="icon is-small"><i class="fa fa-refresh"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="level-item">
+                    <div class="field has-addons">
+                        <div class="control">
+                            <button class="button is-link" id="move"
+                                v-tippy="{arrow: true}" title="m"
+                                @click="toggleModal('#move_file_modal')">
+                                <span class="icon is-small"><i class="fa fa-share"></i></span>
+                                <span>{{ trans('MediaManager::messages.move') }}</span>
+                            </button>
                         </div>
 
+                        <div class="control">
+                            <button class="button is-link" id="rename"
+                                @click="toggleModal('#rename_file_modal')">
+                                <span class="icon is-small"><i class="fa fa-i-cursor"></i></span>
+                                <span>{{ trans('MediaManager::messages.rename') }}</span>
+                            </button>
+                        </div>
+
+                        <div class="control">
+                            <button class="button is-link" id="delete"
+                                v-tippy="{arrow: true}" title="d / del"
+                                @click="toggleModal('#confirm_delete_modal')">
+                                <span class="icon is-small"><i class="fa fa-trash"></i></span>
+                                <span>{{ trans('MediaManager::messages.delete') }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,125 +78,129 @@
             {{-- ====================================================================== --}}
 
             {{-- right toolbar --}}
-            <div class="level-right is-hidden-touch">
+            <div class="level-right">
                 <div class="level-item">
-                    <div class="field is-grouped">
-                        {{-- multi --}}
+                    {{-- multi --}}
+                    <div class="field">
                         <div class="control">
-                            <div class="field">
+                            <button id="blk_slct_all" class="button" v-tippy="{arrow: true}" title="a">
+                                <span class="icon is-small"><i class="fa fa-plus"></i></span>
+                                <span>Select All</span>
+                            </button>
+                        </div>
+                        @if (!isset($no_bulk))
+                            <div class="control">
+                                <button id="blk_slct" class="button" :disabled="!allItemsCount" v-tippy="{arrow: true}" title="b">
+                                    <span class="icon is-small"><i class="fa fa-puzzle-piece"></i></span>
+                                    <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <template v-if="allItemsCount">
+                    {{-- filter by --}}
+                    <div class="level-item">
+                        <div class="control">
+                            <div class="field has-addons">
                                 <div class="control">
-                                    <button id="blk_slct_all" class="button" v-tippy="{arrow: true}" title="a">
-                                        <span class="icon is-small"><i class="fa fa-plus"></i></span>
-                                        <span>Select All</span>
+                                    <button @click="showFilesOfType('image')"
+                                        v-tippy="{arrow: true}" title="Filter By Image"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('image')}"
+                                        :disabled="!btnFilter('image')">
+                                        <span class="icon is-small"><i class="fa fa-image"></i></span>
                                     </button>
                                 </div>
                                 <div class="control">
-                                    <button id="blk_slct" class="button" :disabled="!allItemsCount" v-tippy="{arrow: true}" title="b">
-                                        <span class="icon is-small"><i class="fa fa-puzzle-piece"></i></span>
-                                        <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
+                                    <button @click="showFilesOfType('video')"
+                                        v-tippy="{arrow: true}" title="Filter By Video"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('video')}"
+                                        :disabled="!btnFilter('video')">
+                                        <span class="icon is-small"><i class="fa fa-video-camera"></i></span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button @click="showFilesOfType('audio')"
+                                        v-tippy="{arrow: true}" title="Filter By Audio"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('audio')}"
+                                        :disabled="!btnFilter('audio')">
+                                        <span class="icon is-small"><i class="fa fa-music"></i></span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button @click="showFilesOfType('folder')"
+                                        v-tippy="{arrow: true}" title="Filter By Folder"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('folder')}"
+                                        :disabled="!btnFilter('folder')">
+                                        <span class="icon is-small"><i class="fa fa-folder"></i></span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button @click="showFilesOfType('text')"
+                                        v-tippy="{arrow: true}" title="Filter By Text"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('text')}"
+                                        :disabled="!btnFilter('text')">
+                                        <span class="icon is-small"><i class="fa fa-file-text"></i></span>
+                                    </button>
+                                </div>
+
+                                <div class="control">
+                                    <button @click="showFilesOfType('all')"
+                                        v-tippy="{arrow: true}" title="Clear Filter"
+                                        class="button"
+                                        :class="{'is-danger': btnFilter('all')}"
+                                        :disabled="!btnFilter('all')">
+                                        <span class="icon is-small"><i class="fa fa-times"></i></span>
                                     </button>
                                 </div>
                             </div>
                         </div>
-
-                        <template v-if="allItemsCount">
-                            {{-- filter by --}}
-                            <div class="control">
-                                <div class="field has-addons">
-                                    <div class="control">
-                                        <button @click="showFilesOfType('image')"
-                                            v-tippy="{arrow: true}" title="Filter By Image"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('image')}"
-                                            :disabled="!btnFilter('image')">
-                                            <span class="icon is-small"><i class="fa fa-image"></i></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('video')"
-                                            v-tippy="{arrow: true}" title="Filter By Video"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('video')}"
-                                            :disabled="!btnFilter('video')">
-                                            <span class="icon is-small"><i class="fa fa-video-camera"></i></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('audio')"
-                                            v-tippy="{arrow: true}" title="Filter By Audio"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('audio')}"
-                                            :disabled="!btnFilter('audio')">
-                                            <span class="icon is-small"><i class="fa fa-music"></i></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('folder')"
-                                            v-tippy="{arrow: true}" title="Filter By Folder"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('folder')}"
-                                            :disabled="!btnFilter('folder')">
-                                            <span class="icon is-small"><i class="fa fa-folder"></i></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('text')"
-                                            v-tippy="{arrow: true}" title="Filter By Text"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('text')}"
-                                            :disabled="!btnFilter('text')">
-                                            <span class="icon is-small"><i class="fa fa-file-text"></i></span>
-                                        </button>
-                                    </div>
-
-                                    <div class="control">
-                                        <button @click="showFilesOfType('all')"
-                                            v-tippy="{arrow: true}" title="Clear Filter"
-                                            class="button"
-                                            :class="{'is-danger': btnFilter('all')}"
-                                            :disabled="!btnFilter('all')">
-                                            <span class="icon is-small"><i class="fa fa-times"></i></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- showBy --}}
-                            <div class="control has-icons-left">
-                                <div class="select">
-                                    <select v-model="showBy">
-                                        <option disabled value="undefined">Sort By</option>
-                                        <option value="clear">Non</option>
-                                        <option value="size">Size</option>
-                                        <option value="last_modified">Last Modified</option>
-                                    </select>
-                                </div>
-                                <div class="icon is-small is-left">
-                                    <i class="fa fa-bell-o"></i>
-                                </div>
-                            </div>
-
-                            {{-- search --}}
-                            <div class="control">
-                                <div class="field has-addons">
-                                    <p class="control has-icons-left">
-                                        <input class="input" type="text" placeholder="Find" v-model="searchFor">
-                                        <span class="icon is-small is-left">
-                                            <i class="fa fa-search"></i>
-                                        </span>
-                                    </p>
-                                    <p class="control">
-                                        <button class="button is-black" :disabled="!searchFor"
-                                            v-tippy="{arrow: true}" title="Clear Search"
-                                            @click="resetInput('searchFor')" >
-                                            <span class="icon is-small"><i class="fa fa-times"></i></span>
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        </template>
                     </div>
-                </div>
+
+                    {{-- showBy --}}
+                    <div class="level-item">
+                        <div class="control has-icons-left">
+                            <div class="select">
+                                <select v-model="showBy">
+                                    <option disabled value="undefined">Sort By</option>
+                                    <option value="clear">Non</option>
+                                    <option value="size">Size</option>
+                                    <option value="last_modified">Last Modified</option>
+                                </select>
+                            </div>
+                            <div class="icon is-small is-left">
+                                <i class="fa fa-bell-o"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- search --}}
+                    <div class="level-item">
+                        <div class="control">
+                            <div class="field has-addons">
+                                <p class="control has-icons-left">
+                                    <input class="input" type="text" placeholder="Find" v-model="searchFor">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                </p>
+                                <p class="control">
+                                    <button class="button is-black" :disabled="!searchFor"
+                                        v-tippy="{arrow: true}" title="Clear Search"
+                                        @click="resetInput('searchFor')" >
+                                        <span class="icon is-small"><i class="fa fa-times"></i></span>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </nav>
 

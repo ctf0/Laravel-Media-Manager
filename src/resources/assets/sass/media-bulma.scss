@@ -66,6 +66,11 @@ table,
     }
 }
 
+.modal-card {
+    margin: 0;
+    padding: 1rem 1rem 0;
+}
+
 .modal.is-active {
     align-items: start;
     padding-top: 3%;
@@ -74,4 +79,10 @@ table,
 .modal-card-foot {
     justify-content: flex-end;
     background-color: white;
+}
+
+@media screen and (max-width: 1299px) {
+    .level-left + .level-right {
+        margin-top: 0.75rem;
+    }
 }
