@@ -335,15 +335,6 @@
                         <template v-if="selectedFile">
                             <div class="detail_img">
                                 <template v-if="selectedFileIs('image')">
-                                    <div class="modal mm-animated fadeIn mm-modal" id="preview_modal">
-                                        <div class="modal-background pointer" @click="toggleModal()"></div>
-                                        <div class="modal-content mm-animated fadeInDown">
-                                            <p class="image">
-                                                <img :src="selectedFile.path">
-                                            </p>
-                                        </div>
-                                        <button class="modal-close is-large" @click="toggleModal()"></button>
-                                    </div>
                                     <img :src="selectedFile.path"
                                         v-tippy="{position: 'right', arrow: true}"
                                         title="space" class="pointer"
@@ -412,6 +403,16 @@
         {{-- ====================================================================== --}}
 
         {{-- modals --}}
+        <div class="modal mm-animated fadeIn mm-modal" id="preview_modal" v-if="selectedFileIs('image')">
+            <div class="modal-background pointer" @click="toggleModal()"></div>
+            <div class="modal-content mm-animated fadeInDown">
+                <p class="image">
+                    <img :src="selectedFile.path">
+                </p>
+            </div>
+            <button class="modal-close is-large" @click="toggleModal()"></button>
+        </div>
+
         <div class="modal mm-animated fadeIn mm-modal" id="new_folder_modal">
             {{ Form::open(['route' => 'media.new_folder', '@submit.prevent'=>'NewFolderForm($event)']) }}
                 <div class="modal-background pointer" @click="toggleModal()"></div>
