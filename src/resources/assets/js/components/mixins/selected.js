@@ -42,6 +42,15 @@ export default {
 
             this.resetInput('currentFilterName')
         },
+        goToPrevFolder() {
+            let newSelected = parseInt(this.folders.length) - 1
+
+            if (newSelected < 0) {
+                return false
+            }
+
+            this.goToFolder(newSelected)
+        },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
                 this.noFiles('hide')

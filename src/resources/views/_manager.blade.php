@@ -8,7 +8,7 @@
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
     restrict-path="{{ isset($path) ? $path : null }}"
     restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}">
-    <div>
+    <v-touch @swiperight="toggleModal()">
 
         {{-- top toolbar --}}
         <nav id="toolbar" class="level">
@@ -261,12 +261,13 @@
 
             <div class="manager-container">
                 {{-- files box --}}
-                <div id="left">
+                <v-touch id="left"
+                    @swiperight="goToPrevFolder()"
+                    @dbltap="selectedFileIs('image') ? toggleModal('#preview_modal') : openFolder(selectedFile)">
                     <ul id="files" class="tile">
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
                             :key="index"
-                            @click="setSelected(file)"
-                            @dblclick="openFolder(file)">
+                            @click="setSelected(file)">
                             <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
                                 :data-item="file.name"
                                 :data-index="index">
@@ -319,7 +320,7 @@
                         <div id="ajax_error_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/avalanche.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.ajax_error') }}</h3>
                     </div>
-                </div>
+                </v-touch>
 
                 {{-- ====================================================================== --}}
 
@@ -584,7 +585,7 @@
             {{ Form::close() }}
         </div>
 
-    </div>
+    </v-touch>
 </media-manager>
 
 {{-- scripts --}}

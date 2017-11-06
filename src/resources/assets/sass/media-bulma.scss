@@ -41,6 +41,30 @@ $orange: #ff470f;
     }
 }
 
+.modal-card {
+    margin: 0;
+    padding: 1rem 1rem 0;
+}
+
+#preview_modal {
+    .modal-content,
+    .modal-card {
+        width: auto;
+        max-width: 640px;
+        margin: 0;
+    }
+}
+
+.modal.is-active {
+    align-items: start;
+    padding-top: 3%;
+}
+
+.modal-card-foot {
+    justify-content: flex-end;
+    background-color: white;
+}
+
 // bulma
 .input {
     border-color: $gray_7;
@@ -64,21 +88,6 @@ table,
     tr:hover {
         background-color: transparent;
     }
-}
-
-.modal-card {
-    margin: 0;
-    padding: 1rem 1rem 0;
-}
-
-.modal.is-active {
-    align-items: start;
-    padding-top: 3%;
-}
-
-.modal-card-foot {
-    justify-content: flex-end;
-    background-color: white;
 }
 
 @media screen and (max-width: 1299px) {

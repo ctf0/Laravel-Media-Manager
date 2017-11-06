@@ -42,7 +42,7 @@
 - restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/File-Extension-Restriction)
 - download selected "including bulk selection"
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
-- auto scroll to selected item when using (left, right, home, end)
+- auto scroll to selected item when using (left/up, right/down, home, end)
 - search
 - filter by type
     + folder
@@ -67,27 +67,30 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |            button            |  keyboard | mouse (click) |
-    |---------------------|------------------------------|-----------|---------------|
-    |                     | upload *(toolbar)*           | u         | *             |
-    |                     | refresh *(toolbar)*          | r         | *             |
-    |                     | move *(toolbar)*             | m         | *             |
-    |                     | delete *(toolbar)*           | d/del     | *             |
-    |                     | bulk select *(toolbar)*      | b         | *             |
-    |                     | bulk select all *(toolbar)*  | a         | *             |
-    |                     | file rename *(modal)*        | enter     | *             |
-    |                     | file delete *(modal)*        | enter     | *             |
-    |                     | create new folder *(modal)*  | enter     | *             |
-    |                     | toggle *(sidebar)*           | t         | *             |
-    |                     | play/pause media *(sidebar)* | space     | *             |
-    |                     | view image *(sidebar)*       | space     | *             |
-    |                     | hide image *(light-box)*     | space/esc | *             |
-    | select next         |                              | right     | *             |
-    | select prev         |                              | left      | *             |
-    | select first        |                              | home      | *             |
-    | select last         |                              | end       | *             |
-    | open folder         |                              | enter     | double click  |
-    | go back to prev dir | folderName *(breadcrumb)*    | backspace | *             |
+    |      navigation     |            button            |   keyboard   | mouse (click) |    touch    |
+    |---------------------|------------------------------|--------------|---------------|-------------|
+    |                     | upload *(toolbar)*           | u            | *             |             |
+    |                     | refresh *(toolbar)*          | r            | *             |             |
+    |                     | move *(toolbar)*             | m            | *             |             |
+    |                     | delete *(toolbar)*           | d/del        | *             |             |
+    |                     | bulk select *(toolbar)*      | b            | *             |             |
+    |                     | bulk select all *(toolbar)*  | a            | *             |             |
+    |                     | &nbsp;                       |              |               |             |
+    |                     | file/folder rename *(modal)* | enter        | *             |             |
+    |                     | file/folder delete *(modal)* | enter        | *             |             |
+    |                     | file/folder move *(modal)*   | enter        | *             |             |
+    |                     | create new folder *(modal)*  | enter        | *             |             |
+    |                     | &nbsp;                       |              |               |             |
+    |                     | toggle *(sidebar)*           | t            | *             |             |
+    |                     | play/pause media *(sidebar)* | space        | *             |             |
+    |                     | preview image *(sidebar)*    | space        | *             | 2x tap      |
+    |                     | hide image *(light-box)*     | space/esc    | *             | swipe right |
+    | select next         |                              | right / down | *             |             |
+    | select prev         |                              | left / up    | *             |             |
+    | select first        |                              | home         | *             |             |
+    | select last         |                              | end          | *             |             |
+    | open folder         |                              | enter        | 2x click      | 2x tap      |
+    | go back to prev dir | folderName *(breadcrumb)*    | backspace    | *             | swipe right |
 
 - events
 
@@ -175,9 +178,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif
+yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif --save
+npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

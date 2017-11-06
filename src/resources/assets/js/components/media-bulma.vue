@@ -133,7 +133,6 @@ export default {
 
                 let curSelected = $('#files li .selected')
                 let curSelectedIndex = parseInt(curSelected.data('index'))
-                let newSelected = ''
 
                 // when modal isnt visible
                 if (!$('.mm-modal').hasClass('is-active')) {
@@ -149,13 +148,7 @@ export default {
 
                             // go up a dir
                             if (keycode(e) == 'backspace' && this.folders.length) {
-                                newSelected = parseInt(this.folders.length) - 1
-
-                                if (newSelected < 0) {
-                                    return false
-                                }
-
-                                this.goToFolder(newSelected)
+                                this.goToPrevFolder()
                             }
 
                             // when there are files
@@ -163,7 +156,8 @@ export default {
                                 this.navigation(e, curSelectedIndex)
 
                                 if (
-                                    keycode(e) == 'space' && e.target == document.body &&
+                                    keycode(e) == 'space' &&
+                                    e.target == document.body &&
                                     (this.selectedFileIs('video') || this.selectedFileIs('audio') || this.selectedFileIs('image'))
                                 ) {
                                     e.preventDefault()
