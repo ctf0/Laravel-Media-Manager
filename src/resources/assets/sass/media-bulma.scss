@@ -1,14 +1,7 @@
 @import "./shared/animate";
 @import "./shared/progress";
 @import "./shared/manager";
-$gray_7: #b5b5b5;
-$turquoise: #00d1b2;
-$green: #23d160;
-$yellow: #ffdd57;
-$red: #ff3860;
-$orange: #ff470f;
 
-// modal
 .modal-card-head,
 .progress-bar {
     &.is-warning {

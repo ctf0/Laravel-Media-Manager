@@ -11,6 +11,11 @@ $gray_5: #bbb;
 $dark-gray_1: #555;
 $dark-gray_2: #444;
 $slate_gray: #76838c;
+$gray_7: #b5b5b5;
+$turquoise: #00d1b2;
+$green: #23d160;
+$yellow: #ffdd57;
+$red: #ff3860;
 $blue: #3273dc;
 $blue_2: #276cda;
 
@@ -36,17 +41,40 @@ $blue_2: #276cda;
 }
 
 .dz {
+    position: relative;
     min-height: 150px;
     padding: 45px;
     cursor: pointer;
-    border: 2px dashed $blue;
+    border: 2px dashed rgba(187, 187, 187, 0.5);
     border-radius: 5px;
-    background: white;
+
+    &::before {
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        content: "";
+        opacity: 0.5;
+        background-image: url("/assets/vendor/MediaManager/upload.jpg");
+        background-repeat: repeat;
+    }
 
     .dz-message {
         font-weight: 400;
-        margin: 2em 0;
+        width: calc(100% / 3);
+        margin: auto;
+        padding: 1em 0;
+        transition: all 0.3s ease-in-out;
         text-align: center;
+        background-color: rgba(255, 210, 0, 0.9);
+    }
+
+    &:hover {
+        .dz-message {
+            box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.2);
+        }
     }
 }
 
@@ -279,6 +307,14 @@ $blue_2: #276cda;
 
         a {
             color: $blue;
+        }
+
+        .copy-link {
+            transition: all 0.3s ease;
+
+            &:hover {
+                color: $green;
+            }
         }
     }
 

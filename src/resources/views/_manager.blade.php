@@ -210,9 +210,7 @@
         <div class="field is-marginless">
             <div id="dz">
                 <form class="dz" id="new-upload" action="{{ route('media.upload') }}">
-                    <div class="dz-message title is-4">
-                        {{ trans('MediaManager::messages.drag_drop_info') }}
-                    </div>
+                    <div class="dz-message title is-4">{{ trans('MediaManager::messages.drag_drop_info') }}</div>
                     {{ csrf_field() }}
                     <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
                 </form>
@@ -376,16 +374,23 @@
                                         <h4>items: <span>@{{ selectedFile.items }} Item(s)</span></h4>
                                     </template>
                                     <template v-else>
-                                        <h4>Public URL: <a :href="selectedFile.path" target="_blank">Click Here</a></h4>
-                                    </template>
-                                    <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
-                                    <template v-if="!selectedFileIs('folder')">
+                                        <h4>Public URL:
+                                            <span class="icon pointer copy-link"
+                                                @click="copyLink(selectedFile.path)"
+                                                :title="linkCopied ? 'Copied' : 'Copy Link To Clipboard'"
+                                                v-tippy="{position: 'top', arrow: true, hideOnClick: false}"
+                                                @Hidden="linkCopied = false">
+                                                <i class="fa fa-clone" aria-hidden="true"></i>
+                                            </span>
+                                            <a :href="selectedFile.path" target="_blank">Click Here</a>
+                                        </h4>
                                         <h4>Download File:
                                             <a :href="selectedFile.path" @click.prevent="saveFile(selectedFile.path)">
                                                 <span class="icon has-text-link"><i class="fa fa-download fa-lg"></i></span>
                                             </a>
                                         </h4>
                                     </template>
+                                    <h4>Last Modified: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
                                 </div>
                             </div>
                         </template>

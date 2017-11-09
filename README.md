@@ -41,6 +41,7 @@
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/File-Extension-Restriction)
 - download selected "including bulk selection"
+- directly copy selected file link with a click.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left/up, right/down, home, end)
 - search
@@ -178,9 +179,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

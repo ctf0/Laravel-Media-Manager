@@ -37,6 +37,7 @@ export default {
     data() {
         return {
             is_loading: false,
+            linkCopied: false,
             files: [],
             folders: [],
             directories: [],

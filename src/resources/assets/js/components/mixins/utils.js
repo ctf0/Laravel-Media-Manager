@@ -135,6 +135,10 @@ export default {
             }
 
             downloadFile(path)
+        },
+        copyLink(path) {
+            this.linkCopied = true
+            this.$copyText(path)
         }
     }
 }

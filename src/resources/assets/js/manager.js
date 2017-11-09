@@ -12,6 +12,7 @@ window.keycode = require('keycode')
 window.dropzone = require('dropzone')
 Vue.use(require('vue-tippy'))
 Vue.use(require('vue2-filters'))
+Vue.use(require('vue-clipboard2'))
 
 let VueTouch = require('vue-touch')
 VueTouch.registerCustomEvent('dbltap', {
