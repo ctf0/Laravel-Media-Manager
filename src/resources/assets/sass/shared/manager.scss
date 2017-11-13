@@ -7,7 +7,7 @@ $gray_1: #f9f9f9;
 $gray_2: #e0e0e0;
 $gray_3: #eceff1;
 $gray_4: #f1f1f1;
-$gray_5: #bbb;
+$gray_5: #8d8c8c;
 $dark-gray_1: #555;
 $dark-gray_2: #444;
 $slate_gray: #76838c;
@@ -42,39 +42,45 @@ $blue_2: #276cda;
 
 .dz {
     position: relative;
-    min-height: 150px;
-    padding: 45px;
+    overflow: hidden;
     cursor: pointer;
     border: 2px dashed rgba(187, 187, 187, 0.5);
     border-radius: 5px;
+    background-image: url("/assets/vendor/MediaManager/upload.jpg");
+    background-repeat: repeat;
 
     &::before {
         position: absolute;
-        z-index: -1;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+        top: 50%;
+        left: 50%;
+        width: 25vw;
+        height: 25vw;
         content: "";
-        opacity: 0.5;
-        background-image: url("/assets/vendor/MediaManager/upload.jpg");
-        background-repeat: repeat;
+        transition: all 0.3s ease-in-out;
+        border-radius: 100vw;
+        background-color: rgba(255, 210, 0, 0.9);
+        translate: -50% -50%;
+    }
+
+    &:hover {
+        &::before {
+            box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.2);
+        }
     }
 
     .dz-message {
         font-weight: 400;
-        width: calc(100% / 3);
-        margin: auto;
-        padding: 1em 0;
-        transition: all 0.3s ease-in-out;
+        position: relative;
+        margin: 0;
+        padding: 3em;
         text-align: center;
-        background-color: rgba(255, 210, 0, 0.9);
     }
+}
 
-    &:hover {
-        .dz-message {
-            box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.2);
-        }
+@media screen and (max-width: 992px) {
+    .dz::before {
+        width: 65vw;
+        height: 65vw;
     }
 }
 
@@ -178,15 +184,40 @@ $blue_2: #276cda;
 }
 
 .file_link {
+    position: relative;
     display: flex;
     overflow: hidden;
     width: 100%;
     margin: 10px;
     padding: 10px;
     cursor: pointer;
+    transition: all 0.25s ease;
     border: 1px solid $off_white_3;
     border-radius: 4px;
     background: $off_white_2;
+
+    &.selected,
+    &.bulk-selected,
+    &:hover {
+        color: white;
+        border-color: $blue_2;
+        background: $blue;
+
+        h4,
+        i {
+            color: white;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 10px 45px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .copy-link {
+        position: absolute;
+        right: 0;
+        bottom: 1px;
+    }
 
     .link_icon {
         flex: 1;
@@ -224,19 +255,6 @@ $blue_2: #276cda;
 
         small {
             font-size: 11px;
-        }
-    }
-
-    &.selected,
-    &.bulk-selected,
-    &:hover {
-        color: white;
-        border-color: $blue_2;
-        background: $blue;
-
-        h4,
-        i {
-            color: white;
         }
     }
 }
@@ -307,14 +325,6 @@ $blue_2: #276cda;
 
         a {
             color: $blue;
-        }
-
-        .copy-link {
-            transition: all 0.3s ease;
-
-            &:hover {
-                color: $green;
-            }
         }
     }
 

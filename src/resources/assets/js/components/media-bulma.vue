@@ -8,6 +8,7 @@
 // fa-minus
 // fa fa-angle-double-right
 // fa fa-angle-double-left
+
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
@@ -32,7 +33,8 @@ export default {
         'dirsRoute',
         'hideExt',
         'restrictPath',
-        'restrictExt'
+        'restrictExt',
+        'trans'
     ],
     data() {
         return {
@@ -340,10 +342,10 @@ export default {
 
                 if ($(this).hasClass('is-warning')) {
                     $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
-                    toggle_text.text('Select Non')
+                    toggle_text.text(manager.trans.non)
                 } else {
                     $(this).find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                    toggle_text.text('Select All')
+                    toggle_text.text(manager.trans.all)
                 }
             })
 

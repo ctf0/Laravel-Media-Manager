@@ -75,7 +75,7 @@ export default {
         toggleInfo() {
             $('#right').fadeToggle()
             let span = $('.toggle').find('span').not('.icon')
-            span.text(span.text() == 'Close' ? 'Open' : 'Close')
+            span.text(span.text() == this.trans.close ? this.trans.open : this.trans.close)
             $('.toggle').find('.fa').toggleClass('fa fa-angle-double-right').toggleClass('fa fa-angle-double-left')
         },
         toggleModal(selector = null) {

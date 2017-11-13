@@ -22,7 +22,7 @@ export default {
                 let toggle_text = $('#blk_slct_all').find('span').not('.icon')
                 $('#blk_slct_all').removeClass('is-warning')
                 $('#blk_slct_all').find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                toggle_text.text('Select All')
+                toggle_text.text(this.trans.all)
             }
         },
         selectedFile(val) {
