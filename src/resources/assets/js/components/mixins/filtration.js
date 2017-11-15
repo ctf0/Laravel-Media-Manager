@@ -31,7 +31,6 @@ export default {
             }
 
             if (val == 'all') {
-                this.filterdList = []
                 this.resetInput('currentFilterName')
             } else {
                 this.filterdList = this.files.items.filter((item) => {

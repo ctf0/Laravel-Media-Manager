@@ -1,11 +1,11 @@
 export default {
     methods: {
         /*                Main                */
-        getFiles(folders) {
+        getFiles(folders, select_prev = null) {
             this.loadingFiles('show')
             this.resetInput('searchFor')
             this.resetInput('showBy')
-            this.showFilesOfType('all')
+            this.resetInput('currentFilterName')
 
             let folder_location = '/'
 
@@ -28,12 +28,27 @@ export default {
                     return this.showNotif(res.error, 'danger')
                 }
 
+                // check for restricted path
                 if (this.checkForRestrictedPath()) {
                     EventHub.fire('get-folders', true)
                 }
 
                 this.files = res
 
+                // check for prev opened folder
+                if (select_prev) {
+                    this.$nextTick(() => {
+                        this.files.items.map((e) => {
+                            if (e.name == select_prev) {
+                                return this.setSelected(e)
+                            }
+                        })
+                    })
+                } else {
+                    this.selectFirst()
+                }
+
+                // check for restricted extensions
                 if (this.restrictExt.length) {
                     this.files.items = this.files.items.filter((e) => {
                         return !this.checkForRestrictedExt(e)
@@ -41,11 +56,9 @@ export default {
                 }
 
                 this.noFiles('hide')
-                this.selectFirst()
                 $('#right').fadeIn()
-
-                // dirs list
                 this.updateDirsList()
+
             }).fail(() => {
                 this.ajaxError()
             })

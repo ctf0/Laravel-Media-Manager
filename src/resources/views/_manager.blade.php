@@ -2,22 +2,18 @@
 <link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
 
 {{-- component --}}
-@php
-    $trans = [
-        'all' => trans('MediaManager::messages.select_all'),
-        'non' => trans('MediaManager::messages.select_non'),
-        'close' => trans('MediaManager::messages.close'),
-        'open' => trans('MediaManager::messages.open')
-    ];
-@endphp
-
 <media-manager inline-template
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
     restrict-path="{{ isset($path) ? $path : null }}"
     restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}"
-    :trans="{{ json_encode($trans) }}">
+    :trans="{{ json_encode([
+        'all' => trans('MediaManager::messages.select_all'),
+        'non' => trans('MediaManager::messages.select_non'),
+        'close' => trans('MediaManager::messages.close'),
+        'open' => trans('MediaManager::messages.open')
+    ]) }}">
     <v-touch @swiperight="toggleModal()">
 
         {{-- top toolbar --}}

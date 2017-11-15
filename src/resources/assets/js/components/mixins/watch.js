@@ -70,7 +70,11 @@ export default {
                     this.selectFirst()
                 }
             }
+        },
+        currentFilterName(val) {
+            if (!val) {
+                this.filterdList = []
+            }
         }
     }
-
 }

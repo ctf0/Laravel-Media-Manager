@@ -54,15 +54,16 @@ export default {
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
                 this.noFiles('hide')
+                this.resetInput('currentFilterName')
 
                 if (this.checkForRestrictedPath() && index == 0) {
                     return false
                 }
 
-                this.folders = this.folders.splice(0, index)
-                this.getFiles(this.folders)
+                let prev_folder_name = this.folders[index]
 
-                this.resetInput('currentFilterName')
+                this.folders = this.folders.splice(0, index)
+                this.getFiles(this.folders, prev_folder_name)
             }
         },
         scrollToFile(file) {
