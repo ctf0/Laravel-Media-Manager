@@ -2,11 +2,8 @@ export default {
     watch: {
         allFiles(val) {
             if (val.length < 1) {
-                this.resetInput('selectedFile')
-                return this.noFiles('show')
+                this.noFiles('show')
             }
-
-            this.noFiles('hide')
         },
         bulkList(val) {
             if (val) {
@@ -22,7 +19,7 @@ export default {
                 let toggle_text = $('#blk_slct_all').find('span').not('.icon')
                 $('#blk_slct_all').removeClass('is-warning')
                 $('#blk_slct_all').find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                toggle_text.text(this.trans.all)
+                toggle_text.text(this.trans('select_all'))
             }
         },
         selectedFile(val) {
@@ -44,20 +41,13 @@ export default {
             }
         },
         searchFor(val) {
-            if (!val) {
-                this.resetInput('searchItemsCount')
-                this.noFiles('hide')
-            } else {
-                this.updateSearchCount()
-
-                // so we dont miss with the bulk selection list
-                if (!this.isBulkSelecting()) {
-                    this.clearSelected()
-                }
-            }
-
             if (!this.isBulkSelecting()) {
                 this.selectFirst()
+            }
+
+            if (!val) {
+                this.resetInput('searchItemsCount')
+                return this.noFiles('hide')
             }
         },
         showBy(val) {
@@ -73,7 +63,16 @@ export default {
         },
         currentFilterName(val) {
             if (!val) {
-                this.filterdList = []
+                this.resetInput('filterdList', [])
+            }
+        },
+        searchItemsCount(val) {
+            if (val == 0) {
+                this.clearSelected()
+            }
+
+            if (this.allItemsCount == undefined) {
+                this.resetInput('searchItemsCount')
             }
         }
     }

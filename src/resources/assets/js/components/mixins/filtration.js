@@ -27,7 +27,7 @@ export default {
         },
         showFilesOfType(val) {
             if (this.currentFilterName == val) {
-                return false
+                return
             }
 
             if (val == 'all') {

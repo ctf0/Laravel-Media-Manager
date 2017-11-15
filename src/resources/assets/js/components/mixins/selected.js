@@ -1,9 +1,8 @@
 export default {
     methods: {
-        selectedFileIs(val) {
-            if (typeof this.selectedFile !== 'undefined') {
-                return this.fileTypeIs(this.selectedFile, val)
-            }
+        // selected
+        getSelected() {
+            return $('#files li .selected')
         },
         setSelected(file) {
             this.clearSelected()
@@ -20,7 +19,7 @@ export default {
         },
         clearSelected() {
             this.resetInput('selectedFile')
-            $('#files li .selected').removeClass('selected')
+            this.getSelected().removeClass('selected')
         },
         selectFirst() {
             this.$nextTick(() => {
@@ -30,6 +29,13 @@ export default {
                 }
             })
         },
+        selectedFileIs(val) {
+            if (typeof this.selectedFile !== 'undefined') {
+                return this.fileTypeIs(this.selectedFile, val)
+            }
+        },
+
+        // folder
         openFolder(file) {
             if (!this.isBulkSelecting()) {
                 if (!this.fileTypeIs(file, 'folder')) {
@@ -41,15 +47,6 @@ export default {
             }
 
             this.resetInput('currentFilterName')
-        },
-        goToPrevFolder() {
-            let newSelected = parseInt(this.folders.length) - 1
-
-            if (newSelected < 0) {
-                return false
-            }
-
-            this.goToFolder(newSelected)
         },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
@@ -66,6 +63,17 @@ export default {
                 this.getFiles(this.folders, prev_folder_name)
             }
         },
+        goToPrevFolder() {
+            let newSelected = parseInt(this.folders.length) - 1
+
+            if (newSelected < 0) {
+                return false
+            }
+
+            this.goToFolder(newSelected)
+        },
+
+        // scroll to
         scrollToFile(file) {
             if (!file) {
                 file = $('div[data-index="0"]')
@@ -81,6 +89,34 @@ export default {
             if (file[0].offsetTop > container.height()) {
                 container[0].scrollTop += offset
             }
+        },
+
+        // navigation
+        goToPrev() {
+            let curSelectedIndex = parseInt(this.getSelected().data('index'))
+
+            if (curSelectedIndex !== 0) {
+                let newSelected = curSelectedIndex - 1
+                let cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+        },
+        goToNext() {
+            let curSelectedIndex = parseInt(this.getSelected().data('index'))
+
+            if (curSelectedIndex < this.allItemsCount - 1) {
+                let newSelected = curSelectedIndex + 1
+                let cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+        },
+
+        // ops
+        deleteItem() {
+            $('#delete').trigger('click')
+        },
+        moveItem() {
+            $('#move').trigger('click')
         }
     }
 }

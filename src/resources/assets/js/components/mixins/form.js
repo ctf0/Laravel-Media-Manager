@@ -2,6 +2,7 @@ export default {
     methods: {
         /*                Main                */
         getFiles(folders, select_prev = null) {
+            this.noFiles('hide')
             this.loadingFiles('show')
             this.resetInput('searchFor')
             this.resetInput('showBy')
@@ -44,7 +45,7 @@ export default {
                             }
                         })
                     })
-                } else {
+                } else if (this.files.items.length) {
                     this.selectFirst()
                 }
 
@@ -55,7 +56,6 @@ export default {
                     })
                 }
 
-                this.noFiles('hide')
                 $('#right').fadeIn()
                 this.updateDirsList()
 

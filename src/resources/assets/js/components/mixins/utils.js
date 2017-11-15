@@ -70,12 +70,15 @@ export default {
 
             return index > 0 ? name.substring(index + 1) : null
         },
+        trans(key) {
+            return this.mediaTrans[key]
+        },
 
         /*                Toggle                */
         toggleInfo() {
             $('#right').fadeToggle()
             let span = $('.toggle').find('span').not('.icon')
-            span.text(span.text() == this.trans.close ? this.trans.open : this.trans.close)
+            span.text(span.text() == this.trans('close') ? this.trans('open') : this.trans('close'))
             $('.toggle').find('.fa').toggleClass('fa fa-angle-double-right').toggleClass('fa fa-angle-double-left')
         },
         toggleModal(selector = null) {
@@ -124,7 +127,6 @@ export default {
         },
 
         // download
-        // DownloadJS v0.5.2
         saveFile(path) {
             if (this.isBulkSelecting()) {
                 this.bulkList.forEach((item) => {
@@ -136,9 +138,27 @@ export default {
 
             downloadFile(path)
         },
+
+        // copy to clipboard
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+
+        // animation
+        afterEnter() {
+            if (this.searchFor) {
+                this.updateSearchCount()
+            }
+        },
+        afterLeave() {
+            if (this.searchFor) {
+                this.updateSearchCount()
+            }
+
+            if (this.allItemsCount == undefined) {
+                this.clearSelected()
+            }
         }
     }
 }

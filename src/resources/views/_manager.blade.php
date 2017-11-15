@@ -8,13 +8,14 @@
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
     restrict-path="{{ isset($path) ? $path : null }}"
     restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}"
-    :trans="{{ json_encode([
-        'all' => trans('MediaManager::messages.select_all'),
-        'non' => trans('MediaManager::messages.select_non'),
+    :media-trans="{{ json_encode([
+        'select_all' => trans('MediaManager::messages.select_all'),
+        'select_non' => trans('MediaManager::messages.select_non'),
         'close' => trans('MediaManager::messages.close'),
         'open' => trans('MediaManager::messages.open')
     ]) }}">
-    <v-touch @swiperight="toggleModal()">
+    <v-touch @swiperight="lightBoxIsActive() ? goToPrev() : false"
+        @swipeleft="lightBoxIsActive() ? goToNext() : false">
 
         {{-- top toolbar --}}
         <nav id="toolbar" class="level">
@@ -95,16 +96,14 @@
                                 <span>{{ trans('MediaManager::messages.select_all') }}</span>
                             </button>
                         </div>
-                        @if (!isset($no_bulk))
-                            <div class="control">
-                                <button id="blk_slct"  class="button"
-                                    :disabled="!allItemsCount"
-                                    v-tippy="{arrow: true}" title="b">
-                                    <span class="icon is-small"><i class="fa fa-puzzle-piece"></i></span>
-                                    <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
-                                </button>
-                            </div>
-                        @endif
+                        <div class="control">
+                            <button id="blk_slct"  class="button"
+                                :disabled="!allItemsCount"
+                                v-tippy="{arrow: true}" title="b">
+                                <span class="icon is-small"><i class="fa fa-puzzle-piece"></i></span>
+                                <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -269,10 +268,15 @@
             <div class="manager-container">
                 {{-- files box --}}
                 <v-touch id="left"
+                    @dbltap="selectedFileIs('image') ? toggleModal('#preview_modal') : openFolder(selectedFile)"
                     @swiperight="goToPrevFolder()"
-                    @dbltap="selectedFileIs('image') ? toggleModal('#preview_modal') : openFolder(selectedFile)">
+                    @swipeup="moveItem()"
+                    @swipedown="deleteItem()">
 
-                    <ul id="files" class="tile">
+                    <transition-group id="files" class="tile"
+                        tag="ul" name="list" mode="out-in"
+                        v-on:after-enter="afterEnter"
+                        v-on:after-leave="afterLeave">
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), showBy, -1)"
                             :key="index"
                             @click="setSelected(file)">
@@ -285,7 +289,7 @@
                                     @click="copyLink(file.path)"
                                     :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
                                     v-tippy="{arrow: true, hideOnClick: false}"
-                                    @Hidden="linkCopied = false">
+                                    @hidden="linkCopied = false">
                                     <i class="fa fa-clone" aria-hidden="true"></i>
                                 </div>
 
@@ -320,7 +324,7 @@
                                 </div>
                             </div>
                         </li>
-                    </ul>
+                    </transition-group>
 
                     {{-- ====================================================================== --}}
 
@@ -399,11 +403,11 @@
                                     <template v-else>
                                         <h4>
                                             <a :href="selectedFile.path" class="has-text-link" target="_blank">{{ trans('MediaManager::messages.public_url') }}</a>
-                                            <a :href="selectedFile.path"
+                                            <button class="is--link"
                                                 @click.prevent="saveFile(selectedFile.path)"
                                                 v-tippy="{arrow: true}" title="{{ trans('MediaManager::messages.download_file') }}">
                                                 <span class="icon has-text-black"><i class="fa fa-download fa-lg"></i></span>
-                                            </a>
+                                            </button>
                                         </h4>
                                     </template>
                                     <h4>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
@@ -413,17 +417,17 @@
                     </div>
 
                     {{-- items count --}}
-                    <div class="count" v-if="allItemsCount">
-                        <p class="title is-marginless" v-if="bulkItemsCount">
+                    <transition-group class="count" tag="ul" name="count" mode="out-in">
+                        <li :key="1" class="title is-marginless" v-if="bulkItemsCount">
                             @{{ bulkItemsCount }} {{ trans('MediaManager::messages.selected') }}
-                        </p>
-                        <p class="title is-marginless" v-if="searchItemsCount !== null && searchItemsCount >= 0">
+                        </li>
+                        <li :key="2" class="title is-marginless" v-if="searchItemsCount !== null && searchItemsCount >= 0">
                             @{{ searchItemsCount }} {{ trans('MediaManager::messages.found') }}
-                        </p>
-                        <p class="title is-marginless">
+                        </li>
+                        <li :key="3" class="title is-marginless" v-if="allItemsCount">
                             @{{ allItemsCount }} {{ trans('MediaManager::messages.total') }}
-                        </p>
-                    </div>
+                        </li>
+                    </transition-group>
                 </div>
             </div>
         </div>

@@ -72,8 +72,8 @@
     |---------------------|------------------------------|--------------|---------------|-------------|
     |                     | upload *(toolbar)*           | u            | *             |             |
     |                     | refresh *(toolbar)*          | r            | *             |             |
-    |                     | move *(toolbar)*             | m            | *             |             |
-    |                     | delete *(toolbar)*           | d/del        | *             |             |
+    |                     | move *(toolbar)*             | m            | *             | swipe up    |
+    |                     | delete *(toolbar)*           | d/del        | *             | swipe down  |
     |                     | bulk select *(toolbar)*      | b            | *             |             |
     |                     | bulk select all *(toolbar)*  | a            | *             |             |
     |                     | &nbsp;                       |              |               |             |
@@ -85,9 +85,9 @@
     |                     | toggle *(sidebar)*           | t            | *             |             |
     |                     | play/pause media *(sidebar)* | space        | *             |             |
     |                     | preview image *(sidebar)*    | space        | *             | 2x tap      |
-    |                     | hide image *(light-box)*     | space/esc    | *             | swipe right |
-    | select next         |                              | right / down | *             |             |
-    | select prev         |                              | left / up    | *             |             |
+    |                     | hide image *(light-box)*     | space/esc    | *             |             |
+    | select next         |                              | right / down | *             | swipe left  |
+    | select prev         |                              | left / up    | *             | swipe right |
     | select first        |                              | home         | *             |             |
     | select last         |                              | end          | *             |             |
     | open folder         |                              | enter        | 2x click      | 2x tap      |
@@ -98,7 +98,6 @@
     |   type  |               event-name              |               description                |
     |---------|---------------------------------------|------------------------------------------|
     | JS      |                                       |                                          |
-    |         | modal-show                            | when modal is showen                     |
     |         | modal-show                            | when modal is showen                     |
     |         | modal-hide                            | when modal is hidden                     |
     |         | no-files-show                         | when no files msg is showen              |

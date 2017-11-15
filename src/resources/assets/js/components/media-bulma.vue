@@ -34,7 +34,7 @@ export default {
         'hideExt',
         'restrictPath',
         'restrictExt',
-        'trans'
+        'mediaTrans'
     ],
     data() {
         return {
@@ -134,9 +134,6 @@ export default {
 
             $(document).keydown((e) => {
 
-                let curSelected = $('#files li .selected')
-                let curSelectedIndex = parseInt(curSelected.data('index'))
-
                 // when modal isnt visible
                 if (!$('.mm-modal').hasClass('is-active')) {
                     // when search is not focused
@@ -156,7 +153,7 @@ export default {
 
                             // when there are files
                             if (this.allItemsCount) {
-                                this.navigation(e, curSelectedIndex)
+                                this.navigation(e)
 
                                 if (
                                     keycode(e) == 'space' &&
@@ -207,12 +204,12 @@ export default {
 
                             // delete file
                             if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                                $('#delete').trigger('click')
+                                this.deleteItem()
                             }
 
                             // move file
                             if (this.checkForFolders() && keycode(e) == 'm') {
-                                $('#move').trigger('click')
+                                this.moveItem()
                             }
                         }
                         /* end of with or without bulk selection */
@@ -240,7 +237,7 @@ export default {
                             this.toggleModal()
                         }
 
-                        this.navigation(e, curSelectedIndex)
+                        this.navigation(e)
                     }
 
                     // hide lb
@@ -271,7 +268,7 @@ export default {
                     $('#blk_slct_all').hide()
 
                     $('li.bulk-selected').removeClass('bulk-selected')
-                    manager.bulkList = []
+                    manager.resetInput('bulkList', [])
                     manager.selectFirst()
                 }
 
@@ -299,7 +296,7 @@ export default {
 
                 // if having search + having bulk items < search found items
                 else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
-                    manager.bulkList = []
+                    manager.resetInput('bulkList', [])
                     manager.clearSelected()
 
                     if ($(this).hasClass('is-warning')) {
@@ -316,7 +313,7 @@ export default {
                 else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
                     if ($(this).hasClass('is-warning')) {
                         $(this).removeClass('is-warning')
-                        manager.bulkList = []
+                        manager.resetInput('bulkList', [])
                     } else {
                         $(this).addClass('is-warning')
                         manager.bulkList = manager.allFiles.slice(0)
@@ -328,7 +325,7 @@ export default {
                 // otherwise
                 else {
                     $(this).removeClass('is-warning')
-                    manager.bulkList = []
+                    manager.resetInput('bulkList', [])
                     manager.clearSelected()
                 }
 
@@ -342,10 +339,10 @@ export default {
 
                 if ($(this).hasClass('is-warning')) {
                     $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
-                    toggle_text.text(manager.trans.non)
+                    toggle_text.text(manager.trans('select_non'))
                 } else {
                     $(this).find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                    toggle_text.text(manager.trans.all)
+                    toggle_text.text(manager.trans('select_all'))
                 }
             })
 
@@ -383,34 +380,25 @@ export default {
          * @param  {[type]} e                [description]
          * @param  {[type]} curSelectedIndex [description]
          */
-        navigation(e, curSelectedIndex) {
-            let cur = ''
-            let newSelected = ''
-
+        navigation(e) {
             // go to prev image
-            if ((keycode(e) == 'left' || keycode(e) == 'up') && curSelectedIndex !== 0) {
+            if (keycode(e) == 'left' || keycode(e) == 'up') {
                 e.preventDefault()
-
-                newSelected = curSelectedIndex - 1
-                cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
+                this.goToPrev()
             }
 
             // go to next image
-            if ((keycode(e) == 'right' || keycode(e) == 'down') && curSelectedIndex < this.allItemsCount - 1) {
+            if (keycode(e) == 'right' || keycode(e) == 'down') {
                 e.preventDefault()
-
-                newSelected = curSelectedIndex + 1
-                cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
+                this.goToNext()
             }
 
             // go to last item
             if (keycode(e) == 'end') {
                 e.preventDefault()
 
-                newSelected = this.allItemsCount - 1
-                cur = $('div[data-index="' + newSelected + '"]')
+                let newSelected = this.allItemsCount - 1
+                let cur = $('div[data-index="' + newSelected + '"]')
                 this.scrollToFile(cur)
             }
 
@@ -435,7 +423,7 @@ export default {
             if (this.filterNameIs('audio') || this.filterNameIs('video')) {
                 $('.player').bind('ended', () => {
                     // nav to next
-                    $('#files li .selected').trigger($.Event('keydown', {keyCode: keycode('right')}))
+                    this.getSelected().trigger($.Event('keydown', {keyCode: keycode('right')}))
 
                     let last = $('#files li:last-of-type').find('div.selected').length
 

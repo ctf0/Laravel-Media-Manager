@@ -44,7 +44,7 @@ $blue_2: #276cda;
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    border: 2px dashed rgba(187, 187, 187, 0.5);
+    border: 2px dashed rgba($gray_7, 0.5);
     border-radius: 5px;
     background-image: url("/assets/vendor/MediaManager/upload.jpg");
     background-repeat: repeat;
@@ -176,9 +176,10 @@ $blue_2: #276cda;
             display: flex;
             align-items: stretch;
             flex: 1;
-            min-width: 200px;
+            min-width: 225px;
             max-width: 250px;
             min-height: 90px;
+            transition: all 0.1s;
         }
     }
 }
@@ -192,6 +193,7 @@ $blue_2: #276cda;
     padding: 10px;
     cursor: pointer;
     transition: all 0.25s ease;
+    transform: translateZ(0);
     border: 1px solid $off_white_3;
     border-radius: 4px;
     background: $off_white_2;
@@ -217,6 +219,7 @@ $blue_2: #276cda;
         position: absolute;
         right: 0;
         bottom: 1px;
+        cursor: copy;
     }
 
     .link_icon {
@@ -416,4 +419,36 @@ $blue_2: #276cda;
 
 .m-l-50 {
     margin-left: 50px !important;
+}
+
+.is--link {
+    padding: 0;
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+a[target="_blank"] {
+    cursor: alias;
+}
+
+// animation
+.count-enter-active,
+.count-leave-active,
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.3s;
+}
+
+.list-enter,
+.list-leave-to {
+    transform: translateY(100px);
+    opacity: 0;
+}
+
+.count-enter,
+.count-leave-to {
+    transform: translateX(30px);
+    opacity: 0;
 }
