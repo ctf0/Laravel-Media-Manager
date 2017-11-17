@@ -4,14 +4,16 @@
 // is-danger
 // field
 // has-addons
-// fa-plus
-// fa-minus
+// icon
+// fa-plus / fa-minus
+// fa-refresh / fa-spin
 // fa fa-angle-double-right
 // fa fa-angle-double-left
 
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
+import LockFile from './mixins/lock'
 import SelectedFile from './mixins/selected'
 import Restriction from './mixins/restriction'
 import Utilities from './mixins/utils'
@@ -23,12 +25,14 @@ export default {
         Form,
         FileFiltration,
         BulkSelect,
+        LockFile,
         SelectedFile,
         Restriction,
         Utilities,
         Watchers
     ],
     props: [
+        'inModal',
         'filesRoute',
         'dirsRoute',
         'hideExt',
@@ -45,6 +49,7 @@ export default {
             directories: [],
             filterdList: [],
             bulkList: [],
+            lockedList: [],
             selectedFile: undefined,
             showBy: undefined,
             currentFilterName: undefined,
@@ -56,11 +61,16 @@ export default {
     },
     computed: {
         allFiles() {
-            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
+            if (this.filterItemsCount) {
                 return this.filterdList
             }
 
             return this.files.items
+        },
+        filterItemsCount() {
+            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
+                return this.filterdList.length
+            }
         },
         allItemsCount() {
             if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
@@ -71,6 +81,21 @@ export default {
             if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
                 return this.bulkList.length
             }
+        },
+        bulkListFilter() {
+            let list = this.bulkList
+
+            if (this.lockedList.length) {
+                list = this.bulkList.filter((x) => {
+                    return this.lockedList.indexOf(x) < 0
+                })
+            }
+
+            if (list.length > 0) {
+                $('#delete').removeAttr('disabled')
+            }
+
+            return list
         }
     },
     created() {
@@ -81,7 +106,6 @@ export default {
         this.getFiles('/')
     },
     mounted() {
-        this.$tippy.forceUpdateHtml()
         this.initManager()
     },
     updated() {
@@ -211,6 +235,11 @@ export default {
                             if (this.checkForFolders() && keycode(e) == 'm') {
                                 this.moveItem()
                             }
+
+                            // lock files
+                            if (keycode(e) == 'l') {
+                                this.pushToLockedList()
+                            }
                         }
                         /* end of with or without bulk selection */
 
@@ -253,9 +282,7 @@ export default {
             // bulk select
             $('#blk_slct').click(function() {
                 $(this).toggleClass('is-danger')
-                $('#upload, #new_folder, #refresh, #rename').parent().hide()
                 $(this).closest('.field').toggleClass('has-addons')
-                $('#blk_slct_all').fadeIn()
 
                 // reset when toggled off
                 if (!manager.isBulkSelecting()) {
@@ -267,29 +294,33 @@ export default {
 
                     $('#blk_slct_all').hide()
 
-                    $('li.bulk-selected').removeClass('bulk-selected')
+                    manager.clearSelected()
                     manager.resetInput('bulkList', [])
-                    manager.selectFirst()
+                    return manager.selectFirst()
                 }
 
+                $('#upload, #new_folder, #refresh, #rename').parent().hide()
+                $('#blk_slct_all').fadeIn()
                 manager.clearSelected()
             })
 
             // select all files
             $('#blk_slct_all').click(function() {
+                let btn = $(this)
+
                 // if no items in bulk list
                 if (manager.bulkList == 0) {
                     // if no search query
                     if (!manager.searchFor) {
-                        $(this).addClass('is-warning')
+                        btn.addClass('is-warning')
                         manager.bulkList = manager.allFiles.slice(0)
                     }
 
                     // if found search items
                     if (manager.searchItemsCount) {
-                        $(this).addClass('is-warning')
+                        btn.addClass('is-warning')
                         $('#files li').each(function() {
-                            $(this).trigger('click')
+                            btn.trigger('click')
                         })
                     }
                 }
@@ -299,23 +330,23 @@ export default {
                     manager.resetInput('bulkList', [])
                     manager.clearSelected()
 
-                    if ($(this).hasClass('is-warning')) {
-                        $(this).removeClass('is-warning')
+                    if (btn.hasClass('is-warning')) {
+                        btn.removeClass('is-warning')
                     } else {
-                        $(this).addClass('is-warning')
+                        btn.addClass('is-warning')
                         $('#files li').each(function() {
-                            $(this).trigger('click')
+                            btn.trigger('click')
                         })
                     }
                 }
 
                 // if NO search + having bulk items < all items
                 else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
-                    if ($(this).hasClass('is-warning')) {
-                        $(this).removeClass('is-warning')
+                    if (btn.hasClass('is-warning')) {
+                        btn.removeClass('is-warning')
                         manager.resetInput('bulkList', [])
                     } else {
-                        $(this).addClass('is-warning')
+                        btn.addClass('is-warning')
                         manager.bulkList = manager.allFiles.slice(0)
                     }
 
@@ -324,7 +355,7 @@ export default {
 
                 // otherwise
                 else {
-                    $(this).removeClass('is-warning')
+                    btn.removeClass('is-warning')
                     manager.resetInput('bulkList', [])
                     manager.clearSelected()
                 }
@@ -335,13 +366,13 @@ export default {
                 }
 
                 // toggle styling
-                let toggle_text = $(this).find('span').not('.icon')
+                let toggle_text = btn.find('span').not('.icon')
 
-                if ($(this).hasClass('is-warning')) {
-                    $(this).find('.fa').removeClass('fa-plus').addClass('fa-minus')
+                if (btn.hasClass('is-warning')) {
+                    btn.find('.fa').removeClass('fa-plus').addClass('fa-minus')
                     toggle_text.text(manager.trans('select_non'))
                 } else {
-                    $(this).find('.fa').removeClass('fa-minus').addClass('fa-plus')
+                    btn.find('.fa').removeClass('fa-minus').addClass('fa-plus')
                     toggle_text.text(manager.trans('select_all'))
                 }
             })
@@ -364,12 +395,12 @@ export default {
                 }
 
                 if (this.bulkItemsCount) {
-                    $('.folder_warning').hide()
-
-                    this.bulkList.some((item) => {
-                        if (item.type.includes('folder')) {
-                            $('.folder_warning').show()
+                    this.bulkListFilter.some((item) => {
+                        if (this.fileTypeIs(item, 'folder')) {
+                            return $('.folder_warning').show()
                         }
+
+                        $('.folder_warning').hide()
                     })
                 }
             })
@@ -377,8 +408,6 @@ export default {
 
         /**
          * keyboard navigation
-         * @param  {[type]} e                [description]
-         * @param  {[type]} curSelectedIndex [description]
          */
         navigation(e) {
             // go to prev image
@@ -408,22 +437,23 @@ export default {
                 this.scrollToFile()
             }
 
-            if (!this.selectedFileIs('image')) {
-                this.noScroll()
+            if (this.lightBoxIsActive() && !this.selectedFileIs('image')) {
+                this.toggleModal()
             }
         },
 
         /**
          * autoplay media
          *
-         * last item will keep repeating unless we added the constrain "!last" below
+         * last item will keep repeating
+         * unless we added the constrain "!last"
          * but now it wont play
          */
         autoPlay() {
             if (this.filterNameIs('audio') || this.filterNameIs('video')) {
                 $('.player').bind('ended', () => {
                     // nav to next
-                    this.getSelected().trigger($.Event('keydown', {keyCode: keycode('right')}))
+                    this.goToNext()
 
                     let last = $('#files li:last-of-type').find('div.selected').length
 

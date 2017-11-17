@@ -33,16 +33,25 @@ export default {
                 duration: duration
             })
         },
+        resetInput(input, val = undefined) {
+            this[input] = val
+        },
+
+        // moving
         checkForFolders() {
-            return setTimeout(() => {
-                $('#move_folder_dropdown').val() !== null ? true : false
-            }, 10)
+            return $('#move_folder_dropdown').val() !== null ? true : false
         },
         moveUpCheck() {
             return this.folders.length && !this.restrictAndLast()
         },
-        resetInput(input, val = undefined) {
-            this[input] = val
+        canWeMove() {
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    if (!this.checkForFolders()) {
+                        $('#move').attr('disabled', true)
+                    }
+                }, 50)
+            })
         },
 
         /*                Resolve                */
@@ -76,10 +85,13 @@ export default {
 
         /*                Toggle                */
         toggleInfo() {
-            $('#right').fadeToggle()
-            let span = $('.toggle').find('span').not('.icon')
+            $('#right').fadeToggle('fast')
+
+            let btn = $('.toggle')
+            let span = btn.find('span').not('.icon')
+
             span.text(span.text() == this.trans('close') ? this.trans('open') : this.trans('close'))
-            $('.toggle').find('.fa').toggleClass('fa fa-angle-double-right').toggleClass('fa fa-angle-double-left')
+            btn.find('.fa').toggleClass('fa-angle-double-right fa-angle-double-left')
         },
         toggleModal(selector = null) {
             if (!selector) {
@@ -93,6 +105,8 @@ export default {
             $(selector).find('input').focus()
             EventHub.fire('modal-show')
         },
+
+        // loading
         toggleLoading() {
             return this.is_loading = !this.is_loading
         },
@@ -105,25 +119,28 @@ export default {
         },
         noFiles(s) {
             if (s == 'show') {
-                EventHub.fire('no-files-show')
-                return $('#no_files').fadeIn()
+                $('.toggle').fadeOut('fast')
+                $('#no_files').show()
+                return EventHub.fire('no-files-show')
             }
 
-            EventHub.fire('no-files-hide')
             $('#no_files').hide()
+            $('.toggle').fadeIn('fast')
+            EventHub.fire('no-files-hide')
         },
         loadingFiles(s) {
             if (s == 'show') {
-                EventHub.fire('loading-files-show')
-                return $('#file_loader').show()
+                $('#file_loader').show()
+                return EventHub.fire('loading-files-show')
             }
 
-            EventHub.fire('loading-files-hide')
             $('#file_loader').hide()
+            EventHub.fire('loading-files-hide')
         },
         ajaxError() {
-            EventHub.fire('ajax-error-show')
+            $('.toggle').fadeOut('fast')
             $('#ajax_error').show()
+            EventHub.fire('ajax-error-show')
         },
 
         // download

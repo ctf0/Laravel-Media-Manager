@@ -8,12 +8,14 @@
     :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
     restrict-path="{{ isset($path) ? $path : null }}"
     restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}"
+    :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :media-trans="{{ json_encode([
         'select_all' => trans('MediaManager::messages.select_all'),
         'select_non' => trans('MediaManager::messages.select_non'),
         'close' => trans('MediaManager::messages.close'),
         'open' => trans('MediaManager::messages.open')
     ]) }}">
+
     <v-touch @swiperight="lightBoxIsActive() ? goToPrev() : false"
         @swipeleft="lightBoxIsActive() ? goToNext() : false">
 
@@ -78,6 +80,18 @@
                                 <span>{{ trans('MediaManager::messages.delete') }}</span>
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <div class="level-item">
+                    <div class="control">
+                        <button class="button is-warning" id="lock"
+                            v-tippy="{arrow: true}" title="l"
+                            @click="pushToLockedList()">
+                            <span class="icon is-small">
+                                <i class="fa" :class="IsInLockedList(selectedFile) ? 'fa-unlock' : 'fa-lock'"></i>
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -266,6 +280,28 @@
             {{-- ====================================================================== --}}
 
             <div class="manager-container">
+                <section>
+                    {{-- loading data from server --}}
+                    <div id="file_loader" style="display: none;">
+                        <div id="file_loader_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/octopus.json') }}"></div>
+                        <h3>{{ trans('MediaManager::messages.loading') }}</h3>
+                    </div>
+
+                    {{-- no files --}}
+                    <div id="no_files" style="display: none;">
+                        <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
+                        <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
+                    </div>
+
+                    {{-- error --}}
+                    <div id="ajax_error" style="display: none;">
+                        <div id="ajax_error_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/avalanche.json') }}"></div>
+                        <h3>{{ trans('MediaManager::messages.ajax_error') }}</h3>
+                    </div>
+                </section>
+
+                {{-- ====================================================================== --}}
+
                 {{-- files box --}}
                 <v-touch id="left"
                     @dbltap="selectedFileIs('image') ? toggleModal('#preview_modal') : openFolder(selectedFile)"
@@ -284,8 +320,14 @@
                                 :data-item="file.name"
                                 :data-index="index">
 
+                                {{-- lock file --}}
+                                <div class="icon lock_icon" :class="IsInLockedList(file) ? 'is-danger' : 'is-success'"
+                                    @click="toggleLock(file)">
+                                </div>
+
+                                {{-- copy file link --}}
                                 <div v-if="!fileTypeIs(file, 'folder')"
-                                    class="icon copy-link"
+                                    class="icon copy_link"
                                     @click="copyLink(file.path)"
                                     :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
                                     v-tippy="{arrow: true, hideOnClick: false}"
@@ -325,26 +367,6 @@
                             </div>
                         </li>
                     </transition-group>
-
-                    {{-- ====================================================================== --}}
-
-                    {{-- loading data from server --}}
-                    <div id="file_loader" style="display: none;">
-                        <div id="file_loader_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/octopus.json') }}"></div>
-                        <h3>{{ trans('MediaManager::messages.loading') }}</h3>
-                    </div>
-
-                    {{-- no files --}}
-                    <div id="no_files" style="display: none;">
-                        <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
-                        <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
-                    </div>
-
-                    {{-- error --}}
-                    <div id="ajax_error" style="display: none;">
-                        <div id="ajax_error_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/avalanche.json') }}"></div>
-                        <h3>{{ trans('MediaManager::messages.ajax_error') }}</h3>
-                    </div>
                 </v-touch>
 
                 {{-- ====================================================================== --}}
@@ -520,8 +542,8 @@
                             <span class="select is-fullwidth">
                                 <select id="move_folder_dropdown">
                                     <option v-if="moveUpCheck()" value="../">../</option>
-                                    <option v-if="filterDirList(dir)"
-                                        v-for="(dir,index) in directories"
+                                    <option v-for="(dir,index) in directories"
+                                        v-if="filterDirList(dir)"
                                         :key="index" :value="dir">
                                         @{{ dir }}
                                     </option>
@@ -551,15 +573,14 @@
                     <header class="modal-card-head is-danger">
                         <p class="modal-card-title">
                             <span class="icon"><i class="fa fa-warning"></i></span>
-                            <span>{{ trans('MediaManager::messages.are_you_sure') }}</span>
+                            <span>{{ trans('MediaManager::messages.are_you_sure_delete') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
                     <section class="modal-card-body">
-                        <h3 class="title">{{ trans('MediaManager::messages.are_you_sure_delete') }}</h3>
-                        <template v-if="bulkItemsCount">
-                            <table class="table" v-if="bulkItemsCount <= 8">
-                                <tr class="confirm_delete_text" v-for="item in bulkList">
+                        <template v-if="bulkListFilter.length">
+                            <table class="table" v-if="bulkListFilter.length <= 8">
+                                <tr class="confirm_delete_text" v-for="item in bulkListFilter">
                                     <td width="1%">
                                         <span class="icon is-large">
                                             <i v-if="fileTypeIs(item, 'folder')" class="fa fa-folder fa-lg"></i>

@@ -2,7 +2,7 @@ export default {
     methods: {
         btnFilter(val) {
             if (val == 'all') {
-                return this.filterdList.length
+                return this.filterItemsCount
             }
 
             return this.files.items.some((item) => {

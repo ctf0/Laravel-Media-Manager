@@ -2,6 +2,8 @@ export default {
     methods: {
         /*                Main                */
         getFiles(folders, select_prev = null) {
+
+            $('.fa-refresh').addClass('fa-spin')
             this.noFiles('hide')
             this.loadingFiles('show')
             this.resetInput('searchFor')
@@ -45,7 +47,7 @@ export default {
                             }
                         })
                     })
-                } else if (this.files.items.length) {
+                } else if (this.allItemsCount) {
                     this.selectFirst()
                 }
 
@@ -56,7 +58,7 @@ export default {
                     })
                 }
 
-                $('#right').fadeIn()
+                $('.fa-refresh').removeClass('fa-spin')
                 this.updateDirsList()
 
             }).fail(() => {
@@ -143,7 +145,8 @@ export default {
         MoveFileForm(event) {
             if ($('#move_folder_dropdown').val() !== null) {
                 if (this.bulkItemsCount) {
-                    this.move_file(this.bulkList, event.target.action)
+                    this.move_file(this.bulkListFilter, event.target.action)
+
                     setTimeout(() => {
                         $('#blk_slct').trigger('click')
                     }, 100)
@@ -154,7 +157,8 @@ export default {
         },
         DeleteFileForm(event) {
             if (this.bulkItemsCount) {
-                this.delete_file(this.bulkList, event.target.action)
+                this.delete_file(this.bulkListFilter, event.target.action)
+
                 setTimeout(() => {
                     $('#blk_slct').trigger('click')
                 }, 100)
@@ -232,7 +236,7 @@ export default {
             })
         },
         removeFromLists(name) {
-            if (this.filterdList.length) {
+            if (this.filterItemsCount) {
                 let list = this.filterdList
 
                 list.map((e) => {
@@ -269,7 +273,7 @@ export default {
                     destination = destination.split('/').shift()
                 }
 
-                if (this.filterdList.length) {
+                if (this.filterItemsCount) {
                     this.filterdList.map((e) => {
                         if (e.name.includes(destination)) {
                             e.items += parseInt(count)

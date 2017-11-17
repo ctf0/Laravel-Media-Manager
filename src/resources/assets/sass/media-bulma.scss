@@ -3,7 +3,8 @@
 @import "./shared/manager";
 
 .modal-card-head,
-.progress-bar {
+.progress-bar,
+.icon {
     &.is-warning {
         background-color: $yellow;
     }

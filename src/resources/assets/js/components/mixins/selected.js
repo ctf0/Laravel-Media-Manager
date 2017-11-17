@@ -6,24 +6,23 @@ export default {
         },
         setSelected(file) {
             this.clearSelected()
-            $('div[data-item="' + file.name + '"]').addClass('selected')
             this.selectedFile = file
-
-            if (!this.selectedFileIs('folder')) {
-                EventHub.fire('file_selected', this.selectedFile.path)
-            }
+            $('div[data-item="' + file.name + '"]').addClass('selected')
+            this.canWeMove()
 
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }
+
         },
         clearSelected() {
             this.resetInput('selectedFile')
-            this.getSelected().removeClass('selected')
+            this.getSelected().removeClass('selected bulk-selected')
         },
         selectFirst() {
             this.$nextTick(() => {
                 let file = $('div[data-index="0"]')
+
                 if (file.length > 0) {
                     file.trigger('click')
                 }
