@@ -1,0 +1,4 @@
+/*! DownloadJS v0.5.2 
+ Denis Radin aka PixelsCommander 
+ Article about: http://pixelscommander.com/javascript/javascript-file-download-ignore-content-type/*/
+window.downloadFile=function(a){if(/(iP)/g.test(navigator.userAgent))return alert("Your device does not support files downloading. Please try again in desktop browser."),!1;if(window.downloadFile.isChrome||window.downloadFile.isSafari){var b=document.createElement("a");if(b.href=a,void 0!==b.download){var c=a.substring(a.lastIndexOf("/")+1,a.length);b.download=c}if(document.createEvent){var d=document.createEvent("MouseEvents");return d.initEvent("click",!0,!0),b.dispatchEvent(d),!0}}return-1===a.indexOf("?")&&(a+="?download"),window.open(a,"_self"),!0},window.downloadFile.isChrome=navigator.userAgent.toLowerCase().indexOf("chrome")>-1,window.downloadFile.isSafari=navigator.userAgent.toLowerCase().indexOf("safari")>-1;
