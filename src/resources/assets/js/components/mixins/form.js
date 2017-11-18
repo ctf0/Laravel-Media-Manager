@@ -4,11 +4,11 @@ export default {
         getFiles(folders, select_prev = null) {
 
             $('.fa-refresh').addClass('fa-spin')
+            this.clearSelected()
+            this.toggleInfoPanel()
             this.noFiles('hide')
             this.loadingFiles('show')
-            this.resetInput('searchFor')
-            this.resetInput('showBy')
-            this.resetInput('currentFilterName')
+            this.resetInput(['searchFor', 'showBy', 'currentFilterName'])
 
             let folder_location = '/'
 
@@ -20,8 +20,6 @@ export default {
             $.post(this.filesRoute, {
                 folder: folder_location
             }, (res) => {
-                this.loadingFiles('hide')
-
                 if (res.error) {
                     if (this.checkForRestrictedPath()) {
                         EventHub.fire('get-folders', false)
@@ -58,6 +56,8 @@ export default {
                     })
                 }
 
+                this.loadingFiles('hide')
+                this.toggleInfoPanel()
                 $('.fa-refresh').removeClass('fa-spin')
                 this.updateDirsList()
 

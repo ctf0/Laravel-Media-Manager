@@ -5,8 +5,6 @@ export default {
         },
         toggleLock(file) {
             if (this.IsInLockedList(file)) {
-                this.toggleBtns('enable')
-
                 this.canWeMove()
 
                 // add back to directories
@@ -15,47 +13,38 @@ export default {
                     this.directories.sort()
                 }
 
+                // remove item
                 return this.lockedList.splice(this.lockedList.indexOf(file), 1)
             }
 
-            this.toggleBtns('disable')
-
-            // remove from avail directories
+            // remove from directories
             if (this.fileTypeIs(file, 'folder')) {
                 this.directories.splice(this.directories.indexOf(file.name), 1)
             }
+
+            // add item
             this.lockedList.push(file)
         },
         pushToLockedList() {
             if (this.isBulkSelecting()) {
+                // clear prev
                 if (this.lockedList.length) {
-                    this.toggleBtns('enable')
-
-                    let list = [...this.lockedList]
+                    let list = this.lockedList.slice(0)
 
                     return list.map((e) => {
                         this.toggleLock(e)
                     })
                 }
 
-                this.toggleBtns('disable')
+                // add selected
                 return this.bulkList.map((e) => {
                     this.toggleLock(e)
                 })
             }
 
-            this.toggleLock(this.selectedFile)
-        },
-        toggleBtns(s) {
-            if (s == 'disable') {
-                $('#move').attr('disabled', true)
-                $('#rename').attr('disabled', true)
-                return $('#delete').attr('disabled', true)
+            if (this.selectedFile) {
+                this.toggleLock(this.selectedFile)
             }
-
-            $('#move').removeAttr('disabled')
-            $('#rename').removeAttr('disabled')
-            $('#delete').removeAttr('disabled')
         }
     }
 }

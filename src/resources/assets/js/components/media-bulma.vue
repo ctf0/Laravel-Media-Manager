@@ -18,6 +18,7 @@ import SelectedFile from './mixins/selected'
 import Restriction from './mixins/restriction'
 import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
+import Computed from './mixins/computed'
 
 export default {
     name: 'media-manager',
@@ -29,6 +30,7 @@ export default {
         SelectedFile,
         Restriction,
         Utilities,
+        Computed,
         Watchers
     ],
     props: [
@@ -37,19 +39,22 @@ export default {
         'dirsRoute',
         'hideExt',
         'restrictPath',
-        'restrictExt',
-        'mediaTrans'
+        'restrictExt'
     ],
     data() {
         return {
-            is_loading: false,
+            isLoading: false,
             linkCopied: false,
+            toggleInfo: true,
+            allSelected: false,
+
             files: [],
             folders: [],
             directories: [],
             filterdList: [],
             bulkList: [],
             lockedList: [],
+
             selectedFile: undefined,
             showBy: undefined,
             currentFilterName: undefined,
@@ -57,45 +62,6 @@ export default {
             searchFor: undefined,
             new_folder_name: undefined,
             new_filename: undefined
-        }
-    },
-    computed: {
-        allFiles() {
-            if (this.filterItemsCount) {
-                return this.filterdList
-            }
-
-            return this.files.items
-        },
-        filterItemsCount() {
-            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
-                return this.filterdList.length
-            }
-        },
-        allItemsCount() {
-            if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
-                return this.allFiles.length
-            }
-        },
-        bulkItemsCount() {
-            if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
-                return this.bulkList.length
-            }
-        },
-        bulkListFilter() {
-            let list = this.bulkList
-
-            if (this.lockedList.length) {
-                list = this.bulkList.filter((x) => {
-                    return this.lockedList.indexOf(x) < 0
-                })
-            }
-
-            if (list.length > 0) {
-                $('#delete').removeAttr('disabled')
-            }
-
-            return list
         }
     },
     created() {
@@ -119,43 +85,123 @@ export default {
         initManager() {
             let manager = this
 
-            //********** File Upload **********//
-            $('#new-upload').dropzone({
-                createImageThumbnails: false,
-                parallelUploads: 10,
-                uploadMultiple: true,
-                forceFallback: false,
-                previewsContainer: '#uploadPreview',
-                processingmultiple() {
-                    $('#uploadProgress').fadeIn()
-                },
-                totaluploadprogress(uploadProgress) {
-                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
-                },
-                successmultiple(files, res) {
-                    res.data.map((item) => {
-                        if (item.success) {
-                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
-                        } else {
-                            manager.showNotif(item.message, 'danger')
-                        }
-                    })
+            this.fileUpload(manager)
+            this.shortCuts()
+            this.toolBar(manager)
+        },
 
-                    manager.getFiles(manager.folders)
-                },
-                errormultiple(files, res) {
-                    this.showNotif(res, 'danger')
-                },
-                queuecomplete() {
-                    $('#upload').trigger('click')
-                    $('#uploadProgress').fadeOut(() => {
-                        $('#uploadProgress .progress-bar').css('width', 0)
-                    })
+        toolBar(manager) {
+            // bulk select
+            $('#blk_slct').click(function() {
+                $(this).toggleClass('is-danger')
+
+                // reset when toggled off
+                if (!manager.isBulkSelecting()) {
+                    if (manager.allSelected) {
+                        $('#blk_slct_all').trigger('click')
+                    }
+
+                    manager.clearSelected()
+                    manager.resetInput('bulkList', [])
+                    return manager.selectFirst()
+                }
+
+                manager.clearSelected()
+            })
+
+            // select all files
+            $('#blk_slct_all').click(function() {
+                // if no items in bulk list
+                if (manager.bulkList == 0) {
+                    // if no search query
+                    if (!manager.searchFor) {
+                        manager.allSelected = true
+                        manager.bulkList = manager.allFiles.slice(0)
+                    }
+
+                    // if found search items
+                    if (manager.searchItemsCount) {
+                        manager.allSelected = true
+                        $('#files li').each(function() {
+                            $(this).trigger('click')
+                        })
+                    }
+                }
+
+                // if having search + having bulk items < search found items
+                else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
+                    manager.resetInput('bulkList', [])
+                    manager.clearSelected()
+
+                    if (manager.allSelected) {
+                        manager.allSelected = false
+                    } else {
+                        manager.allSelected = true
+                        $('#files li').each(function() {
+                            $(this).trigger('click')
+                        })
+                    }
+                }
+
+                // if NO search + having bulk items < all items
+                else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
+                    if (manager.allSelected) {
+                        manager.allSelected = false
+                        manager.resetInput('bulkList', [])
+                    } else {
+                        manager.allSelected = true
+                        manager.bulkList = manager.allFiles.slice(0)
+                    }
+
+                    manager.clearSelected()
+                }
+
+                // otherwise
+                else {
+                    manager.allSelected = false
+                    manager.resetInput('bulkList', [])
+                    manager.clearSelected()
+                }
+
+                // if we have items in bulk list, select first item
+                if (manager.bulkItemsCount) {
+                    manager.selectedFile = manager.bulkList[0]
                 }
             })
 
-            //********** Key Press **********//
+            // upload
+            $('#upload').click(() => {
+                $('#dz').fadeToggle('fast')
+            })
 
+            // delete
+            $('#delete').click(() => {
+                if (!this.isBulkSelecting() && this.selectedFile) {
+                    if (this.selectedFileIs('folder')) {
+                        $('.folder_warning').show()
+                    } else {
+                        $('.folder_warning').hide()
+                    }
+
+                    $('#confirm_delete').text(this.selectedFile.name)
+                }
+
+                if (this.bulkItemsCount) {
+                    this.bulkListFilter.some((item) => {
+                        if (this.fileTypeIs(item, 'folder')) {
+                            return $('.folder_warning').show()
+                        }
+
+                        $('.folder_warning').hide()
+                    })
+                }
+            })
+        },
+
+        /**
+         * shortCuts
+         */
+        shortCuts() {
             $(document).keydown((e) => {
 
                 // when modal isnt visible
@@ -218,6 +264,10 @@ export default {
                         if (this.allItemsCount) {
                             // bulk select
                             if (keycode(e) == 'b') {
+                                if (this.searchFor && this.searchItemsCount == 0) {
+                                    return
+                                }
+
                                 $('#blk_slct').trigger('click')
                             }
 
@@ -276,131 +326,42 @@ export default {
                 }
                 /* end of modal is visible */
             })
+        },
 
-            //********** Toolbar Buttons **********//
-
-            // bulk select
-            $('#blk_slct').click(function() {
-                $(this).toggleClass('is-danger')
-                $(this).closest('.field').toggleClass('has-addons')
-
-                // reset when toggled off
-                if (!manager.isBulkSelecting()) {
-                    $('#upload, #new_folder, #refresh, #rename').parent().show()
-
-                    if ($('#blk_slct_all').hasClass('is-warning')) {
-                        $('#blk_slct_all').trigger('click')
-                    }
-
-                    $('#blk_slct_all').hide()
-
-                    manager.clearSelected()
-                    manager.resetInput('bulkList', [])
-                    return manager.selectFirst()
-                }
-
-                $('#upload, #new_folder, #refresh, #rename').parent().hide()
-                $('#blk_slct_all').fadeIn()
-                manager.clearSelected()
-            })
-
-            // select all files
-            $('#blk_slct_all').click(function() {
-                let btn = $(this)
-
-                // if no items in bulk list
-                if (manager.bulkList == 0) {
-                    // if no search query
-                    if (!manager.searchFor) {
-                        btn.addClass('is-warning')
-                        manager.bulkList = manager.allFiles.slice(0)
-                    }
-
-                    // if found search items
-                    if (manager.searchItemsCount) {
-                        btn.addClass('is-warning')
-                        $('#files li').each(function() {
-                            btn.trigger('click')
-                        })
-                    }
-                }
-
-                // if having search + having bulk items < search found items
-                else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
-                    manager.resetInput('bulkList', [])
-                    manager.clearSelected()
-
-                    if (btn.hasClass('is-warning')) {
-                        btn.removeClass('is-warning')
-                    } else {
-                        btn.addClass('is-warning')
-                        $('#files li').each(function() {
-                            btn.trigger('click')
-                        })
-                    }
-                }
-
-                // if NO search + having bulk items < all items
-                else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
-                    if (btn.hasClass('is-warning')) {
-                        btn.removeClass('is-warning')
-                        manager.resetInput('bulkList', [])
-                    } else {
-                        btn.addClass('is-warning')
-                        manager.bulkList = manager.allFiles.slice(0)
-                    }
-
-                    manager.clearSelected()
-                }
-
-                // otherwise
-                else {
-                    btn.removeClass('is-warning')
-                    manager.resetInput('bulkList', [])
-                    manager.clearSelected()
-                }
-
-                // if we have items in bulk list, select first item
-                if (manager.bulkItemsCount) {
-                    manager.selectedFile = manager.bulkList[0]
-                }
-
-                // toggle styling
-                let toggle_text = btn.find('span').not('.icon')
-
-                if (btn.hasClass('is-warning')) {
-                    btn.find('.fa').removeClass('fa-plus').addClass('fa-minus')
-                    toggle_text.text(manager.trans('select_non'))
-                } else {
-                    btn.find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                    toggle_text.text(manager.trans('select_all'))
-                }
-            })
-
-            // upload
-            $('#upload').click(() => {
-                $('#dz').fadeToggle('fast')
-            })
-
-            // delete
-            $('#delete').click(() => {
-                if (!manager.isBulkSelecting()) {
-                    if (this.selectedFileIs('folder')) {
-                        $('.folder_warning').show()
-                    } else {
-                        $('.folder_warning').hide()
-                    }
-
-                    $('#confirm_delete').text(this.selectedFile.name)
-                }
-
-                if (this.bulkItemsCount) {
-                    this.bulkListFilter.some((item) => {
-                        if (this.fileTypeIs(item, 'folder')) {
-                            return $('.folder_warning').show()
+        /**
+         * dropzone
+         */
+        fileUpload(manager) {
+            $('#new-upload').dropzone({
+                createImageThumbnails: false,
+                parallelUploads: 10,
+                uploadMultiple: true,
+                forceFallback: false,
+                previewsContainer: '#uploadPreview',
+                processingmultiple() {
+                    $('#uploadProgress').fadeIn()
+                },
+                totaluploadprogress(uploadProgress) {
+                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
+                },
+                successmultiple(files, res) {
+                    res.data.map((item) => {
+                        if (item.success) {
+                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
+                        } else {
+                            manager.showNotif(item.message, 'danger')
                         }
+                    })
 
-                        $('.folder_warning').hide()
+                    manager.getFiles(manager.folders)
+                },
+                errormultiple(files, res) {
+                    this.showNotif(res, 'danger')
+                },
+                queuecomplete() {
+                    $('#upload').trigger('click')
+                    $('#uploadProgress').fadeOut(() => {
+                        $('#uploadProgress .progress-bar').css('width', 0)
                     })
                 }
             })

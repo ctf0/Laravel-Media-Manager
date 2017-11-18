@@ -6,17 +6,12 @@ export default {
             }
         },
         selectedFile(val) {
-            if (!val || this.IsInLockedList(val)) {
-                return this.toggleBtns('disable')
-            }
-
             if (this.inModal && !this.selectedFileIs('folder')) {
                 EventHub.fire('file_selected', val.path)
             }
 
             // hide move button when there is only one folder and its selected
             this.canWeMove()
-            this.toggleBtns('enable')
         },
 
         // bulk
@@ -25,26 +20,10 @@ export default {
                 // hide move button when all folders are selected
                 this.canWeMove()
             }
-
-            if (val == 0 && this.isBulkSelecting()) {
-                let btn = $('#blk_slct_all')
-
-                if (btn.hasClass('is-warning')) {
-                    btn.removeClass('is-warning')
-                    btn.find('.fa').removeClass('fa-minus').addClass('fa-plus')
-                    btn.find('span').not('.icon').text(this.trans('select_all'))
-                }
-            }
         },
         bulkItemsCount(val) {
-            if (val > 1) {
-                let btn = $('#blk_slct_all')
-
-                if (!btn.hasClass('is-warning')) {
-                    btn.addClass('is-warning')
-                    btn.find('.fa').removeClass('fa-plus').addClass('fa-minus')
-                    btn.find('span').not('.icon').text(this.trans('select_non'))
-                }
+            if (val > 1 && !this.allSelected) {
+                this.allSelected = true
             }
         },
 

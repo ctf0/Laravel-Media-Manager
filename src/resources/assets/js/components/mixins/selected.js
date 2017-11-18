@@ -8,7 +8,6 @@ export default {
             this.clearSelected()
             this.selectedFile = file
             $('div[data-item="' + file.name + '"]').addClass('selected')
-            this.canWeMove()
 
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)

@@ -30,10 +30,6 @@ $blue_2: #276cda;
     background: $white_gray;
 }
 
-#blk_slct_all {
-    display: none;
-}
-
 // upload
 #dz {
     display: none;
@@ -356,7 +352,6 @@ $blue_2: #276cda;
 #no_files,
 #ajax_error {
     position: absolute;
-    z-index: 1;
     top: 0;
     right: 0;
     bottom: 0;
@@ -366,6 +361,11 @@ $blue_2: #276cda;
     justify-content: center;
     background: white;
 }
+
+// #file_loader,
+// #ajax_error {
+//     z-index: 1;
+// }
 
 #ajax_error {
     flex-direction: column;

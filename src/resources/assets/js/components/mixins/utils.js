@@ -14,6 +14,7 @@ export default {
             let duration = null
 
             switch (s) {
+            case 'black':
             case 'danger':
                 title = 'Error'
                 break
@@ -34,15 +35,21 @@ export default {
             })
         },
         resetInput(input, val = undefined) {
+            if (Array.isArray(input)) {
+                return input.forEach((e) => {
+                    this[e] = val
+                })
+            }
+
             this[input] = val
         },
 
         // moving
-        checkForFolders() {
-            return $('#move_folder_dropdown').val() !== null ? true : false
-        },
         moveUpCheck() {
             return this.folders.length && !this.restrictAndLast()
+        },
+        checkForFolders() {
+            return $('#move_folder_dropdown').val() !== null
         },
         canWeMove() {
             this.$nextTick(() => {
@@ -84,14 +91,8 @@ export default {
         },
 
         /*                Toggle                */
-        toggleInfo() {
-            $('#right').fadeToggle('fast')
-
-            let btn = $('.toggle')
-            let span = btn.find('span').not('.icon')
-
-            span.text(span.text() == this.trans('close') ? this.trans('open') : this.trans('close'))
-            btn.find('.fa').toggleClass('fa-angle-double-right fa-angle-double-left')
+        toggleInfoPanel() {
+            return this.toggleInfo = !this.toggleInfo
         },
         toggleModal(selector = null) {
             if (!selector) {
@@ -108,7 +109,7 @@ export default {
 
         // loading
         toggleLoading() {
-            return this.is_loading = !this.is_loading
+            return this.isLoading = !this.isLoading
         },
         noScroll(s) {
             if (s == 'add') {
@@ -119,13 +120,11 @@ export default {
         },
         noFiles(s) {
             if (s == 'show') {
-                $('.toggle').fadeOut('fast')
                 $('#no_files').show()
                 return EventHub.fire('no-files-show')
             }
 
             $('#no_files').hide()
-            $('.toggle').fadeIn('fast')
             EventHub.fire('no-files-hide')
         },
         loadingFiles(s) {
