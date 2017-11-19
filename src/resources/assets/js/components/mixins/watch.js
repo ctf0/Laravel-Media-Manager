@@ -22,16 +22,16 @@ export default {
             }
         },
         bulkItemsCount(val) {
-            if (val > 1 && !this.allSelected) {
-                this.allSelected = true
+            if (val > 1 && !this.bulkSelectAll) {
+                this.bulkSelectAll = true
             }
         },
 
         // filter
-        showBy(val) {
+        sortBy(val) {
             if (val) {
                 if (val == 'clear') {
-                    this.resetInput('showBy')
+                    this.resetInput('sortBy')
                 }
 
                 if (!this.isBulkSelecting()) {

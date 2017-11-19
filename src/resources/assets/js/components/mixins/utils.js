@@ -44,7 +44,7 @@ export default {
             this[input] = val
         },
 
-        // moving
+        /*                Moving                */
         moveUpCheck() {
             return this.folders.length && !this.restrictAndLast()
         },
@@ -106,8 +106,11 @@ export default {
             $(selector).find('input').focus()
             EventHub.fire('modal-show')
         },
+        toggleUploadPanel() {
+            this.uploadToggle = !this.uploadToggle
+        },
 
-        // loading
+        /*                Loading                */
         toggleLoading() {
             return this.isLoading = !this.isLoading
         },
@@ -142,6 +145,7 @@ export default {
             EventHub.fire('ajax-error-show')
         },
 
+        /*                Ops                */
         // download
         saveFile(path) {
             if (this.isBulkSelecting()) {
@@ -159,22 +163,6 @@ export default {
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
-        },
-
-        // animation
-        afterEnter() {
-            if (this.searchFor) {
-                this.updateSearchCount()
-            }
-        },
-        afterLeave() {
-            if (this.searchFor) {
-                this.updateSearchCount()
-            }
-
-            if (this.allItemsCount == undefined) {
-                this.clearSelected()
-            }
         }
     }
 }

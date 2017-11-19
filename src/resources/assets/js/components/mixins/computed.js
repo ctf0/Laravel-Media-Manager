@@ -1,13 +1,13 @@
 export default {
     computed: {
         allFiles() {
-            if (this.filterItemsCount) {
+            if (this.filteredItemsCount) {
                 return this.filterdList
             }
 
             return this.files.items
         },
-        filterItemsCount() {
+        filteredItemsCount() {
             if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
                 return this.filterdList.length
             }
@@ -29,10 +29,6 @@ export default {
                 list = this.bulkList.filter((x) => {
                     return this.lockedList.indexOf(x) < 0
                 })
-            }
-
-            if (list.length > 0) {
-                $('#delete').removeAttr('disabled')
             }
 
             return list

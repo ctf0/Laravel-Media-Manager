@@ -1,16 +1,6 @@
 <script>
-/* external classes */
-// is-warning
-// is-danger
-// field
-// has-addons
-// icon
-// fa-plus / fa-minus
-// fa-refresh / fa-spin
-// fa fa-angle-double-right
-// fa fa-angle-double-left
-
 import Form from './mixins/form'
+import Ops from './mixins/ops'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
 import LockFile from './mixins/lock'
@@ -24,6 +14,7 @@ export default {
     name: 'media-manager',
     mixins: [
         Form,
+        Ops,
         FileFiltration,
         BulkSelect,
         LockFile,
@@ -39,14 +30,18 @@ export default {
         'dirsRoute',
         'hideExt',
         'restrictPath',
-        'restrictExt'
+        'restrictExt',
+        'mediaTrans'
     ],
     data() {
         return {
             isLoading: false,
             linkCopied: false,
             toggleInfo: true,
-            allSelected: false,
+            bulkSelectAll: false,
+            bulkSelect: false,
+            folderWarning: false,
+            uploadToggle: false,
 
             files: [],
             folders: [],
@@ -56,7 +51,7 @@ export default {
             lockedList: [],
 
             selectedFile: undefined,
-            showBy: undefined,
+            sortBy: undefined,
             currentFilterName: undefined,
             searchItemsCount: undefined,
             searchFor: undefined,
@@ -72,7 +67,8 @@ export default {
         this.getFiles('/')
     },
     mounted() {
-        this.initManager()
+        this.fileUpload()
+        this.shortCuts()
     },
     updated() {
         this.autoPlay()
@@ -81,126 +77,43 @@ export default {
         $(document).unbind()
     },
     methods: {
-        // init
-        initManager() {
+        fileUpload() {
             let manager = this
 
-            this.fileUpload(manager)
-            this.shortCuts()
-            this.toolBar(manager)
-        },
-
-        toolBar(manager) {
-            // bulk select
-            $('#blk_slct').click(function() {
-                $(this).toggleClass('is-danger')
-
-                // reset when toggled off
-                if (!manager.isBulkSelecting()) {
-                    if (manager.allSelected) {
-                        $('#blk_slct_all').trigger('click')
-                    }
-
-                    manager.clearSelected()
-                    manager.resetInput('bulkList', [])
-                    return manager.selectFirst()
-                }
-
-                manager.clearSelected()
-            })
-
-            // select all files
-            $('#blk_slct_all').click(function() {
-                // if no items in bulk list
-                if (manager.bulkList == 0) {
-                    // if no search query
-                    if (!manager.searchFor) {
-                        manager.allSelected = true
-                        manager.bulkList = manager.allFiles.slice(0)
-                    }
-
-                    // if found search items
-                    if (manager.searchItemsCount) {
-                        manager.allSelected = true
-                        $('#files li').each(function() {
-                            $(this).trigger('click')
-                        })
-                    }
-                }
-
-                // if having search + having bulk items < search found items
-                else if (manager.searchFor && manager.bulkItemsCount < manager.searchItemsCount) {
-                    manager.resetInput('bulkList', [])
-                    manager.clearSelected()
-
-                    if (manager.allSelected) {
-                        manager.allSelected = false
-                    } else {
-                        manager.allSelected = true
-                        $('#files li').each(function() {
-                            $(this).trigger('click')
-                        })
-                    }
-                }
-
-                // if NO search + having bulk items < all items
-                else if (!manager.searchFor && manager.bulkItemsCount < manager.allItemsCount) {
-                    if (manager.allSelected) {
-                        manager.allSelected = false
-                        manager.resetInput('bulkList', [])
-                    } else {
-                        manager.allSelected = true
-                        manager.bulkList = manager.allFiles.slice(0)
-                    }
-
-                    manager.clearSelected()
-                }
-
-                // otherwise
-                else {
-                    manager.allSelected = false
-                    manager.resetInput('bulkList', [])
-                    manager.clearSelected()
-                }
-
-                // if we have items in bulk list, select first item
-                if (manager.bulkItemsCount) {
-                    manager.selectedFile = manager.bulkList[0]
-                }
-            })
-
-            // upload
-            $('#upload').click(() => {
-                $('#dz').fadeToggle('fast')
-            })
-
-            // delete
-            $('#delete').click(() => {
-                if (!this.isBulkSelecting() && this.selectedFile) {
-                    if (this.selectedFileIs('folder')) {
-                        $('.folder_warning').show()
-                    } else {
-                        $('.folder_warning').hide()
-                    }
-
-                    $('#confirm_delete').text(this.selectedFile.name)
-                }
-
-                if (this.bulkItemsCount) {
-                    this.bulkListFilter.some((item) => {
-                        if (this.fileTypeIs(item, 'folder')) {
-                            return $('.folder_warning').show()
+            $('#new-upload').dropzone({
+                createImageThumbnails: false,
+                parallelUploads: 10,
+                uploadMultiple: true,
+                forceFallback: false,
+                previewsContainer: '#uploadPreview',
+                processingmultiple() {
+                    $('#uploadProgress').fadeIn()
+                },
+                totaluploadprogress(uploadProgress) {
+                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
+                },
+                successmultiple(files, res) {
+                    res.data.map((item) => {
+                        if (item.success) {
+                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
+                        } else {
+                            manager.showNotif(item.message, 'danger')
                         }
+                    })
 
-                        $('.folder_warning').hide()
+                    manager.getFiles(manager.folders)
+                },
+                errormultiple(files, res) {
+                    this.showNotif(res, 'danger')
+                },
+                queuecomplete() {
+                    manager.$refs.upload.click()
+                    $('#uploadProgress').fadeOut(() => {
+                        $('#uploadProgress .progress-bar').css('width', 0)
                     })
                 }
             })
         },
-
-        /**
-         * shortCuts
-         */
         shortCuts() {
             $(document).keydown((e) => {
 
@@ -250,12 +163,12 @@ export default {
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                $('#refresh').trigger('click')
+                                this.$refs.refresh.click()
                             }
 
                             // file upload
                             if (keycode(e) == 'u') {
-                                $('#upload').trigger('click')
+                                this.$refs.upload.click()
                             }
                         }
                         /* end of no bulk selection */
@@ -268,12 +181,12 @@ export default {
                                     return
                                 }
 
-                                $('#blk_slct').trigger('click')
+                                this.$refs.bulkSelect.click()
                             }
 
                             // add all to bulk list
                             if (this.isBulkSelecting() && keycode(e) == 'a') {
-                                $('#blk_slct_all').trigger('click')
+                                this.$refs.bulkSelectAll.click()
                             }
 
                             // delete file
@@ -295,7 +208,7 @@ export default {
 
                         // toggle file details sidebar
                         if (keycode(e) == 't') {
-                            $('.toggle').trigger('click')
+                            this.toggleInfoPanel()
                         }
                     }
                     /* end of search is not focused */
@@ -329,81 +242,6 @@ export default {
         },
 
         /**
-         * dropzone
-         */
-        fileUpload(manager) {
-            $('#new-upload').dropzone({
-                createImageThumbnails: false,
-                parallelUploads: 10,
-                uploadMultiple: true,
-                forceFallback: false,
-                previewsContainer: '#uploadPreview',
-                processingmultiple() {
-                    $('#uploadProgress').fadeIn()
-                },
-                totaluploadprogress(uploadProgress) {
-                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
-                },
-                successmultiple(files, res) {
-                    res.data.map((item) => {
-                        if (item.success) {
-                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
-                        } else {
-                            manager.showNotif(item.message, 'danger')
-                        }
-                    })
-
-                    manager.getFiles(manager.folders)
-                },
-                errormultiple(files, res) {
-                    this.showNotif(res, 'danger')
-                },
-                queuecomplete() {
-                    $('#upload').trigger('click')
-                    $('#uploadProgress').fadeOut(() => {
-                        $('#uploadProgress .progress-bar').css('width', 0)
-                    })
-                }
-            })
-        },
-
-        /**
-         * keyboard navigation
-         */
-        navigation(e) {
-            // go to prev image
-            if (keycode(e) == 'left' || keycode(e) == 'up') {
-                e.preventDefault()
-                this.goToPrev()
-            }
-
-            // go to next image
-            if (keycode(e) == 'right' || keycode(e) == 'down') {
-                e.preventDefault()
-                this.goToNext()
-            }
-
-            // go to last item
-            if (keycode(e) == 'end') {
-                e.preventDefault()
-
-                let newSelected = this.allItemsCount - 1
-                let cur = $('div[data-index="' + newSelected + '"]')
-                this.scrollToFile(cur)
-            }
-
-            // go to first item
-            if (keycode(e) == 'home') {
-                e.preventDefault()
-                this.scrollToFile()
-            }
-
-            if (this.lightBoxIsActive() && !this.selectedFileIs('image')) {
-                this.toggleModal()
-            }
-        },
-
-        /**
          * autoplay media
          *
          * last item will keep repeating
@@ -425,6 +263,27 @@ export default {
                         })
                     }
                 })
+            }
+        },
+
+        /**
+         * animation
+         *
+         * because $nextTick doesnt work correctly
+         * with transition-group
+         */
+        afterEnter() {
+            if (this.searchFor) {
+                this.updateSearchCount()
+            }
+        },
+        afterLeave() {
+            if (this.searchFor) {
+                this.updateSearchCount()
+            }
+
+            if (this.allItemsCount == undefined) {
+                this.clearSelected()
             }
         }
     },

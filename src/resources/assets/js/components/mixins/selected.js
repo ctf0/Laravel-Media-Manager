@@ -1,18 +1,8 @@
 export default {
     methods: {
-        // selected
+        /*                Selected                */
         getSelected() {
             return $('#files li .selected')
-        },
-        setSelected(file) {
-            this.clearSelected()
-            this.selectedFile = file
-            $('div[data-item="' + file.name + '"]').addClass('selected')
-
-            if (this.isBulkSelecting()) {
-                this.pushtoBulkList(file)
-            }
-
         },
         clearSelected() {
             this.resetInput('selectedFile')
@@ -27,13 +17,23 @@ export default {
                 }
             })
         },
+        setSelected(file) {
+            this.clearSelected()
+            this.selectedFile = file
+            $('div[data-item="' + file.name + '"]').addClass('selected')
+
+            if (this.isBulkSelecting()) {
+                this.pushtoBulkList(file)
+            }
+
+        },
         selectedFileIs(val) {
             if (typeof this.selectedFile !== 'undefined') {
                 return this.fileTypeIs(this.selectedFile, val)
             }
         },
 
-        // folder
+        /*                Folder                */
         openFolder(file) {
             if (!this.isBulkSelecting()) {
                 if (!this.fileTypeIs(file, 'folder')) {
@@ -71,25 +71,39 @@ export default {
             this.goToFolder(newSelected)
         },
 
-        // scroll to
-        scrollToFile(file) {
-            if (!file) {
-                file = $('div[data-index="0"]')
+        /*                Navigation                */
+        navigation(e) {
+            // go to prev image
+            if (keycode(e) == 'left' || keycode(e) == 'up') {
+                e.preventDefault()
+                this.goToPrev()
             }
 
-            let container = $('#left')
-            let offset = parseInt(container.css('padding-top')) + parseInt(file.css('margin-top'))
+            // go to next image
+            if (keycode(e) == 'right' || keycode(e) == 'down') {
+                e.preventDefault()
+                this.goToNext()
+            }
 
-            file.trigger('click')
-            file[0].scrollIntoView(false)
+            // go to last item
+            if (keycode(e) == 'end') {
+                e.preventDefault()
 
-            // respect container & file offset when scrolling
-            if (file[0].offsetTop > container.height()) {
-                container[0].scrollTop += offset
+                let newSelected = this.allItemsCount - 1
+                let cur = $('div[data-index="' + newSelected + '"]')
+                this.scrollToFile(cur)
+            }
+
+            // go to first item
+            if (keycode(e) == 'home') {
+                e.preventDefault()
+                this.scrollToFile()
+            }
+
+            if (this.lightBoxIsActive() && !this.selectedFileIs('image')) {
+                this.toggleModal()
             }
         },
-
-        // navigation
         goToPrev() {
             let curSelectedIndex = parseInt(this.getSelected().data('index'))
 
@@ -108,13 +122,21 @@ export default {
                 this.scrollToFile(cur)
             }
         },
+        scrollToFile(file) {
+            if (!file) {
+                file = $('div[data-index="0"]')
+            }
 
-        // ops
-        deleteItem() {
-            $('#delete').trigger('click')
-        },
-        moveItem() {
-            $('#move').trigger('click')
+            let container = $('#left')
+            let offset = parseInt(container.css('padding-top')) + parseInt(file.css('margin-top'))
+
+            file.trigger('click')
+            file[0].scrollIntoView(false)
+
+            // respect container & file offset when scrolling
+            if (file[0].offsetTop > container.height()) {
+                container[0].scrollTop += offset
+            }
         }
     }
 }
