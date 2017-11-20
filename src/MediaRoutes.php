@@ -20,6 +20,7 @@ class MediaRoutes
             Route::post('delete_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@delete_file', 'as' => 'delete_file']);
             Route::post('move_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@move_file', 'as' => 'move_file']);
             Route::post('rename_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@rename_file', 'as' => 'rename_file']);
+            Route::post('lock_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@lock_file', 'as' => 'lock_file']);
         });
     }
 }

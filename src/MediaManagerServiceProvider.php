@@ -53,6 +53,38 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/resources/views' => resource_path('views/vendor/MediaManager'),
         ], 'view');
+
+        $this->viewComp();
+        static::create_LLD(config('mediaManager.locked_files_list'));
+    }
+
+    protected function viewComp()
+    {
+        $url = app('filesystem')
+            ->disk(config('mediaManager.storage_disk'))
+            ->url('/');
+
+        view()->composer('MediaManager::_manager', function ($view) use ($url) {
+            $view->with([
+               'base_url' => $url,
+           ]);
+        });
+    }
+
+    /**
+     * create locked list dir.
+     *
+     * @param [type] $dir [description]
+     *
+     * @return [type] [description]
+     */
+    protected static function create_LLD($dir)
+    {
+        $dir_name = dirname($dir);
+
+        if (!app('files')->exists($dir_name)) {
+            return app('files')->makeDirectory($dir_name, 0755, true);
+        }
     }
 
     /**
@@ -88,16 +120,6 @@ mix.js('resources/assets/vendor/MediaManager/js/manager.js', 'public/assets/vend
 EOT;
 
             $this->file->append($mix_file, $data);
-        }
-
-        // fw
-        $env_file = base_path('.env');
-        $search   = 'MIX_MM_FRAMEWORK';
-
-        if ($this->checkExist($env_file, $search)) {
-            $data = "\nMIX_MM_FRAMEWORK=bulma";
-
-            $this->file->append($env_file, $data);
         }
 
         // run check once

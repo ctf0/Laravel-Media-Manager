@@ -29,7 +29,6 @@
 - after installation, package will auto-add
     + package routes to `routes/web.php`
     + package assets compiling to `webpack.mix.js`
-    + `MIX_MM_FRAMEWORK=bulma` to `.env`
 
 ## Features
 
@@ -40,10 +39,11 @@
 - bulk selection.
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/File-Extension-Restriction)
-- download selected "including bulk selection"
-- directly copy selected file link with a click.
+- download selected ***"including bulk selection"***
+- directly copy selected file link.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left/up, right/down, home, end)
+- [lock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-Folder)
 - search
 - filter by type
     + folder
@@ -60,7 +60,7 @@
     + selected
     + search found
 - protection against overwriting (files / folders)
-- autoplay media files "if selected filter is audio/video"
+- autoplay media files ***"if selected filter is audio/video"***
 - file name sanitization for
     + upload
     + rename
@@ -149,11 +149,6 @@ return [
     'sanitized_text' => uniqid(),
 
     /*
-     * css farmework
-     */
-    'framework' => env('MIX_MM_FRAMEWORK'),
-
-    /*
      * display file last modification time as
      * http://carbon.nesbot.com/docs/#api-formatting
      */
@@ -162,7 +157,12 @@ return [
     /**
      * hide file extension in files list
      */
-    'hide_ext' => true
+    'hide_ext' => true,
+
+    /*
+     * locked files list
+     */
+    'locked_files_list' => storage_path('logs/MediaManager.php')
 ];
 ```
 
@@ -184,14 +184,6 @@ npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-cli
 ```
 
 - for styling we use ***bulma***
-
-> ***Or Use another Framework***
->
-> - edit `views/vendor/MediaManager` files.
-> - duplicate `assets/vendor/MediaManager/js/components/media-bulma.vue` and rename it to the framework you want ex.`media-bootstrap.vue`
-> - duplicate `assets/vendor/MediaManager/sass/media-bulma.scss` and rename it to the framework you want ex.`media-bootstrap.scss`
-> - set `MIX_MM_FRAMEWORK` to the framework name ex.`MIX_MM_FRAMEWORK=bootstrap`
-> - start editing the new files.
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
     + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)

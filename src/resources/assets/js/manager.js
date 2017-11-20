@@ -22,7 +22,7 @@ VueTouch.registerCustomEvent('dbltap', {
 Vue.use(VueTouch, {name: 'v-touch'})
 
 /*                Components                */
-Vue.component('MediaManager', require('./components/media-' + process.env.MIX_MM_FRAMEWORK + '.vue'))
+Vue.component('MediaManager', require('./components/media.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */

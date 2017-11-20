@@ -17,19 +17,20 @@ class MediaController extends Controller
     protected $folderChars;
     protected $sanitizedText;
     protected $unallowed_mimes;
+    protected $locked_files_list;
     protected $LMF;
-    protected $fw;
 
     public function __construct()
     {
-        $this->fileSystem      = config('mediaManager.storage_disk');
-        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
-        $this->ignoreFiles     = config('mediaManager.ignore_files');
-        $this->fileChars       = config('mediaManager.allowed_fileNames_chars');
-        $this->folderChars     = config('mediaManager.allowed_folderNames_chars');
-        $this->sanitizedText   = config('mediaManager.sanitized_text');
-        $this->unallowed_mimes = config('mediaManager.unallowed_mimes');
-        $this->LMF             = config('mediaManager.last_modified_format');
+        $this->fileSystem         = config('mediaManager.storage_disk');
+        $this->storageDisk        = app('filesystem')->disk($this->fileSystem);
+        $this->ignoreFiles        = config('mediaManager.ignore_files');
+        $this->fileChars          = config('mediaManager.allowed_fileNames_chars');
+        $this->folderChars        = config('mediaManager.allowed_folderNames_chars');
+        $this->sanitizedText      = config('mediaManager.sanitized_text');
+        $this->unallowed_mimes    = config('mediaManager.unallowed_mimes');
+        $this->LMF                = config('mediaManager.last_modified_format');
+        $this->locked_files_list  = config('mediaManager.locked_files_list');
     }
 
     /**
@@ -60,8 +61,11 @@ class MediaController extends Controller
         }
 
         return response()->json([
-            'path'   => $folder,
-            'items'  => $this->getData($folder),
+            'locked' => file_exists($this->locked_files_list) ? include $this->locked_files_list : [],
+            'files'  => [
+                'path'   => $folder,
+                'items'  => $this->getData($folder),
+            ],
         ]);
     }
 
@@ -328,5 +332,33 @@ class MediaController extends Controller
         }
 
         return compact('success', 'message', 'new_filename');
+    }
+
+    /**
+     * [lock_file description].
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function lock_file(Request $request)
+    {
+        $path  = $request->path;
+        $state = $request->state;
+        $data  = [];
+
+        if (file_exists($this->locked_files_list)) {
+            $data = include $this->locked_files_list;
+        }
+
+        'add' == $state
+            ? array_push($data, $path)
+            : array_splice($data, array_search($path, $data), 1);
+
+        $res = "<?php\n\nreturn " . var_export($data, true) . ';';
+
+        return app('files')->put($this->locked_files_list, $res)
+            ? response()->json(['message'=>"done $state"])
+            : response()->json(['message'=>trans('MediaManager::messages.ajax_error')]);
     }
 }

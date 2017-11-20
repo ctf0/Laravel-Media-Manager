@@ -37,13 +37,6 @@ return [
     'sanitized_text' => uniqid(),
 
     /*
-     * css farmework
-     * ex.
-     * MIX_MM_FRAMEWORK=bulma
-     */
-    'framework' => env('MIX_MM_FRAMEWORK'),
-
-    /*
      * display file last modification time as
      *
      * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
@@ -54,4 +47,9 @@ return [
      * hide file extension in files list
      */
     'hide_ext' => true,
+
+    /*
+     * locked files list
+     */
+    'locked_files_list' => storage_path('logs/MediaManager.php'),
 ];
