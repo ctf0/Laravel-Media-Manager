@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/30937714-e6537c94-a3d7-11e7-83e8-3052addc7ba0.png">
+    <img src="https://user-images.githubusercontent.com/7388088/33029294-e11b7f60-ce20-11e7-91a9-95fb652d3fcd.png">
 </p>
 
 # Media Manager
@@ -74,12 +74,13 @@
     |                     | refresh *(toolbar)*          | r            | *             |             |
     |                     | move *(toolbar)*             | m            | *             | swipe up    |
     |                     | delete *(toolbar)*           | d/del        | *             | swipe down  |
+    |                     | lock/unlock *(toolbar)*      | l            | *             |             |
     |                     | bulk select *(toolbar)*      | b            | *             |             |
     |                     | bulk select all *(toolbar)*  | a            | *             |             |
     |                     | &nbsp;                       |              |               |             |
-    |                     | file/folder rename *(modal)* | enter        | *             |             |
-    |                     | file/folder delete *(modal)* | enter        | *             |             |
-    |                     | file/folder move *(modal)*   | enter        | *             |             |
+    |                     | confirm rename *(modal)*     | enter        | *             |             |
+    |                     | confirm delete *(modal)*     | enter        | *             |             |
+    |                     | confirm move *(modal)*       | enter        | *             |             |
     |                     | create new folder *(modal)*  | enter        | *             |             |
     |                     | &nbsp;                       |              |               |             |
     |                     | toggle *(sidebar)*           | t            | *             |             |
