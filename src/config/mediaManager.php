@@ -47,9 +47,4 @@ return [
      * hide file extension in files list
      */
     'hide_ext' => true,
-
-    /*
-     * locked files list
-     */
-    'locked_files_list' => storage_path('logs/MediaManager.php'),
 ];

@@ -1,6 +1,5 @@
 <script>
 import Form from './mixins/form'
-import Ops from './mixins/ops'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
 import LockFile from './mixins/lock'
@@ -14,7 +13,6 @@ export default {
     name: 'media-manager',
     mixins: [
         Form,
-        Ops,
         FileFiltration,
         BulkSelect,
         LockFile,
@@ -25,13 +23,15 @@ export default {
         Watchers
     ],
     props: [
+        'baseUrl',
         'inModal',
+        'hideExt',
+        'mediaTrans',
         'filesRoute',
         'dirsRoute',
-        'hideExt',
+        'lockFileRoute',
         'restrictPath',
-        'restrictExt',
-        'mediaTrans'
+        'restrictExt'
     ],
     data() {
         return {
@@ -90,7 +90,7 @@ export default {
                     $('#uploadProgress').fadeIn()
                 },
                 totaluploadprogress(uploadProgress) {
-                    $('#uploadProgress .progress-bar').css('width', uploadProgress + '%')
+                    $('.progress-bar').css('width', uploadProgress + '%')
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
@@ -107,13 +107,14 @@ export default {
                     this.showNotif(res, 'danger')
                 },
                 queuecomplete() {
-                    manager.$refs.upload.click()
+                    manager.toggleUploadPanel()
                     $('#uploadProgress').fadeOut(() => {
-                        $('#uploadProgress .progress-bar').css('width', 0)
+                        $('.progress-bar').css('width', 0)
                     })
                 }
             })
         },
+
         shortCuts() {
             $(document).keydown((e) => {
 
@@ -163,12 +164,12 @@ export default {
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                this.$refs.refresh.click()
+                                this.getFiles(this.folders)
                             }
 
                             // file upload
                             if (keycode(e) == 'u') {
-                                this.$refs.upload.click()
+                                this.toggleUploadPanel()
                             }
                         }
                         /* end of no bulk selection */
@@ -191,17 +192,17 @@ export default {
 
                             // delete file
                             if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                                this.deleteItem()
+                                this.$refs.delete.click()
                             }
 
                             // move file
                             if (this.checkForFolders() && keycode(e) == 'm') {
-                                this.moveItem()
+                                this.$refs.move.click()
                             }
 
                             // lock files
                             if (keycode(e) == 'l') {
-                                this.pushToLockedList()
+                                this.$refs.lock.click()
                             }
                         }
                         /* end of with or without bulk selection */
@@ -239,6 +240,106 @@ export default {
                 }
                 /* end of modal is visible */
             })
+        },
+        deleteItem() {
+            if (!this.isBulkSelecting() && this.selectedFile) {
+                if (this.selectedFileIs('folder')) {
+                    this.folderWarning = true
+                } else {
+                    this.folderWarning = false
+                }
+
+                this.$refs.confirm_delete.innerText = this.selectedFile.name
+            }
+
+            if (this.bulkItemsCount) {
+                this.bulkListFilter.some((item) => {
+                    if (this.fileTypeIs(item, 'folder')) {
+                        return this.folderWarning = true
+                    }
+
+                    this.folderWarning = false
+                })
+            }
+
+            this.toggleModal('#confirm_delete_modal')
+        },
+        moveItem() {
+            this.toggleModal('#move_file_modal')
+        },
+        renameItem() {
+            this.toggleModal('#rename_file_modal')
+        },
+        blkSlct() {
+            this.bulkSelect = !this.bulkSelect
+
+            // reset when toggled off
+            if (this.isBulkSelecting()) {
+                return this.clearSelected()
+            }
+
+            this.bulkSelectAll = false
+            this.clearSelected()
+            this.resetInput('bulkList', [])
+            this.selectFirst()
+        },
+        blkSlctAll() {
+            // if no items in bulk list
+            if (this.bulkList == 0) {
+                // if no search query
+                if (!this.searchFor) {
+                    this.bulkSelectAll = true
+                    this.bulkList = this.allFiles.slice(0)
+                }
+
+                // if found search items
+                if (this.searchItemsCount) {
+                    this.bulkSelectAll = true
+                    $('#files li').each(function() {
+                        $(this).trigger('click')
+                    })
+                }
+            }
+
+            // if having search + having bulk items < search found items
+            else if (this.searchFor && this.bulkItemsCount < this.searchItemsCount) {
+                this.resetInput('bulkList', [])
+                this.clearSelected()
+
+                if (this.bulkSelectAll) {
+                    this.bulkSelectAll = false
+                } else {
+                    this.bulkSelectAll = true
+                    $('#files li').each(function() {
+                        $(this).trigger('click')
+                    })
+                }
+            }
+
+            // if NO search + having bulk items < all items
+            else if (!this.searchFor && this.bulkItemsCount < this.allItemsCount) {
+                if (this.bulkSelectAll) {
+                    this.bulkSelectAll = false
+                    this.resetInput('bulkList', [])
+                } else {
+                    this.bulkSelectAll = true
+                    this.bulkList = this.allFiles.slice(0)
+                }
+
+                this.clearSelected()
+            }
+
+            // otherwise
+            else {
+                this.bulkSelectAll = false
+                this.resetInput('bulkList', [])
+                this.clearSelected()
+            }
+
+            // if we have items in bulk list, select first item
+            if (this.bulkItemsCount) {
+                this.selectedFile = this.bulkList[0]
+            }
         },
 
         /**

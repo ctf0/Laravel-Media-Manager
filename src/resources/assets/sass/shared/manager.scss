@@ -19,6 +19,10 @@ $red: #ff3860;
 $blue: #3273dc;
 $blue_2: #276cda;
 
+* {
+    backface-visibility: hidden;
+}
+
 // toolbar
 #toolbar {
     flex-wrap: wrap;
@@ -161,10 +165,6 @@ $blue_2: #276cda;
     flex: 4;
     padding: 10px;
 
-    * {
-        transform: translateZ(0);
-    }
-
     #files {
         display: flex;
         flex-wrap: wrap;
@@ -272,6 +272,7 @@ $blue_2: #276cda;
 }
 
 #right {
+    position: relative;
     flex: 1;
     border-left: 1px solid $gray_4;
 
@@ -290,6 +291,10 @@ $blue_2: #276cda;
         p {
             padding: 10px;
         }
+    }
+
+    .right_details {
+        margin-bottom: 120px;
     }
 
     .detail_img {
@@ -340,7 +345,9 @@ $blue_2: #276cda;
     }
 
     .count {
-        margin-top: 20px;
+        position: absolute;
+        right: 0;
+        bottom: 0;
         padding: 10px;
         text-align: right;
     }

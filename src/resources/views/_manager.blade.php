@@ -3,15 +3,15 @@
 
 {{-- component --}}
 <media-manager inline-template
+    base-url="{{ $base_url }}"
+    :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
+    :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
+    :media-trans="{{ json_encode(['no_val' => trans('MediaManager::messages.no_val')]) }}"
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
+    lock-file-route="{{ route('media.lock_file') }}"
     restrict-path="{{ isset($path) ? $path : null }}"
-    restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}"
-    :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
-    :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
-    :media-trans="{{ json_encode([
-        'no_val' => trans('MediaManager::messages.no_val')
-    ]) }}">
+    restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}">
 
     <v-touch @swiperight="lightBoxIsActive() ? goToPrev() : false"
         @swipeleft="lightBoxIsActive() ? goToNext() : false">
@@ -27,7 +27,6 @@
                         <div class="control">
                             <button class="button"
                                 @click="toggleUploadPanel()"
-                                ref="upload"
                                 v-tippy="{arrow: true}" title="u">
                                 <span class="icon is-small"><i class="fa fa-cloud-upload"></i></span>
                                 <span>{{ trans('MediaManager::messages.upload') }}</span>
@@ -49,7 +48,6 @@
                 <div class="level-item" v-if="!isBulkSelecting()">
                     <div class="control">
                         <button class="button is-light"
-                            ref="refresh"
                             v-tippy="{arrow: true}" title="r"
                             @click="getFiles(folders)">
                             <span class="icon is-small">
@@ -65,9 +63,9 @@
                         <div class="control">
                             <button class="button is-link"
                                 ref="move"
-                                :disabled="!selectedFile || IsInLockedList(selectedFile)"
+                                :disabled="m_d_dc()"
                                 v-tippy="{arrow: true}" title="m"
-                                @click="toggleModal('#move_file_modal')">
+                                @click="moveItem()">
                                 <span class="icon is-small"><i class="fa fa-share"></i></span>
                                 <span>{{ trans('MediaManager::messages.move') }}</span>
                             </button>
@@ -76,10 +74,9 @@
                         {{-- rename --}}
                         <div class="control">
                             <button class="button is-link"
-                                ref="rename"
                                 :disabled="!selectedFile || IsInLockedList(selectedFile)"
                                 v-if="!isBulkSelecting()"
-                                @click="toggleModal('#rename_file_modal')">
+                                @click="renameItem()">
                                 <span class="icon is-small"><i class="fa fa-i-cursor"></i></span>
                                 <span>{{ trans('MediaManager::messages.rename') }}</span>
                             </button>
@@ -89,9 +86,9 @@
                         <div class="control">
                             <button class="button is-link"
                                 ref="delete"
-                                :disabled="!selectedFile || IsInLockedList(selectedFile)"
+                                :disabled="m_d_dc()"
                                 v-tippy="{arrow: true}" title="d / del"
-                                @click="del(), toggleModal('#confirm_delete_modal')">
+                                @click="deleteItem()">
                                 <span class="icon is-small"><i class="fa fa-trash"></i></span>
                                 <span>{{ trans('MediaManager::messages.delete') }}</span>
                             </button>
@@ -103,6 +100,7 @@
                 <div class="level-item">
                     <div class="control">
                         <button class="button is-warning"
+                            ref="lock"
                             :disabled="searchItemsCount == 0 || !allItemsCount || isBulkSelecting() && !bulkItemsCount"
                             v-tippy="{arrow: true}" title="l"
                             @click="pushToLockedList()">
@@ -586,7 +584,7 @@
                             <h3 class="title">{{ trans('MediaManager::messages.destination_folder') }}</h3>
                             <div class="control has-icons-left">
                                 <span class="select is-fullwidth">
-                                    <select id="move_folder_dropdown">
+                                    <select ref="move_folder_dropdown">
                                         <option v-if="moveUpCheck()" value="../">../</option>
                                         <option v-for="(dir,index) in directories"
                                             v-if="filterDirList(dir)"

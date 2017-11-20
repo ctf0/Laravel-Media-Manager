@@ -61,7 +61,7 @@ class MediaController extends Controller
         }
 
         return response()->json([
-            'locked' => file_exists($this->locked_files_list) ? include $this->locked_files_list : [],
+            'locked' => app('db')->connection('mediamanager')->table('locked')->pluck('path'),
             'files'  => [
                 'path'   => $folder,
                 'items'  => $this->getData($folder),
@@ -345,20 +345,12 @@ class MediaController extends Controller
     {
         $path  = $request->path;
         $state = $request->state;
-        $data  = [];
+        $db    = app('db')->connection('mediamanager')->table('locked');
 
-        if (file_exists($this->locked_files_list)) {
-            $data = include $this->locked_files_list;
-        }
+        'added' == $state
+            ? $db->insert(['path'=>$path])
+            : $db->where('path', $path)->delete();
 
-        'add' == $state
-            ? array_push($data, $path)
-            : array_splice($data, array_search($path, $data), 1);
-
-        $res = "<?php\n\nreturn " . var_export($data, true) . ';';
-
-        return app('files')->put($this->locked_files_list, $res)
-            ? response()->json(['message'=>"done $state"])
-            : response()->json(['message'=>trans('MediaManager::messages.ajax_error')]);
+        return response()->json(['message'=>"'$path' $state"]);
     }
 }

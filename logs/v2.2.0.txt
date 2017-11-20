@@ -1,0 +1,11 @@
+- added missing vendor/download “sorry about that”
+- keep visited folder active when navigating up
+- add animation
+- add swipe left/right for image preview
+- add swipe up/down for move & delete selected
+- add lock item option “check wiki for notes”
+- removed framework config, update your ‘webpack.mix.js’
+- less depend on jquery
+- update assets
+- update readme
+- make sure to republish the assets as new files were added.

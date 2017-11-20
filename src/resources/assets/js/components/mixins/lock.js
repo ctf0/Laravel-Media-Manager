@@ -1,42 +1,33 @@
 export default {
     methods: {
         IsInLockedList(file) {
-            return this.lockedList.includes(file)
+            if (file) {
+                return this.lockedList.includes(file.path)
+            }
         },
         toggleLock(file) {
+            // remove item
             if (this.IsInLockedList(file)) {
-                this.canWeMove()
-
-                // add back to directories
+                // this.canWeMove()
                 if (this.fileTypeIs(file, 'folder')) {
                     this.directories.push(file.name)
                     this.directories.sort()
                 }
 
-                // remove item
-                return this.lockedList.splice(this.lockedList.indexOf(file), 1)
+                this.lockForm(file.path, 'removed')
+                return this.lockedList.splice(this.lockedList.indexOf(file.path), 1)
             }
 
-            // remove from directories
+            // add item
             if (this.fileTypeIs(file, 'folder')) {
                 this.directories.splice(this.directories.indexOf(file.name), 1)
             }
 
-            // add item
-            this.lockedList.push(file)
+            this.lockForm(file.path, 'added')
+            this.lockedList.push(file.path)
         },
         pushToLockedList() {
             if (this.isBulkSelecting()) {
-                // clear prev
-                if (this.lockedList.length) {
-                    let list = this.lockedList.slice(0)
-
-                    return list.map((e) => {
-                        this.toggleLock(e)
-                    })
-                }
-
-                // add selected
                 return this.bulkList.map((e) => {
                     this.toggleLock(e)
                 })

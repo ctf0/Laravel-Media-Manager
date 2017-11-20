@@ -25,7 +25,6 @@ export default {
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }
-
         },
         selectedFileIs(val) {
             if (typeof this.selectedFile !== 'undefined') {

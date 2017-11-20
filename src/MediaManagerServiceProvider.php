@@ -32,6 +32,18 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/config' => config_path(),
         ], 'config');
 
+        // database
+        $this->publishes([
+            __DIR__ . '/database' => storage_path('log'),
+        ], 'db');
+
+        $db_info = [
+            'driver'   => 'sqlite',
+            'database' => storage_path('logs/MediaManager.sqlite'),
+            'prefix'   => '',
+        ];
+        config(['database.connections.mediamanager' => $db_info]);
+
         // public
         $this->publishes([
             __DIR__ . '/dist' => public_path('assets/vendor/MediaManager'),
@@ -55,7 +67,6 @@ class MediaManagerServiceProvider extends ServiceProvider
         ], 'view');
 
         $this->viewComp();
-        static::create_LLD(config('mediaManager.locked_files_list'));
     }
 
     protected function viewComp()
@@ -69,22 +80,6 @@ class MediaManagerServiceProvider extends ServiceProvider
                'base_url' => $url,
            ]);
         });
-    }
-
-    /**
-     * create locked list dir.
-     *
-     * @param [type] $dir [description]
-     *
-     * @return [type] [description]
-     */
-    protected static function create_LLD($dir)
-    {
-        $dir_name = dirname($dir);
-
-        if (!app('files')->exists($dir_name)) {
-            return app('files')->makeDirectory($dir_name, 0755, true);
-        }
     }
 
     /**
@@ -115,7 +110,7 @@ class MediaManagerServiceProvider extends ServiceProvider
 // MediaManager
 require('dotenv').config()
 mix.js('resources/assets/vendor/MediaManager/js/manager.js', 'public/assets/vendor/MediaManager')
-    .sass('resources/assets/vendor/MediaManager/sass/media-' + process.env.MIX_MM_FRAMEWORK + '.scss', 'public/assets/vendor/MediaManager/style.css')
+    .sass('resources/assets/vendor/MediaManager/sass/media.scss', 'public/assets/vendor/MediaManager/style.css')
     .version();
 EOT;
 

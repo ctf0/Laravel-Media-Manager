@@ -22,13 +22,18 @@ export default {
                 return this.bulkList.length
             }
         },
+        // this is made so we can still use move/delete
+        // incase we have multiple files selected
+        // and one or more of them is locked
         bulkListFilter() {
-            let list = this.bulkList
+            let list
 
             if (this.lockedList.length) {
-                list = this.bulkList.filter((x) => {
-                    return this.lockedList.indexOf(x) < 0
+                list = this.bulkList.filter((e) => {
+                    return !this.lockedList.includes(e.path)
                 })
+            } else {
+                list = this.bulkList
             }
 
             return list

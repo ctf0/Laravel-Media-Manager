@@ -10,21 +10,20 @@ export default {
         },
         showNotif(msg, s = 'success') {
 
-            let title = ''
-            let duration = null
+            let title
+            let duration = 3
 
             switch (s) {
             case 'black':
             case 'danger':
                 title = 'Error'
+                duration = null
                 break
             case 'warning':
                 title = 'Warning'
-                duration = 3
                 break
             default:
                 title = 'Success'
-                duration = 3
             }
 
             EventHub.fire('showNotif', {
@@ -49,7 +48,7 @@ export default {
             return this.folders.length && !this.restrictAndLast()
         },
         checkForFolders() {
-            return $('#move_folder_dropdown').val() !== null
+            return this.$refs.move_folder_dropdown.value !== null
         },
         canWeMove() {
             this.$nextTick(() => {
@@ -163,6 +162,12 @@ export default {
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+
+        m_d_dc() {
+            return !this.selectedFile ||
+                !this.isBulkSelecting() && this.IsInLockedList(this.selectedFile) ||
+                this.isBulkSelecting() && this.bulkListFilter.length == 0
         }
     }
 }

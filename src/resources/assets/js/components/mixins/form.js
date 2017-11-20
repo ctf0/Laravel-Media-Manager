@@ -3,8 +3,8 @@ export default {
         /*                Main                */
         getFiles(folders, select_prev = null) {
 
-            this.toggleLoading()
             this.clearSelected()
+            this.toggleLoading()
             this.toggleInfoPanel()
             this.noFiles('hide')
             this.loadingFiles('show')
@@ -20,6 +20,8 @@ export default {
             $.post(this.filesRoute, {
                 folder: folder_location
             }, (res) => {
+
+                // folder doesnt exist
                 if (res.error) {
                     if (this.checkForRestrictedPath()) {
                         EventHub.fire('get-folders', false)
@@ -34,7 +36,8 @@ export default {
                     EventHub.fire('get-folders', true)
                 }
 
-                this.files = res
+                this.files = res.files
+                this.lockedList = res.locked
 
                 // check for prev opened folder
                 if (select_prev) {
@@ -69,6 +72,20 @@ export default {
             $.post(this.dirsRoute, {
                 folder_location: this.folders
             }, (data) => {
+                // nested folders
+                if (this.lockedList.length && this.files.path !== '') {
+                    return this.directories = data.filter((e) => {
+                        return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
+                    })
+                }
+
+                // root
+                if (this.lockedList.length) {
+                    return this.directories = data.filter((e) => {
+                        return !this.lockedList.includes(`${this.baseUrl}${e}`)
+                    })
+                }
+
                 this.directories = data
 
             }).fail(() => {
@@ -105,6 +122,8 @@ export default {
                 this.ajaxError()
             })
         },
+
+        // rename
         RenameFileForm(event) {
             let changed = this.new_filename
 
@@ -142,8 +161,10 @@ export default {
                 this.ajaxError()
             })
         },
+
+        // move
         MoveFileForm(event) {
-            if ($('#move_folder_dropdown').val() !== null) {
+            if (this.$refs.move_folder_dropdown.value !== null) {
                 if (this.bulkItemsCount) {
                     this.move_file(this.bulkListFilter, event.target.action)
 
@@ -155,6 +176,49 @@ export default {
                 }
             }
         },
+        move_file(files, routeUrl) {
+            this.toggleLoading()
+
+            let destination = this.$refs.move_folder_dropdown.value
+
+            $.post(routeUrl, {
+                folder_location: this.folders,
+                destination: destination,
+                moved_files: files
+            }, (res) => {
+                this.toggleLoading()
+
+                res.data.map((item) => {
+                    if (!item.success) {
+                        return this.showNotif(item.message, 'danger')
+                    }
+
+                    this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
+                    this.removeFromLists(item.name)
+
+                    // update folder count when folder is moved into another
+                    if (this.fileTypeIs(item, 'folder')) {
+                        if (item.items > 0) {
+                            this.updateFolderCount(destination, item.items, item.size)
+                        }
+
+                        // update dirs list after move
+                        this.updateDirsList()
+                    } else {
+                        this.updateFolderCount(destination, 1, item.size)
+                    }
+                })
+
+                this.toggleModal()
+                this.updateFoundCount(files.length)
+                this.selectFirst()
+
+            }).fail(() => {
+                this.ajaxError()
+            })
+        },
+
+        // delete
         DeleteFileForm(event) {
             if (this.bulkItemsCount) {
                 this.delete_file(this.bulkListFilter, event.target.action)
@@ -164,6 +228,113 @@ export default {
                 }, 100)
             } else {
                 this.delete_file([this.selectedFile], event.target.action)
+            }
+        },
+        delete_file(files, routeUrl) {
+            this.toggleLoading()
+
+            $.post(routeUrl, {
+                folder_location: this.folders,
+                deleted_files: files
+            }, (res) => {
+                this.toggleLoading()
+
+                res.data.map((item) => {
+                    if (!item.success) {
+                        return this.showNotif(item.message, 'danger')
+                    }
+
+                    this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
+                    this.removeFromLists(item.name)
+                })
+
+                this.toggleModal()
+                this.updateFoundCount(files.length)
+                this.selectFirst()
+
+            }).fail(() => {
+                this.ajaxError()
+            })
+        },
+
+        lockForm(path, state) {
+            $.post(this.lockFileRoute, {
+                path: path,
+                state: state
+            }, (res) => {
+                this.showNotif(res.message)
+            }).fail(() => {
+                this.ajaxError()
+            })
+        },
+
+        /*                Ops                */
+        removeFromLists(name) {
+            if (this.filteredItemsCount) {
+                let list = this.filterdList
+
+                list.map((e) => {
+                    if (e.name.includes(name)) {
+                        list.splice(list.indexOf(e), 1)
+                    }
+                })
+            }
+
+            if (this.directories.length) {
+                let list = this.directories
+
+                list.map((e) => {
+                    if (e.includes(name)) {
+                        list.splice(list.indexOf(e), 1)
+                    }
+                })
+            }
+
+            this.files.items.map((e) => {
+                if (e.name.includes(name)) {
+                    let list = this.files.items
+
+                    list.splice(list.indexOf(e), 1)
+                }
+            })
+
+            this.clearSelected()
+        },
+        updateFolderCount(destination, count, weight = 0) {
+            if (destination !== '../') {
+
+                if (destination.includes('/')) {
+                    destination = destination.split('/').shift()
+                }
+
+                if (this.filteredItemsCount) {
+                    this.filterdList.map((e) => {
+                        if (e.name.includes(destination)) {
+                            e.items += parseInt(count)
+                            e.size += parseInt(weight)
+                        }
+                    })
+                }
+
+                this.files.items.some((e) => {
+                    if (e.name.includes(destination)) {
+                        e.items += parseInt(count)
+                        e.size += parseInt(weight)
+                    }
+                })
+            }
+        },
+        updateItemName(item, oldName, newName) {
+            // update the main files list
+            let filesIndex = this.files.items[this.files.items.indexOf(item)]
+            filesIndex.name = newName
+            filesIndex.path = filesIndex.path.replace(oldName, newName)
+
+            // if found in the filterd list, then update it aswell
+            if (this.filterdList.includes(item)) {
+                let filterIndex = this.filterdList[this.filterdList.indexOf(item)]
+                filterIndex.name = newName
+                filesIndex.path = filterIndex.path.replace(oldName, newName)
             }
         }
     }
