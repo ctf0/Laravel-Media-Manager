@@ -42,6 +42,7 @@ export default {
             bulkSelect: false,
             folderWarning: false,
             uploadToggle: false,
+            checkForFolders: false,
 
             files: [],
             folders: [],
@@ -50,6 +51,7 @@ export default {
             bulkList: [],
             lockedList: [],
 
+            moveToPath: undefined,
             selectedFile: undefined,
             sortBy: undefined,
             currentFilterName: undefined,
@@ -72,6 +74,14 @@ export default {
     },
     updated() {
         this.autoPlay()
+        this.$nextTick(() => {
+            let item = this.$refs.move_folder_dropdown.options[0]
+            if (item) {
+                return this.checkForFolders = true
+            }
+
+            this.checkForFolders = false
+        })
     },
     beforeDestroy() {
         $(document).unbind()
@@ -196,7 +206,7 @@ export default {
                             }
 
                             // move file
-                            if (this.checkForFolders() && keycode(e) == 'm') {
+                            if (this.checkForFolders && keycode(e) == 'm') {
                                 this.$refs.move.click()
                             }
 
@@ -383,7 +393,7 @@ export default {
                 this.updateSearchCount()
             }
 
-            if (this.allItemsCount == undefined) {
+            if (!this.allItemsCount) {
                 this.clearSelected()
             }
         }

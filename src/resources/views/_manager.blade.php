@@ -63,7 +63,7 @@
                         <div class="control">
                             <button class="button is-link"
                                 ref="move"
-                                :disabled="m_d_dc()"
+                                :disabled="mv_dl() || !checkForFolders"
                                 v-tippy="{arrow: true}" title="m"
                                 @click="moveItem()">
                                 <span class="icon is-small"><i class="fa fa-share"></i></span>
@@ -86,7 +86,7 @@
                         <div class="control">
                             <button class="button is-link"
                                 ref="delete"
-                                :disabled="m_d_dc()"
+                                :disabled="mv_dl()"
                                 v-tippy="{arrow: true}" title="d / del"
                                 @click="deleteItem()">
                                 <span class="icon is-small"><i class="fa fa-trash"></i></span>
@@ -532,7 +532,9 @@
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
                             <button type="submit" class="button is-link" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.create_new_folder') }}
+                                <template v-if="!isLoading">
+                                    {{ trans('MediaManager::messages.create_new_folder') }}
+                                </template>
                             </button>
                         </footer>
                     </div>
@@ -562,7 +564,9 @@
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
                             <button type="submit" class="button is-warning" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.rename') }}
+                                <template v-if="!isLoading">
+                                    {{ trans('MediaManager::messages.rename') }}
+                                </template>
                             </button>
                         </footer>
                     </div>
@@ -584,7 +588,7 @@
                             <h3 class="title">{{ trans('MediaManager::messages.destination_folder') }}</h3>
                             <div class="control has-icons-left">
                                 <span class="select is-fullwidth">
-                                    <select ref="move_folder_dropdown">
+                                    <select ref="move_folder_dropdown" v-model="moveToPath">
                                         <option v-if="moveUpCheck()" value="../">../</option>
                                         <option v-for="(dir,index) in directories"
                                             v-if="filterDirList(dir)"
@@ -602,8 +606,10 @@
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
-                            <button type="submit" class="button is-warning" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.move') }}
+                            <button type="submit" class="button is-warning" :disabled="isLoading || !moveToPath" :class="{'is-loading': isLoading}">
+                                <template v-if="!isLoading">
+                                    {{ trans('MediaManager::messages.move') }}
+                                </template>
                             </button>
                         </footer>
                     </div>
@@ -674,7 +680,9 @@
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
                             <button type="submit" class="button is-danger" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.delete_confirm') }}
+                                <template v-if="!isLoading">
+                                    {{ trans('MediaManager::messages.delete_confirm') }}
+                                </template>
                             </button>
                         </footer>
                     </div>

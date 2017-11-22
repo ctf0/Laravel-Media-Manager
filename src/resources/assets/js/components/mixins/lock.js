@@ -8,7 +8,6 @@ export default {
         toggleLock(file) {
             // remove item
             if (this.IsInLockedList(file)) {
-                // this.canWeMove()
                 if (this.fileTypeIs(file, 'folder')) {
                     this.directories.push(file.name)
                     this.directories.sort()

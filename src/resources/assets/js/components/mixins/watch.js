@@ -10,17 +10,22 @@ export default {
                 EventHub.fire('file_selected', val.path)
             }
 
-            // hide move button when there is only one folder and its selected
-            this.canWeMove()
+            if (val && this.checkForFolders) {
+                this.$nextTick(() => {
+                    let item = this.$refs.move_folder_dropdown.options[0]
+                    if (item) {
+                        return this.moveToPath = item.value
+                    }
+                })
+            }
+        },
+        checkForFolders(val) {
+            if (!val) {
+                this.resetInput('moveToPath')
+            }
         },
 
         // bulk
-        bulkList(val) {
-            if (val) {
-                // hide move button when all folders are selected
-                this.canWeMove()
-            }
-        },
         bulkItemsCount(val) {
             if (val > 1 && !this.bulkSelectAll) {
                 this.bulkSelectAll = true

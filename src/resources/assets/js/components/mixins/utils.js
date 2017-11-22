@@ -45,19 +45,14 @@ export default {
 
         /*                Moving                */
         moveUpCheck() {
-            return this.folders.length && !this.restrictAndLast()
+            return this.allItemsCount && this.folders.length && !this.restrictAndLast()
         },
-        checkForFolders() {
-            return this.$refs.move_folder_dropdown.value !== null
-        },
-        canWeMove() {
-            this.$nextTick(() => {
-                setTimeout(() => {
-                    if (!this.checkForFolders()) {
-                        $('#move').attr('disabled', true)
-                    }
-                }, 50)
-            })
+        mv_dl() {
+            if (this.isBulkSelecting()) {
+                return this.bulkListFilter.length == 0
+            }
+
+            return !this.selectedFile || this.IsInLockedList(this.selectedFile)
         },
 
         /*                Resolve                */
@@ -162,12 +157,6 @@ export default {
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
-        },
-
-        m_d_dc() {
-            return !this.selectedFile ||
-                !this.isBulkSelecting() && this.IsInLockedList(this.selectedFile) ||
-                this.isBulkSelecting() && this.bulkListFilter.length == 0
         }
     }
 }

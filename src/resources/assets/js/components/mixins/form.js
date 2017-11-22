@@ -164,7 +164,7 @@ export default {
 
         // move
         MoveFileForm(event) {
-            if (this.$refs.move_folder_dropdown.value !== null) {
+            if (this.checkForFolders) {
                 if (this.bulkItemsCount) {
                     this.move_file(this.bulkListFilter, event.target.action)
 
@@ -179,7 +179,7 @@ export default {
         move_file(files, routeUrl) {
             this.toggleLoading()
 
-            let destination = this.$refs.move_folder_dropdown.value
+            let destination = this.moveToPath
 
             $.post(routeUrl, {
                 folder_location: this.folders,
