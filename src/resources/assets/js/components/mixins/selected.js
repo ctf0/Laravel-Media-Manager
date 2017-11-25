@@ -33,38 +33,39 @@ export default {
         },
 
         /*                Folder                */
-        openFolder(file) {
-            if (!this.isBulkSelecting()) {
-                if (!this.fileTypeIs(file, 'folder')) {
-                    return false
-                }
-
-                this.folders.push(file.name)
-                this.getFiles(this.folders)
-            }
-
-            this.resetInput('currentFilterName')
-        },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
                 this.noFiles('hide')
                 this.resetInput('currentFilterName')
 
                 if (this.checkForRestrictedPath() && index == 0) {
-                    return false
+                    return
                 }
 
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
-                this.getFiles(this.folders, prev_folder_name)
+                this.loadFiles(this.folders, prev_folder_name)
             }
         },
-        goToPrevFolder() {
-            let newSelected = parseInt(this.folders.length) - 1
+        openFolder(file) {
+            if (!this.isBulkSelecting()) {
+                if (!this.fileTypeIs(file, 'folder')) {
+                    return
+                }
 
-            if (newSelected < 0) {
-                return false
+                this.folders.push(file.name)
+                this.loadFiles(this.folders)
+            }
+
+            this.resetInput('currentFilterName')
+        },
+        goToPrevFolder() {
+            let length = this.folders.length
+            let newSelected = length - 1
+
+            if (length == 0 || this.restrictPath && this.files.path == `/${this.restrictPath}`) {
+                return
             }
 
             this.goToFolder(newSelected)

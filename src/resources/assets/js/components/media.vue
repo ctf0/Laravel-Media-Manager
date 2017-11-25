@@ -25,13 +25,13 @@ export default {
     props: [
         'baseUrl',
         'inModal',
-        'hideExt',
+        'hideFilesExt',
         'mediaTrans',
         'filesRoute',
         'dirsRoute',
         'lockFileRoute',
         'restrictPath',
-        'restrictExt'
+        'hideExt'
     ],
     data() {
         return {
@@ -62,11 +62,7 @@ export default {
         }
     },
     created() {
-        if (this.checkForRestrictedPath()) {
-            return this.restrictAccess()
-        }
-
-        this.getFiles('/')
+        this.loadFiles()
     },
     mounted() {
         this.fileUpload()
@@ -111,7 +107,7 @@ export default {
                         }
                     })
 
-                    manager.getFiles(manager.folders)
+                    manager.loadFiles(manager.folders)
                 },
                 errormultiple(files, res) {
                     this.showNotif(res, 'danger')
@@ -174,7 +170,7 @@ export default {
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                this.getFiles(this.folders)
+                                this.loadFiles(this.folders)
                             }
 
                             // file upload
@@ -192,27 +188,37 @@ export default {
                                     return
                                 }
 
-                                this.$refs.bulkSelect.click()
+                                if (this.$refs.bulkSelect) {
+                                    this.$refs.bulkSelect.click()
+                                }
                             }
 
                             // add all to bulk list
                             if (this.isBulkSelecting() && keycode(e) == 'a') {
-                                this.$refs.bulkSelectAll.click()
+                                if (this.$refs.bulkSelectAll) {
+                                    this.$refs.bulkSelectAll.click()
+                                }
                             }
 
                             // delete file
                             if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                                this.$refs.delete.click()
+                                if (this.$refs.delete) {
+                                    this.$refs.delete.click()
+                                }
                             }
 
                             // move file
                             if (this.checkForFolders && keycode(e) == 'm') {
-                                this.$refs.move.click()
+                                if (this.$refs.move) {
+                                    this.$refs.move.click()
+                                }
                             }
 
                             // lock files
                             if (keycode(e) == 'l') {
-                                this.$refs.lock.click()
+                                if (this.$refs.lock) {
+                                    this.$refs.lock.click()
+                                }
                             }
                         }
                         /* end of with or without bulk selection */

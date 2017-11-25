@@ -46,5 +46,5 @@ return [
     /*
      * hide file extension in files list
      */
-    'hide_ext' => true,
+    'hide_files_ext' => true,
 ];

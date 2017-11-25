@@ -57,7 +57,7 @@ export default {
 
         /*                Resolve                */
         getFileName(name) {
-            if (!this.hideExt) {
+            if (!this.hideFilesExt) {
                 return name
             }
 

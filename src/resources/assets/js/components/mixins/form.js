@@ -1,5 +1,12 @@
 export default {
     methods: {
+        loadFiles(folders = '/', prev = null) {
+            if (this.checkForRestrictedPath()) {
+                return this.restrictAccess()
+            }
+
+            this.getFiles(folders, prev)
+        },
         /*                Main                */
         getFiles(folders, select_prev = null) {
 
@@ -10,15 +17,13 @@ export default {
             this.loadingFiles('show')
             this.resetInput(['searchFor', 'sortBy', 'currentFilterName'])
 
-            let folder_location = '/'
-
             if (folders !== '/') {
-                folder_location = '/' + folders.join('/')
+                folders = '/' + folders.join('/')
             }
 
             // files list
             $.post(this.filesRoute, {
-                folder: folder_location
+                folder: folders
             }, (res) => {
 
                 // folder doesnt exist
@@ -52,8 +57,8 @@ export default {
                     this.selectFirst()
                 }
 
-                // check for restricted extensions
-                if (this.restrictExt.length) {
+                // check for hidden extensions
+                if (this.hideExt.length) {
                     this.files.items = this.files.items.filter((e) => {
                         return !this.checkForRestrictedExt(e)
                     })
@@ -116,7 +121,7 @@ export default {
                 }
 
                 this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
-                this.getFiles(this.folders)
+                this.loadFiles(this.folders)
 
             }).fail(() => {
                 this.ajaxError()
@@ -134,12 +139,11 @@ export default {
             this.toggleLoading()
 
             let filename = this.selectedFile.name
-
             let ext = this.getExtension(filename)
             let new_filename = ext == null ? changed : `${changed}.${ext}`
 
             $.post(event.target.action, {
-                folder_location: this.folders,
+                folder_location: this.files.path,
                 filename: filename,
                 new_filename: new_filename
             }, (data) => {
@@ -182,7 +186,7 @@ export default {
             let destination = this.moveToPath
 
             $.post(routeUrl, {
-                folder_location: this.folders,
+                folder_location: this.files.path,
                 destination: destination,
                 moved_files: files
             }, (res) => {
@@ -234,7 +238,7 @@ export default {
             this.toggleLoading()
 
             $.post(routeUrl, {
-                folder_location: this.folders,
+                folder_location: this.files.path,
                 deleted_files: files
             }, (res) => {
                 this.toggleLoading()
@@ -257,6 +261,7 @@ export default {
             })
         },
 
+        // lock / unlock
         lockForm(path, state) {
             $.post(this.lockFileRoute, {
                 path: path,

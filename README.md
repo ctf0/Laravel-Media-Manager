@@ -38,7 +38,7 @@
     - delete
 - bulk selection.
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
-- restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/File-Extension-Restriction)
+- restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - download selected ***"including bulk selection"***
 - directly copy selected file link.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
@@ -158,7 +158,7 @@ return [
     /**
      * hide file extension in files list
      */
-    'hide_ext' => true
+    'hide_files_ext' => true
 ];
 ```
 

@@ -9,9 +9,9 @@ export default {
             this.getFiles(arr)
 
             // show folders if we have something
-            EventHub.listenOnce('get-folders', (data) => {
-                if (data) {
-                    return this.folders.push(...arr)
+            EventHub.listenOnce('get-folders', (check) => {
+                if (check) {
+                    return this.folders = arr.length > 1 ? [arr[arr.length - 1]] : arr
                 }
             })
         },
@@ -19,7 +19,7 @@ export default {
             return this.checkForRestrictedPath() && this.folders.length < 2
         },
         checkForRestrictedExt(file) {
-            return this.restrictExt.includes(this.getExtension(file.name))
+            return this.hideExt.includes(this.getExtension(file.name))
         }
     }
 }

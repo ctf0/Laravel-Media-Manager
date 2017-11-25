@@ -77,7 +77,7 @@ class MediaManagerServiceProvider extends ServiceProvider
 
         view()->composer('MediaManager::_manager', function ($view) use ($url) {
             $view->with([
-               'base_url' => preg_replace('/\/+/', '/', $url),
+               'base_url' => $url,
            ]);
         });
     }

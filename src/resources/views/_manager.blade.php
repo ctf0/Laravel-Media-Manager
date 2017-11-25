@@ -5,13 +5,13 @@
 <media-manager inline-template
     base-url="{{ $base_url }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
-    :hide-ext="{{ config('mediaManager.hide_ext') ? 'true' : 'false' }}"
+    :hide-files-ext="{{ config('mediaManager.hide_files_ext') ? 'true' : 'false' }}"
     :media-trans="{{ json_encode(['no_val' => trans('MediaManager::messages.no_val')]) }}"
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     lock-file-route="{{ route('media.lock_file') }}"
     restrict-path="{{ isset($path) ? $path : null }}"
-    restrict-ext="{{ isset($ext) ? json_encode($ext) : null }}">
+    hide-ext="{{ isset($ext) ? json_encode($ext) : null }}">
 
     <v-touch @swiperight="lightBoxIsActive() ? goToPrev() : false"
         @swipeleft="lightBoxIsActive() ? goToNext() : false">
