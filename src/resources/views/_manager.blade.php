@@ -36,7 +36,7 @@
                         {{-- new folder --}}
                         <div class="control">
                             <button class="button"
-                                @click="toggleModal('#new_folder_modal')">
+                                @click="toggleModal('new_folder_modal')">
                                 <span class="icon is-small"><i class="fa fa-folder"></i></span>
                                 <span>{{ trans('MediaManager::messages.add_folder') }}</span>
                             </button>
@@ -238,7 +238,11 @@
                         <div class="control">
                             <div class="field has-addons">
                                 <p class="control has-icons-left">
-                                    <input class="input" type="text" placeholder="{{ trans('MediaManager::messages.find') }}" v-model="searchFor">
+                                    <input class="input"
+                                        type="text"
+                                        v-model="searchFor"
+                                        data-search
+                                        placeholder="{{ trans('MediaManager::messages.find') }}">
                                     <span class="icon is-small is-left">
                                         <i class="fa fa-search"></i>
                                     </span>
@@ -270,9 +274,11 @@
 
                 <div id="uploadPreview"></div>
 
-                <div id="uploadProgress" class="progress">
-                    <div class="progress-bar is-success progress-bar-striped active"></div>
-                </div>
+                <transition name="list">
+                    <div id="uploadProgress" class="progress" v-show="uploadStart">
+                        <div class="progress-bar is-success progress-bar-striped active" :style="{width: uploadProgress}"></div>
+                    </div>
+                </transition>
             </div>
         </transition>
 
@@ -323,19 +329,19 @@
                 {{-- loadings --}}
                 <section>
                     {{-- loading data from server --}}
-                    <div id="file_loader" style="display: none;">
+                    <div id="file_loader" v-show="file_loader">
                         <div id="file_loader_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/octopus.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.loading') }}</h3>
                     </div>
 
                     {{-- no files --}}
-                    <div id="no_files" style="display: none;">
+                    <div id="no_files" v-show="no_files">
                         <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.no_files_in_folder') }}</h3>
                     </div>
 
                     {{-- error --}}
-                    <div id="ajax_error" style="display: none;">
+                    <div id="ajax_error" v-show="ajax_error">
                         <div id="ajax_error_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/avalanche.json') }}"></div>
                         <h3>{{ trans('MediaManager::messages.ajax_error') }}</h3>
                     </div>
@@ -345,21 +351,23 @@
 
                 {{-- files box --}}
                 <v-touch id="left"
-                    @dbltap="selectedFileIs('image') ? toggleModal('#preview_modal') : openFolder(selectedFile)"
+                    ref="left"
+                    @dbltap="selectedFileIs('image') ? toggleModal('preview_modal') : openFolder(selectedFile)"
                     @swiperight="goToPrevFolder()"
                     @swipeup="moveItem()"
                     @swipedown="deleteItem()">
 
                     <transition-group id="files" class="tile"
                         tag="ul" name="list" mode="out-in"
+                        ref="filesList"
                         v-on:after-enter="afterEnter"
                         v-on:after-leave="afterLeave">
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
-                            @click="setSelected(file)">
-                            <div class="file_link" :class="{'bulk-selected': IsInBulkList(file)}"
+                            @click="setSelected(file, index)">
+                            <div class="file_link" :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 :data-item="file.name"
-                                :data-index="index">
+                                :ref="'file_' + index">
 
                                 {{-- lock file --}}
                                 <div class="icon lock_icon" :class="IsInLockedList(file) ? 'is-danger' : 'is-success'"
@@ -428,7 +436,7 @@
                                         <img :src="selectedFile.path"
                                             v-tippy="{position: 'left', arrow: true}"
                                             title="space" class="pointer"
-                                            @click="toggleModal('#preview_modal')"/>
+                                            @click="toggleModal('preview_modal')"/>
                                     </template>
 
                                     <template v-if="selectedFileIs('video')">
@@ -501,7 +509,8 @@
 
         {{-- modals --}}
         <section>
-            <div class="modal mm-animated fadeIn mm-modal" id="preview_modal" v-if="selectedFileIs('image')">
+            {{-- preview_modal --}}
+            <div class="modal is-active mm-animated fadeIn" v-if="isActiveModal('preview_modal')">
                 <div class="modal-background pointer" @click="toggleModal()"></div>
                 <div class="modal-content mm-animated fadeInDown">
                     <p class="image">
@@ -511,8 +520,9 @@
                 <button class="modal-close is-large" @click="toggleModal()"></button>
             </div>
 
-            <div class="modal mm-animated fadeIn mm-modal" id="new_folder_modal">
-                {{ Form::open(['route' => 'media.new_folder', '@submit.prevent'=>'NewFolderForm($event)']) }}
+            {{-- new_folder_modal --}}
+            <div class="modal is-active mm-animated fadeIn" v-show="isActiveModal('new_folder_modal')">
+                <form action="{{ route('media.new_folder') }}" @submit.prevent="NewFolderForm($event)">
                     <div class="modal-background pointer" @click="toggleModal()"></div>
                     <div class="modal-card mm-animated fadeInDown">
                         <header class="modal-card-head is-link">
@@ -524,25 +534,28 @@
                         </header>
                         <section class="modal-card-body">
                             <input class="input" type="text"
+                                v-model="new_folder_name"
                                 placeholder="{{ trans('MediaManager::messages.new_folder_name') }}"
-                                v-model="new_folder_name">
+                                ref="new_folder_modal_input">
                         </section>
                         <footer class="modal-card-foot">
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
-                            <button type="submit" class="button is-link" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                <template v-if="!isLoading">
-                                    {{ trans('MediaManager::messages.create_new_folder') }}
-                                </template>
+                            <button type="submit"
+                                class="button is-link"
+                                :disabled="isLoading"
+                                :class="{'is-loading': isLoading}">
+                                {{ trans('MediaManager::messages.create_new_folder') }}
                             </button>
                         </footer>
                     </div>
-                {{ Form::close() }}
+                </form>
             </div>
 
-            <div class="modal mm-animated fadeIn mm-modal" id="rename_file_modal">
-                {{ Form::open(['route' => 'media.rename_file', '@submit.prevent'=>'RenameFileForm($event)']) }}
+            {{-- rename_file_modal --}}
+            <div class="modal is-active mm-animated fadeIn" v-show="isActiveModal('rename_file_modal')">
+                <form action="{{ route('media.rename_file') }}" @submit.prevent="RenameFileForm($event)">
                     <div class="modal-background pointer" @click="toggleModal()"></div>
                     <div class="modal-card mm-animated fadeInDown">
                         <header class="modal-card-head is-warning">
@@ -557,24 +570,27 @@
                             <input class="input" type="text"
                                 v-if="selectedFile"
                                 v-model="new_filename"
+                                ref="rename_file_modal_input"
                                 @focus="new_filename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
                         </section>
                         <footer class="modal-card-foot">
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
-                            <button type="submit" class="button is-warning" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                <template v-if="!isLoading">
-                                    {{ trans('MediaManager::messages.rename') }}
-                                </template>
+                            <button type="submit"
+                                class="button is-warning"
+                                :disabled="isLoading"
+                                :class="{'is-loading': isLoading}">
+                                {{ trans('MediaManager::messages.rename') }}
                             </button>
                         </footer>
                     </div>
-                {{ Form::close() }}
+                </form>
             </div>
 
-            <div class="modal mm-animated fadeIn mm-modal" id="move_file_modal">
-                {{ Form::open(['route' => 'media.move_file', '@submit.prevent'=>'MoveFileForm($event)']) }}
+            {{-- move_file_modal --}}
+            <div class="modal is-active mm-animated fadeIn" v-show="isActiveModal('move_file_modal')">
+                <form action="{{ route('media.move_file') }}" @submit.prevent="MoveFileForm($event)">
                     <div class="modal-background pointer" @click="toggleModal()"></div>
                     <div class="modal-card mm-animated fadeInDown">
                         <header class="modal-card-head is-warning">
@@ -606,18 +622,20 @@
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
-                            <button type="submit" class="button is-warning" :disabled="isLoading || !moveToPath" :class="{'is-loading': isLoading}">
-                                <template v-if="!isLoading">
-                                    {{ trans('MediaManager::messages.move') }}
-                                </template>
+                            <button type="submit"
+                                class="button is-warning"
+                                :disabled="isLoading || !moveToPath"
+                                :class="{'is-loading': isLoading}">
+                                {{ trans('MediaManager::messages.move') }}
                             </button>
                         </footer>
                     </div>
-                {{ Form::close() }}
+                </form>
             </div>
 
-            <div class="modal mm-animated fadeIn mm-modal" id="confirm_delete_modal">
-                {{ Form::open(['route' => 'media.delete_file', '@submit.prevent'=>'DeleteFileForm($event)']) }}
+            {{-- confirm_delete_modal --}}
+            <div class="modal is-active mm-animated fadeIn" v-show="isActiveModal('confirm_delete_modal')">
+                <form action="{{ route('media.delete_file') }}" @submit.prevent="DeleteFileForm($event)">
                     <div class="modal-background pointer" @click="toggleModal()"></div>
                     <div class="modal-card mm-animated fadeInDown">
                         <header class="modal-card-head is-danger">
@@ -679,14 +697,16 @@
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}
                             </button>
-                            <button type="submit" class="button is-danger" :disabled="isLoading" :class="{'is-loading': isLoading}">
-                                <template v-if="!isLoading">
-                                    {{ trans('MediaManager::messages.delete_confirm') }}
-                                </template>
+                            <button type="submit"
+                                ref="confirm_delete_modal_submit"
+                                class="button is-danger"
+                                :disabled="isLoading"
+                                :class="{'is-loading': isLoading}">
+                                {{ trans('MediaManager::messages.delete_confirm') }}
                             </button>
                         </footer>
                     </div>
-                {{ Form::close() }}
+                </form>
             </div>
         </section>
 

@@ -36,12 +36,18 @@ export default {
     data() {
         return {
             isLoading: false,
-            linkCopied: false,
+            no_files: false,
+            file_loader: false,
+            ajax_error: false,
             toggleInfo: true,
+            uploadToggle: false,
+            uploadStart: false,
+            uploadProgress: 0,
+
+            linkCopied: false,
             bulkSelectAll: false,
             bulkSelect: false,
             folderWarning: false,
-            uploadToggle: false,
             checkForFolders: false,
 
             files: [],
@@ -51,18 +57,24 @@ export default {
             bulkList: [],
             lockedList: [],
 
-            moveToPath: undefined,
-            selectedFile: undefined,
-            sortBy: undefined,
-            currentFilterName: undefined,
-            searchItemsCount: undefined,
-            searchFor: undefined,
-            new_folder_name: undefined,
-            new_filename: undefined
+            moveToPath: null,
+            selectedFile: null,
+            currentFileIndex: null,
+            sortBy: null,
+            currentFilterName: null,
+            searchItemsCount: null,
+            searchFor: null,
+            new_folder_name: null,
+            new_filename: null,
+            active_modal: null
         }
     },
     created() {
-        this.loadFiles()
+        if (this.checkForRestrictedPath()) {
+            return this.restrictAccess()
+        }
+
+        this.getFiles()
     },
     mounted() {
         this.fileUpload()
@@ -86,17 +98,14 @@ export default {
         fileUpload() {
             let manager = this
 
-            $('#new-upload').dropzone({
+            new Dropzone('#new-upload', {
                 createImageThumbnails: false,
                 parallelUploads: 10,
                 uploadMultiple: true,
                 forceFallback: false,
                 previewsContainer: '#uploadPreview',
                 processingmultiple() {
-                    $('#uploadProgress').fadeIn()
-                },
-                totaluploadprogress(uploadProgress) {
-                    $('.progress-bar').css('width', uploadProgress + '%')
+                    manager.uploadStart = true
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
@@ -107,16 +116,18 @@ export default {
                         }
                     })
 
-                    manager.loadFiles(manager.folders)
+                    manager.getFiles(manager.folders)
+                },
+                totaluploadprogress(uploadProgress) {
+                    return manager.uploadProgress = `${uploadProgress}%`
                 },
                 errormultiple(files, res) {
-                    this.showNotif(res, 'danger')
+                    manager.showNotif(res, 'danger')
                 },
                 queuecomplete() {
+                    manager.uploadStart = false
+                    manager.uploadProgress = 0
                     manager.toggleUploadPanel()
-                    $('#uploadProgress').fadeOut(() => {
-                        $('.progress-bar').css('width', 0)
-                    })
                 }
             })
         },
@@ -125,9 +136,9 @@ export default {
             $(document).keydown((e) => {
 
                 // when modal isnt visible
-                if (!$('.mm-modal').hasClass('is-active')) {
+                if (!this.active_modal) {
                     // when search is not focused
-                    if (!$('.input').is(':focus')) {
+                    if (document.activeElement.dataset.search == undefined) {
                         // when no bulk selecting
                         if (!this.isBulkSelecting()) {
 
@@ -162,7 +173,7 @@ export default {
                                     // "show" image quick view
                                     if (this.selectedFileIs('image')) {
                                         this.noScroll('add')
-                                        this.toggleModal('#preview_modal')
+                                        this.toggleModal('preview_modal')
                                     }
                                 }
                             }
@@ -170,7 +181,7 @@ export default {
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                this.loadFiles(this.folders)
+                                this.getFiles(this.folders)
                             }
 
                             // file upload
@@ -234,12 +245,7 @@ export default {
 
                 // when modal is visible
                 else {
-                    if (keycode(e) == 'enter') {
-                        e.preventDefault()
-                        $('.mm-modal.is-active').find('button[type="submit"]').trigger('click')
-                    }
-
-                    if (this.lightBoxIsActive()) {
+                    if (this.isActiveModal('preview_modal')) {
                         // hide lb
                         if (keycode(e) == 'space') {
                             e.preventDefault()
@@ -278,26 +284,23 @@ export default {
                 })
             }
 
-            this.toggleModal('#confirm_delete_modal')
+            this.toggleModal('confirm_delete_modal')
         },
         moveItem() {
-            this.toggleModal('#move_file_modal')
+            this.toggleModal('move_file_modal')
         },
         renameItem() {
-            this.toggleModal('#rename_file_modal')
+            this.toggleModal('rename_file_modal')
         },
         blkSlct() {
             this.bulkSelect = !this.bulkSelect
-
-            // reset when toggled off
-            if (this.isBulkSelecting()) {
-                return this.clearSelected()
-            }
-
             this.bulkSelectAll = false
-            this.clearSelected()
             this.resetInput('bulkList', [])
-            this.selectFirst()
+            this.resetInput('selectedFile')
+
+            if (!this.isBulkSelecting()) {
+                this.selectFirst()
+            }
         },
         blkSlctAll() {
             // if no items in bulk list
@@ -309,26 +312,30 @@ export default {
                 }
 
                 // if found search items
-                if (this.searchItemsCount) {
+                if (this.searchFor && this.searchItemsCount) {
                     this.bulkSelectAll = true
-                    $('#files li').each(function() {
-                        $(this).trigger('click')
-                    })
+
+                    let list = this.filesList
+                    for (let i = list.length - 1; i >= 0; i--) {
+                        list[i].click()
+                    }
                 }
             }
 
             // if having search + having bulk items < search found items
             else if (this.searchFor && this.bulkItemsCount < this.searchItemsCount) {
                 this.resetInput('bulkList', [])
-                this.clearSelected()
+                this.resetInput('selectedFile')
 
                 if (this.bulkSelectAll) {
                     this.bulkSelectAll = false
                 } else {
                     this.bulkSelectAll = true
-                    $('#files li').each(function() {
-                        $(this).trigger('click')
-                    })
+
+                    let list = this.filesList
+                    for (let i = list.length - 1; i >= 0; i--) {
+                        list[i].click()
+                    }
                 }
             }
 
@@ -342,14 +349,14 @@ export default {
                     this.bulkList = this.allFiles.slice(0)
                 }
 
-                this.clearSelected()
+                this.resetInput('selectedFile')
             }
 
             // otherwise
             else {
                 this.bulkSelectAll = false
                 this.resetInput('bulkList', [])
-                this.clearSelected()
+                this.resetInput('selectedFile')
             }
 
             // if we have items in bulk list, select first item
@@ -400,7 +407,7 @@ export default {
             }
 
             if (!this.allItemsCount) {
-                this.clearSelected()
+                this.resetInput('selectedFile')
             }
         }
     },

@@ -43,7 +43,7 @@
 - directly copy selected file link.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-Folder)
+- [lock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder)
 - search
 - filter by type
     + folder
@@ -174,9 +174,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue axios dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue axios dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

@@ -17,11 +17,15 @@ export default {
                 return this.allFiles.length
             }
         },
+        filesList() {
+            return this.$refs.filesList.$el.children
+        },
         bulkItemsCount() {
             if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
                 return this.bulkList.length
             }
         },
+
         // this is made so we can still use move/delete
         // incase we have multiple files selected
         // and one or more of them is locked

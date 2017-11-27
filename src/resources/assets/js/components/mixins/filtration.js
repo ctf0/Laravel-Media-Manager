@@ -45,7 +45,7 @@ export default {
             }
 
             if (!this.isBulkSelecting()) {
-                this.clearSelected()
+                this.resetInput('selectedFile')
                 this.selectFirst()
             }
 
@@ -71,23 +71,18 @@ export default {
             let oldCount = this.searchItemsCount
 
             this.$nextTick(() => {
-                this.searchItemsCount = parseInt($('#files li').length)
-
-                if (this.searchItemsCount == 0 && oldCount == 0) {
-                    return
-                }
+                this.searchItemsCount = this.filesList.length
 
                 if (this.searchItemsCount == 0) {
+                    if (oldCount == 0) {
+                        return
+                    }
+
                     return this.noFiles('show')
                 }
 
                 this.noFiles('hide')
             })
-        },
-        updateFoundCount(count) {
-            if (this.searchFor) {
-                this.searchItemsCount = parseInt(this.searchItemsCount - count)
-            }
         }
     }
 }

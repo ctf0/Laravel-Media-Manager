@@ -1,39 +1,34 @@
 export default {
     methods: {
-        loadFiles(folders = '/', prev = null) {
-            if (this.checkForRestrictedPath()) {
-                return this.restrictAccess()
-            }
-
-            this.getFiles(folders, prev)
-        },
         /*                Main                */
-        getFiles(folders, select_prev = null) {
+        getFiles(folders = '/', select_prev = null) {
 
-            this.clearSelected()
             this.toggleLoading()
             this.toggleInfoPanel()
             this.noFiles('hide')
-            this.loadingFiles('show')
-            this.resetInput(['searchFor', 'sortBy', 'currentFilterName'])
+            if (!this.file_loader) {
+                this.loadingFiles('show')
+            }
+            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile'])
 
             if (folders !== '/') {
                 folders = '/' + folders.join('/')
             }
 
             // files list
-            $.post(this.filesRoute, {
+            axios.post(this.filesRoute, {
                 folder: folders
-            }, (res) => {
+            }).then(({data}) => {
+
+                this.toggleLoading()
 
                 // folder doesnt exist
-                if (res.error) {
+                if (data.error) {
                     if (this.checkForRestrictedPath()) {
                         EventHub.fire('get-folders', false)
                     }
 
-                    this.noFiles('show')
-                    return this.showNotif(res.error, 'danger')
+                    return this.showNotif(data.error, 'danger')
                 }
 
                 // check for restricted path
@@ -41,15 +36,15 @@ export default {
                     EventHub.fire('get-folders', true)
                 }
 
-                this.files = res.files
-                this.lockedList = res.locked
+                this.files = data.files
+                this.lockedList = data.locked
 
                 // check for prev opened folder
                 if (select_prev) {
                     this.$nextTick(() => {
-                        this.files.items.map((e) => {
+                        this.files.items.map((e, i) => {
                             if (e.name == select_prev) {
-                                return this.setSelected(e)
+                                return this.setSelected(e, i)
                             }
                         })
                     })
@@ -64,19 +59,18 @@ export default {
                     })
                 }
 
-                this.toggleLoading()
                 this.loadingFiles('hide')
                 this.toggleInfoPanel()
                 this.updateDirsList()
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
         updateDirsList() {
-            $.post(this.dirsRoute, {
+            axios.post(this.dirsRoute, {
                 folder_location: this.folders
-            }, (data) => {
+            }).then(({data}) => {
                 // nested folders
                 if (this.lockedList.length && this.files.path !== '') {
                     return this.directories = data.filter((e) => {
@@ -93,7 +87,7 @@ export default {
 
                 this.directories = data
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
@@ -108,10 +102,10 @@ export default {
 
             this.toggleLoading()
 
-            $.post(event.target.action, {
+            axios.post(event.target.action, {
                 current_path: this.files.path,
                 new_folder_name: folder_name
-            }, (data) => {
+            }).then(({data}) => {
                 this.toggleLoading()
                 this.resetInput('new_folder_name')
                 this.toggleModal()
@@ -121,9 +115,9 @@ export default {
                 }
 
                 this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
-                this.loadFiles(this.folders)
+                this.getFiles(this.folders)
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
@@ -142,11 +136,11 @@ export default {
             let ext = this.getExtension(filename)
             let new_filename = ext == null ? changed : `${changed}.${ext}`
 
-            $.post(event.target.action, {
+            axios.post(event.target.action, {
                 folder_location: this.files.path,
                 filename: filename,
                 new_filename: new_filename
-            }, (data) => {
+            }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
 
@@ -161,7 +155,7 @@ export default {
                     this.updateDirsList()
                 }
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
@@ -185,14 +179,14 @@ export default {
 
             let destination = this.moveToPath
 
-            $.post(routeUrl, {
+            axios.post(routeUrl, {
                 folder_location: this.files.path,
                 destination: destination,
                 moved_files: files
-            }, (res) => {
+            }).then(({data}) => {
                 this.toggleLoading()
 
-                res.data.map((item) => {
+                data.data.map((item) => {
                     if (!item.success) {
                         return this.showNotif(item.message, 'danger')
                     }
@@ -214,10 +208,12 @@ export default {
                 })
 
                 this.toggleModal()
-                this.updateFoundCount(files.length)
                 this.selectFirst()
+                if (this.searchFor) {
+                    this.searchItemsCount = this.filesList.length
+                }
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
@@ -237,13 +233,13 @@ export default {
         delete_file(files, routeUrl) {
             this.toggleLoading()
 
-            $.post(routeUrl, {
+            axios.post(routeUrl, {
                 folder_location: this.files.path,
                 deleted_files: files
-            }, (res) => {
+            }).then(({data}) => {
                 this.toggleLoading()
 
-                res.data.map((item) => {
+                data.data.map((item) => {
                     if (!item.success) {
                         return this.showNotif(item.message, 'danger')
                     }
@@ -253,22 +249,24 @@ export default {
                 })
 
                 this.toggleModal()
-                this.updateFoundCount(files.length)
                 this.selectFirst()
+                if (this.searchFor) {
+                    this.searchItemsCount = this.filesList.length
+                }
 
-            }).fail(() => {
+            }).catch(() => {
                 this.ajaxError()
             })
         },
 
         // lock / unlock
         lockForm(path, state) {
-            $.post(this.lockFileRoute, {
+            axios.post(this.lockFileRoute, {
                 path: path,
                 state: state
-            }, (res) => {
-                this.showNotif(res.message)
-            }).fail(() => {
+            }).then(({data}) => {
+                this.showNotif(data.message)
+            }).catch(() => {
                 this.ajaxError()
             })
         },
@@ -303,7 +301,7 @@ export default {
                 }
             })
 
-            this.clearSelected()
+            this.resetInput('selectedFile')
         },
         updateFolderCount(destination, count, weight = 0) {
             if (destination !== '../') {

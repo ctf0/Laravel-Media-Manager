@@ -11,7 +11,7 @@ export default {
             // show folders if we have something
             EventHub.listenOnce('get-folders', (check) => {
                 if (check) {
-                    return this.folders = arr.length > 1 ? [arr[arr.length - 1]] : arr
+                    return this.folders = arr.length > 0 ? [arr[arr.length - 1]] : arr
                 }
             })
         },

@@ -5,8 +5,8 @@ export default {
         isLastItem(item, list) {
             return item == list[list.length - 1]
         },
-        lightBoxIsActive() {
-            return $('#preview_modal').hasClass('is-active')
+        isActiveModal(el) {
+            return this.active_modal == el
         },
         showNotif(msg, s = 'success') {
 
@@ -33,7 +33,7 @@ export default {
                 duration: duration
             })
         },
-        resetInput(input, val = undefined) {
+        resetInput(input, val = null) {
             if (Array.isArray(input)) {
                 return input.forEach((e) => {
                     this[e] = val
@@ -85,57 +85,61 @@ export default {
         },
 
         /*                Toggle                */
-        toggleInfoPanel() {
-            return this.toggleInfo = !this.toggleInfo
-        },
         toggleModal(selector = null) {
             if (!selector) {
-                this.noScroll()
-                $('.mm-modal').removeClass('is-active')
+                this.noScroll('remove')
+                this.resetInput('active_modal')
                 return EventHub.fire('modal-hide')
             }
 
             this.noScroll('add')
-            $(selector).addClass('is-active')
-            $(selector).find('input').focus()
+            this.active_modal = selector
             EventHub.fire('modal-show')
+        },
+        toggleLoading() {
+            return this.isLoading = !this.isLoading
+        },
+        toggleInfoPanel() {
+            return this.toggleInfo = !this.toggleInfo
         },
         toggleUploadPanel() {
             this.uploadToggle = !this.uploadToggle
         },
+        toggleLoader(key, state) {
+            this[key] = state
+        },
 
         /*                Loading                */
-        toggleLoading() {
-            return this.isLoading = !this.isLoading
-        },
         noScroll(s) {
+            let el = document.getElementsByTagName('html')[0]
+
             if (s == 'add') {
-                return $('html').addClass('no-scroll')
+                return el.classList.add('no-scroll')
             }
 
-            $('html').removeClass('no-scroll')
+            return el.classList.remove('no-scroll')
         },
         noFiles(s) {
             if (s == 'show') {
-                $('#no_files').show()
+                this.toggleLoader('no_files', true)
                 return EventHub.fire('no-files-show')
             }
 
-            $('#no_files').hide()
+            this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
         loadingFiles(s) {
             if (s == 'show') {
-                $('#file_loader').show()
+                this.toggleLoader('file_loader', true)
                 return EventHub.fire('loading-files-show')
             }
 
-            $('#file_loader').hide()
+            this.toggleLoader('file_loader', false)
             EventHub.fire('loading-files-hide')
         },
         ajaxError() {
-            $('.toggle').fadeOut('fast')
-            $('#ajax_error').show()
+            this.toggleInfoPanel()
+            this.toggleLoader('ajax_error', true)
             EventHub.fire('ajax-error-show')
         },
 

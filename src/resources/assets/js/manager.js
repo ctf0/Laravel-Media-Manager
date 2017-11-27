@@ -1,15 +1,8 @@
-$.ajaxSetup({
-    cache: false,
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-})
-
 /*                Libs                */
 window.Vue = require('vue')
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
-window.dropzone = require('dropzone')
+window.Dropzone = require('dropzone')
 Vue.use(require('vue-tippy'))
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
@@ -20,6 +13,12 @@ VueTouch.registerCustomEvent('dbltap', {
     taps: 2
 })
 Vue.use(VueTouch, {name: 'v-touch'})
+
+window.axios = require('axios')
+axios.defaults.headers.common = {
+    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    'X-Requested-With': 'XMLHttpRequest'
+}
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/media.vue'))

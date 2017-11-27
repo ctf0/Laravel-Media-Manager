@@ -6,17 +6,19 @@ export default {
             }
         },
         selectedFile(val) {
-            if (this.inModal && !this.selectedFileIs('folder')) {
-                EventHub.fire('file_selected', val.path)
-            }
+            if (val) {
+                if (this.inModal && !this.selectedFileIs('folder')) {
+                    EventHub.fire('file_selected', val.path)
+                }
 
-            if (val && this.checkForFolders) {
-                this.$nextTick(() => {
-                    let item = this.$refs.move_folder_dropdown.options[0]
-                    if (item) {
-                        return this.moveToPath = item.value
-                    }
-                })
+                if (this.checkForFolders) {
+                    this.$nextTick(() => {
+                        let item = this.$refs.move_folder_dropdown.options[0]
+                        if (item) {
+                            return this.moveToPath = item.value
+                        }
+                    })
+                }
             }
         },
         checkForFolders(val) {
@@ -24,11 +26,34 @@ export default {
                 this.resetInput('moveToPath')
             }
         },
-
-        // bulk
         bulkItemsCount(val) {
             if (val > 1 && !this.bulkSelectAll) {
                 this.bulkSelectAll = true
+            }
+        },
+        active_modal(val) {
+            if (val == 'new_folder_modal') {
+                this.$nextTick(() => {
+                    return this.$refs.new_folder_modal_input.focus()
+                })
+            }
+
+            if (val == 'rename_file_modal') {
+                this.$nextTick(() => {
+                    return this.$refs.rename_file_modal_input.focus()
+                })
+            }
+
+            if (val == 'move_file_modal') {
+                this.$nextTick(() => {
+                    return this.$refs.move_folder_dropdown.focus()
+                })
+            }
+
+            if (val == 'confirm_delete_modal') {
+                this.$nextTick(() => {
+                    return this.$refs.confirm_delete_modal_submit.focus()
+                })
             }
         },
 
@@ -63,7 +88,7 @@ export default {
         },
         searchItemsCount(val) {
             if (val == 0) {
-                this.clearSelected()
+                this.resetInput('selectedFile')
             }
 
             if (this.allItemsCount == undefined) {
