@@ -510,7 +510,7 @@
         {{-- modals --}}
         <section>
             {{-- preview_modal --}}
-            <div class="modal is-active mm-animated fadeIn" v-if="isActiveModal('preview_modal')">
+            <div class="modal is-active mm-animated fadeIn" id="preview_modal" v-if="isActiveModal('preview_modal')">
                 <div class="modal-background pointer" @click="toggleModal()"></div>
                 <div class="modal-content mm-animated fadeInDown">
                     <p class="image">
