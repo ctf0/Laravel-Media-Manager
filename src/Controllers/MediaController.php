@@ -348,10 +348,10 @@ class MediaController extends Controller
         $state = $request->state;
         $db    = app('db')->connection('mediamanager')->table('locked');
 
-        'added' == $state
+        'locked' == $state
             ? $db->insert(['path'=>$path])
             : $db->where('path', $path)->delete();
 
-        return response()->json(['message'=>"'$path' $state"]);
+        return response()->json(['message'=>"'$path' " . ucfirst($state)]);
     }
 }

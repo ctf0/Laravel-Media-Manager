@@ -13,7 +13,7 @@ export default {
                     this.directories.sort()
                 }
 
-                this.lockForm(file.path, 'removed')
+                this.lockForm(file.path, 'unlocked')
                 return this.lockedList.splice(this.lockedList.indexOf(file.path), 1)
             }
 
@@ -22,7 +22,7 @@ export default {
                 this.directories.splice(this.directories.indexOf(file.name), 1)
             }
 
-            this.lockForm(file.path, 'added')
+            this.lockForm(file.path, 'locked')
             this.lockedList.push(file.path)
         },
         pushToLockedList() {
