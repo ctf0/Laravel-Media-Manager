@@ -221,7 +221,7 @@
                         <div class="control has-icons-left">
                             <div class="select">
                                 <select v-model="sortBy">
-                                    <option disabled value="undefined">{{ trans('MediaManager::messages.sort_by') }}</option>
+                                    <option disabled value="null">{{ trans('MediaManager::messages.sort_by') }}</option>
                                     <option value="clear">{{ trans('MediaManager::messages.non') }}</option>
                                     <option value="size">{{ trans('MediaManager::messages.size') }}</option>
                                     <option value="last_modified">{{ trans('MediaManager::messages.last_modified') }}</option>

@@ -192,7 +192,7 @@ export default {
                     }
 
                     this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
-                    this.removeFromLists(item.name)
+                    this.removeFromLists(item.name, item.type)
 
                     // update folder count when folder is moved into another
                     if (this.fileTypeIs(item, 'folder')) {
@@ -245,7 +245,7 @@ export default {
                     }
 
                     this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
-                    this.removeFromLists(item.name)
+                    this.removeFromLists(item.name, item.type)
                 })
 
                 this.toggleModal()
@@ -272,12 +272,12 @@ export default {
         },
 
         /*                Ops                */
-        removeFromLists(name) {
+        removeFromLists(name, type) {
             if (this.filteredItemsCount) {
                 let list = this.filterdList
 
                 list.map((e) => {
-                    if (e.name.includes(name)) {
+                    if (e.name.includes(name) && e.type.includes(type)) {
                         list.splice(list.indexOf(e), 1)
                     }
                 })
@@ -294,7 +294,7 @@ export default {
             }
 
             this.files.items.map((e) => {
-                if (e.name.includes(name)) {
+                if (e.name.includes(name) && e.type.includes(type)) {
                     let list = this.files.items
 
                     list.splice(list.indexOf(e), 1)

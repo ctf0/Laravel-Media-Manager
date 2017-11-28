@@ -193,6 +193,7 @@ class MediaController extends Controller
             $result[]   = [
                 'success' => true,
                 'name'    => $file_name,
+                'type'    => $type,
             ];
 
             $file_name = "$folderLocation/$file_name";
