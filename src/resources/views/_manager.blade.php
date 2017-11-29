@@ -6,7 +6,10 @@
     base-url="{{ $base_url }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-files-ext="{{ config('mediaManager.hide_files_ext') ? 'true' : 'false' }}"
-    :media-trans="{{ json_encode(['no_val' => trans('MediaManager::messages.no_val')]) }}"
+    :media-trans="{{ json_encode([
+        'no_val' => trans('MediaManager::messages.no_val'),
+        'single_char_folder'=> trans('MediaManager::messages.single_char_folder')
+    ]) }}"
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     lock-file-route="{{ route('media.lock_file') }}"

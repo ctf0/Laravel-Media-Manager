@@ -37,6 +37,7 @@ return array (
   'new_file_folder' => 'New File/Folder Name',
   'new_folder_name' => 'New Folder Name',
   'no_files_in_folder' => 'No files in this folder.',
+  'no_val' => 'Maybe You Should Add Something First',
   'non' => 'Non',
   'not_allowed_file_ext' => 'Files Of Type ":attr" Are Not Allowed',
   'nothing_selected' => 'No file or folder selected',
@@ -47,6 +48,7 @@ return array (
   'select_all' => 'Select All',
   'select_non' => 'Select Non',
   'selected' => 'Selected',
+  'single_char_folder' => 'Folders With First Level Path As Single Character Should Be Avoided',
   'size' => 'Size',
   'sort_by' => 'Sort By',
   'title' => 'Title',
@@ -57,5 +59,4 @@ return array (
   'upload_text' => 'Drag & Drop Files<br>Or<br>Click To Upload',
   'url' => 'URL',
   'video_support' => 'Your browser does not support the video tag.',
-  'no_val' => 'Maybe You Should Add Something First',
 );

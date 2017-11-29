@@ -37,6 +37,7 @@ return array (
   'new_file_folder' => 'Nouveau nom de fichier/dossier',
   'new_folder_name' => 'Nom du nouveau dossier',
   'no_files_in_folder' => 'Pas de fichiers dans ce dossier.',
+  'no_val' => NULL,
   'non' => NULL,
   'not_allowed_file_ext' => 'Les fichiers du type ":attr" ne sont pas autorisés',
   'nothing_selected' => 'Aucun fichier ou dossier sélectionné',
@@ -47,6 +48,7 @@ return array (
   'select_all' => NULL,
   'select_non' => NULL,
   'selected' => NULL,
+  'single_char_folder' => NULL,
   'size' => NULL,
   'sort_by' => NULL,
   'title' => NULL,
@@ -57,5 +59,4 @@ return array (
   'upload_text' => 'Faites glisser & déposez des fichiers<br>ou<br>cliquez pour télécharger',
   'url' => NULL,
   'video_support' => NULL,
-  'no_val' => NULL,
 );

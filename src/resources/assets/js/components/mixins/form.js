@@ -100,6 +100,10 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
+            if (folder_name.match(/^.\/.*|^.$/)) {
+                return this.showNotif(this.trans('single_char_folder'), 'danger')
+            }
+
             this.toggleLoading()
 
             axios.post(event.target.action, {

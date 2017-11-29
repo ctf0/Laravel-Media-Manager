@@ -1,3 +1,24 @@
+<style>
+    .count-enter-active,
+    .count-leave-active,
+    .list-enter-active,
+    .list-leave-active {
+        transition: all 0.3s;
+    }
+
+    .count-enter,
+    .count-leave-to {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+
+    .list-enter,
+    .list-leave-to {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+</style>
+
 <script>
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
