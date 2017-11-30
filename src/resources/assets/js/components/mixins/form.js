@@ -134,6 +134,10 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
+            if (this.selectedFileIs('folder') && changed.match(/^.\/.*|^.$/)) {
+                return this.showNotif(this.trans('single_char_folder'), 'danger')
+            }
+
             this.toggleLoading()
 
             let filename = this.selectedFile.name
