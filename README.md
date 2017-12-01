@@ -38,7 +38,7 @@
     - delete
 - bulk selection.
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
-- restrict access to [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
+- dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - download selected ***"including bulk selection"***
 - directly copy selected file link.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
@@ -83,7 +83,7 @@
     |                     | confirm move *(modal)*       | enter        | *             |             |
     |                     | create new folder *(modal)*  | enter        | *             |             |
     |                     | &nbsp;                       |              |               |             |
-    |                     | toggle *(sidebar)*           | t            | *             |             |
+    |                     | toggle *(info panel)*        | t            | *             |             |
     |                     | play/pause media *(sidebar)* | space        | *             |             |
     |                     | preview image *(sidebar)*    | space        | *             | 2x tap      |
     |                     | hide image *(light-box)*     | space/esc    | *             |             |
@@ -106,7 +106,7 @@
     |         | loading-files-show                    | when loading files is hidden             |
     |         | loading-files-hide                    | when loading files is hidden             |
     |         | ajax-error-show                       | when ajax call fails                     |
-    |         | file_selected                         | get selected file url                    |
+    |         | file_selected *(when using modal)*    | get selected file url                    |
     | Laravel |                                       |                                          |
     |         | MMFileUploaded($file_path)            | get uploaded file full path              |
     |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
@@ -185,8 +185,6 @@ npm install vue axios dropzone keycode vue-tippy vue2-filters vuemit vue-notif v
     + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
 
 ```js
-// ex. "resources/assets/js/app.js"
-
 require('./../vendor/MediaManager/js/manager')
 
 new Vue({
