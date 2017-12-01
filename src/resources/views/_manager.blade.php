@@ -10,6 +10,7 @@
         'no_val' => trans('MediaManager::messages.no_val'),
         'single_char_folder'=> trans('MediaManager::messages.single_char_folder')
     ]) }}"
+    :upload-panel-img-list="{{ $patterns }}"
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     lock-file-route="{{ route('media.lock_file') }}"
@@ -269,7 +270,7 @@
         {{-- drop zone --}}
         <transition name="list" mode="in-out">
             <div class="field dz" v-show="uploadToggle">
-                <form id="new-upload" action="{{ route('media.upload') }}">
+                <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
                     <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
                     {{ csrf_field() }}
                     <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">

@@ -25,6 +25,16 @@ export default {
                 return this.bulkList.length
             }
         },
+        uploadPanelImg() {
+            if (this.uploadToggle) {
+                let list = this.uploadPanelImgList
+                let url = list[Math.floor(Math.random() * list.length)]
+
+                return {
+                    'background-image': `url("${url}")`
+                }
+            }
+        },
 
         // this is made so we can still use move/delete
         // incase we have multiple files selected

@@ -52,6 +52,7 @@ export default {
         'dirsRoute',
         'lockFileRoute',
         'restrictPath',
+        'uploadPanelImgList',
         'hideExt'
     ],
     data() {

@@ -119,7 +119,7 @@ export default {
                 }
 
                 this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
-                this.getFiles(this.folders)
+                this.getFiles(this.folders, data.new_folder_name)
 
             }).catch(() => {
                 this.ajaxError()

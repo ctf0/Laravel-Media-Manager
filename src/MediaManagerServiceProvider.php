@@ -37,12 +37,11 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/database' => storage_path('log'),
         ], 'db');
 
-        $db_info = [
+        config(['database.connections.mediamanager' => [
             'driver'   => 'sqlite',
             'database' => storage_path('logs/MediaManager.sqlite'),
             'prefix'   => '',
-        ];
-        config(['database.connections.mediamanager' => $db_info]);
+        ]]);
 
         // public
         $this->publishes([
@@ -75,9 +74,16 @@ class MediaManagerServiceProvider extends ServiceProvider
             ->disk(config('mediaManager.storage_disk'))
             ->url('/');
 
-        view()->composer('MediaManager::_manager', function ($view) use ($url) {
+        $patterns = collect(
+                app('files')->allFiles(public_path('assets/vendor/MediaManager/patterns'))
+                )->map(function ($item) {
+                    return "/assets/vendor/MediaManager/patterns/{$item->getFileName()}";
+                });
+
+        view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns) {
             $view->with([
                'base_url' => $url,
+               'patterns' => json_encode($patterns),
            ]);
         });
     }

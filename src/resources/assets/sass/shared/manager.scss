@@ -43,9 +43,9 @@ $blue_2: #276cda;
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
     border: 2px dashed rgba($gray_7, 0.5);
     border-radius: 5px;
-    background-image: url("/assets/vendor/MediaManager/upload.jpg");
     background-repeat: repeat;
 
     &::before {
@@ -57,13 +57,17 @@ $blue_2: #276cda;
         content: "";
         transition: all 0.3s ease-in-out;
         border-radius: 100vw;
-        background-color: rgba(255, 210, 0, 0.9);
+        background-color: orangered;
+        mix-blend-mode: difference;
         translate: -50% -50%;
     }
 
     &:hover {
+        box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);
+
         &::before {
-            box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.2);
+            background-color: transparent;
+            box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);
         }
     }
 
@@ -73,6 +77,8 @@ $blue_2: #276cda;
         margin: 0;
         padding: 3em;
         text-align: center;
+        color: white;
+        mix-blend-mode: difference;
     }
 }
 
