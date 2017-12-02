@@ -1,7 +1,30 @@
-@import "./shared/animate";
-@import "./shared/progress";
-@import "./shared/manager";
+//colors
+$white_gray: #cfd8dc;
+$off_white_1: #fefefe;
+$off_white_2: #f5f5f5;
+$off_white_3: #eee;
+$gray_1: #f9f9f9;
+$gray_2: #e0e0e0;
+$gray_3: #eceff1;
+$gray_4: #f1f1f1;
+$gray_5: #8d8c8c;
+$dark-gray_1: #555;
+$dark-gray_2: #444;
+$slate_gray: #76838c;
+$gray_7: #b5b5b5;
+$turquoise: #00d1b2;
+$green: #23d160;
+$yellow: #ffdd57;
+$red: #ff3860;
+$blue: #3273dc;
+$blue_2: #276cda;
 
+@import "./vendor/animate";
+@import "./vendor/progress";
+@import "./vendor/switcher";
+@import "./manager";
+
+// bulma
 .modal-card-head,
 .progress-bar,
 .icon {
@@ -59,7 +82,10 @@
     background-color: white;
 }
 
-// bulma
+.image {
+    display: inline-block;
+}
+
 .input {
     border-color: $gray_7;
     box-shadow: none;

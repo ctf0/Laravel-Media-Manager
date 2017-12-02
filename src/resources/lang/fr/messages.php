@@ -59,4 +59,5 @@ return array (
   'upload_text' => 'Faites glisser & déposez des fichiers<br>ou<br>cliquez pour télécharger',
   'url' => NULL,
   'video_support' => NULL,
+  'use_random_names' => NULL,
 );

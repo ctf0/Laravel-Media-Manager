@@ -40,17 +40,9 @@ export default {
         // incase we have multiple files selected
         // and one or more of them is locked
         bulkListFilter() {
-            let list
-
-            if (this.lockedList.length) {
-                list = this.bulkList.filter((e) => {
-                    return !this.lockedList.includes(e.path)
-                })
-            } else {
-                list = this.bulkList
-            }
-
-            return list
+            return this.lockedList.length
+                ? this.bulkList.filter((e) => {return !this.lockedList.includes(e.path)})
+                : this.bulkList
         }
     }
 }

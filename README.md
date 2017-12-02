@@ -39,6 +39,8 @@
 - bulk selection.
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
+- dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
+- toggle between `random names` & `original names` for uploaded files.
 - download selected ***"including bulk selection"***
 - directly copy selected file link.
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
@@ -174,9 +176,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue axios dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue axios dropzone keycode vue-ls vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue axios dropzone keycode vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue axios dropzone keycode vue-ls vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

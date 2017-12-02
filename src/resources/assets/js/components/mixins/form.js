@@ -39,6 +39,20 @@ export default {
                 this.files = data.files
                 this.lockedList = data.locked
 
+                // check for hidden extensions
+                if (this.hideExt.length) {
+                    this.files.items = this.files.items.filter((e) => {
+                        return !this.checkForHiddenExt(e)
+                    })
+                }
+
+                // check for hidden folders
+                if (this.hidePath.length) {
+                    this.files.items = this.files.items.filter((e) => {
+                        return !this.checkForHiddenPath(e)
+                    })
+                }
+
                 // check for prev opened folder
                 if (select_prev) {
                     this.$nextTick(() => {
@@ -52,18 +66,12 @@ export default {
                     this.selectFirst()
                 }
 
-                // check for hidden extensions
-                if (this.hideExt.length) {
-                    this.files.items = this.files.items.filter((e) => {
-                        return !this.checkForRestrictedExt(e)
-                    })
-                }
-
                 this.loadingFiles('hide')
                 this.toggleInfoPanel()
                 this.updateDirsList()
 
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -71,23 +79,32 @@ export default {
             axios.post(this.dirsRoute, {
                 folder_location: this.folders
             }).then(({data}) => {
-                // nested folders
-                if (this.lockedList.length && this.files.path !== '') {
-                    return this.directories = data.filter((e) => {
-                        return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
+
+                this.directories = data
+
+                // check for hidden folders
+                if (this.hidePath.length) {
+                    this.directories = this.directories.filter((e) => {
+                        return !this.checkForFolderName(e)
                     })
                 }
 
-                // root
                 if (this.lockedList.length) {
-                    return this.directories = data.filter((e) => {
+                    // nested folders
+                    if (this.files.path !== '') {
+                        return this.directories = this.directories.filter((e) => {
+                            return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
+                        })
+                    }
+
+                    // root
+                    this.directories = this.directories.filter((e) => {
                         return !this.lockedList.includes(`${this.baseUrl}${e}`)
                     })
                 }
 
-                this.directories = data
-
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -121,7 +138,8 @@ export default {
                 this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
                 this.getFiles(this.folders, data.new_folder_name)
 
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -163,7 +181,8 @@ export default {
                     this.updateDirsList()
                 }
 
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -221,7 +240,8 @@ export default {
                     this.searchItemsCount = this.filesList.length
                 }
 
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -262,7 +282,8 @@ export default {
                     this.searchItemsCount = this.filesList.length
                 }
 
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },
@@ -274,7 +295,8 @@ export default {
                 state: state
             }).then(({data}) => {
                 this.showNotif(data.message)
-            }).catch(() => {
+            }).catch((err) => {
+                console.error(err)
                 this.ajaxError()
             })
         },

@@ -56,6 +56,9 @@ export default {
                 })
             }
         },
+        randomNames(val) {
+            return this.$ls.set('mm-uploadRndNames', val)
+        },
 
         // filter
         sortBy(val) {

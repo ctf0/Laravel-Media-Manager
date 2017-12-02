@@ -6,6 +6,8 @@
     base-url="{{ $base_url }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-files-ext="{{ config('mediaManager.hide_files_ext') ? 'true' : 'false' }}"
+    :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
+    :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
     :media-trans="{{ json_encode([
         'no_val' => trans('MediaManager::messages.no_val'),
         'single_char_folder'=> trans('MediaManager::messages.single_char_folder')
@@ -14,11 +16,10 @@
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     lock-file-route="{{ route('media.lock_file') }}"
-    restrict-path="{{ isset($path) ? $path : null }}"
-    hide-ext="{{ isset($ext) ? json_encode($ext) : null }}">
+    :restrict-path="{{ isset($path) ? $path : 'null' }}">
 
-    <v-touch @swiperight="lightBoxIsActive() ? goToPrev() : false"
-        @swipeleft="lightBoxIsActive() ? goToNext() : false">
+    <v-touch @swiperight="isActiveModal('preview_modal') ? goToPrev() : false"
+        @swipeleft="isActiveModal('preview_modal') ? goToNext() : false">
 
         {{-- top toolbar --}}
         <nav id="toolbar" class="level">
@@ -267,13 +268,18 @@
 
         {{-- ====================================================================== --}}
 
-        {{-- drop zone --}}
+        {{-- dropzone --}}
         <transition name="list" mode="in-out">
             <div class="field dz" v-show="uploadToggle">
                 <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
                     <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
                     {{ csrf_field() }}
                     <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+
+                    <div class="form-switcher" title="{{ trans('MediaManager::messages.use_random_names') }}" v-tippy="{arrow: true}">
+                        <input type="checkbox" name="random_names" id="random_names" v-model="randomNames">
+                        <label class="switcher" for="random_names"></label>
+                    </div>
                 </form>
 
                 <div id="uploadPreview"></div>

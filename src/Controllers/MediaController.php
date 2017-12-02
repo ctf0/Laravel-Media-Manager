@@ -100,6 +100,7 @@ class MediaController extends Controller
     {
         $upload_path = $request->upload_path;
         $files       = $request->file;
+        $random_name = $request->random_names;
         $result      = [];
 
         foreach ($files as $one) {
@@ -114,7 +115,7 @@ class MediaController extends Controller
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
 
-                $file_name   = $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
+                $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
                 $destination = "$upload_path/$file_name";
 
                 // check existence

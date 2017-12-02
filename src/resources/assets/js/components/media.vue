@@ -53,7 +53,8 @@ export default {
         'lockFileRoute',
         'restrictPath',
         'uploadPanelImgList',
-        'hideExt'
+        'hideExt',
+        'hidePath'
     ],
     data() {
         return {
@@ -71,6 +72,7 @@ export default {
             bulkSelect: false,
             folderWarning: false,
             checkForFolders: false,
+            randomNames: false,
 
             files: [],
             folders: [],
@@ -92,6 +94,8 @@ export default {
         }
     },
     created() {
+        this.randomNames = this.$ls.get('mm-uploadRndNames', false)
+
         if (this.checkForRestrictedPath()) {
             return this.restrictAccess()
         }
@@ -105,12 +109,9 @@ export default {
     updated() {
         this.autoPlay()
         this.$nextTick(() => {
-            let item = this.$refs.move_folder_dropdown.options[0]
-            if (item) {
-                return this.checkForFolders = true
-            }
-
-            this.checkForFolders = false
+            return this.$refs.move_folder_dropdown.options[0]
+                ? this.checkForFolders = true
+                : this.checkForFolders = false
         })
     },
     beforeDestroy() {
@@ -125,17 +126,16 @@ export default {
                 parallelUploads: 10,
                 uploadMultiple: true,
                 forceFallback: false,
+                timeout: 3600000,
                 previewsContainer: '#uploadPreview',
                 processingmultiple() {
                     manager.uploadStart = true
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
-                        if (item.success) {
-                            manager.showNotif(`Successfully Uploaded "${item.message}"`)
-                        } else {
-                            manager.showNotif(item.message, 'danger')
-                        }
+                        item.success
+                            ? manager.showNotif(`Successfully Uploaded "${item.message}"`)
+                            : manager.showNotif(item.message, 'danger')
                     })
 
                     manager.getFiles(manager.folders)
@@ -287,22 +287,18 @@ export default {
         },
         deleteItem() {
             if (!this.isBulkSelecting() && this.selectedFile) {
-                if (this.selectedFileIs('folder')) {
-                    this.folderWarning = true
-                } else {
-                    this.folderWarning = false
-                }
+                this.selectedFileIs('folder')
+                    ? this.folderWarning = true
+                    : this.folderWarning = false
 
                 this.$refs.confirm_delete.innerText = this.selectedFile.name
             }
 
             if (this.bulkItemsCount) {
                 this.bulkListFilter.some((item) => {
-                    if (this.fileTypeIs(item, 'folder')) {
-                        return this.folderWarning = true
-                    }
-
-                    this.folderWarning = false
+                    return this.fileTypeIs(item, 'folder')
+                        ? this.folderWarning = true
+                        : this.folderWarning = false
                 })
             }
 

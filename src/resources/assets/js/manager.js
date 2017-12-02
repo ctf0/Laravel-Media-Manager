@@ -6,7 +6,9 @@ window.Dropzone = require('dropzone')
 Vue.use(require('vue-tippy'))
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
+Vue.use(require('vue-ls'))
 
+// v-touch
 let VueTouch = require('vue-touch')
 VueTouch.registerCustomEvent('dbltap', {
     type: 'tap',
@@ -14,6 +16,7 @@ VueTouch.registerCustomEvent('dbltap', {
 })
 Vue.use(VueTouch, {name: 'v-touch'})
 
+// axios
 window.axios = require('axios')
 axios.defaults.headers.common = {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
