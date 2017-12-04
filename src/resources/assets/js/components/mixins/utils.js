@@ -145,22 +145,31 @@ export default {
 
         /*                Ops                */
         // download
-        saveFile(path) {
+        saveFile(item) {
             if (this.isBulkSelecting()) {
-                this.bulkList.forEach((item) => {
-                    downloadFile(item.path)
+                this.bulkList.forEach((e) => {
+                    downloadFile(e.path)
                 })
 
                 return this.showNotif('All Done')
             }
 
-            downloadFile(path)
+            downloadFile(item.path)
+            return this.showNotif(`"${item.name}" ${this.trans('downloaded')}`)
         },
 
         // copy to clipboard
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+
+        // ls
+        updateLs(obj) {
+            let oldLs = this.$ls.get('mediamanager', {})
+
+            Object.assign(oldLs, obj)
+            this.$ls.set('mediamanager', oldLs)
         }
     }
 }

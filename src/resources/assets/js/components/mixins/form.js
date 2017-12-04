@@ -56,7 +56,7 @@ export default {
                 // check for prev opened folder
                 if (select_prev) {
                     this.$nextTick(() => {
-                        this.files.items.map((e, i) => {
+                        this.files.items.some((e, i) => {
                             if (e.name == select_prev) {
                                 return this.setSelected(e, i)
                             }

@@ -16,6 +16,8 @@
 // upload
 .dz {
     margin: 15px 0;
+    border: 2px dashed rgba($gray_7, 0.5);
+    border-radius: 5px;
 }
 
 #new-upload {
@@ -23,7 +25,6 @@
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    border: 2px dashed rgba($gray_7, 0.5);
     border-radius: 5px;
     background-repeat: repeat;
 
@@ -42,11 +43,10 @@
     }
 
     &:hover {
-        box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 5px 20px 0 rgba(black, 0.3);
 
         &::before {
-            background-color: transparent;
-            box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 20px 0 rgba(black, 0.3);
         }
     }
 
@@ -57,7 +57,13 @@
         padding: 3em;
         text-align: center;
         color: white;
-        mix-blend-mode: difference;
+    }
+
+    .form-switcher {
+        position: absolute;
+        z-index: 1;
+        bottom: 0.5rem;
+        left: 0.5rem;
     }
 }
 
@@ -76,7 +82,7 @@
 }
 
 #uploadProgress {
-    margin-top: 10px;
+    margin-bottom: 15px;
     border-radius: 100vw;
 }
 
@@ -149,7 +155,10 @@
     position: relative;
     overflow: scroll;
     min-height: 400px;
-    // max-height: 584px;
+}
+
+.inModal {
+    max-height: 584px;
 }
 
 #left {
@@ -202,7 +211,7 @@
     }
 
     &:hover {
-        box-shadow: 0 10px 45px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 45px 0 rgba(black, 0.2);
     }
 
     .copy_link {
@@ -259,6 +268,15 @@
         small {
             font-size: 11px;
         }
+    }
+}
+
+.image-preview-content {
+    .title {
+        overflow: hidden;
+        max-width: 300px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }
 
@@ -477,7 +495,7 @@
     overflow: hidden;
 }
 
-.pointer {
+.link {
     cursor: pointer;
 }
 
@@ -513,7 +531,7 @@
     margin-left: 50px !important;
 }
 
-.is--link {
+.btn-plain {
     padding: 0;
     cursor: pointer;
     border: none;
@@ -523,4 +541,62 @@
 
 [target="_blank"] {
     cursor: alias;
+}
+
+// animation
+$list: (img-nxt, img-prv, info-in, info-out, slide, list);
+
+@each $class in $list {
+    .#{$class}-enter-active,
+    .#{$class}-leave-active {
+        transition: all 0.3s;
+    }
+}
+
+/* files */
+.list-enter,
+.list-leave-to {
+    transform: translateY(30px);
+    opacity: 0;
+}
+
+/* image */
+.img-prv-enter {
+    transform: translateX(-10px);
+    opacity: 0;
+}
+
+.img-prv-leave-to {
+    transform: translateX(90px);
+    opacity: 0;
+}
+
+.img-nxt-enter {
+    transform: translateX(10px);
+    opacity: 0;
+}
+
+.img-nxt-leave-to {
+    transform: translateX(-90px);
+    opacity: 0;
+}
+
+/* info toggle btn */
+.info-in-enter,
+.info-in-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
+}
+
+.info-out-enter,
+.info-out-leave-to {
+    transform: translateX(-10px);
+    opacity: 0;
+}
+
+/* count & info panel */
+.slide-enter,
+.slide-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
 }

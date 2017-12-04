@@ -75,7 +75,7 @@ class MediaManagerServiceProvider extends ServiceProvider
             ->url('/');
 
         $patterns = collect(
-                app('files')->allFiles(public_path('assets/vendor/MediaManager/patterns'))
+                    app('files')->allFiles(public_path('assets/vendor/MediaManager/patterns'))
                 )->map(function ($item) {
                     return "/assets/vendor/MediaManager/patterns/{$item->getFileName()}";
                 });

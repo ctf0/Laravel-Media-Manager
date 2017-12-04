@@ -1,5 +1,6 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/33029294-e11b7f60-ce20-11e7-91a9-95fb652d3fcd.png">
+    <img src="https://user-images.githubusercontent.com/7388088/33564620-9e584826-d923-11e7-9ce3-8d4a306734f3.jpg">
+    <img src="https://user-images.githubusercontent.com/7388088/33564621-9e8837d4-d923-11e7-9117-f63db660c463.jpg">
 </p>
 
 # Media Manager
@@ -176,9 +177,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue axios dropzone keycode vue-ls vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue axios dropzone keycode vue-ls vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

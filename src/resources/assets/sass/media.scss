@@ -25,6 +25,30 @@ $blue_2: #276cda;
 @import "./manager";
 
 // bulma
+.input {
+    border-color: $gray_7;
+    box-shadow: none;
+}
+
+table,
+.table {
+    margin-bottom: 0;
+
+    td {
+        padding: 0;
+    }
+
+    td,
+    th {
+        vertical-align: middle;
+        border: none !important;
+    }
+
+    tr:hover {
+        background-color: transparent;
+    }
+}
+
 .modal-card-head,
 .progress-bar,
 .icon {
@@ -58,23 +82,21 @@ $blue_2: #276cda;
     }
 }
 
-.modal-card {
-    margin: 0;
-    padding: 1rem 1rem 0;
-}
+.modal {
+    align-items: flex-start;
 
-#preview_modal {
-    .modal-content,
-    .modal-card {
-        width: auto;
-        max-width: 640px;
-        margin: 0;
+    &.is-active {
+        padding-top: 4%;
     }
 }
 
-.modal.is-active {
-    align-items: start;
-    padding-top: 3%;
+.modal-card {
+    margin: 0;
+    padding: 1rem;
+}
+
+.modal-content {
+    box-shadow: 0 5px 25px 0 rgba(black, 0.2);
 }
 
 .modal-card-foot {
@@ -82,32 +104,18 @@ $blue_2: #276cda;
     background-color: white;
 }
 
+#preview_modal {
+    .modal-content,
+    .modal-card {
+        width: auto;
+        max-width: 480px;
+        margin: 0;
+    }
+}
+
 .image {
     display: inline-block;
-}
-
-.input {
-    border-color: $gray_7;
-    box-shadow: none;
-}
-
-table,
-.table {
-    margin-bottom: 0;
-
-    td {
-        padding: 0;
-    }
-
-    td,
-    th {
-        vertical-align: middle;
-        border: none !important;
-    }
-
-    tr:hover {
-        background-color: transparent;
-    }
+    min-width: 100%;
 }
 
 @media screen and (max-width: 1299px) {

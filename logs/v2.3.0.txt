@@ -1,0 +1,31 @@
+# we are now jQuery free :scream::metal::boom::muscle::dancers:
+
+## image
+- animate navigation
+- clicking the preview will open the image in a new tab
+- preview is now a card with basic info and main functionality “mostly for mobile users”
+
+## new options
+- added hide folder option
+- add random names option for uploaded files “will also be saved in local-storage”
+- save visited folder to local-storage so you can continue from where you left.
+- auto select folder after creation
+- set “max-height” to the manager if opened inside a modal
+
+## fixs
+- fix hide ext
+- disallow folder creation with single character name
+- disallow folder rename to single character
+- fix list update after remove items with same name but diff type
+- fix preview modal image align
+
+## styling
+- better responsive
+- some styling & animation
+- added some patterns for upload panel bg so image change on each toggle
+- change lock/unlock notification msg
+- add notification for single file download
+
+- update assets “make sure to republish the assets”
+- update readme
+- update wiki

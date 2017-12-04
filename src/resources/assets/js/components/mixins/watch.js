@@ -56,8 +56,13 @@ export default {
                 })
             }
         },
+
+        // ls
         randomNames(val) {
-            return this.$ls.set('mm-uploadRndNames', val)
+            this.updateLs({'randomNames': val})
+        },
+        folders(val) {
+            this.updateLs({'folders': val})
         },
 
         // filter

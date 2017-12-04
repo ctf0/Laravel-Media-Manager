@@ -16,6 +16,9 @@ VueTouch.registerCustomEvent('dbltap', {
 })
 Vue.use(VueTouch, {name: 'v-touch'})
 
+// directive
+require('vue-multi-ref')
+
 // axios
 window.axios = require('axios')
 axios.defaults.headers.common = {

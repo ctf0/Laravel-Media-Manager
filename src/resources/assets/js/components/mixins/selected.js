@@ -68,18 +68,21 @@ export default {
             // go to prev item
             if (keycode(e) == 'left' || keycode(e) == 'up') {
                 e.preventDefault()
+                this.navDirection = 'prev'
                 this.goToPrev()
             }
 
             // go to next item
             if (keycode(e) == 'right' || keycode(e) == 'down') {
                 e.preventDefault()
+                this.navDirection = 'next'
                 this.goToNext()
             }
 
             // go to last item
             if (keycode(e) == 'end') {
                 e.preventDefault()
+                this.navDirection = 'next'
 
                 let last = this.filesList.length - 1
                 this.scrollToFile(this.$refs[`file_${last}`])
@@ -88,6 +91,7 @@ export default {
             // go to first item
             if (keycode(e) == 'home') {
                 e.preventDefault()
+                this.navDirection = 'prev'
                 this.scrollToFile(this.$refs.file_0)
             }
 
