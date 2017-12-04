@@ -52,6 +52,7 @@ export default {
             folderWarning: false,
             checkForFolders: false,
             randomNames: false,
+            toolBar: true,
 
             files: [],
             folders: [],
@@ -276,6 +277,10 @@ export default {
             /* end of modal is visible */
         },
         deleteItem() {
+            if (this.$refs.delete[0].disabled) {
+                return
+            }
+
             if (!this.isBulkSelecting() && this.selectedFile) {
                 this.selectedFileIs('folder')
                     ? this.folderWarning = true
@@ -295,6 +300,10 @@ export default {
             this.toggleModal('confirm_delete_modal')
         },
         moveItem() {
+            if (this.$refs.move[0].disabled) {
+                return
+            }
+
             this.toggleModal('move_file_modal')
         },
         renameItem() {

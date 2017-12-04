@@ -1,6 +1,5 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7388088/33564620-9e584826-d923-11e7-9ce3-8d4a306734f3.jpg">
-    <img src="https://user-images.githubusercontent.com/7388088/33564621-9e8837d4-d923-11e7-9117-f63db660c463.jpg">
 </p>
 
 # Media Manager

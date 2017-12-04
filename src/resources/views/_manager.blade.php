@@ -23,7 +23,7 @@
         @swipeleft="isActiveModal('preview_modal') ? goToNext() : false">
 
         {{-- top toolbar --}}
-        <nav id="toolbar" class="level">
+        <nav id="toolbar" class="level" v-show="toolBar">
 
             {{-- left toolbar --}}
             <div class="level-left">
@@ -319,8 +319,8 @@
             </div>
 
             {{-- toggle info --}}
-            <div class="level-right is-hidden-touch">
-                <div class="toggle" @click="toggleInfoPanel()" v-tippy="{arrow: true}" title="t">
+            <div class="level-right">
+                <div class="toggle is-hidden-touch" @click="toggleInfoPanel()" v-tippy="{arrow: true}" title="t">
                     <transition :name="toggleInfo ? 'info-out' : 'info-in'" mode="out-in">
                         <div key="1" v-if="toggleInfo">
                             <span>{{ trans('MediaManager::messages.close') }}</span>
@@ -331,6 +331,12 @@
                             <span class="icon"><i class="fa fa-angle-double-left"></i></span>
                         </div>
                     </transition>
+                </div>
+
+                <div class="is-hidden-desktop">
+                    <button class="button is-link" @click="toolBar = !toolBar">
+                        <span class="icon"><i class="fa fa-bars"></i></span>
+                    </button>
                 </div>
             </div>
         </div>
