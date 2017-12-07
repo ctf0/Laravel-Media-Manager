@@ -38,7 +38,7 @@ axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 
-// scrollIntoView({behavior: 'smooth'}) polyfill
+// polyfill
 // window.__forceSmoothScrollPolyfill__ = true
 require('smoothscroll-polyfill').polyfill()
 

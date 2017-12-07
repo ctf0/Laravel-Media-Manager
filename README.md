@@ -1,14 +1,18 @@
+# Laravel Media Manager
+
+[![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager)
+
+The only media manager with this number of features & flexibility.
+
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7388088/33564620-9e584826-d923-11e7-9ce3-8d4a306734f3.jpg">
 </p>
 
-# Media Manager
-
-- Inspired by [Voyager](https://github.com/the-control-group/voyager), [October](https://github.com/octobercms/october), [WordPress](https://codex.wordpress.org/Media_Library_Screen)
-
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
 
 - package requires Laravel v5.4+
+
+<br>
 
 ## Installation
 
@@ -29,6 +33,27 @@
 - after installation, package will auto-add
     + package routes to `routes/web.php`
     + package assets compiling to `webpack.mix.js`
+
+- install dependencies
+
+```bash
+yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+# or
+npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+```
+
+- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
+    - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
+
+```js
+require('./../vendor/MediaManager/js/manager')
+
+new Vue({
+    el: '#app'
+})
+```
+
+<br>
 
 ## Features
 
@@ -115,6 +140,8 @@
     |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |
     |         | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" path   |
 
+<br>
+
 ## Config
 **config/mediaManager.php**
 
@@ -164,34 +191,8 @@ return [
 ];
 ```
 
+<br>
+
 ## Usage
 
-- For everyone that hate ***npm*** & possibly the whole js ecosystem **"YOU ARE NOT ALONE"** but maintaining a seperate dist copy is a tedious job for me, so if you need a help installing it, here are some steps to get you going
-    + install npm https://www.npmjs.com/get-npm
-    + (optional) install yarn https://yarnpkg.com/lang/en/docs/install/
-    + follow the steps below :clap: :muscle: :dancers:
-
----
-
-- install dependencies
-
-```bash
-yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
-# or
-npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
-```
-
-- for styling we use ***bulma***
-
-- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
-    + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
-
-```js
-require('./../vendor/MediaManager/js/manager')
-
-new Vue({
-    el: '#app'
-})
-```
-
-- now visit `localhost:8000/media`
+- visit `localhost:8000/media`
