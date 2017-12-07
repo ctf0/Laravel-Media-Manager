@@ -64,6 +64,9 @@ export default {
         folders(val) {
             this.updateLs({'folders': val})
         },
+        toolBar(val) {
+            this.updateLs({'toolBar': val})
+        },
 
         // filter
         sortBy(val) {
@@ -91,12 +94,12 @@ export default {
 
             if (!val) {
                 this.resetInput('searchItemsCount')
-                return this.noFiles('hide')
+                this.noFiles('hide')
             }
         },
         searchItemsCount(val) {
             if (val == 0) {
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
             }
 
             if (this.allItemsCount == undefined) {

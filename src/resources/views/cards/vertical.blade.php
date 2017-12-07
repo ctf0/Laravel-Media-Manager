@@ -1,7 +1,19 @@
-<div class="card image-preview-content">
-    <div class="card-image">
-        <a :href="selectedFile.path" target="_blank" class="image"><img :src="selectedFile.path"></a>
-    </div>
+<div class="card">
+    <v-touch class="card-image"
+        :class="{'pdf': selectedFileIs('pdf')}"
+        @swiperight="goToPrev()"
+        @swipeleft="goToNext()">
+
+        <template v-if="selectedFileIs('pdf')">
+            <object :data="selectedFile.path" :type="selectedFile.type" width="100%" height="100%">
+               <p>{{ trans('MediaManager::messages.pdf') }}</p>
+            </object>
+        </template>
+
+        <template v-else>
+            <a :href="selectedFile.path" target="_blank" class="image"><img :src="selectedFile.path"></a>
+        </template>
+    </v-touch>
 
     <div class="card-content">
         <div class="level">
@@ -13,7 +25,7 @@
                             <span class="icon is-large"
                                 :class="IsInLockedList(selectedFile) ? 'is-danger' : 'is-success'"
                                 :title="IsInLockedList(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
-                                v-tippy="{arrow: true, hideOnClick: false}"
+                                v-tippy="{hideOnClick: false}"
                                 @click="toggleLock(selectedFile)">
                                 <span class="icon is-small">
                                     <i class="fa fa-lg" :class="IsInLockedList(selectedFile) ? 'fa-unlock' : 'fa-lock'"></i>
@@ -33,7 +45,7 @@
                 <div class="level-item has-text-centered">
                     <div>
                         <button class="btn-plain" @click.prevent="saveFile(selectedFile)"
-                            v-tippy="{arrow: true}" title="{{ trans('MediaManager::messages.download_file') }}">
+                            v-tippy title="{{ trans('MediaManager::messages.download_file') }}">
                             <span class="icon has-text-black"><i class="fa fa-download fa-3x"></i></span>
                         </button>
                         <p>@{{ getFileSize(selectedFile.size) }}</p>
@@ -73,6 +85,5 @@
                 <span>{{ trans('MediaManager::messages.delete') }}</span>
             </button>
         </div>
-
       </footer>
 </div>

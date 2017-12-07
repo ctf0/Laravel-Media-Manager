@@ -104,19 +104,19 @@ class MediaController extends Controller
         $result      = [];
 
         foreach ($files as $one) {
+            $file_type   = $one->getMimeType();
+
+            $original    = $one->getClientOriginalName();
+            $file_ext    = $one->getClientOriginalExtension();
+            $get_name    = str_replace(".$file_ext", '', $original);
+            $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
+            $destination = "$upload_path/$file_name";
+
             try {
                 // check for mime type
-                $original  = $one->getClientOriginalName();
-                $file_type = $one->getMimeType();
-                $file_ext  = $one->getClientOriginalExtension();
-                $get_name  = str_replace(".$file_ext", '', $original);
-
                 if (str_contains($file_type, $this->unallowed_mimes)) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
-
-                $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
-                $destination = "$upload_path/$file_name";
 
                 // check existence
                 if ($this->storageDisk->exists($destination)) {

@@ -107,41 +107,49 @@ export default {
             if (ls) {
                 this.randomNames = ls.randomNames
                 this.folders = ls.folders || '/'
+                this.toolBar = ls.toolBar
             }
         },
 
         fileUpload() {
             let manager = this
+            let counter = 0
+            let progress = 0
+            let increaseBy = 0
 
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
                 parallelUploads: 10,
                 uploadMultiple: true,
                 forceFallback: false,
+                ignoreHiddenFiles: true,
                 timeout: 3600000,
                 previewsContainer: '#uploadPreview',
-                processingmultiple() {
+                addedfile() {
                     manager.uploadStart = true
+                    counter++
+                    increaseBy = 100 / counter
+                },
+                sending() {
+                    progress += increaseBy
+                    return manager.uploadProgress = `${progress}%`
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
                         item.success
-                            ? manager.showNotif(`Successfully Uploaded "${item.message}"`)
+                            ? manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
                             : manager.showNotif(item.message, 'danger')
                     })
 
                     manager.getFiles(manager.folders)
-                },
-                totaluploadprogress(uploadProgress) {
-                    return manager.uploadProgress = `${uploadProgress}%`
                 },
                 errormultiple(files, res) {
                     manager.showNotif(res, 'danger')
                 },
                 queuecomplete() {
                     manager.uploadStart = false
-                    manager.uploadProgress = 0
                     manager.toggleUploadPanel()
+                    manager.uploadProgress = 0
                 }
             })
         },
@@ -171,7 +179,10 @@ export default {
                             if (
                                 keycode(e) == 'space' &&
                                 e.target == document.body &&
-                                (this.selectedFileIs('video') || this.selectedFileIs('audio') || this.selectedFileIs('image'))
+                                (
+                                    this.selectedFileIs('video') || this.selectedFileIs('audio') ||
+                                    this.selectedFileIs('image') || this.selectedFileIs('pdf')
+                                )
                             ) {
                                 e.preventDefault()
 
@@ -185,7 +196,7 @@ export default {
                                 }
 
                                 // "show" image quick view
-                                if (this.selectedFileIs('image')) {
+                                if (this.selectedFileIs('image') || this.selectedFileIs('pdf')) {
                                     this.noScroll('add')
                                     this.toggleModal('preview_modal')
                                 }
@@ -313,7 +324,7 @@ export default {
             this.bulkSelect = !this.bulkSelect
             this.bulkSelectAll = false
             this.resetInput('bulkList', [])
-            this.resetInput('selectedFile')
+            this.resetInput(['selectedFile', 'currentFileIndex'])
 
             if (!this.isBulkSelecting()) {
                 this.selectFirst()
@@ -342,7 +353,7 @@ export default {
             // if having search + having bulk items < search found items
             else if (this.searchFor && this.bulkItemsCount < this.searchItemsCount) {
                 this.resetInput('bulkList', [])
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
 
                 if (this.bulkSelectAll) {
                     this.bulkSelectAll = false
@@ -366,14 +377,14 @@ export default {
                     this.bulkList = this.allFiles.slice(0)
                 }
 
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
             }
 
             // otherwise
             else {
                 this.bulkSelectAll = false
                 this.resetInput('bulkList', [])
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
             }
 
             // if we have items in bulk list, select first item
@@ -422,7 +433,7 @@ export default {
             }
 
             if (!this.allItemsCount) {
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
             }
         }
     },

@@ -176,9 +176,9 @@ return [
 - install dependencies
 
 ```bash
-yarn add vue axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - for styling we use ***bulma***

@@ -19,10 +19,10 @@ $red: #ff3860;
 $blue: #3273dc;
 $blue_2: #276cda;
 
-@import "./vendor/animate";
-@import "./vendor/progress";
-@import "./vendor/switcher";
-@import "./manager";
+@import './vendor/animate';
+@import './vendor/progress';
+@import './vendor/switcher';
+@import './manager';
 
 // bulma
 .input {
@@ -106,10 +106,21 @@ table,
 
 #preview_modal {
     .modal-content,
-    .modal-card {
+    .card-image {
         width: auto;
         max-width: 480px;
         margin: 0;
+    }
+
+    .pdf {
+        height: 480px;
+    }
+
+    .title {
+        overflow: hidden;
+        max-width: 300px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 }
 

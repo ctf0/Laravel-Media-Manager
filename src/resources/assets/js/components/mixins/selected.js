@@ -68,14 +68,12 @@ export default {
             // go to prev item
             if (keycode(e) == 'left' || keycode(e) == 'up') {
                 e.preventDefault()
-                this.navDirection = 'prev'
                 this.goToPrev()
             }
 
             // go to next item
             if (keycode(e) == 'right' || keycode(e) == 'down') {
                 e.preventDefault()
-                this.navDirection = 'next'
                 this.goToNext()
             }
 
@@ -96,7 +94,7 @@ export default {
             }
 
             // toggle modal off
-            if (this.isActiveModal('preview_modal') && !this.selectedFileIs('image')) {
+            if (this.isActiveModal('preview_modal') && !(this.selectedFileIs('image') || this.selectedFileIs('pdf'))) {
                 this.toggleModal()
             }
         },
@@ -104,6 +102,7 @@ export default {
             let curSelectedIndex = this.currentFileIndex
 
             if (curSelectedIndex !== 0) {
+                this.navDirection = 'prev'
                 let newSelected = curSelectedIndex - 1
                 this.scrollToFile(this.$refs[`file_${newSelected}`])
             }
@@ -112,22 +111,15 @@ export default {
             let curSelectedIndex = this.currentFileIndex
 
             if (curSelectedIndex < this.allItemsCount - 1) {
+                this.navDirection = 'next'
                 let newSelected = curSelectedIndex + 1
                 this.scrollToFile(this.$refs[`file_${newSelected}`])
             }
         },
         scrollToFile(file) {
             file = file[0]
-            let container = this.$refs.left.$el
-            let offset = container.style.paddingTop + file.style.marginTop
-
             file.click()
-            file.scrollIntoView(false)
-
-            // respect container & file offset when scrolling
-            if (file.offsetTop > container.offsetHeight) {
-                container.scrollTop += offset
-            }
+            file.scrollIntoView({behavior: 'smooth'})
         }
     }
 }

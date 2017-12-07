@@ -45,7 +45,7 @@ export default {
             }
 
             if (!this.isBulkSelecting()) {
-                this.resetInput('selectedFile')
+                this.resetInput(['selectedFile', 'currentFileIndex'])
                 this.selectFirst()
             }
 

@@ -34,7 +34,7 @@
         left: 50%;
         width: 25vw;
         height: 25vw;
-        content: "";
+        content: '';
         transition: all 0.3s ease-in-out;
         border-radius: 100vw;
         background-color: orangered;
@@ -74,7 +74,7 @@
     }
 }
 
-@media screen and (max-width: 786px) {
+@media screen and (max-width: 768px) {
     #new-upload::before {
         width: 50vw;
         height: 50vw;
@@ -271,15 +271,6 @@
     }
 }
 
-.image-preview-content {
-    .title {
-        overflow: hidden;
-        max-width: 300px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-}
-
 #right {
     position: relative;
     flex: 1;
@@ -431,7 +422,7 @@
     }
 }
 
-@media screen and (max-width: 786px) {
+@media screen and (max-width: 768px) {
     #file_loader {
         #file_loader_anim {
             width: 30vw;
@@ -539,7 +530,7 @@
     background: transparent;
 }
 
-[target="_blank"] {
+[target='_blank'] {
     cursor: alias;
 }
 

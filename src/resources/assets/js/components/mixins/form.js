@@ -9,7 +9,7 @@ export default {
             if (!this.file_loader) {
                 this.loadingFiles('show')
             }
-            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile'])
+            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
 
             if (folders !== '/') {
                 folders = '/' + folders.join('/')
@@ -331,7 +331,7 @@ export default {
                 }
             })
 
-            this.resetInput('selectedFile')
+            this.resetInput(['selectedFile', 'currentFileIndex'])
         },
         updateFolderCount(destination, count, weight = 0) {
             if (destination !== '../') {
