@@ -28,7 +28,7 @@
                                 v-tippy="{hideOnClick: false}"
                                 @click="toggleLock(selectedFile)">
                                 <span class="icon is-small">
-                                    <i class="fa fa-lg" :class="IsInLockedList(selectedFile) ? 'fa-unlock' : 'fa-lock'"></i>
+                                    <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'" scale="1.5"></icon>
                                 </span>
                             </span>
                         </div>
@@ -44,9 +44,9 @@
             <div class="level-right">
                 <div class="level-item has-text-centered">
                     <div>
-                        <button class="btn-plain" @click.prevent="saveFile(selectedFile)"
+                        <button class="button btn-plain" @click.prevent="saveFile(selectedFile)"
                             v-tippy title="{{ trans('MediaManager::messages.download_file') }}">
-                            <span class="icon has-text-black"><i class="fa fa-download fa-3x"></i></span>
+                            <span class="icon has-text-black"><icon name="download" scale="3"></icon></span>
                         </button>
                         <p>@{{ getFileSize(selectedFile.size) }}</p>
                     </div>
@@ -61,7 +61,7 @@
                 v-multi-ref="'move'"
                 :disabled="mv_dl() || !checkForFolders"
                 @click="moveItem()">
-                <span class="icon is-small"><i class="fa fa-share"></i></span>
+                <span class="icon is-small"><icon name="share"></icon></span>
                 <span>{{ trans('MediaManager::messages.move') }}</span>
             </button>
         </div>
@@ -71,7 +71,7 @@
                 :disabled="!selectedFile || IsInLockedList(selectedFile)"
                 v-if="!isBulkSelecting()"
                 @click="renameItem()">
-                <span class="icon is-small"><i class="fa fa-i-cursor"></i></span>
+                <span class="icon is-small"><icon name="i-cursor"></icon></span>
                 <span>{{ trans('MediaManager::messages.rename') }}</span>
             </button>
         </div>
@@ -81,7 +81,7 @@
                 v-multi-ref="'delete'"
                 :disabled="mv_dl()"
                 @click="deleteItem()">
-                <span class="icon is-small"><i class="fa fa-trash"></i></span>
+                <span class="icon is-small"><icon name="trash"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete') }}</span>
             </button>
         </div>

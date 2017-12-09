@@ -37,9 +37,9 @@ The only media manager with this number of features & flexibility.
 - install dependencies
 
 ```bash
-yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-awesome vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-awesome vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
