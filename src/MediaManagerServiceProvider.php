@@ -65,7 +65,9 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/resources/views' => resource_path('views/vendor/MediaManager'),
         ], 'view');
 
-        $this->viewComp();
+        if (app('files')->exists(public_path('assets/vendor/MediaManager/patterns'))) {
+            $this->viewComp();
+        }
     }
 
     protected function viewComp()
