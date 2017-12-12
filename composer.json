@@ -19,7 +19,7 @@
    ],
     "require": {
         "php" : "~7.0",
-       "illuminate/support": "^5.4",
+       "illuminate/support": "5.4 || 5.5",
        "ctf0/package-changelog": "^1.0"
     },
     "autoload": {
