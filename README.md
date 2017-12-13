@@ -37,9 +37,9 @@ The only media manager with this number of features & flexibility.
 - install dependencies
 
 ```bash
-yarn add vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-awesome vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone keycode smoothscroll-polyfill babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue smoothscroll-polyfill axios dropzone keycode vue-ls vue-multi-ref vue-tippy vue2-filters vuemit vue-notif vue-clipboard2 vue-awesome vue-touch@next babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone keycode smoothscroll-polyfill babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -61,23 +61,23 @@ new Vue({
     - upload
     - move
     - delete
-- bulk selection.
+- bulk selection
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
-- toggle between `random names` & `original names` for uploaded files.
+- toggle between `random names` & `original names` for uploaded files
 - download selected ***"including bulk selection"***
-- directly copy selected file link.
+- directly copy selected file link
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder)
+- [lock/unlock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) "***sqlite needs to be installed"***
 - search
 - filter by type
     + folder
     + image
     + audio
     + video
-    + text
+    + text/pdf
 - sortBy
     + name "default"
     + size
@@ -95,31 +95,32 @@ new Vue({
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |      navigation     |            button            |   keyboard   | mouse (click) |    touch    |
-    |---------------------|------------------------------|--------------|---------------|-------------|
-    |                     | upload *(toolbar)*           | u            | *             |             |
-    |                     | refresh *(toolbar)*          | r            | *             |             |
-    |                     | move *(toolbar)*             | m            | *             | swipe up    |
-    |                     | delete *(toolbar)*           | d/del        | *             | swipe down  |
-    |                     | lock/unlock *(toolbar)*      | l            | *             |             |
-    |                     | bulk select *(toolbar)*      | b            | *             |             |
-    |                     | bulk select all *(toolbar)*  | a            | *             |             |
-    |                     | &nbsp;                       |              |               |             |
-    |                     | confirm rename *(modal)*     | enter        | *             |             |
-    |                     | confirm delete *(modal)*     | enter        | *             |             |
-    |                     | confirm move *(modal)*       | enter        | *             |             |
-    |                     | create new folder *(modal)*  | enter        | *             |             |
-    |                     | &nbsp;                       |              |               |             |
-    |                     | toggle *(info panel)*        | t            | *             |             |
-    |                     | play/pause media *(sidebar)* | space        | *             |             |
-    |                     | preview image *(sidebar)*    | space        | *             | 2x tap      |
-    |                     | hide image *(light-box)*     | space/esc    | *             |             |
-    | select next         |                              | right / down | *             | swipe left  |
-    | select prev         |                              | left / up    | *             | swipe right |
-    | select first        |                              | home         | *             |             |
-    | select last         |                              | end          | *             |             |
-    | open folder         |                              | enter        | 2x click      | 2x tap      |
-    | go back to prev dir | folderName *(breadcrumb)*    | backspace    | *             | swipe right |
+    |   navigation   |               button               |   keyboard   | mouse (click) |    touch    |
+    |----------------|------------------------------------|--------------|---------------|-------------|
+    |                | upload *(toolbar)*                 | u            | *             |             |
+    |                | refresh *(toolbar)*                | r            | *             |             |
+    |                | move *(toolbar)*                   | m            | *             | swipe up    |
+    |                | delete *(toolbar)*                 | d/del        | *             | swipe down  |
+    |                | lock/unlock *(toolbar)*            | l            | *             |             |
+    |                | bulk select *(toolbar)*            | b            | *             |             |
+    |                | bulk select all *(toolbar)*        | a            | *             |             |
+    |                | &nbsp;                             |              |               |             |
+    |                | confirm rename *(modal)*           | enter        | *             |             |
+    |                | confirm delete *(modal)*           | enter        | *             |             |
+    |                | confirm move *(modal)*             | enter        | *             |             |
+    |                | create new folder *(modal)*        | enter        | *             |             |
+    |                | &nbsp;                             |              |               |             |
+    |                | toggle *(info panel)*              | t            | *             |             |
+    |                | play/pause media *(sidebar)*       | space        | *             |             |
+    |                | preview image/pdf/text *(sidebar)* | space        | *             | tap         |
+    |                | preview image/pdf/text             | space        | 2x click      | 2x tap      |
+    |                | hide image *(light-box)*           | space/esc    | *             |             |
+    | select next    |                                    | right / down | *             | swipe left  |
+    | select prev    |                                    | left / up    | *             | swipe right |
+    | select first   |                                    | home         | *             |             |
+    | select last    |                                    | end          | *             |             |
+    | open folder    |                                    | enter        | 2x click      | 2x tap      |
+    | go to prev dir | folderName *(breadcrumb)*          | backspace    | *             | swipe right |
 
 - events
 
@@ -128,12 +129,7 @@ new Vue({
     | JS      |                                       |                                          |
     |         | modal-show                            | when modal is showen                     |
     |         | modal-hide                            | when modal is hidden                     |
-    |         | no-files-show                         | when no files msg is showen              |
-    |         | no-files-hide                         | when no files msg is hidden              |
-    |         | loading-files-show                    | when loading files is hidden             |
-    |         | loading-files-hide                    | when loading files is hidden             |
-    |         | ajax-error-show                       | when ajax call fails                     |
-    |         | file_selected *(when using modal)*    | get selected file url                    |
+    |         | file_selected *(when inside modal)*   | get selected file url                    |
     | Laravel |                                       |                                          |
     |         | MMFileUploaded($file_path)            | get uploaded file full path              |
     |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |

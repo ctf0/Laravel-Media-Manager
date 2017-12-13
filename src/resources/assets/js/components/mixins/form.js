@@ -1,14 +1,11 @@
 export default {
     methods: {
         /*                Main                */
-        getFiles(folders = '/', select_prev = null) {
+        getFiles(folders = '/', prev_folder = null, prev_file = null) {
 
             this.toggleLoading()
-            this.toggleInfoPanel()
             this.noFiles('hide')
-            if (!this.file_loader) {
-                this.loadingFiles('show')
-            }
+            this.loadingFiles('show')
             this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
 
             if (folders !== '/') {
@@ -19,8 +16,6 @@ export default {
             axios.post(this.filesRoute, {
                 folder: folders
             }).then(({data}) => {
-
-                this.toggleLoading()
 
                 // folder doesnt exist
                 if (data.error) {
@@ -54,21 +49,54 @@ export default {
                 }
 
                 // check for prev opened folder
-                if (select_prev) {
+                if (prev_folder) {
                     this.$nextTick(() => {
                         this.files.items.some((e, i) => {
-                            if (e.name == select_prev) {
+                            if (e.name == prev_folder) {
                                 return this.setSelected(e, i)
                             }
                         })
                     })
-                } else if (this.allItemsCount) {
-                    this.selectFirst()
                 }
 
+                // check for prev selected file
+                if (prev_file) {
+                    this.$nextTick(() => {
+                        this.files.items.some((e, i) => {
+                            if (e.name == prev_file) {
+                                return this.setSelected(e, i)
+                            }
+                        })
+                    })
+                }
+
+                // we have files
+                if (this.allItemsCount) {
+                    // now prev files / folders
+                    if (!prev_folder && !prev_file) {
+                        this.selectFirst()
+                    }
+
+                    setTimeout(() => {
+                        this.toggleInfo = true
+                        this.toggleLoading()
+                        this.loadingFiles('hide')
+                    }, 500)
+
+                    // scroll to prev selected item
+                    setTimeout(() => {
+                        if (this.currentFileIndex) {
+                            this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
+                        }
+                    }, 1000)
+
+                    return this.updateDirsList()
+                }
+
+                // we dont have files
+                this.toggleLoading()
                 this.loadingFiles('hide')
-                this.toggleInfoPanel()
-                this.updateDirsList()
+                this.toggleInfo = false
 
             }).catch((err) => {
                 console.error(err)

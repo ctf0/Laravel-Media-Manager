@@ -6,16 +6,23 @@ window.Dropzone = require('dropzone')
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
 Vue.use(require('vue-ls'))
+
+// vue-tippy
 Vue.use(require('vue-tippy'), {
-    flipDuration: 0,
     arrow: true,
     touchHold: true,
-    performance: true,
-    popperOptions: {
-        modifiers: {
-            preventOverflow: {
-                enabled: false
-            }
+    inertia: true,
+    performance: true
+})
+window.addEventListener('scroll', function () {
+    const poppers = document.querySelectorAll('.tippy-popper')
+
+    for (const popper of poppers) {
+        const tooltip = popper._reference._tippy
+
+        if (tooltip.state.visible) {
+            tooltip.popperInstance.disableEventListeners()
+            tooltip.hide()
         }
     }
 })
@@ -39,11 +46,11 @@ axios.defaults.headers.common = {
 }
 
 // polyfill
-// window.__forceSmoothScrollPolyfill__ = true
+window.__forceSmoothScrollPolyfill__ = true
 require('smoothscroll-polyfill').polyfill()
 
 // vue-awesome
-import 'vue-awesome/icons/cloud-upload'
+import 'vue-awesome/icons/shopping-basket'
 import 'vue-awesome/icons/folder'
 import 'vue-awesome/icons/refresh'
 import 'vue-awesome/icons/share'
@@ -55,7 +62,6 @@ import 'vue-awesome/icons/puzzle-piece'
 import 'vue-awesome/icons/image'
 import 'vue-awesome/icons/video-camera'
 import 'vue-awesome/icons/music'
-import 'vue-awesome/icons/file-text'
 import 'vue-awesome/icons/times'
 import 'vue-awesome/icons/bell-o'
 import 'vue-awesome/icons/search'
@@ -71,6 +77,8 @@ import 'vue-awesome/icons/warning'
 import 'vue-awesome/icons/archive'
 import 'vue-awesome/icons/unlock'
 import 'vue-awesome/icons/lock'
+import 'vue-awesome/icons/eye'
+import 'vue-awesome/icons/film'
 Vue.component('icon', require('vue-awesome/components/Icon'))
 
 /*                Components                */

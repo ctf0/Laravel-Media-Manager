@@ -1,8 +1,0 @@
-- fix using swipe up/down when move/delete is disabled
-- add toggle toolbar button “mostly for mobile users”
-- smooth scroll navigation
-- better/accurate progress bar for upload
-- fix not changing animation direction for swiping
-- fix not reseting current selected file index
-- preview pdf
-- fix https://github.com/ctf0/Laravel-Media-Manager/issues/20

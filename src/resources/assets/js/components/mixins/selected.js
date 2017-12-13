@@ -23,6 +23,11 @@ export default {
                 return this.fileTypeIs(this.selectedFile, val)
             }
         },
+        dbltap() {
+            return this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')
+                ? this.toggleModal('preview_modal')
+                : this.openFolder(this.selectedFile)
+        },
 
         /*                Folder                */
         openFolder(file) {
@@ -94,7 +99,14 @@ export default {
             }
 
             // toggle modal off
-            if (this.isActiveModal('preview_modal') && !(this.selectedFileIs('image') || this.selectedFileIs('pdf'))) {
+            if (
+                this.isActiveModal('preview_modal') &&
+                !(
+                    this.selectedFileIs('image') ||
+                    this.selectedFileIs('pdf') ||
+                    this.selectedFileIs('text')
+                )
+            ) {
                 this.toggleModal()
             }
         },
@@ -119,7 +131,15 @@ export default {
         scrollToFile(file) {
             file = file[0]
             file.click()
-            file.scrollIntoView({behavior: 'smooth'})
+
+            let wrapper = this.$refs.__stackLeft.$el
+            let count = file.offsetTop - wrapper.scrollTop - 20
+            wrapper.scrollBy({top: count, left: 0, behavior: 'smooth'})
+
+            // fix for no scroll when screen is < 1024px
+            if (wrapper.scrollTop == 0) {
+                file.scrollIntoView(false)
+            }
         }
     }
 }

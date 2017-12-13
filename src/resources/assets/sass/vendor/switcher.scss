@@ -1,0 +1,586 @@
+/**
+ * https://www.cssscript.com/ios-style-pure-css-switch-buttons-ios-switcher/
+ */
+.form-switcher {
+    input[type='checkbox'] {
+        display: none;
+
+        &:disabled {
+            & + .switcher {
+                cursor: not-allowed;
+                opacity: 0.6;
+                box-shadow: 0 0 0 transparent !important;
+
+                &::after {
+                    width: 21px !important;
+                    height: 21px !important;
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    &::after {
+                        transform: translateX(18px) !important;
+                    }
+                }
+            }
+        }
+
+        &:checked {
+            &:disabled {
+                & + .switcher {
+                    border-color: darken($active_theme, 5%) !important;
+                    box-shadow: 0 0 0 15px $active_theme inset !important;
+                }
+            }
+
+            & + .switcher {
+                transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out 0.02s;
+                border-color: $green;
+                background-color: $green;
+                box-shadow: 0 0 0 12.5px $green inset;
+
+                &::after {
+                    transform: translateX(18px);
+                }
+
+                &:hover {
+                    &:active {
+                        &::after {
+                            transform: translateX(10.65px);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .switcher {
+        position: relative;
+        display: block;
+        width: 43px;
+        height: 25px;
+        padding: 0;
+        cursor: pointer;
+        transition: box-shadow 0.2s ease-out 0.02s, border-color 0.2s ease-out;
+        border: 2px solid $active_theme;
+        border-radius: 100vw;
+        background-color: $active_theme;
+
+        &::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 21px;
+            height: 21px;
+            content: '';
+            transition: all 0.2s ease-out;
+            transform: translateX(0);
+            border-radius: 100vw;
+            background-color: $white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        &:hover {
+            &:active {
+                box-shadow: 0 0 0 13px $active_theme inset;
+
+                &::after {
+                    width: 28.35px !important;
+                }
+            }
+        }
+    }
+}
+
+.form-switcher.form-switcher-sm {
+    .switcher {
+        width: 31px;
+        height: 18px;
+
+        &:hover {
+            &:active {
+                box-shadow: 0 0 0 13px $active_theme inset;
+
+                &::after {
+                    width: 18.9px !important;
+                }
+            }
+        }
+
+        &::after {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    input[type='checkbox'] {
+        &:disabled {
+            & + .switcher {
+                &::after {
+                    width: 14px !important;
+                    height: 14px !important;
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    &::after {
+                        transform: translateX(13px) !important;
+                    }
+                }
+            }
+        }
+
+        &:checked {
+            & + .switcher {
+                border-color: $green;
+                background-color: $green;
+                box-shadow: 0 0 0 9px $green inset;
+
+                &::after {
+                    transform: translateX(13px);
+                }
+
+                &:hover {
+                    &:active {
+                        &::after {
+                            transform: translateX(8.1px);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.form-switcher.form-switcher-lg {
+    .switcher {
+        width: 53px;
+        height: 30px;
+
+        &:hover {
+            &:active {
+                box-shadow: 0 0 0 13px $active_theme inset;
+
+                &::after {
+                    width: 35.1px !important;
+                }
+            }
+        }
+
+        &::after {
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    input[type='checkbox'] {
+        &:disabled {
+            & + .switcher {
+                &::after {
+                    width: 26px !important;
+                    height: 26px !important;
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    &::after {
+                        transform: translateX(23px) !important;
+                    }
+                }
+            }
+        }
+
+        &:checked {
+            & + .switcher {
+                border-color: $green;
+                background-color: $green;
+                box-shadow: 0 0 0 15px $green inset;
+
+                &::after {
+                    transform: translateX(23px);
+                }
+
+                &:hover {
+                    &:active {
+                        &::after {
+                            transform: translateX(13.9px);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media('max', 768) {
+    .form-switcher.form-switcher-sm-phone {
+        .switcher {
+            width: 31px;
+            height: 18px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 18.9px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 14px !important;
+                        height: 14px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(13px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 9px $green inset;
+
+                    &::after {
+                        transform: translateX(13px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(8.1px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .form-switcher.form-switcher-md-phone {
+        .switcher {
+            width: 43px;
+            height: 25px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 28.35px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 21px;
+                height: 21px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 21px !important;
+                        height: 21px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(18px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 12.5px $green inset;
+
+                    &::after {
+                        transform: translateX(18px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(10.65px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .form-switcher.form-switcher-lg-phone {
+        .switcher {
+            width: 53px;
+            height: 30px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 35.1px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 26px !important;
+                        height: 26px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(23px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 15px $green inset;
+
+                    &::after {
+                        transform: translateX(23px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(13.9px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media('max', 991) {
+    .form-switcher.form-switcher-sm-tablet {
+        .switcher {
+            width: 31px;
+            height: 18px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 18.9px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 14px !important;
+                        height: 14px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(13px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 9px $green inset;
+
+                    &::after {
+                        transform: translateX(13px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(8.1px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .form-switcher.form-switcher-md-tablet {
+        .switcher {
+            width: 43px;
+            height: 25px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 28.35px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 21px;
+                height: 21px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 21px !important;
+                        height: 21px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(18px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 12.5px $green inset;
+
+                    &::after {
+                        transform: translateX(18px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(10.65px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .form-switcher.form-switcher-lg-tablet {
+        .switcher {
+            width: 53px;
+            height: 30px;
+
+            &:hover {
+                &:active {
+                    box-shadow: 0 0 0 13px $active_theme inset;
+
+                    &::after {
+                        width: 35.1px !important;
+                    }
+                }
+            }
+
+            &::after {
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        input[type='checkbox'] {
+            &:disabled {
+                & + .switcher {
+                    &::after {
+                        width: 26px !important;
+                        height: 26px !important;
+                    }
+                }
+
+                &:checked {
+                    & + .switcher {
+                        &::after {
+                            transform: translateX(23px) !important;
+                        }
+                    }
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    border-color: $green;
+                    background-color: $green;
+                    box-shadow: 0 0 0 15px $green inset;
+
+                    &::after {
+                        transform: translateX(23px);
+                    }
+
+                    &:hover {
+                        &:active {
+                            &::after {
+                                transform: translateX(13.9px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

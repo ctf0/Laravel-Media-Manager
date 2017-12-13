@@ -5,13 +5,13 @@ EventHub.listen('modal-hide', () => {})
 // F I L E - L O A D I N G
 EventHub.listen('loading-files-show', () => {
     setTimeout(() => {
-        bm(document.getElementById('file_loader_anim'), 'file_loader_anim')
+        bm(document.getElementById('loading_files_anim'), 'loading_files_anim')
     }, 50)
 })
 
 EventHub.listen('loading-files-hide', () => {
     setTimeout(() => {
-        bodymovin.destroy('file_loader_anim')
+        bodymovin.destroy('loading_files_anim')
     }, 50)
 })
 
@@ -22,6 +22,15 @@ EventHub.listen('no-files-show', () => {
 
 EventHub.listen('no-files-hide', () => {
     bodymovin.destroy('no_files_anim')
+})
+
+// N O - S E A R C H
+EventHub.listen('no-search-show', () => {
+    bm(document.getElementById('no_search_anim'), 'no_search_anim')
+})
+
+EventHub.listen('no-search-hide', () => {
+    bodymovin.destroy('no_search_anim')
 })
 
 // A J A X  - E R R O R
@@ -40,6 +49,9 @@ function bm(el, name) {
         loop: true,
         name: name,
         autoplay: true,
-        path: el.getAttribute('data-json')
+        path: el.getAttribute('data-json'),
+        rendererSettings: {
+            progressiveLoad: true
+        }
     })
 }

@@ -13,16 +13,6 @@ export default {
             return this.currentFilterName == val
         },
         fileTypeIs(item, val) {
-            if (val == 'text') {
-                if (!item.type.includes('folder') &&
-                    !item.type.includes('image') &&
-                    !item.type.includes('video') &&
-                    !item.type.includes('audio') &&
-                    !item.type.includes('pdf')) {
-                    return true
-                }
-            }
-
             return item.type.includes(val)
         },
         showFilesOfType(val) {
@@ -78,10 +68,10 @@ export default {
                         return
                     }
 
-                    return this.noFiles('show')
+                    return this.noSearch('show')
                 }
 
-                this.noFiles('hide')
+                this.noSearch('hide')
             })
         }
     }

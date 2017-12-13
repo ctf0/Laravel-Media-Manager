@@ -128,13 +128,22 @@ export default {
             this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
+        noSearch(s) {
+            if (s == 'show') {
+                this.toggleLoader('no_search', true)
+                return EventHub.fire('no-search-show')
+            }
+
+            this.toggleLoader('no_search', false)
+            EventHub.fire('no-search-hide')
+        },
         loadingFiles(s) {
             if (s == 'show') {
-                this.toggleLoader('file_loader', true)
+                this.toggleLoader('loading_files', true)
                 return EventHub.fire('loading-files-show')
             }
 
-            this.toggleLoader('file_loader', false)
+            this.toggleLoader('loading_files', false)
             EventHub.fire('loading-files-hide')
         },
         ajaxError() {

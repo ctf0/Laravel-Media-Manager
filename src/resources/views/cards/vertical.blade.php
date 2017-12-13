@@ -1,12 +1,11 @@
-<div class="card">
+<div class="card" :class="{'pdf': selectedFileIs('pdf') || selectedFileIs('text')}">
     <v-touch class="card-image"
-        :class="{'pdf': selectedFileIs('pdf')}"
         @swiperight="goToPrev()"
         @swipeleft="goToNext()">
 
-        <template v-if="selectedFileIs('pdf')">
+        <template v-if="selectedFileIs('pdf') || selectedFileIs('text')">
             <object :data="selectedFile.path" :type="selectedFile.type" width="100%" height="100%">
-               <p>{{ trans('MediaManager::messages.pdf') }}</p>
+               <p v-if="selectedFileIs('pdf')">{{ trans('MediaManager::messages.pdf') }}</p>
             </object>
         </template>
 
@@ -33,7 +32,11 @@
                             </span>
                         </div>
                         <div class="media-content">
-                            <p class="title">@{{ selectedFile.name }}</p>
+                            <p class="title">@{{ selectedFile.name }}
+                                <a v-if="selectedFileIs('pdf')" :href="selectedFile.path" class="has-text-dark" target="_blank">
+                                    <icon name="eye"></icon>
+                                </a>
+                            </p>
                             <p class="heading">@{{ selectedFile.last_modified_formated }}</p>
                         </div>
                     </div>

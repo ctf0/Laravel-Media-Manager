@@ -19,7 +19,11 @@ export default {
                         }
                     })
                 }
+
+                return this.updateLs({'selectedFileName': val.name})
             }
+
+            this.updateLs({'selectedFileName': null})
         },
         checkForFolders(val) {
             if (!val) {
@@ -94,15 +98,19 @@ export default {
 
             if (!val) {
                 this.resetInput('searchItemsCount')
-                this.noFiles('hide')
+                this.noSearch('hide')
+
+                this.selectFirstInBulkList()
             }
         },
         searchItemsCount(val) {
             if (val == 0) {
                 this.resetInput(['selectedFile', 'currentFileIndex'])
+            } else {
+                this.selectFirstInBulkList()
             }
 
-            if (this.allItemsCount == undefined) {
+            if (this.allItemsCount == undefined || val == this.allItemsCount) {
                 this.resetInput('searchItemsCount')
             }
         }

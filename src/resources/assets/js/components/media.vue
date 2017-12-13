@@ -9,7 +9,10 @@ import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
 import Computed from './mixins/computed'
 
+import Bounty from 'vue-bounty'
+
 export default {
+    components: {Bounty},
     name: 'media-manager',
     mixins: [
         Form,
@@ -39,7 +42,8 @@ export default {
         return {
             isLoading: false,
             no_files: false,
-            file_loader: false,
+            loading_files: false,
+            no_search: false,
             ajax_error: false,
             toggleInfo: true,
             uploadToggle: false,
@@ -81,13 +85,12 @@ export default {
             return this.restrictAccess()
         }
 
-        this.getFiles(this.folders)
+        this.getFiles(this.folders, null, this.selectedFile)
 
         document.addEventListener('keydown', this.shortCuts)
     },
     mounted() {
         this.fileUpload()
-        this.shortCuts()
     },
     updated() {
         this.autoPlay()
@@ -105,9 +108,10 @@ export default {
             let ls = this.$ls.get('mediamanager')
 
             if (ls) {
-                this.randomNames = ls.randomNames
-                this.folders = ls.folders || '/'
-                this.toolBar = ls.toolBar
+                this.randomNames = ls.randomNames ? ls.randomNames : false
+                this.folders = ls.folders ? ls.folders : []
+                this.toolBar = ls.toolBar ? ls.toolBar : true
+                this.selectedFile = ls.selectedFileName ? ls.selectedFileName : null
             }
         },
 
@@ -141,7 +145,9 @@ export default {
                             : manager.showNotif(item.message, 'danger')
                     })
 
-                    manager.getFiles(manager.folders)
+                    res.data.length
+                        ? manager.getFiles(manager.folders, null, res.data[res.data.length - 1].message)
+                        : manager.getFiles(manager.folders)
                 },
                 errormultiple(files, res) {
                     manager.showNotif(res, 'danger')
@@ -153,6 +159,7 @@ export default {
                 }
             })
         },
+        /* end of upload */
 
         shortCuts(e) {
             // when modal isnt visible
@@ -180,8 +187,11 @@ export default {
                                 keycode(e) == 'space' &&
                                 e.target == document.body &&
                                 (
-                                    this.selectedFileIs('video') || this.selectedFileIs('audio') ||
-                                    this.selectedFileIs('image') || this.selectedFileIs('pdf')
+                                    this.selectedFileIs('video') ||
+                                    this.selectedFileIs('audio') ||
+                                    this.selectedFileIs('image') ||
+                                    this.selectedFileIs('pdf') ||
+                                    this.selectedFileIs('text')
                                 )
                             ) {
                                 e.preventDefault()
@@ -195,8 +205,8 @@ export default {
                                         : player.pause()
                                 }
 
-                                // "show" image quick view
-                                if (this.selectedFileIs('image') || this.selectedFileIs('pdf')) {
+                                // "show" image/pdf/text quick view
+                                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
                                     this.noScroll('add')
                                     this.toggleModal('preview_modal')
                                 }
@@ -206,7 +216,7 @@ export default {
 
                         // refresh
                         if (keycode(e) == 'r') {
-                            this.getFiles(this.folders)
+                            this.refresh()
                         }
 
                         // file upload
@@ -286,6 +296,11 @@ export default {
                 }
             }
             /* end of modal is visible */
+        },
+        /* end of short cuts */
+
+        refresh() {
+            this.getFiles(this.folders, null, this.selectedFile.name)
         },
         deleteItem() {
             if (this.$refs.delete[0].disabled) {

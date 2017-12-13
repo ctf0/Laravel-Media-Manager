@@ -1,0 +1,35 @@
+.mm-animated {
+    animation-duration: 600ms;
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    animation-fill-mode: both;
+}
+
+@keyframes fadeInDown {
+    from {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+.fadeInDown {
+    animation-name: fadeInDown;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}

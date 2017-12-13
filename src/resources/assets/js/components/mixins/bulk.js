@@ -15,6 +15,14 @@ export default {
 
             // select prev item
             this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+        },
+        selectFirstInBulkList() {
+            let list = this.bulkList
+
+            if (list.length) {
+                this.selectedFile = list[0]
+                this.currentFileIndex = 0
+            }
         }
     }
 }

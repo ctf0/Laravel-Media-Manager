@@ -1,0 +1,68 @@
+// loaders
+#loading_files,
+#no_files,
+#no_search,
+#ajax_error {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $active_theme;
+
+    h3 {
+        margin-top: 1rem;
+        color: darken($active_theme, 50%);
+    }
+}
+
+// anim
+#loading_files_anim,
+#ajax_error_anim,
+#no_search_anim,
+#no_files_anim {
+    overflow: hidden;
+}
+
+#loading_files {
+    #loading_files_anim {
+        height: 100%;
+
+        svg {
+            transform: scale(1.5);
+        }
+    }
+
+    h3 {
+        margin: 0 0 2rem;
+    }
+}
+
+#ajax_error_anim {
+    width: 150px;
+}
+
+#no_search_anim {
+    width: 200px;
+
+    svg {
+        transform: scale(3);
+    }
+}
+
+#no_files {
+    #no_files_anim {
+        width: 100px;
+    }
+
+    h3 {
+        margin-left: 1rem;
+    }
+}
