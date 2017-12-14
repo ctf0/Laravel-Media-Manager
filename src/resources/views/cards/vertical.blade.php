@@ -16,41 +16,56 @@
 
     <div class="card-content">
         <div class="level">
-            {{-- lock / name / date --}}
             <div class="level-left">
                 <div class="level-item">
                     <div class="media">
+                        {{-- lock / unlock --}}
                         <div class="media-left link">
                             <span class="icon is-large"
                                 :class="IsInLockedList(selectedFile) ? 'is-danger' : 'is-success'"
                                 :title="IsInLockedList(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
-                                v-tippy="{hideOnClick: false}"
+                                v-tippy="{arrow: true, hideOnClick: false}"
                                 @click="toggleLock(selectedFile)">
                                 <span class="icon is-small">
                                     <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'" scale="1.5"></icon>
                                 </span>
                             </span>
                         </div>
+
                         <div class="media-content">
-                            <p class="title">@{{ selectedFile.name }}
+                            {{-- name --}}
+                            <p class="title">
+                                <span class="link"
+                                    @click="copyLink(selectedFile.path)"
+                                    :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
+                                    v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
+                                    @hidden="linkCopied = false">
+                                    @{{ selectedFile.name }}
+                                </span>
+
+                                {{-- pdf open --}}
                                 <a v-if="selectedFileIs('pdf')" :href="selectedFile.path" class="has-text-dark" target="_blank">
                                     <icon name="eye"></icon>
                                 </a>
                             </p>
+
+                            {{-- date --}}
                             <p class="heading">@{{ selectedFile.last_modified_formated }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- download / size --}}
             <div class="level-right">
                 <div class="level-item has-text-centered">
                     <div>
+                        {{-- download --}}
                         <button class="button btn-plain" @click.prevent="saveFile(selectedFile)"
                             v-tippy title="{{ trans('MediaManager::messages.download_file') }}">
                             <span class="icon has-text-black"><icon name="download" scale="3"></icon></span>
                         </button>
+
+                        {{-- size --}}
                         <p>@{{ getFileSize(selectedFile.size) }}</p>
                     </div>
                 </div>
@@ -59,6 +74,7 @@
     </div>
 
     <footer class="card-footer">
+        {{-- move --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 v-multi-ref="'move'"
@@ -69,6 +85,7 @@
             </button>
         </div>
 
+        {{-- rename --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 :disabled="!selectedFile || IsInLockedList(selectedFile)"
@@ -79,6 +96,7 @@
             </button>
         </div>
 
+        {{-- delete --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 v-multi-ref="'delete'"

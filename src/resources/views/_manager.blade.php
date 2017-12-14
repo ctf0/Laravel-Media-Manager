@@ -32,6 +32,8 @@
                         {{-- upload --}}
                         <div class="control">
                             <button class="button"
+                                ref="upload"
+                                :disabled="uploadStart"
                                 @click="toggleUploadPanel()"
                                 v-tippy title="u">
                                 <span class="icon is-small"><icon name="shopping-basket"></icon></span>
@@ -270,30 +272,27 @@
         {{-- ====================================================================== --}}
 
         {{-- dropzone --}}
-        <transition name="list" mode="out-in">
-            <div v-show="uploadToggle">
-                <div class="media-manager__dz">
-                    <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
-                        <div class="__dz-message dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
-                        {{ csrf_field() }}
-                        <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+        <transition-group name="list" mode="out-in" tag="section">
+            <div key="1" v-show="uploadToggle" class="media-manager__dz">
+                <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
 
-                        <div class="form-switcher" title="{{ trans('MediaManager::messages.use_random_names') }}" v-tippy>
-                            <input type="checkbox" name="random_names" id="random_names" v-model="randomNames">
-                            <label class="switcher" for="random_names"></label>
-                        </div>
-                    </form>
-
-                    <div id="uploadPreview"></div>
-                </div>
-
-                <transition name="list">
-                    <div id="uploadProgress" class="progress" v-show="uploadStart">
-                        <div class="progress-bar is-success progress-bar-striped active" :style="{width: uploadProgress}"></div>
+                    {{ csrf_field() }}
+                    <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
+                    <div class="form-switcher" title="{{ trans('MediaManager::messages.use_random_names') }}" v-tippy>
+                        <input type="checkbox" name="random_names" id="random_names" v-model="randomNames">
+                        <label class="switcher" for="random_names"></label>
                     </div>
-                </transition>
+
+                    <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+                </form>
+
+                <div id="uploadPreview"></div>
             </div>
-        </transition>
+
+            <div key="2" id="uploadProgress" class="progress" v-show="uploadStart">
+                <div class="progress-bar is-success progress-bar-striped active" :style="{width: uploadProgress}"></div>
+            </div>
+        </transition-group>
 
         {{-- ====================================================================== --}}
 
@@ -349,8 +348,8 @@
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
                             @click="setSelected(file, index)">
-                            <div class="__file-box" :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
-                                :data-item="file.name"
+                            <div class="__file-box"
+                                :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 :ref="'file_' + index">
 
                                 {{-- lock file --}}
@@ -387,6 +386,7 @@
                                     </div>
 
                                     <div class="__box-info">
+                                        {{-- folder --}}
                                         <template v-if="fileTypeIs(file, 'folder')">
                                             <h4>@{{ file.name }}</h4>
                                             <small>
@@ -395,6 +395,7 @@
                                             </small>
                                         </template>
 
+                                        {{-- any other --}}
                                         <template v-else>
                                             <h4>@{{ getFileName(file.name) }}</h4>
                                             <small>
@@ -426,7 +427,7 @@
                                 <template v-if="selectedFileIs('image')">
                                     <img :src="selectedFile.path"
                                         :key="selectedFile.name"
-                                        v-tippy="{position: 'left'}"
+                                        v-tippy="{arrow: true, position: 'left'}"
                                         title="space"
                                         class="link image"
                                         @click="toggleModal('preview_modal')"/>
@@ -437,7 +438,7 @@
                                     <video controls preload="metadata" class="__right-video"
                                         ref="player"
                                         :key="selectedFile.name"
-                                        v-tippy="{position: 'left'}" title="space">
+                                        v-tippy="{arrow: true, position: 'left'}" title="space">
                                         <source :src="selectedFile.path" type="video/mp4">
                                         <source :src="selectedFile.path" type="video/ogg">
                                         <source :src="selectedFile.path" type="video/webm">
@@ -450,7 +451,7 @@
                                     <audio controls preload="metadata" class="__right-audio"
                                         ref="player"
                                         :key="selectedFile.name"
-                                        v-tippy="{position: 'left'}" title="space">
+                                        v-tippy="{arrow: true, position: 'left'}" title="space">
                                         <source :src="selectedFile.path" type="audio/ogg">
                                         <source :src="selectedFile.path" type="audio/mpeg">
                                         {{ trans('MediaManager::messages.audio_support') }}
@@ -460,12 +461,12 @@
                                 {{-- icons --}}
                                 <icon v-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
                                 <div key="1" v-if="selectedFileIs('pdf')" class="link"
-                                    v-tippy="{position: 'left'}" title="space"
+                                    v-tippy="{arrow: true, position: 'left'}" title="space"
                                     @click="toggleModal('preview_modal')">
                                     <icon name="file-pdf-o" scale="4"></icon>
                                 </div>
                                 <div key="2" v-if="selectedFileIs('text')" class="link"
-                                    v-tippy="{position: 'left'}" title="space"
+                                    v-tippy="{arrow: true, position: 'left'}" title="space"
                                     @click="toggleModal('preview_modal')">
                                     <icon name="file-text-o" scale="4"></icon>
                                 </div>
@@ -496,27 +497,41 @@
                                     </template>
                                     <h4>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
                                 </div>
+
+                                {{-- keep the counts at bottom --}}
+                                <div v-else></div>
                             </transition>
 
                             {{-- items count --}}
-                            <transition-group class="__right-count" tag="div" name="slide" mode="out-in">
+                            <transition-group tag="div" name="slide" mode="out-in" class="__right-count">
+                                {{-- all --}}
                                 <div key="1" v-if="allItemsCount">
-                                    <p class="title is-1">
-                                        <bounty :value="allItemsCount"/>
-                                    </p>
+                                    <p class="title is-1"><bounty :value="allItemsCount"/></p>
                                     <p class="heading">{{ trans('MediaManager::messages.total') }}</p>
                                 </div>
 
+                                {{-- search --}}
                                 <div key="2" v-if="searchItemsCount !== null && searchItemsCount >= 0">
-                                    <p class="title is-1">
-                                        <bounty :value="searchItemsCount"/>
-                                    </p>
+                                    <p class="title is-1"><bounty :value="searchItemsCount"/></p>
                                     <p class="heading">{{ trans('MediaManager::messages.found') }}</p>
                                 </div>
 
-                                <div key="3" v-if="bulkItemsCount">
-                                    <p class="title is-1">
-                                        <bounty :value="bulkItemsCount"/>
+                                {{-- bulk --}}
+                                <div key="3" v-if="bulkItemsCount" class="__right-count-bulk">
+                                    <p>
+                                        <span class="title is-1"><bounty :value="bulkItemsCount"/></span>
+
+                                        {{-- nested --}}
+                                        <template v-if="bulkItemsChild">
+                                            <span class="icon is-medium"><icon name="plus"></icon></span>
+                                            <span class="title is-5"><bounty :value="bulkItemsChild"/></span>
+                                        </template>
+                                    </p>
+
+                                    {{-- size --}}
+                                    <p v-if="bulkItemsSize"
+                                        class="title is-6 has-text-weight-semibold">
+                                        <bounty :value="bulkItemsSize"/>
                                     </p>
                                     <p class="heading">{{ trans('MediaManager::messages.selected') }}</p>
                                 </div>
@@ -534,7 +549,10 @@
                     {{-- directories breadCrumb --}}
                     <ol class="breadcrumb">
                         <li v-if="!checkForRestrictedPath()">
-                            <a v-if="folders.length > 0 && !isBulkSelecting()" class="p-l-0" @click="goToFolder(0)">
+                            <a v-if="folders.length > 0 && !isBulkSelecting()"
+                                class="p-l-0"
+                                v-tippy title="backspace"
+                                @click="goToFolder(0)">
                                 {{ trans('MediaManager::messages.library') }}
                             </a>
                             <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
@@ -551,7 +569,10 @@
 
                 <div class="level-right">
                     {{-- toggle info --}}
-                    <div class="is-hidden-touch" @click="toggleInfoPanel()" v-tippy title="t" v-if="allItemsCount">
+                    <div class="is-hidden-touch"
+                        @click="toggleInfoPanel()"
+                        v-tippy title="t"
+                        v-if="allItemsCount">
                         <transition :name="toggleInfo ? 'info-out' : 'info-in'" mode="out-in">
                             <div key="1" v-if="toggleInfo" class="__stack-right-toggle has-text-link">
                                 <span>{{ trans('MediaManager::messages.close') }}</span>
@@ -731,53 +752,86 @@
 
                     <form action="{{ route('media.delete_file') }}" @submit.prevent="DeleteFileForm($event)">
                         <section class="modal-card-body">
+                            {{-- multi --}}
                             <template v-if="bulkListFilter.length">
-                                <table class="table" v-if="bulkListFilter.length <= 8">
-                                    <tr class="__modal-delete-text" v-for="item in bulkListFilter">
-                                        <td width="1%">
-                                            <span class="icon is-large">
-                                                <icon v-if="fileTypeIs(item, 'folder')" name="folder" scale="1.2"></icon>
-                                                <icon v-if="fileTypeIs(item, 'image')" name="image" scale="1.2"></icon>
-                                                <icon v-if="fileTypeIs(item, 'video')" name="film" scale="1.2"></icon>
-                                                <icon v-if="fileTypeIs(item, 'audio')" name="music" scale="1.2"></icon>
-                                                <icon v-if="fileTypeIs(item, 'pdf')" name="file-pdf-o" scale="1.2"></icon>
-                                                <icon v-if="fileTypeIs(item, 'text')" name="file-text-o" scale="1.2"></icon>
+                                <template v-if="bulkListFilter.length <= 8">
+                                    <div class="media" v-for="one in bulkListFilter">
+                                        <figure class="media-left">
+                                            <span class="icon has-text-link">
+                                                <icon v-if="fileTypeIs(one, 'folder')" name="folder" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'image')" name="image" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'video')" name="film" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'audio')" name="music" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'pdf')" name="file-pdf-o" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'text')" name="file-text-o" scale="1.2"></icon>
                                             </span>
-                                        </td>
-                                        <td v-if="item.items" class="title is-5">@{{ item.name }} "@{{ item.items }} {{ trans('MediaManager::messages.items') }}"</td>
-                                        <td v-else class="title is-5">@{{ item.name }}</td>
-                                    </tr>
-                                </table>
+                                        </figure>
+                                        <div class="media-content">
+                                            <p class="title is-4">
+                                                <strong class="has-text-link">@{{ one.name }}</strong>
+                                                <small v-if="one.items" class="has-text-link">"@{{ one.items }} {{ trans('MediaManager::messages.items') }}"</small>
+                                            </p>
+                                            <p class="subtitle is-5 has-text-danger">@{{ getFileSize(one.size) }}</p>
+                                        </div>
+                                    </div>
+                                </template>
 
-                                <p class="m-l-50 __modal-delete-text" v-else>
-                                    <span class="icon is-large"><icon name="archive" scale="1.5"></icon></span>
-                                    <span class="title is-5">"@{{ bulkListFilter.length }}" {{ trans('MediaManager::messages.too_many_files') }}</span>
+                                {{-- more than 8 items --}}
+                                <template v-else>
+                                    <div class="media">
+                                        <figure class="media-left">
+                                            <span class="icon has-text-link"><icon name="archive" scale="1.5"></icon></span>
+                                        </figure>
+                                        <div class="media-content">
+                                            <p class="title is-4">
+                                                <strong>"@{{ bulkListFilter.length }}"</strong>
+                                                <small class="has-text-link">{{ trans('MediaManager::messages.too_many_files') }}</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                {{-- total size --}}
+                                <p class="__modal-delete-total">
+                                    <span class="title">@{{ bulkItemsSize }}</span>
+                                    <span class="heading">{{ trans('MediaManager::messages.total') }}</span>
                                 </p>
                             </template>
 
+                            {{-- single --}}
                             <template v-else>
-                                <table class="table" v-if="selectedFile">
-                                    <tr class="__modal-delete-text">
-                                        <td width="1%">
-                                            <span class="icon is-large">
-                                                <icon v-if="selectedFileIs('folder')" name="folder" scale="1.2"></icon>
-                                                <icon v-if="selectedFileIs('image')" name="image" scale="1.2"></icon>
-                                                <icon v-if="selectedFileIs('video')" name="film" scale="1.2"></icon>
-                                                <icon v-if="selectedFileIs('audio')" name="music" scale="1.2"></icon>
-                                                <icon v-if="selectedFileIs('pdf')" name="file-pdf-o" scale="1.2"></icon>
-                                                <icon v-if="selectedFileIs('text')" name="file-text-o" scale="1.2"></icon>
+                                <template v-if="selectedFile">
+                                    <div class="media">
+                                        <figure class="media-left">
+                                            <span class="icon has-text-link">
+                                                <icon v-if="selectedFileIs('folder')" name="folder" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('image')" name="image" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('video')" name="film" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('audio')" name="music" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('pdf')" name="file-pdf-o" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('text')" name="file-text-o" scale="1.8"></icon>
                                             </span>
-                                        </td>
-                                        <td id="confirm_delete" class="title is-5" ref="confirm_delete"></td>
-                                    </tr>
-                                </table>
+                                        </figure>
+                                        <div class="media-content">
+                                            <p class="title is-4">
+                                                <strong class="has-text-link">@{{ selectedFile.name }}</strong>
+                                                <small v-if="selectedFile.items" class="has-text-link">
+                                                    "@{{ selectedFile.items }} {{ trans('MediaManager::messages.items') }}"
+                                                </small>
+                                            </p>
+                                            <p class="subtitle is-5 has-text-danger">@{{ getFileSize(selectedFile.size) }}</p>
+                                        </div>
+                                    </div>
+                                </template>
                             </template>
 
-                            <h5 class="__modal-folder-warning" v-if="folderWarning">
+                            {{-- deleting folder warning --}}
+                            <h5 v-if="folderWarning" class="__modal-folder-warning" >
                                 <span class="icon"><icon name="warning"></icon></span>
                                 <span>{{ trans('MediaManager::messages.delete_folder') }}</span>
                             </h5>
                         </section>
+
                         <footer class="modal-card-foot">
                             <button type="reset" class="button" @click="toggleModal()">
                                 {{ trans('MediaManager::messages.cancel') }}

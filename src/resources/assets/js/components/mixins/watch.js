@@ -60,6 +60,14 @@ export default {
                 })
             }
         },
+        uploadStart(val) {
+            if (val) {
+                this.toggleUploadPanel()
+                this.toggleLoading()
+                this.noFiles('hide')
+                this.loadingFiles('show')
+            }
+        },
 
         // ls
         randomNames(val) {

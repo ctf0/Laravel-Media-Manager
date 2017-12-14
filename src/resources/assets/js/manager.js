@@ -12,17 +12,16 @@ Vue.use(require('vue-tippy'), {
     arrow: true,
     touchHold: true,
     inertia: true,
-    performance: true
-})
-window.addEventListener('scroll', function () {
-    const poppers = document.querySelectorAll('.tippy-popper')
-
-    for (const popper of poppers) {
-        const tooltip = popper._reference._tippy
-
-        if (tooltip.state.visible) {
-            tooltip.popperInstance.disableEventListeners()
-            tooltip.hide()
+    performance: true,
+    flipDuration: 0,
+    popperOptions: {
+        modifiers: {
+            preventOverflow: {
+                enabled: false
+            },
+            hide: {
+                enabled: false
+            }
         }
     }
 })

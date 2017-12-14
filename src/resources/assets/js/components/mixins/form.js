@@ -3,9 +3,13 @@ export default {
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
 
-            this.toggleLoading()
             this.noFiles('hide')
-            this.loadingFiles('show')
+
+            if (!this.loading_files) {
+                this.toggleLoading()
+                this.loadingFiles('show')
+            }
+
             this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
 
             if (folders !== '/') {
@@ -78,9 +82,9 @@ export default {
                     }
 
                     setTimeout(() => {
-                        this.toggleInfo = true
                         this.toggleLoading()
                         this.loadingFiles('hide')
+                        this.toggleInfo = true
                     }, 500)
 
                     // scroll to prev selected item

@@ -1,5 +1,3 @@
-require('./../../vendor/download.min')
-
 export default {
     methods: {
         isLastItem(item, list) {
@@ -153,20 +151,6 @@ export default {
         },
 
         /*                Ops                */
-        // download
-        saveFile(item) {
-            if (this.isBulkSelecting()) {
-                this.bulkList.forEach((e) => {
-                    downloadFile(e.path)
-                })
-
-                return this.showNotif('All Done')
-            }
-
-            downloadFile(item.path)
-            return this.showNotif(`"${item.name}" ${this.trans('downloaded')}`)
-        },
-
         // copy to clipboard
         copyLink(path) {
             this.linkCopied = true

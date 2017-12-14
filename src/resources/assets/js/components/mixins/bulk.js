@@ -13,8 +13,12 @@ export default {
 
             this.bulkList.splice(this.bulkList.indexOf(file), 1)
 
-            // select prev item
-            this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+            if (this.bulkItemsCount) {
+                // select prev item
+                this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+            } else {
+                this.resetInput(['selectedFile', 'currentFileIndex'])
+            }
         },
         selectFirstInBulkList() {
             let list = this.bulkList

@@ -8,6 +8,7 @@ import Restriction from './mixins/restriction'
 import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
 import Computed from './mixins/computed'
+import Download from './mixins/download'
 
 import Bounty from 'vue-bounty'
 
@@ -23,6 +24,7 @@ export default {
         Restriction,
         Utilities,
         Computed,
+        Download,
         Watchers
     ],
     props: [
@@ -75,7 +77,12 @@ export default {
             new_folder_name: null,
             new_filename: null,
             active_modal: null,
-            navDirection: ''
+
+            navDirection: null,
+            gradients: [
+                'linear-gradient(45deg,#6FE594,#27A47C)',
+                'linear-gradient(45deg,#F1467A,#FB949E)'
+            ]
         }
     },
     created() {
@@ -120,6 +127,7 @@ export default {
             let counter = 0
             let progress = 0
             let increaseBy = 0
+            let last = null
 
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
@@ -140,22 +148,24 @@ export default {
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
-                        item.success
-                            ? manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
-                            : manager.showNotif(item.message, 'danger')
+                        if (item.success) {
+                            manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
+                            last = item.message
+                        } else {
+                            manager.showNotif(item.message, 'danger')
+                        }
                     })
-
-                    res.data.length
-                        ? manager.getFiles(manager.folders, null, res.data[res.data.length - 1].message)
-                        : manager.getFiles(manager.folders)
                 },
                 errormultiple(files, res) {
                     manager.showNotif(res, 'danger')
                 },
                 queuecomplete() {
                     manager.uploadStart = false
-                    manager.toggleUploadPanel()
                     manager.uploadProgress = 0
+
+                    last
+                        ? manager.getFiles(manager.folders, null, last)
+                        : manager.getFiles(manager.folders)
                 }
             })
         },
@@ -221,7 +231,7 @@ export default {
 
                         // file upload
                         if (keycode(e) == 'u') {
-                            this.toggleUploadPanel()
+                            this.$refs.upload.click()
                         }
                     }
                     /* end of no bulk selection */
@@ -311,8 +321,6 @@ export default {
                 this.selectedFileIs('folder')
                     ? this.folderWarning = true
                     : this.folderWarning = false
-
-                this.$refs.confirm_delete.innerText = this.selectedFile.name
             }
 
             if (this.bulkItemsCount) {

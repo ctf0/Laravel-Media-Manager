@@ -1,5 +1,8 @@
 export default {
     computed: {
+        filesList() {
+            return this.$refs.filesList.$el.children
+        },
         allFiles() {
             if (this.filteredItemsCount) {
                 return this.filterdList
@@ -7,35 +10,51 @@ export default {
 
             return this.files.items
         },
-        filteredItemsCount() {
-            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
-                return this.filterdList.length
-            }
-        },
         allItemsCount() {
             if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
                 return this.allFiles.length
             }
         },
-        filesList() {
-            return this.$refs.filesList.$el.children
+        filteredItemsCount() {
+            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
+                return this.filterdList.length
+            }
         },
+
+        // bulk
         bulkItemsCount() {
             if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
                 return this.bulkList.length
             }
         },
-        uploadPanelImg() {
-            if (this.uploadToggle) {
-                let list = this.uploadPanelImgList
-                let url = list[Math.floor(Math.random() * list.length)]
+        bulkItemsSize() {
+            let count = 0
 
-                return {
-                    'background-image': `url("${url}")`
+            this.bulkList.map((item) => {count += item.size})
+
+            return this.getFileSize(count)
+        },
+        bulkItemsChild() {
+            let bulk = this.bulkItemsCount
+
+            if (bulk) {
+                if (bulk == 1 && !this.selectedFileIs('folder')) {
+                    return
                 }
+
+                let count = 0
+
+                this.bulkList.map((item) => {
+                    let list = item.items
+
+                    if (list) {
+                        count += list
+                    }
+                })
+
+                return count
             }
         },
-
         // this is made so we can still use move/delete
         // incase we have multiple files selected
         // and one or more of them is locked
@@ -43,6 +62,22 @@ export default {
             return this.lockedList.length
                 ? this.bulkList.filter((e) => {return !this.lockedList.includes(e.path)})
                 : this.bulkList
+        },
+
+        // upload panel
+        uploadPanelImg() {
+            if (this.uploadToggle) {
+                let imgs = this.uploadPanelImgList
+                let grds = this.gradients
+
+                let url = imgs[Math.floor(Math.random() * imgs.length)]
+                let color = grds[Math.floor(Math.random() * grds.length)]
+
+                return {
+                    '--gradient': color,
+                    'background-image': `url("${url}")`
+                }
+            }
         }
     }
 }

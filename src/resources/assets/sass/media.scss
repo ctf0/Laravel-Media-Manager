@@ -42,6 +42,7 @@
     transition: all 0.3s ease-in-out;
     border-radius: 5px;
     background-repeat: repeat;
+    background-position: center;
 
     &::before {
         position: absolute;
@@ -52,9 +53,9 @@
         content: '';
         transition: all 0.3s ease-in-out;
         transform: translate(-50%, -50%);
+        opacity: 0.8;
         border-radius: 100vw;
-        background-color: orangered;
-        mix-blend-mode: difference;
+        background-image: var(--gradient);
     }
 
     &:hover {
@@ -65,7 +66,7 @@
         }
     }
 
-    .__dz-message {
+    .dz-message {
         font-weight: 400;
         position: relative;
         margin: 0;
@@ -97,7 +98,7 @@
 }
 
 #uploadProgress {
-    margin-bottom: 15px;
+    margin: 1rem 0;
     border-radius: 100vw;
 }
 
@@ -434,29 +435,40 @@
         flex-direction: row-reverse;
         justify-content: space-evenly;
         margin-top: 3rem;
-        text-align: center;
         color: darken($active_theme, 50%);
 
         > div {
-            flex: 1;
+            text-align: center;
 
             &:not(:first-of-type) {
                 border-right: 1px solid darken($active_theme, 10%);
             }
 
-            &:only-of-type {
-                padding-right: 0.75rem;
-                text-align: right;
+            &:not(:only-of-type) {
+                flex: 1;
+                transition: all 0.3s;
             }
 
-            .title {
-                line-height: 1;
-                margin: 0 !important;
-                color: darken($active_theme, 50%);
+            &:only-of-type {
+                margin-left: auto;
+            }
+        }
 
-                svg {
-                    fill: darken($active_theme, 50%);
-                }
+        .__right-count-bulk {
+            span.icon,
+            span.is-5 {
+                position: relative;
+                bottom: 6px;
+            }
+        }
+
+        .title {
+            line-height: 1;
+            margin: 0 !important;
+            color: darken($active_theme, 50%);
+
+            svg {
+                fill: darken($active_theme, 50%);
             }
         }
     }
@@ -496,10 +508,10 @@
     }
 }
 
-.__modal-delete-text * {
-    font-weight: 500;
-    color: $blue;
-    fill: $blue;
+.__modal-delete-total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    text-align: right;
 }
 
 .__modal-folder-warning {
@@ -581,9 +593,8 @@
                 }
 
                 &:only-of-type {
-                    padding-right: 0;
-                    padding-left: 0.75rem;
-                    text-align: left;
+                    margin-right: auto;
+                    margin-left: 0;
                 }
             }
         }

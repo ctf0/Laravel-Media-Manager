@@ -66,7 +66,7 @@ new Vue({
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - toggle between `random names` & `original names` for uploaded files
-- download selected ***"including bulk selection"***
+- download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
 - use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
 - auto scroll to selected item when using (left/up, right/down, home, end)

@@ -1,0 +1,17 @@
+# Edits
+
+- in image preview, click the name to copy its url.
+- move upload panel bg patterns to its own branch to minimize package size.
+- more cleanup.
+- uploading new items while the manager is already uploading is now disabled, also the call to update the files list will run only once at the end of the upload to minimize the load on the server.
+
+# Bulk Select
+
+- show total selected items size
+- show folders nested items count
+- fix not being able to manually deselect last item in bulk list
+- show items size when deleting + total if more than one
+- if you want you can now download a zip file with all the selected files instead of separate ones. https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile
+
+- update readme
+- update assets
