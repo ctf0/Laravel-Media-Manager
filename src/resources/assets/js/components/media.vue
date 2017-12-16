@@ -1,11 +1,11 @@
 <script>
+import Utilities from './mixins/utils'
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
 import LockFile from './mixins/lock'
 import SelectedFile from './mixins/selected'
 import Restriction from './mixins/restriction'
-import Utilities from './mixins/utils'
 import Watchers from './mixins/watch'
 import Computed from './mixins/computed'
 import Download from './mixins/download'
@@ -16,15 +16,15 @@ export default {
     components: {Bounty},
     name: 'media-manager',
     mixins: [
+        Utilities,
         Form,
         FileFiltration,
         BulkSelect,
         LockFile,
         SelectedFile,
         Restriction,
-        Utilities,
-        Computed,
         Download,
+        Computed,
         Watchers
     ],
     props: [
@@ -48,9 +48,9 @@ export default {
             no_search: false,
             ajax_error: false,
             toggleInfo: true,
-            uploadToggle: false,
-            uploadStart: false,
-            uploadProgress: 0,
+            toggleUploadArea: false,
+            showProgress: false,
+            progressCounter: 0,
 
             linkCopied: false,
             bulkSelectAll: false,
@@ -123,11 +123,13 @@ export default {
         },
 
         fileUpload() {
-            let manager = this
-            let counter = 0
+            const manager = this
+
+            let items = 0
             let progress = 0
-            let increaseBy = 0
+            let counter = 0
             let last = null
+            let sendingComplete = false
 
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
@@ -138,13 +140,17 @@ export default {
                 timeout: 3600000,
                 previewsContainer: '#uploadPreview',
                 addedfile() {
-                    manager.uploadStart = true
-                    counter++
-                    increaseBy = 100 / counter
+                    manager.showProgress = true
+                    items++
+                    counter = 100 / items
                 },
                 sending() {
-                    progress += increaseBy
-                    return manager.uploadProgress = `${progress}%`
+                    progress += counter
+                    manager.progressCounter = `${progress.toFixed(2)}%`
+
+                    if (progress >= 100) {
+                        sendingComplete = true
+                    }
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
@@ -155,157 +161,164 @@ export default {
                             manager.showNotif(item.message, 'danger')
                         }
                     })
+
+                    if (sendingComplete) {
+                        items = 0
+                        progress = 0
+                        manager.progressCounter = 0
+                        manager.showProgress = false
+
+                        setTimeout(() => {
+                            last
+                                ? manager.getFiles(manager.folders, null, last)
+                                : manager.getFiles(manager.folders)
+                        }, 500)
+                    }
                 },
                 errormultiple(files, res) {
                     manager.showNotif(res, 'danger')
-                },
-                queuecomplete() {
-                    manager.uploadStart = false
-                    manager.uploadProgress = 0
-
-                    last
-                        ? manager.getFiles(manager.folders, null, last)
-                        : manager.getFiles(manager.folders)
                 }
             })
         },
         /* end of upload */
 
         shortCuts(e) {
-            // when modal isnt visible
-            if (!this.active_modal) {
-                // when search is not focused
-                if (document.activeElement.dataset.search == undefined) {
-                    // when no bulk selecting
-                    if (!this.isBulkSelecting()) {
+            if (!this.isLoading) {
+                // when modal isnt visible
+                if (!this.active_modal) {
+                    // when search is not focused
+                    if (document.activeElement.dataset.search == undefined) {
+                        // when no bulk selecting
+                        if (!this.isBulkSelecting()) {
 
-                        // open folder
-                        if (keycode(e) == 'enter' && this.selectedFile) {
-                            this.openFolder(this.selectedFile)
+                            // open folder
+                            if (keycode(e) == 'enter' && this.selectedFile) {
+                                this.openFolder(this.selectedFile)
+                            }
+
+                            // go up a dir
+                            if (keycode(e) == 'backspace' && this.folders.length) {
+                                this.goToPrevFolder()
+                            }
+
+                            // when there are files
+                            if (this.allItemsCount) {
+                                this.navigation(e)
+
+                                if (
+                                    keycode(e) == 'space' &&
+                                    e.target == document.body &&
+                                    (
+                                        this.selectedFileIs('video') ||
+                                        this.selectedFileIs('audio') ||
+                                        this.selectedFileIs('image') ||
+                                        this.selectedFileIs('pdf') ||
+                                        this.selectedFileIs('text')
+                                    )
+                                ) {
+                                    e.preventDefault()
+
+                                    // play-pause media
+                                    if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                                        let player = this.$refs.player
+
+                                        return player.paused
+                                            ? player.play()
+                                            : player.pause()
+                                    }
+
+                                    // "show" image/pdf/text quick view
+                                    if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
+                                        this.noScroll('add')
+                                        this.toggleModal('preview_modal')
+                                    }
+                                }
+                            }
+                            // end of when there are files
+
+                            // refresh
+                            if (keycode(e) == 'r') {
+                                this.refresh()
+                            }
+
+                            // file upload
+                            if (keycode(e) == 'u') {
+                                this.$refs.upload.click()
+                            }
                         }
+                        /* end of no bulk selection */
 
-                        // go up a dir
-                        if (keycode(e) == 'backspace' && this.folders.length) {
-                            this.goToPrevFolder()
-                        }
-
-                        // when there are files
+                        // with or without bulk selection
                         if (this.allItemsCount) {
-                            this.navigation(e)
-
-                            if (
-                                keycode(e) == 'space' &&
-                                e.target == document.body &&
-                                (
-                                    this.selectedFileIs('video') ||
-                                    this.selectedFileIs('audio') ||
-                                    this.selectedFileIs('image') ||
-                                    this.selectedFileIs('pdf') ||
-                                    this.selectedFileIs('text')
-                                )
-                            ) {
-                                e.preventDefault()
-
-                                // play-pause media
-                                if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                                    let player = this.$refs.player
-
-                                    return player.paused
-                                        ? player.play()
-                                        : player.pause()
+                            // bulk select
+                            if (keycode(e) == 'b') {
+                                if (this.searchFor && this.searchItemsCount == 0) {
+                                    return
                                 }
 
-                                // "show" image/pdf/text quick view
-                                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
-                                    this.noScroll('add')
-                                    this.toggleModal('preview_modal')
+                                if (this.$refs.bulkSelect) {
+                                    this.$refs.bulkSelect.click()
+                                }
+                            }
+
+                            // add all to bulk list
+                            if (this.isBulkSelecting() && keycode(e) == 'a') {
+                                if (this.$refs.bulkSelectAll) {
+                                    this.$refs.bulkSelectAll.click()
+                                }
+                            }
+
+                            // delete file
+                            if (keycode(e) == 'delete' || keycode(e) == 'd') {
+                                if (!this.$refs.delete[0].disabled) {
+                                    this.$refs.delete[0].click()
+                                }
+                            }
+
+                            // move file
+                            if (this.checkForFolders && keycode(e) == 'm') {
+                                if (!this.$refs.move[0].disabled) {
+                                    this.$refs.move[0].click()
+                                }
+                            }
+
+                            // lock files
+                            if (keycode(e) == 'l') {
+                                if (this.$refs.lock) {
+                                    this.$refs.lock.click()
                                 }
                             }
                         }
-                        // end of when there are files
+                        /* end of with or without bulk selection */
 
-                        // refresh
-                        if (keycode(e) == 'r') {
-                            this.refresh()
-                        }
-
-                        // file upload
-                        if (keycode(e) == 'u') {
-                            this.$refs.upload.click()
+                        // toggle file details sidebar
+                        if (keycode(e) == 't') {
+                            this.toggleInfoPanel()
                         }
                     }
-                    /* end of no bulk selection */
-
-                    // with or without bulk selection
-                    if (this.allItemsCount) {
-                        // bulk select
-                        if (keycode(e) == 'b') {
-                            if (this.searchFor && this.searchItemsCount == 0) {
-                                return
-                            }
-
-                            if (this.$refs.bulkSelect) {
-                                this.$refs.bulkSelect.click()
-                            }
-                        }
-
-                        // add all to bulk list
-                        if (this.isBulkSelecting() && keycode(e) == 'a') {
-                            if (this.$refs.bulkSelectAll) {
-                                this.$refs.bulkSelectAll.click()
-                            }
-                        }
-
-                        // delete file
-                        if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                            if (!this.$refs.delete[0].disabled) {
-                                this.$refs.delete[0].click()
-                            }
-                        }
-
-                        // move file
-                        if (this.checkForFolders && keycode(e) == 'm') {
-                            if (!this.$refs.move[0].disabled) {
-                                this.$refs.move[0].click()
-                            }
-                        }
-
-                        // lock files
-                        if (keycode(e) == 'l') {
-                            if (this.$refs.lock) {
-                                this.$refs.lock.click()
-                            }
-                        }
-                    }
-                    /* end of with or without bulk selection */
-
-                    // toggle file details sidebar
-                    if (keycode(e) == 't') {
-                        this.toggleInfoPanel()
-                    }
+                    /* end of search is not focused */
                 }
-                /* end of search is not focused */
-            }
-            /* end of modal isnt visible */
+                /* end of modal isnt visible */
 
-            // when modal is visible
-            else {
-                if (this.isActiveModal('preview_modal')) {
+                // when modal is visible
+                else {
+                    if (this.isActiveModal('preview_modal')) {
+                        // hide lb
+                        if (keycode(e) == 'space') {
+                            e.preventDefault()
+                            this.toggleModal()
+                        }
+
+                        this.navigation(e)
+                    }
+
                     // hide lb
-                    if (keycode(e) == 'space') {
-                        e.preventDefault()
+                    if (keycode(e) == 'esc') {
                         this.toggleModal()
                     }
-
-                    this.navigation(e)
                 }
-
-                // hide lb
-                if (keycode(e) == 'esc') {
-                    this.toggleModal()
-                }
+                /* end of modal is visible */
             }
-            /* end of modal is visible */
         },
         /* end of short cuts */
 

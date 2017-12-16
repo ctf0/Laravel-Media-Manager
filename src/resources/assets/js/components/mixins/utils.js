@@ -40,17 +40,23 @@ export default {
 
             this[input] = val
         },
-
-        /*                Moving                */
         moveUpCheck() {
             return this.allItemsCount && this.folders.length && !this.restrictAndLast()
         },
+
+        /*                Buttons                */
         mv_dl() {
             if (this.isBulkSelecting()) {
                 return this.bulkListFilter.length == 0
             }
 
             return !this.selectedFile || this.IsInLockedList(this.selectedFile)
+        },
+        lock() {
+            return this.searchItemsCount == 0 ||
+            this.isLoading ||
+            !this.allItemsCount ||
+            this.isBulkSelecting() && !this.bulkItemsCount
         },
 
         /*                Resolve                */
@@ -101,7 +107,7 @@ export default {
             return this.toggleInfo = !this.toggleInfo
         },
         toggleUploadPanel() {
-            this.uploadToggle = !this.uploadToggle
+            this.toggleUploadArea = !this.toggleUploadArea
         },
         toggleLoader(key, state) {
             this[key] = state
@@ -119,10 +125,12 @@ export default {
         },
         noFiles(s) {
             if (s == 'show') {
+                this.toggleInfo = false
                 this.toggleLoader('no_files', true)
                 return EventHub.fire('no-files-show')
             }
 
+            this.toggleInfo = true
             this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
@@ -146,6 +154,7 @@ export default {
         },
         ajaxError() {
             this.toggleInfoPanel()
+            this.toggleInfo = false
             this.toggleLoader('ajax_error', true)
             EventHub.fire('ajax-error-show')
         },

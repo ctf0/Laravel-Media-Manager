@@ -3,7 +3,7 @@ $list: (img-nxt, img-prv, info-in, info-out, slide, list);
 @each $class in $list {
     .#{$class}-enter-active,
     .#{$class}-leave-active {
-        transition: all 0.3s ease;
+        transition: all 0.2s ease-in-out;
     }
 }
 
@@ -48,9 +48,16 @@ $list: (img-nxt, img-prv, info-in, info-out, slide, list);
     opacity: 0;
 }
 
-/* count & info panel */
+/* info panel */
 .slide-enter,
 .slide-leave-to {
     transform: translateX(-0.7rem);
+    opacity: 0;
+}
+
+/* counters */
+.counter-enter,
+.counter-leave-to {
+    transform: translateX(0.7rem);
     opacity: 0;
 }

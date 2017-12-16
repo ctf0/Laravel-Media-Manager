@@ -1,5 +1,5 @@
 {{-- manager --}}
-<div class="modal mm-animated fadeIn is-active mm-modal" v-if="showModal">
+<div class="modal mm-animated fadeIn is-active modal-manager__Inmodal" v-if="showModal">
     <div class="modal-background" @click="toggleModal()"></div>
     <div class="modal-content mm-animated fadeInDown">
         <div class="box">

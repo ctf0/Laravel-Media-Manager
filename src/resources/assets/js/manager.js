@@ -44,10 +44,6 @@ axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 
-// polyfill
-window.__forceSmoothScrollPolyfill__ = true
-require('smoothscroll-polyfill').polyfill()
-
 // vue-awesome
 import 'vue-awesome/icons/shopping-basket'
 import 'vue-awesome/icons/folder'

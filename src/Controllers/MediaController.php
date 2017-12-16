@@ -161,7 +161,7 @@ class MediaController extends Controller
         $success         = false;
 
         if ($this->storageDisk->exists($full_path)) {
-            $message = trans('MediaManager::messages.folder_exists_already');
+            $message = trans('MediaManager::messages.error_already_exists');
         } elseif ($this->storageDisk->makeDirectory($full_path)) {
             $success = true;
             $message = '';
@@ -203,7 +203,7 @@ class MediaController extends Controller
                 if (!$this->storageDisk->deleteDirectory($file_name)) {
                     $result[] = [
                         'success' => false,
-                        'message' => trans('MediaManager::messages.error_deleting_folder'),
+                        'message' => trans('MediaManager::messages.error_deleting_file'),
                     ];
                 } else {
                     // fire event

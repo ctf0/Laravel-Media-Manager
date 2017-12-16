@@ -12,7 +12,7 @@ $active_theme: $light_theme;
 
 // colors
 $white: lighten($active_theme, 100%);
-$black: darken($active_theme, 100%);
+$black: darken($active_theme, 80%);
 $green: hsl(141, 71%, 48%);
 $yellow: hsl(48, 100%, 67%);
 $red: hsl(348, 100%, 61%);

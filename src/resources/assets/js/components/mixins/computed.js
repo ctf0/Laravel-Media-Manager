@@ -32,7 +32,7 @@ export default {
 
             this.bulkList.map((item) => {count += item.size})
 
-            return this.getFileSize(count)
+            return count !== 0 ? this.getFileSize(count) : false
         },
         bulkItemsChild() {
             let bulk = this.bulkItemsCount
@@ -66,7 +66,7 @@ export default {
 
         // upload panel
         uploadPanelImg() {
-            if (this.uploadToggle) {
+            if (this.toggleUploadArea) {
                 let imgs = this.uploadPanelImgList
                 let grds = this.gradients
 

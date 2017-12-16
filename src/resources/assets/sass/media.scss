@@ -41,6 +41,7 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     border-radius: 5px;
+    background-color: $black;
     background-repeat: repeat;
     background-position: center;
 
@@ -248,23 +249,23 @@
     &:hover {
         box-shadow: $shadow_1;
     }
+}
 
-    .__box-copy-link {
-        position: absolute;
-        right: 1px;
-        bottom: 0;
-        cursor: copy;
-    }
+.__box-lock-icon {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 0.6rem;
+    height: 0.6rem;
+    cursor: default;
+    border-radius: 100vw;
+}
 
-    .__box-lock-icon {
-        position: absolute;
-        top: 3px;
-        right: 3px;
-        width: 0.6rem;
-        height: 0.6rem;
-        cursor: default;
-        border-radius: 100vw;
-    }
+.__box-copy-link {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: copy;
 }
 
 .__box-data {
@@ -283,7 +284,7 @@
             height: 53px;
             border-radius: 3px;
             background-repeat: no-repeat;
-            background-position: center;
+            background-position: top;
             background-size: cover;
         }
     }
@@ -328,21 +329,17 @@
 
     .__file-box {
         padding: 0;
+    }
 
-        &.selected,
-        &.bulk-selected,
-        &:hover {
-            .__box-info {
-                border-color: darken($blue, 5%) !important;
-            }
-        }
+    .__box-copy-link {
+        right: 1px;
+        bottom: 1px;
     }
 
     .__box-data {
         align-self: unset;
         flex-direction: column;
         width: 100%;
-        text-align: center;
 
         .__box-preview {
             display: flex;
@@ -351,6 +348,7 @@
             justify-content: center;
             width: 100%;
             margin: 0;
+            padding: 0.1rem;
 
             svg {
                 transform: scale(1.5);
@@ -359,15 +357,12 @@
             .__box-img {
                 width: 100%;
                 height: 100%;
-                border-radius: 0;
             }
         }
 
         .__box-info {
-            flex: 1;
             width: 100%;
             padding: 1rem;
-            border-top: 1px solid darken($active_theme, 5%);
         }
     }
 }
@@ -404,7 +399,7 @@
 
     .__right-info {
         display: flex;
-        flex: 1;
+        flex: 1 0 auto;
         flex-direction: column;
         padding: 0.75rem;
         word-break: break-all;
@@ -421,7 +416,7 @@
 
             span {
                 word-break: break-word;
-                color: darken($active_theme, 50%);
+                color: darken($active_theme, 70%);
             }
 
             a {
@@ -479,6 +474,18 @@
     align-items: center;
     padding: 0.7rem;
 
+    * {
+        color: $black;
+    }
+
+    .title {
+        word-break: break-all;
+    }
+
+    .subtitle {
+        color: darken($active_theme, 50%);;
+    }
+
     .modal-content,
     .card-image {
         width: auto;
@@ -499,13 +506,6 @@
             }
         }
     }
-
-    .title {
-        overflow: hidden;
-        max-width: 300px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
 }
 
 .__modal-delete-total {
@@ -518,26 +518,23 @@
     margin-top: 15px;
 }
 
-.__modal-manager {
-    .modal-content {
-        width: 75%;
-    }
-}
-
-@include media('max', 1023) {
-    .__modal-manager {
-        .modal-content {
-            width: 95%;
-        }
-    }
-}
-
 /*                Options                */
 
 /* manager in modal */
-.inModal {
+.modal-manager__Inmodal {
+    padding-top: 2% !important;
+
+    > div.modal-content {
+        width: 75%;
+    }
+
     .media-manager__stack {
         box-shadow: none;
+    }
+
+    .media-manager__stack-right {
+        overflow: scroll;
+        max-height: 65vh;
     }
 
     .__stack-right-toggle {
@@ -549,6 +546,20 @@
     .__box-copy-link {
         right: 0;
         bottom: 1px;
+    }
+
+    .__modal-preview {
+        .modal-content {
+            width: 100%;
+        }
+    }
+}
+
+@include media('max', 1023) {
+    .modal-manager__Inmodal {
+        .modal-content {
+            width: 95%;
+        }
     }
 }
 
@@ -600,9 +611,9 @@
         }
     }
 
-    .slide-enter,
-    .slide-leave-to {
-        transform: translateX(0.7rem);
+    .count-enter,
+    .count-leave-to {
+        transform: translateX(-0.7rem);
         opacity: 0;
     }
 }
@@ -640,6 +651,10 @@
     border: none;
     border-radius: 0;
     background: transparent;
+
+    * {
+        color: darken($active_theme, 70%);;
+    }
 
     &:focus {
         border: none;

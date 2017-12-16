@@ -6,6 +6,7 @@ export default {
             this.noFiles('hide')
 
             if (!this.loading_files) {
+                this.toggleInfo = false
                 this.toggleLoading()
                 this.loadingFiles('show')
             }
@@ -81,18 +82,16 @@ export default {
                         this.selectFirst()
                     }
 
-                    setTimeout(() => {
-                        this.toggleLoading()
-                        this.loadingFiles('hide')
-                        this.toggleInfo = true
-                    }, 500)
+                    this.toggleLoading()
+                    this.loadingFiles('hide')
+                    this.toggleInfo = true
 
                     // scroll to prev selected item
                     setTimeout(() => {
                         if (this.currentFileIndex) {
                             this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
                         }
-                    }, 1000)
+                    }, 800)
 
                     return this.updateDirsList()
                 }
@@ -100,7 +99,6 @@ export default {
                 // we dont have files
                 this.toggleLoading()
                 this.loadingFiles('hide')
-                this.toggleInfo = false
 
             }).catch((err) => {
                 console.error(err)

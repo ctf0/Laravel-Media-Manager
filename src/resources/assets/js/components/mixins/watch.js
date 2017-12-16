@@ -60,9 +60,10 @@ export default {
                 })
             }
         },
-        uploadStart(val) {
+        showProgress(val) {
             if (val) {
-                this.toggleUploadPanel()
+                this.toggleUploadArea = false
+                this.toggleInfo = false
                 this.toggleLoading()
                 this.noFiles('hide')
                 this.loadingFiles('show')
