@@ -5,7 +5,7 @@
 The only media manager with this number of features & flexibility.
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/33564620-9e584826-d923-11e7-9ce3-8d4a306734f3.jpg">
+    <img src="https://user-images.githubusercontent.com/7388088/34068133-75687998-e23f-11e7-98a8-cd7ded43d209.png">
 </p>
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
@@ -126,11 +126,11 @@ new Vue({
 
     |   type  |               event-name              |               description                |
     |---------|---------------------------------------|------------------------------------------|
-    | JS      |                                       |                                          |
+    | [JS](https://github.com/gocanto/vuemit)      |                                       |                                          |
     |         | modal-show                            | when modal is showen                     |
     |         | modal-hide                            | when modal is hidden                     |
     |         | file_selected *(when inside modal)*   | get selected file url                    |
-    | Laravel |                                       |                                          |
+    | [Laravel](https://laravel.com/docs/5.5/events#manually-registering-events) |                                       |                                          |
     |         | MMFileUploaded($file_path)            | get uploaded file full path              |
     |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
     |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |

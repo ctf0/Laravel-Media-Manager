@@ -805,7 +805,7 @@
 
                                 {{-- total size --}}
                                 <p class="__modal-delete-total">
-                                    <span class="title">@{{ bulkItemsSize }}</span>
+                                    <span class="title">@{{ bulkListFilterSize }}</span>
                                     <span class="heading">{{ trans('MediaManager::messages.total') }}</span>
                                 </p>
                             </template>

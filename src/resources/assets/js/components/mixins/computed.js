@@ -34,6 +34,13 @@ export default {
 
             return count !== 0 ? this.getFileSize(count) : false
         },
+        bulkListFilterSize() {
+            let count = 0
+
+            this.bulkListFilter.map((item) => {count += item.size})
+
+            return count !== 0 ? this.getFileSize(count) : false
+        },
         bulkItemsChild() {
             let bulk = this.bulkItemsCount
 
