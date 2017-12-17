@@ -1,4 +1,4 @@
-// M O D A L //
+// M O D A L
 EventHub.listen('modal-show', () => {})
 EventHub.listen('modal-hide', () => {})
 
@@ -40,7 +40,6 @@ EventHub.listen('ajax-error-show', () => {
 
 /**
  * body movin animation
- * you can remove it / replace it, do what you want
  */
 function bm(el, name) {
     bodymovin.loadAnimation({

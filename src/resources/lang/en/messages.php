@@ -17,6 +17,7 @@ return array (
   'delete_confirm' => 'Yes, Delete it!',
   'delete_folder' => 'Deleting a folder will remove all files and folders contained inside.',
   'destination_folder' => 'Destination Folder',
+  'download_file' => 'Download File',
   'downloaded' => 'Downloaded',
   'error_already_exists' => 'A File/Folder already exists with that name.',
   'error_creating_dir' => 'Something seems to have gone wrong with creating the directory, please check your permissions,',
@@ -65,5 +66,5 @@ return array (
   'url' => 'URL',
   'use_random_names' => 'Use Random Names ?',
   'video_support' => 'Your browser does not support the video tag.',
-  'download_file' => 'Download File',
+  'download_folder' => 'Download Folder',
 );

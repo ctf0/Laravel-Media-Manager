@@ -21,6 +21,9 @@ class MediaRoutes
             Route::post('move_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@move_file', 'as' => 'move_file']);
             Route::post('rename_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@rename_file', 'as' => 'rename_file']);
             Route::post('lock_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@lock_file', 'as' => 'lock_file']);
+
+            Route::post('folder_download', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@folder_download', 'as' => 'folder_download']);
+            Route::post('files_download', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@files_download', 'as' => 'files_download']);
         });
     }
 }

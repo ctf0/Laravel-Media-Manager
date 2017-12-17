@@ -65,7 +65,7 @@ import 'vue-awesome/icons/angle-double-left'
 import 'vue-awesome/icons/bars'
 import 'vue-awesome/icons/clone'
 import 'vue-awesome/icons/file-pdf-o'
-import 'vue-awesome/icons/mouse-pointer'
+import 'vue-awesome/icons/power-off'
 import 'vue-awesome/icons/file-text-o'
 import 'vue-awesome/icons/download'
 import 'vue-awesome/icons/warning'
@@ -78,6 +78,7 @@ Vue.component('icon', require('vue-awesome/components/Icon'))
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/media.vue'))
+Vue.component('EditorMediaManager', require('./components/editor.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */

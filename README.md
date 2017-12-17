@@ -68,7 +68,9 @@ new Vue({
 - toggle between `random names` & `original names` for uploaded files
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
-- use manager [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
+- use the manager
+  + [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
+  + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
 - [lock/unlock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) "***sqlite needs to be installed"***
 - search

@@ -152,7 +152,7 @@
     }
 }
 
-.__stack-right-toggle {
+.__stack-sidebar-toggle {
     display: flex;
     align-items: flex-end;
     cursor: pointer;
@@ -172,20 +172,20 @@
 }
 
 /*                files                */
-.media-manager__stack-files {
+.media-manager__stack-container {
     position: relative;
     display: flex;
     background-color: $white;
 }
 
-.media-manager__stack-files,
-.media-manager__stack-right {
+.media-manager__stack-container,
+.media-manager__stack-sidebar {
     min-height: 50vh;
     transition: all 0.25s ease-in;
 }
 
 // left "files list"
-.media-manager__stack-left {
+.media-manager__stack-files {
     position: absolute;
     top: 0;
     right: 0;
@@ -193,14 +193,14 @@
     left: 20%;
     overflow: scroll;
     padding: 0.7rem;
-    transition: left 0.5s;
+    transition: left 0.5s ease-in-out;
 }
 
-.__stack-right-hidden {
+.__stack-sidebar-hidden {
     left: 0;
 }
 
-.__left-files {
+.__files-boxs {
     display: flex;
     flex-wrap: wrap;
     margin: 0;
@@ -214,7 +214,7 @@
         max-width: 244px;
         min-height: 95px;
         max-height: 95px;
-        transition: all 0.25s;
+        transition: all 0.25s ease-in-out;
     }
 }
 
@@ -226,7 +226,7 @@
     margin: 0.7rem;
     padding: 0.7rem;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.25s ease-in-out;
     color: darken($active_theme, 55%);
     border: 1px solid darken($active_theme, 3%);
     border-radius: 4px;
@@ -311,14 +311,14 @@
 }
 
 @include media('max', 1023) {
-    .media-manager__stack-left {
+    .media-manager__stack-files {
         position: relative;
         right: unset;
         left: unset;
         width: 100%;
     }
 
-    .__left-files {
+    .__files-boxs {
         li {
             min-width: 250px;
             max-width: 250px;
@@ -368,44 +368,64 @@
 }
 
 // right "file info sidebar"
-.media-manager__stack-right {
+.media-manager__stack-sidebar {
     position: relative;
     display: flex;
     flex-direction: column;
     width: 20%;
+    transition: all 0.5s ease-in-out;
     border-right: 1px solid darken($active_theme, 5%);
     background-color: $active_theme;
 
-    .__right-preview {
+    .__sidebar-preview {
         overflow: hidden;
         text-align: center;
         color: darken($active_theme, 50%);
-        fill: darken($active_theme, 50%);
 
-        .__right-none-selected {
-            padding: 1rem;
+        .__sidebar-none-selected {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 1rem 0 1.5rem;
+
+            span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 175px;
+                height: 175px;
+                margin: 1rem 0;
+                border: 2px dashed darken($active_theme, 15%);
+                border-radius: 25px;
+            }
+
+            svg {
+                margin: 0;
+                filter: drop-shadow(0.3rem 0.3rem 0 darken($active_theme, 15%));
+            }
         }
 
         svg {
             margin: 4rem 0;
         }
 
-        .__right-audio,
-        .__right-video {
+        .__sidebar-audio,
+        .__sidebar-video {
             display: block;
             width: 100%;
         }
     }
 
-    .__right-info {
+    .__sidebar-info {
         display: flex;
         flex: 1 0 auto;
         flex-direction: column;
         padding: 0.75rem;
+        transition: background 0.8s ease-in-out;
         word-break: break-all;
         border-top: 1px solid darken($active_theme, 5%);
 
-        > div:not(.__right-count) {
+        > div:not(.__sidebar-count) {
             flex: 1;
 
             h4 {
@@ -425,7 +445,13 @@
         }
     }
 
-    .__right-count {
+    .__sidebar-zip {
+        position: relative;
+        bottom: 1px;
+        display: inline-block;
+    }
+
+    .__sidebar-count {
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-evenly;
@@ -441,7 +467,7 @@
 
             &:not(:only-of-type) {
                 flex: 1;
-                transition: all 0.3s;
+                transition: all 0.3s ease-in-out;
             }
 
             &:only-of-type {
@@ -449,7 +475,7 @@
             }
         }
 
-        .__right-count-bulk {
+        .__sidebar-count-bulk {
             span.icon,
             span.is-5 {
                 position: relative;
@@ -522,6 +548,7 @@
 
 /* manager in modal */
 .modal-manager__Inmodal {
+    z-index: 65538; // overlap tinymce window
     padding-top: 2% !important;
 
     > div.modal-content {
@@ -532,12 +559,12 @@
         box-shadow: none;
     }
 
-    .media-manager__stack-right {
+    .media-manager__stack-sidebar {
         overflow: scroll;
         max-height: 65vh;
     }
 
-    .__stack-right-toggle {
+    .__stack-sidebar-toggle {
         span:not(.icon) {
             margin-bottom: 0;
         }
@@ -563,6 +590,10 @@
     }
 }
 
+.__Inmodal-editor {
+    display: none;
+}
+
 /* reverse manager top / bottom toolbar */
 .__stack-reverse {
     .media-manager__stack {
@@ -577,24 +608,24 @@
 
 /* reverse container left / right columns */
 .__stack-files-reverse {
-    .media-manager__stack-files {
+    .media-manager__stack-container {
         flex-direction: row-reverse;
     }
 
-    .media-manager__stack-left {
+    .media-manager__stack-files {
         right: 20%;
         left: 0;
     }
 
-    .__stack-right-hidden {
+    .__stack-sidebar-hidden {
         right: 0;
     }
 
-    .media-manager__stack-right {
+    .media-manager__stack-sidebar {
         border-right: none;
         border-left: 1px solid darken($active_theme, 5%);
 
-        .__right-count {
+        .__sidebar-count {
             flex-direction: row;
 
             > div {
@@ -682,25 +713,6 @@ a[target='_blank'] {
 
     &:hover {
         border-color: darken($active_theme, 30%);
-    }
-}
-
-table,
-.table {
-    margin-bottom: 0;
-
-    td {
-        padding: 0;
-    }
-
-    td,
-    th {
-        vertical-align: middle;
-        border: none !important;
-    }
-
-    tr:hover {
-        background-color: transparent;
     }
 }
 

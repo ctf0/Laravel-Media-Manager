@@ -3,6 +3,7 @@
 namespace ctf0\MediaManager\Controllers;
 
 use Exception;
+use ZipStream\ZipStream;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -107,9 +108,9 @@ class MediaController extends Controller
             $file_type   = $one->getMimeType();
 
             $original    = $one->getClientOriginalName();
-            $file_ext    = $one->getClientOriginalExtension();
-            $get_name    = str_replace(".$file_ext", '', $original);
-            $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null, $file_ext) . ".$file_ext";
+            $get_name    = pathinfo($original, PATHINFO_FILENAME);
+            $file_ext    = pathinfo($original, PATHINFO_EXTENSION);
+            $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null) . ".$file_ext";
             $destination = "$upload_path/$file_name";
 
             try {
@@ -354,5 +355,59 @@ class MediaController extends Controller
             : $db->where('path', $path)->delete();
 
         return response()->json(['message'=>"'$path' " . ucfirst($state)]);
+    }
+
+    /**
+     * zip folder.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function folder_download(Request $request)
+    {
+        $name = $request->name;
+        $dir  = "{$request->folders}/$name";
+
+        return response()->stream(function () use ($name, $dir) {
+            $zip = new ZipStream("$name.zip", [
+                'content_type' => 'application/octet-stream',
+            ]);
+
+            foreach ($this->storageDisk->allFiles($dir) as $file) {
+                $name = pathinfo($file, PATHINFO_BASENAME);
+                $stream = $this->storageDisk->readStream($file);
+
+                $zip->addFileFromStream($name, $stream);
+            }
+
+            $zip->finish();
+        });
+    }
+
+    /**
+     * zip files.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function files_download(Request $request)
+    {
+        $name  = $request->name;
+        $list  = json_decode($request->list, true);
+
+        return response()->stream(function () use ($name, $list) {
+            $zip = new ZipStream("$name.zip", [
+                'content_type' => 'application/octet-stream',
+            ]);
+
+            foreach ($list as $file) {
+                $stream = fopen($file['path'], 'r');
+                $zip->addFileFromStream($file['name'], $stream);
+            }
+
+            $zip->finish();
+        });
     }
 }

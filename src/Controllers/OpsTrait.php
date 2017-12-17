@@ -25,7 +25,7 @@ trait OpsTrait
             if (!preg_grep($pattern, [$folder])) {
                 $time    = $this->storageDisk->lastModified($folder);
                 $files[] = [
-                    'name'                   => strpos($folder, '/') > 1 ? str_replace('/', '', strrchr($folder, '/')) : $folder,
+                    'name'                   => pathinfo($folder, PATHINFO_BASENAME),
                     'type'                   => 'folder',
                     'path'                   => $this->storageDisk->url($folder),
                     'size'                   => $this->folderSize($folder),
@@ -40,7 +40,7 @@ trait OpsTrait
             if (!preg_grep($pattern, [$file])) {
                 $time    = $this->storageDisk->lastModified($file);
                 $files[] = [
-                    'name'                   => strpos($file, '/') > 1 ? str_replace('/', '', strrchr($file, '/')) : $file,
+                    'name'                   => pathinfo($file, PATHINFO_BASENAME),
                     'type'                   => $this->storageDisk->mimeType($file),
                     'path'                   => $this->storageDisk->url($file),
                     'size'                   => $this->storageDisk->size($file),
@@ -109,7 +109,7 @@ trait OpsTrait
     }
 
     /**
-     * get file path from storange.
+     * get file path from storage.
      *
      * @param [type] $disk [description]
      * @param [type] $name [description]

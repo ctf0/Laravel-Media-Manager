@@ -1,3 +1,5 @@
+require('./../../vendor/download.min')
+
 export default {
     methods: {
         isLastItem(item, list) {
@@ -57,6 +59,12 @@ export default {
             this.isLoading ||
             !this.allItemsCount ||
             this.isBulkSelecting() && !this.bulkItemsCount
+        },
+        reset() {
+            this.bulkSelect = false
+            this.bulkSelectAll = false
+            this.resetInput('bulkList', [])
+            this.resetInput(['selectedFile', 'currentFileIndex', 'searchFor'])
         },
 
         /*                Resolve                */
@@ -164,6 +172,19 @@ export default {
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+        // download
+        saveFile(item) {
+            if (this.isBulkSelecting()) {
+                this.bulkList.forEach((e) => {
+                    downloadFile(e.path)
+                })
+
+                return this.showNotif('All Done')
+            }
+
+            downloadFile(item.path)
+            return this.showNotif(`"${item.name}" ${this.trans('downloaded')}`)
         },
 
         // ls

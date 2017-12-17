@@ -8,7 +8,6 @@ import SelectedFile from './mixins/selected'
 import Restriction from './mixins/restriction'
 import Watchers from './mixins/watch'
 import Computed from './mixins/computed'
-import Download from './mixins/download'
 
 import Bounty from 'vue-bounty'
 
@@ -23,7 +22,6 @@ export default {
         LockFile,
         SelectedFile,
         Restriction,
-        Download,
         Computed,
         Watchers
     ],
@@ -80,8 +78,12 @@ export default {
 
             navDirection: null,
             gradients: [
-                'linear-gradient(45deg,#6FE594,#27A47C)',
-                'linear-gradient(45deg,#F1467A,#FB949E)'
+                'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
+                'linear-gradient(141deg, #04a6d7 0%, #209cee 71%, #3287f5 100%)',
+                'linear-gradient(141deg, #12af2f 0%, #23d160 71%, #2ce28a 100%)',
+                'linear-gradient(141deg, #ffaf24 0%, #ffdd57 71%, #fffa70 100%)',
+                'linear-gradient(141deg, #ff0561 0%, #ff3860 71%, #ff5257 100%)',
+                'linear-gradient(141deg, #1f191a 0%, #363636 71%, #46403f 100%)'
             ]
         }
     },
@@ -134,6 +136,7 @@ export default {
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
                 parallelUploads: 10,
+                hiddenInputContainer: '#new-upload',
                 uploadMultiple: true,
                 forceFallback: false,
                 ignoreHiddenFiles: true,

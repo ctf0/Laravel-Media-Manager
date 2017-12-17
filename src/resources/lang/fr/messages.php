@@ -17,6 +17,7 @@ return array (
   'delete_confirm' => 'Oui, Supprimez-le',
   'delete_folder' => 'La suppression d\'un dossier supprimera tous les fichiers et dossiers contenus à l\'intérieur',
   'destination_folder' => 'Dossier de destination',
+  'download_file' => NULL,
   'downloaded' => NULL,
   'error_already_exists' => 'Le fichier ou le dossier semble déjà exister avec ce nom. Choisissez un autre nom ou supprimez l\'autre fichier.',
   'error_creating_dir' => 'Quelque chose semble avoir mal tourné avec la création du répertoire. Veuillez vérifier vos autorisations',
@@ -65,5 +66,5 @@ return array (
   'url' => NULL,
   'use_random_names' => NULL,
   'video_support' => NULL,
-  'download_file' => NULL,
+  'download_folder' => NULL,
 );

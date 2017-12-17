@@ -300,7 +300,7 @@
         {{-- ====================================================================== --}}
 
         <div class="media-manager__stack">
-            <section class="media-manager__stack-files">
+            <section class="media-manager__stack-container">
                 {{-- loadings --}}
                 <section>
                     {{-- loading data from server --}}
@@ -329,8 +329,8 @@
                 {{-- ====================================================================== --}}
 
                 {{-- files box --}}
-                <v-touch class="media-manager__stack-left"
-                    :class="{'__stack-right-hidden': !toggleInfo}"
+                <v-touch class="media-manager__stack-files"
+                    :class="{'__stack-sidebar-hidden': !toggleInfo}"
                     ref="__stackLeft"
                     @dbltap="dbltap()"
                     @swiperight="goToPrevFolder()"
@@ -347,7 +347,7 @@
                     </section>
 
                     {{-- files --}}
-                    <transition-group class="__left-files"
+                    <transition-group class="__files-boxs"
                         tag="ul" name="list" mode="out-in"
                         ref="filesList"
                         v-on:after-enter="afterEnter"
@@ -420,13 +420,13 @@
 
                 {{-- info sidebar --}}
                 <transition name="slide" mode="out-in" appear>
-                    <div class="media-manager__stack-right is-hidden-touch" v-if="toggleInfo">
+                    <div class="media-manager__stack-sidebar is-hidden-touch" v-if="toggleInfo">
                         {{-- preview --}}
-                        <div class="__right-preview">
+                        <div class="__sidebar-preview">
                             <transition name="slide" mode="out-in" appear>
                                 {{-- no selection --}}
-                                <div key="0" class="__right-none-selected" v-if="!selectedFile">
-                                    <icon name="mouse-pointer" scale="2"></icon>
+                                <div key="0" class="__sidebar-none-selected" v-if="!selectedFile">
+                                    <span @click="reset()" class="link"><icon name="power-off" scale="3.2"></icon></span>
                                     <p>{{ trans('MediaManager::messages.nothing_selected') }}</p>
                                 </div>
 
@@ -442,7 +442,7 @@
 
                                 {{-- video --}}
                                 <template v-if="selectedFileIs('video')">
-                                    <video controls preload="metadata" class="__right-video"
+                                    <video controls preload="metadata" class="__sidebar-video"
                                         ref="player"
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}" title="space">
@@ -455,7 +455,7 @@
 
                                 {{-- audio --}}
                                 <template v-if="selectedFileIs('audio')">
-                                    <audio controls preload="metadata" class="__right-audio"
+                                    <audio controls preload="metadata" class="__sidebar-audio"
                                         ref="player"
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}" title="space">
@@ -481,19 +481,36 @@
                         </div>
 
                         {{-- data --}}
-                        <div class="__right-info" v-if="allItemsCount" :style="selectedFile ? 'background-color: white' : ''">
+                        <div class="__sidebar-info" v-if="allItemsCount" :style="selectedFile ? 'background-color: white' : ''">
                             <transition name="list" mode="out-in" appear>
                                 <div :key="selectedFile.name" v-if="selectedFile">
                                     <h4>{{ trans('MediaManager::messages.title') }}: <span>@{{ selectedFile.name }}</span></h4>
                                     <h4>{{ trans('MediaManager::messages.type') }}: <span>@{{ selectedFile.type }}</span></h4>
                                     <h4>{{ trans('MediaManager::messages.size') }}: <span>@{{ getFileSize(selectedFile.size) }}</span></h4>
+
+                                    {{-- folder --}}
                                     <template v-if="selectedFileIs('folder')">
                                         <h4>
                                             {{ trans('MediaManager::messages.items') }}:
                                             <span>@{{ selectedFile.items }} {{ trans('MediaManager::messages.items') }}</span>
                                         </h4>
+
+                                        <h4 v-if="!isBulkSelecting()">
+                                            {{ trans('MediaManager::messages.download_folder') }}:
+                                            <div class="__sidebar-zip">
+                                                <form action="{{ route('media.folder_download') }}" method="post">
+                                                    {{ csrf_field() }}
+                                                    <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
+                                                    <input type="hidden" name="name" :value="this.selectedFile.name">
+                                                    <button type="submit" class="btn-plain">
+                                                        <span class="icon"><icon name="download" scale="1.2"></icon></span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </h4>
                                     </template>
 
+                                    {{-- file --}}
                                     <template v-else>
                                         <h4>
                                             {{ trans('MediaManager::messages.preview') }}:
@@ -502,9 +519,24 @@
 
                                         <h4>
                                             {{ trans('MediaManager::messages.download_file') }}:
+                                            {{-- normal --}}
                                             <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
                                                 <span class="icon"><icon name="download" scale="1.2"></icon></span>
                                             </button>
+
+                                            {{-- zip --}}
+                                            <template v-if="isBulkSelecting()">
+                                                <div class="__sidebar-zip">
+                                                    <form action="{{ route('media.files_download') }}" method="post">
+                                                        {{ csrf_field() }}
+                                                        <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
+                                                        <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
+                                                        <button type="submit" class="btn-plain">
+                                                            <span class="icon"><icon name="archive" scale="1.2"></icon></span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </template>
                                         </h4>
                                     </template>
                                     <h4>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
@@ -515,7 +547,7 @@
                             </transition>
 
                             {{-- items count --}}
-                            <transition-group tag="div" name="counter" mode="out-in" class="__right-count">
+                            <transition-group tag="div" name="counter" mode="out-in" class="__sidebar-count">
                                 {{-- all --}}
                                 <div key="1" v-if="allItemsCount">
                                     <p class="title is-1"><bounty :value="allItemsCount"/></p>
@@ -529,7 +561,7 @@
                                 </div>
 
                                 {{-- bulk --}}
-                                <div key="3" v-if="bulkItemsCount" class="__right-count-bulk">
+                                <div key="3" v-if="bulkItemsCount" class="__sidebar-count-bulk">
                                     <p>
                                         <span class="title is-1"><bounty :value="bulkItemsCount"/></span>
 
@@ -586,11 +618,11 @@
                         v-tippy title="t"
                         v-if="allItemsCount">
                         <transition :name="toggleInfo ? 'info-out' : 'info-in'" mode="out-in">
-                            <div key="1" v-if="toggleInfo" class="__stack-right-toggle has-text-link">
+                            <div key="1" v-if="toggleInfo" class="__stack-sidebar-toggle has-text-link">
                                 <span>{{ trans('MediaManager::messages.close') }}</span>
                                 <span class="icon"><icon name="angle-double-right"></icon></span>
                             </div>
-                            <div key="2" v-else class="__stack-right-toggle has-text-link">
+                            <div key="2" v-else class="__stack-sidebar-toggle has-text-link">
                                 <span>{{ trans('MediaManager::messages.open') }}</span>
                                 <span class="icon"><icon name="angle-double-left"></icon></span>
                             </div>
