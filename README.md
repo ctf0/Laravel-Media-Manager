@@ -59,7 +59,7 @@ new Vue({
 
 - multi
     - upload
-    - move
+    - move/copy ***"toggle between"***
     - delete
 - bulk selection
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
@@ -88,7 +88,7 @@ new Vue({
     + all
     + selected
     + search found
-- protection against overwriting (files / folders)
+- protection against overwriting (files/folders)
 - autoplay media files ***"if selected filter is audio/video"***
 - file name sanitization for
     + upload
@@ -97,46 +97,50 @@ new Vue({
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-    |   navigation   |               button               |   keyboard   | mouse (click) |    touch    |
-    |----------------|------------------------------------|--------------|---------------|-------------|
-    |                | upload *(toolbar)*                 | u            | *             |             |
-    |                | refresh *(toolbar)*                | r            | *             |             |
-    |                | move *(toolbar)*                   | m            | *             | swipe up    |
-    |                | delete *(toolbar)*                 | d/del        | *             | swipe down  |
-    |                | lock/unlock *(toolbar)*            | l            | *             |             |
-    |                | bulk select *(toolbar)*            | b            | *             |             |
-    |                | bulk select all *(toolbar)*        | a            | *             |             |
-    |                | &nbsp;                             |              |               |             |
-    |                | confirm rename *(modal)*           | enter        | *             |             |
-    |                | confirm delete *(modal)*           | enter        | *             |             |
-    |                | confirm move *(modal)*             | enter        | *             |             |
-    |                | create new folder *(modal)*        | enter        | *             |             |
-    |                | &nbsp;                             |              |               |             |
-    |                | toggle *(info panel)*              | t            | *             |             |
-    |                | play/pause media *(sidebar)*       | space        | *             |             |
-    |                | preview image/pdf/text *(sidebar)* | space        | *             | tap         |
-    |                | preview image/pdf/text             | space        | 2x click      | 2x tap      |
-    |                | hide image *(light-box)*           | space/esc    | *             |             |
-    | select next    |                                    | right / down | *             | swipe left  |
-    | select prev    |                                    | left / up    | *             | swipe right |
-    | select first   |                                    | home         | *             |             |
-    | select last    |                                    | end          | *             |             |
-    | open folder    |                                    | enter        | 2x click      | 2x tap      |
-    | go to prev dir | folderName *(breadcrumb)*          | backspace    | *             | swipe right |
+  |   navigation   |                   button                   |    keyboard   | mouse (click) |           touch           |
+  |----------------|--------------------------------------------|---------------|---------------|---------------------------|
+  |                | upload *(toolbar)*                         | u             | *             |                           |
+  |                | refresh *(toolbar)*                        | r             | *             |                           |
+  |                | move *(toolbar)*                           | m             | *             | swipe up                  |
+  |                | delete *(toolbar)*                         | d/del         | *             | swipe down                |
+  |                | lock/unlock *(toolbar)*                    | l             | *             |                           |
+  |                | (reset) bulk select *(toolbar)*            | b             | *             |                           |
+  |                | (reset) bulk select all *(toolbar)*        | a             | *             |                           |
+  |                | cancel bulk selection                      | esc           |               |                           |
+  |                | cancel search *(toolbar)*                  | esc           | *             |                           |
+  |                | &nbsp;                                     |               |               |                           |
+  |                | toggle *(sidebar)*                         | t             | *             |                           |
+  |                | play/pause media *(sidebar)*               | space         | *             |                           |
+  |                | preview image/pdf/text *(sidebar)*         | space         | *             | tap                       |
+  |                | &nbsp;                                     |               |               |                           |
+  |                | confirm rename *(modal)*                   | enter         | *             |                           |
+  |                | confirm delete *(modal)*                   | enter         | *             |                           |
+  |                | confirm move *(modal)*                     | enter         | *             |                           |
+  |                | create new folder *(modal)*                | enter         | *             |                           |
+  |                | &nbsp;                                     |               |               |                           |
+  |                | limit bulk select *(files container)*      | shift + click |               |                           |
+  |                | preview image/pdf/text *(files container)* | space         | **            | 2x tap                    |
+  |                | hide light-box                             | space/esc     | *             |                           |
+  | select next    |                                            | right / down  | *             | swipe left  *(light-box)* |
+  | select prev    |                                            | left / up     | *             | swipe right *(light-box)* |
+  | select first   |                                            | home          | *             |                           |
+  | select last    |                                            | end           | *             |                           |
+  | open folder    |                                            | enter         | **            | 2x tap                    |
+  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *             | swipe right               |
 
 - events
 
-    |   type  |               event-name              |               description                |
-    |---------|---------------------------------------|------------------------------------------|
-    | [JS](https://github.com/gocanto/vuemit)      |                                       |                                          |
-    |         | modal-show                            | when modal is showen                     |
-    |         | modal-hide                            | when modal is hidden                     |
-    |         | file_selected *(when inside modal)*   | get selected file url                    |
-    | [Laravel](https://laravel.com/docs/5.5/events#manually-registering-events) |                                       |                                          |
-    |         | MMFileUploaded($file_path)            | get uploaded file full path              |
-    |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
-    |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |
-    |         | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" path   |
+  |   type  |               event-name              |               description                |
+  |---------|---------------------------------------|------------------------------------------|
+  | [JS](https://github.com/gocanto/vuemit)                                                    |
+  |         | modal-show                            | when modal is showen                     |
+  |         | modal-hide                            | when modal is hidden                     |
+  |         | file_selected *(when inside modal)*   | get selected file url                    |
+  | [Laravel](https://laravel.com/docs/5.5/events#manually-registering-events)                 |
+  |         | MMFileUploaded($file_path)            | get uploaded file full path              |
+  |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
+  |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |
+  |         | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" path   |
 
 <br>
 
@@ -194,3 +198,5 @@ return [
 ## Usage
 
 - visit `localhost:8000/media`
+- [Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)
+

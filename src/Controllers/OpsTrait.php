@@ -18,8 +18,7 @@ trait OpsTrait
         $files          = [];
         $storageFiles   = $this->storageDisk->files($dir);
         $storageFolders = $this->storageDisk->directories($dir);
-
-        $pattern = $this->ignoreFiles;
+        $pattern        = $this->ignoreFiles;
 
         foreach ($storageFolders as $folder) {
             if (!preg_grep($pattern, [$folder])) {
@@ -74,9 +73,9 @@ trait OpsTrait
         return '' == $text ? $this->sanitizedText : $text;
     }
 
-    protected function filePattern($file)
+    protected function filePattern($item)
     {
-        return '/(script.*?\/script)|[^(' . $file . ')a-zA-Z0-9]|\(|\)+/ius';
+        return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]|\(|\)+/ius';
     }
 
     /**
@@ -88,7 +87,10 @@ trait OpsTrait
      */
     protected function folderCount($folder)
     {
+        // files + directories count
         // return count($this->folderFiles($folder)) + count($this->storageDisk->allDirectories($folder));
+
+        // files only
         return count($this->folderFiles($folder));
     }
 
@@ -116,12 +118,12 @@ trait OpsTrait
      *
      * @return [type] [description]
      */
-    protected function getFilePath($disk, $name)
+    protected function getFilePath($name)
     {
-        $config = config("filesystems.disks.$disk");
-        $url    = app('filesystem')->disk($disk)->url($name);
-        $dir    = str_replace(array_get($config, 'url'), '', $url);
-        $root   = array_get($config, 'root');
+        $disks = $this->disks;
+        $url   = $this->storageDisk->url($name);
+        $dir   = str_replace(array_get($disks, 'url'), '', $url);
+        $root  = array_get($disks, 'root');
 
         // for other disks without root ex."cloud"
         if (!$root) {

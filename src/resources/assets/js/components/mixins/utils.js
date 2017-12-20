@@ -9,29 +9,34 @@ export default {
             return this.active_modal == el
         },
         showNotif(msg, s = 'success') {
+            if (msg) {
+                if (s == 'danger') {
+                    this.$refs['alert-audio'].play()
+                }
 
-            let title
-            let duration = 3
+                let title
+                let duration = 3
 
-            switch (s) {
-            case 'black':
-            case 'danger':
-                title = 'Error'
-                duration = null
-                break
-            case 'warning':
-                title = 'Warning'
-                break
-            default:
-                title = 'Success'
+                switch (s) {
+                case 'black':
+                case 'danger':
+                    title = 'Error'
+                    duration = null
+                    break
+                case 'warning':
+                    title = 'Warning'
+                    break
+                default:
+                    title = 'Success'
+                }
+
+                EventHub.fire('showNotif', {
+                    title: title,
+                    body: msg,
+                    type: s,
+                    duration: duration
+                })
             }
-
-            EventHub.fire('showNotif', {
-                title: title,
-                body: msg,
-                type: s,
-                duration: duration
-            })
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {
@@ -64,7 +69,8 @@ export default {
             this.bulkSelect = false
             this.bulkSelectAll = false
             this.resetInput('bulkList', [])
-            this.resetInput(['selectedFile', 'currentFileIndex', 'searchFor'])
+            this.resetInput('searchFor')
+            this.selectFirst()
         },
 
         /*                Resolve                */
@@ -161,9 +167,9 @@ export default {
             EventHub.fire('loading-files-hide')
         },
         ajaxError() {
-            this.toggleInfoPanel()
             this.toggleInfo = false
             this.toggleLoader('ajax_error', true)
+            this.$refs['alert-audio'].play()
             EventHub.fire('ajax-error-show')
         },
 
@@ -180,6 +186,7 @@ export default {
                     downloadFile(e.path)
                 })
 
+                manager.$refs['success-audio'].play()
                 return this.showNotif('All Done')
             }
 

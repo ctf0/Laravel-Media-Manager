@@ -53,6 +53,11 @@ export default {
                     })
                 }
 
+                // we have files
+                if (this.allItemsCount) {
+                    this.selectFirst()
+                }
+
                 // check for prev opened folder
                 if (prev_folder) {
                     this.$nextTick(() => {
@@ -77,11 +82,6 @@ export default {
 
                 // we have files
                 if (this.allItemsCount) {
-                    // now prev files / folders
-                    if (!prev_folder && !prev_file) {
-                        this.selectFirst()
-                    }
-
                     this.toggleLoading()
                     this.loadingFiles('hide')
                     this.toggleInfo = true
@@ -92,6 +92,13 @@ export default {
                             this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
                         }
                     }, 800)
+
+                    // scroll to breadcrumb item
+                    setTimeout(() => {
+                        let name = folders.split('/').pop()
+                        let count = document.getElementById(`${name ? name : 'home'}-bc`).offsetLeft
+                        this.$refs.bc.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                    }, 100)
 
                     return this.updateDirsList()
                 }
@@ -165,7 +172,7 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`Successfully Created "${data.new_folder_name}" at "${data.full_path}"`)
+                this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${data.full_path}"`)
                 this.getFiles(this.folders, data.new_folder_name)
 
             }).catch((err) => {
@@ -204,7 +211,7 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`Successfully Renamed "${filename}" to "${data.new_filename}"`)
+                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
                 this.updateItemName(this.selectedFile, filename, data.new_filename)
 
                 if (this.selectedFileIs('folder')) {
@@ -220,55 +227,65 @@ export default {
         // move
         MoveFileForm(event) {
             if (this.checkForFolders) {
-                if (this.bulkItemsCount) {
-                    this.move_file(this.bulkListFilter, event.target.action)
+                let list = this.bulkItemsCount
+                    ? this.bulkListFilter
+                    : [this.selectedFile]
 
-                    setTimeout(() => {
-                        this.blkSlct()
-                    }, 100)
-                } else {
-                    this.move_file([this.selectedFile], event.target.action)
-                }
+                this.move_file(list, event.target.action)
             }
         },
         move_file(files, routeUrl) {
             this.toggleLoading()
 
             let destination = this.moveToPath
+            let copy = this.useCopy
+            let error = false
 
             axios.post(routeUrl, {
                 folder_location: this.files.path,
                 destination: destination,
-                moved_files: files
+                moved_files: files,
+                use_copy: copy
             }).then(({data}) => {
                 this.toggleLoading()
 
                 data.data.map((item) => {
                     if (!item.success) {
+                        error = true
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    this.showNotif(`Successfully moved "${item.name}" to "${destination}"`)
-                    this.removeFromLists(item.name, item.type)
+                    // copy
+                    if (copy) {
+                        this.showNotif(`${this.trans('copy_success')} "${item.name}" to "${destination}"`)
+                    }
 
-                    // update folder count when folder is moved into another
-                    if (this.fileTypeIs(item, 'folder')) {
-                        if (item.items > 0) {
-                            this.updateFolderCount(destination, item.items, item.size)
-                        }
+                    // move
+                    else {
+                        this.showNotif(`${this.trans('move_success')} "${item.name}" to "${destination}"`)
+                        this.removeFromLists(item.name, item.type)
 
                         // update dirs list after move
                         this.updateDirsList()
-                    } else {
-                        this.updateFolderCount(destination, 1, item.size)
+
+                        // update search count
+                        if (this.searchFor) {
+                            this.searchItemsCount = this.filesList.length
+                        }
                     }
+
+                    // update folder count when folder is moved/copied into another
+                    this.fileTypeIs(item, 'folder')
+                        ? this.updateFolderCount(destination, item.items, item.size)
+                        : this.updateFolderCount(destination, 1, item.size)
                 })
 
+                this.$refs['success-audio'].play()
                 this.toggleModal()
-                this.selectFirst()
-                if (this.searchFor) {
-                    this.searchItemsCount = this.filesList.length
-                }
+
+                this.isBulkSelecting()
+                    ? this.blkSlct()
+                    : error ? false : this.selectFirst()
 
             }).catch((err) => {
                 console.error(err)
@@ -278,15 +295,11 @@ export default {
 
         // delete
         DeleteFileForm(event) {
-            if (this.bulkItemsCount) {
-                this.delete_file(this.bulkListFilter, event.target.action)
+            let list = this.bulkItemsCount
+                ? this.bulkListFilter
+                : [this.selectedFile]
 
-                setTimeout(() => {
-                    this.blkSlct()
-                }, 100)
-            } else {
-                this.delete_file([this.selectedFile], event.target.action)
-            }
+            this.delete_file(list, event.target.action)
         },
         delete_file(files, routeUrl) {
             this.toggleLoading()
@@ -302,12 +315,13 @@ export default {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    this.showNotif(`Successfully Deleted "${item.name}"`, 'warning')
+                    this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
                     this.removeFromLists(item.name, item.type)
                 })
 
+                this.$refs['success-audio'].play()
                 this.toggleModal()
-                this.selectFirst()
+                this.isBulkSelecting() ? this.blkSlct() : this.selectFirst()
                 if (this.searchFor) {
                     this.searchItemsCount = this.filesList.length
                 }
@@ -367,12 +381,15 @@ export default {
             if (destination !== '../') {
 
                 if (destination.includes('/')) {
-                    destination = destination.split('/').shift()
+                    // get the first dir in the path
+                    // because this is what the user is currently viewing
+                    destination = destination.split('/')
+                    destination = destination[0] == '' ? destination[1] : destination[0]
                 }
 
                 if (this.filteredItemsCount) {
-                    this.filterdList.map((e) => {
-                        if (e.name.includes(destination)) {
+                    this.filterdList.some((e) => {
+                        if (e.name == destination) {
                             e.items += parseInt(count)
                             e.size += parseInt(weight)
                         }
@@ -380,7 +397,7 @@ export default {
                 }
 
                 this.files.items.some((e) => {
-                    if (e.name.includes(destination)) {
+                    if (e.name == destination) {
                         e.items += parseInt(count)
                         e.size += parseInt(weight)
                     }

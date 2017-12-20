@@ -10,10 +10,29 @@ export default {
                 }
             })
         },
-        setSelected(file, index) {
+        setSelected(file, index, e = null) {
+            // select with shift
+            if (e && e.shiftKey) {
+                this.bulkSelect = true
+
+                // normal
+                let begin = this.currentFileIndex
+                let end = index + 1
+
+                // reverse
+                if (begin > index) {
+                    begin = index
+                    end = this.currentFileIndex + 1
+                }
+
+                return this.bulkList = this.allFiles.slice(begin, end)
+            }
+
+            // normal selection
             this.selectedFile = file
             this.currentFileIndex = index
 
+            // bulk selection
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }
@@ -131,7 +150,15 @@ export default {
         scrollToFile(file) {
             file = file[0]
             file.click()
-            file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
+
+            let container = this.$refs['__stack-files'].$el
+            let count = file.offsetTop - container.scrollTop - 20
+            container.scrollBy({top: count, left: 0, behavior: 'smooth'})
+
+            // when scrollBy() doesnt work
+            if (!(container.scrollHeight > container.clientHeight)) {
+                file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
+            }
         }
     }
 }

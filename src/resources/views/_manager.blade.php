@@ -2,6 +2,11 @@
 <link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
 
 {{-- component --}}
+@php
+    // mobile breadCrumb
+    $alt_breadcrumb = true;
+@endphp
+
 <media-manager inline-template
     base-url="{{ $base_url }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
@@ -12,7 +17,12 @@
         'no_val' => trans('MediaManager::messages.no_val'),
         'single_char_folder' => trans('MediaManager::messages.single_char_folder'),
         'downloaded' => trans('MediaManager::messages.downloaded'),
-        'upload_success' => trans('MediaManager::messages.upload_success')
+        'upload_success' => trans('MediaManager::messages.upload_success'),
+        'create_success' => trans('MediaManager::messages.create_success'),
+        'rename_success' => trans('MediaManager::messages.rename_success'),
+        'move_success' => trans('MediaManager::messages.move_success'),
+        'delete_success' => trans('MediaManager::messages.delete_success'),
+        'copy_success' => trans('MediaManager::messages.copy_success')
     ]) }}"
     :upload-panel-img-list="{{ $patterns }}"
     files-route="{{ route('media.files') }}"
@@ -21,6 +31,10 @@
     :restrict-path="{{ isset($path) ? $path : 'null' }}">
 
     <div class="">
+
+        {{-- notif-audio --}}
+        <audio ref="alert-audio"><source src="/assets/vendor/MediaManager/audio/alert.mp3" type="audio/mpeg"></audio>
+        <audio ref="success-audio"><source src="/assets/vendor/MediaManager/audio/success.mp3" type="audio/mpeg"></audio>
 
         {{-- top toolbar --}}
         <nav class="media-manager__toolbar level" v-show="toolBar">
@@ -272,6 +286,11 @@
             </div>
         </nav>
 
+        {{-- mobile breadCrumb --}}
+        @if ($alt_breadcrumb)
+            @include('MediaManager::extras._breadcrumb')
+        @endif
+
         {{-- ====================================================================== --}}
 
         {{-- dropzone --}}
@@ -307,10 +326,10 @@
                     <div id="loading_files" v-show="loading_files">
                         <div id="loading_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/world.json') }}"></div>
 
-                        <transition-group name="list" mode="out-in">
-                            <h3 key="1" v-show="showProgress">{{ trans('MediaManager::messages.stand_by') }}</h3>
-                            <h3 key="2" v-show="!showProgress">{{ trans('MediaManager::messages.loading') }}</h3>
-                        </transition-group>
+                        <transition name="list" mode="out-in">
+                            <h3 key="1" v-if="showProgress">{{ trans('MediaManager::messages.stand_by') }}</h3>
+                            <h3 key="2" v-else>{{ trans('MediaManager::messages.loading') }}</h3>
+                        </transition>
                     </div>
 
                     {{-- ajax error --}}
@@ -330,8 +349,8 @@
 
                 {{-- files box --}}
                 <v-touch class="media-manager__stack-files"
+                    ref="__stack-files"
                     :class="{'__stack-sidebar-hidden': !toggleInfo}"
-                    ref="__stackLeft"
                     @dbltap="dbltap()"
                     @swiperight="goToPrevFolder()"
                     @swipeup="moveItem()"
@@ -354,7 +373,7 @@
                         v-on:after-leave="afterLeave">
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
-                            @click="setSelected(file, index)">
+                            @click="setSelected(file, index, $event)">
                             <div class="__file-box"
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 :ref="'file_' + index">
@@ -447,8 +466,6 @@
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}" title="space">
                                         <source :src="selectedFile.path" type="video/mp4">
-                                        <source :src="selectedFile.path" type="video/ogg">
-                                        <source :src="selectedFile.path" type="video/webm">
                                         {{ trans('MediaManager::messages.video_support') }}
                                     </video>
                                 </template>
@@ -459,7 +476,6 @@
                                         ref="player"
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}" title="space">
-                                        <source :src="selectedFile.path" type="audio/ogg">
                                         <source :src="selectedFile.path" type="audio/mpeg">
                                         {{ trans('MediaManager::messages.audio_support') }}
                                     </audio>
@@ -503,7 +519,7 @@
                                                     <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
                                                     <input type="hidden" name="name" :value="this.selectedFile.name">
                                                     <button type="submit" class="btn-plain">
-                                                        <span class="icon"><icon name="download" scale="1.2"></icon></span>
+                                                        <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                     </button>
                                                 </form>
                                             </div>
@@ -591,7 +607,7 @@
             <section class="media-manager__stack-breadcrumb level is-mobile">
                 <div class="level-left">
                     {{-- directories breadCrumb --}}
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb {{ !$alt_breadcrumb ?: 'is-hidden-touch' }}">
                         <li v-if="!checkForRestrictedPath()">
                             <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
                                 class="p-l-0"
@@ -604,7 +620,7 @@
 
                         <template v-for="(folder,index) in folders">
                             <li @click="folders.length > 1 ? goToFolder(index+1) : false">
-                                <p v-if="isLastItem(folder, folders) || isBulkSelecting()">@{{ folder }}</p>
+                                <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
                                 <a v-else v-tippy title="backspace">@{{ folder }}</a>
                             </li>
                         </template>
@@ -660,8 +676,7 @@
 
             {{-- new_folder_modal --}}
             <div class="modal mm-animated fadeIn"
-                :class="{'is-active': isActiveModal('new_folder_modal')}"
-                v-show="isActiveModal('new_folder_modal')">
+                :class="{'is-active': isActiveModal('new_folder_modal')}">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-link">
@@ -696,8 +711,7 @@
 
             {{-- rename_file_modal --}}
             <div class="modal mm-animated fadeIn"
-                :class="{'is-active': isActiveModal('rename_file_modal')}"
-                v-show="isActiveModal('rename_file_modal')">
+                :class="{'is-active': isActiveModal('rename_file_modal')}">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
@@ -734,14 +748,21 @@
 
             {{-- move_file_modal --}}
             <div class="modal mm-animated fadeIn"
-                :class="{'is-active': isActiveModal('move_file_modal')}"
-                v-show="isActiveModal('move_file_modal')">
+                :class="{'is-active': isActiveModal('move_file_modal')}">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
-                            <span class="icon"><icon name="share"></icon></span>
-                            <span>{{ trans('MediaManager::messages.move_file_folder') }}</span>
+                            <transition :name="useCopy ? 'info-in' : 'info-out'" mode="out-in">
+                                <span class="icon" :key="useCopy ? 1 : 2">
+                                    <icon :name="useCopy ? 'clone' : 'share'"></icon>
+                                </span>
+                            </transition>
+
+                            <transition name="list" mode="out-in">
+                                <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy_file_folder') }}</span>
+                                <span key="2" v-else>{{ trans('MediaManager::messages.move_file_folder') }}</span>
+                            </transition>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
@@ -749,20 +770,40 @@
                     <form action="{{ route('media.move_file') }}" @submit.prevent="MoveFileForm($event)">
                         <section class="modal-card-body">
                             <h3 class="title">{{ trans('MediaManager::messages.destination_folder') }}</h3>
-                            <div class="control has-icons-left">
-                                <span class="select is-fullwidth">
-                                    <select ref="move_folder_dropdown" v-model="moveToPath">
-                                        <option v-if="moveUpCheck()" value="../">../</option>
-                                        <option v-for="(dir,index) in directories"
-                                            v-if="filterDirList(dir)"
-                                            :key="index" :value="dir">
-                                            @{{ dir }}
-                                        </option>
-                                    </select>
-                                </span>
-                                <span class="icon is-small is-left">
-                                    <icon name="search"></icon>
-                                </span>
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <span class="select is-fullwidth">
+                                        <select ref="move_folder_dropdown" v-model="moveToPath">
+                                            <option v-if="moveUpCheck()" value="../">../</option>
+                                            <option v-for="(dir,index) in directories"
+                                                v-if="filterDirList(dir)"
+                                                :key="index" :value="dir">
+                                                @{{ dir }}
+                                            </option>
+                                        </select>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                        <icon name="search"></icon>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="field p-t-10">
+                                <div class="control">
+                                    <div class="level">
+                                        <div class="level-right">
+                                            <div class="level-item">
+                                                <div class="form-switcher">
+                                                    <input type="checkbox" name="use_copy" id="use_copy" v-model="useCopy">
+                                                    <label class="switcher" for="use_copy"></label>
+                                                </div>
+                                            </div>
+                                            <div class="level-item">
+                                                <label class="label" for="use_copy">{{ trans('MediaManager::messages.copy_files') }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                         <footer class="modal-card-foot">
@@ -772,8 +813,10 @@
                             <button type="submit"
                                 class="button is-warning"
                                 :disabled="isLoading || !moveToPath"
-                                :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.move') }}
+                                :class="{'is-loading': isLoading}"
+                                v-html="useCopy
+                                    ? '{{ trans('MediaManager::messages.copy') }}'
+                                    : '{{ trans('MediaManager::messages.move') }}'">
                             </button>
                         </footer>
                     </form>
@@ -782,8 +825,7 @@
 
             {{-- confirm_delete_modal --}}
             <div class="modal mm-animated fadeIn"
-                :class="{'is-active': isActiveModal('confirm_delete_modal')}"
-                v-show="isActiveModal('confirm_delete_modal')">
+                :class="{'is-active': isActiveModal('confirm_delete_modal')}">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-danger">

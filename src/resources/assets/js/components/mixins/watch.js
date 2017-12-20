@@ -28,6 +28,8 @@ export default {
         checkForFolders(val) {
             if (!val) {
                 this.resetInput('moveToPath')
+            } else {
+                this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
             }
         },
         bulkItemsCount(val) {

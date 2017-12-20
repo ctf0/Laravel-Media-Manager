@@ -56,6 +56,7 @@ export default {
             folderWarning: false,
             checkForFolders: false,
             randomNames: false,
+            useCopy: false,
             toolBar: true,
 
             files: [],
@@ -117,10 +118,10 @@ export default {
             let ls = this.$ls.get('mediamanager')
 
             if (ls) {
-                this.randomNames = ls.randomNames ? ls.randomNames : false
-                this.folders = ls.folders ? ls.folders : []
-                this.toolBar = ls.toolBar ? ls.toolBar : true
-                this.selectedFile = ls.selectedFileName ? ls.selectedFileName : null
+                this.randomNames = ls.randomNames == 'undefined' ? false : ls.randomNames
+                this.folders = ls.folders == 'undefined' ? [] : ls.folders
+                this.toolBar = ls.toolBar == 'undefined' ? true : ls.toolBar
+                this.selectedFile = ls.selectedFileName == 'undefined' ? null : ls.selectedFileName
             }
         },
 
@@ -171,11 +172,11 @@ export default {
                         manager.progressCounter = 0
                         manager.showProgress = false
 
-                        setTimeout(() => {
-                            last
-                                ? manager.getFiles(manager.folders, null, last)
-                                : manager.getFiles(manager.folders)
-                        }, 500)
+                        manager.$refs['success-audio'].play()
+
+                        last
+                            ? manager.getFiles(manager.folders, null, last)
+                            : manager.getFiles(manager.folders)
                     }
                 },
                 errormultiple(files, res) {
@@ -186,7 +187,7 @@ export default {
         /* end of upload */
 
         shortCuts(e) {
-            if (!this.isLoading) {
+            if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey)) {
                 // when modal isnt visible
                 if (!this.active_modal) {
                     // when search is not focused
@@ -264,10 +265,19 @@ export default {
                                 }
                             }
 
-                            // add all to bulk list
-                            if (this.isBulkSelecting() && keycode(e) == 'a') {
-                                if (this.$refs.bulkSelectAll) {
-                                    this.$refs.bulkSelectAll.click()
+                            if (this.isBulkSelecting()) {
+                                // add all to bulk list
+                                if (keycode(e) == 'a') {
+                                    if (this.$refs.bulkSelectAll) {
+                                        this.$refs.bulkSelectAll.click()
+                                    }
+                                }
+
+                                // cancel bulk selection
+                                if (keycode(e) == 'esc') {
+                                    if (this.$refs.bulkSelect) {
+                                        this.$refs.bulkSelect.click()
+                                    }
                                 }
                             }
 
@@ -300,6 +310,11 @@ export default {
                         }
                     }
                     /* end of search is not focused */
+
+                    // cancel search
+                    else if (keycode(e) == 'esc') {
+                        this.resetInput('searchFor')
+                    }
                 }
                 /* end of modal isnt visible */
 

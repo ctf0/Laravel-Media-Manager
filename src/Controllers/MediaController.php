@@ -18,24 +18,30 @@ class MediaController extends Controller
     protected $folderChars;
     protected $sanitizedText;
     protected $unallowed_mimes;
-    protected $locked_files_list;
     protected $LMF;
+
+    protected $locked_files_list;
+    protected $disks;
 
     public function __construct()
     {
-        $this->fileSystem         = config('mediaManager.storage_disk');
-        $this->storageDisk        = app('filesystem')->disk($this->fileSystem);
-        $this->ignoreFiles        = config('mediaManager.ignore_files');
-        $this->fileChars          = config('mediaManager.allowed_fileNames_chars');
-        $this->folderChars        = config('mediaManager.allowed_folderNames_chars');
-        $this->sanitizedText      = config('mediaManager.sanitized_text');
-        $this->unallowed_mimes    = config('mediaManager.unallowed_mimes');
-        $this->LMF                = config('mediaManager.last_modified_format');
-        $this->locked_files_list  = config('mediaManager.locked_files_list');
+        $config = config('mediaManager');
+
+        $this->fileSystem      = array_get($config, 'storage_disk');
+        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
+        $this->ignoreFiles     = array_get($config, 'ignore_files');
+        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
+        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
+        $this->sanitizedText   = array_get($config, 'sanitized_text');
+        $this->unallowed_mimes = array_get($config, 'unallowed_mimes');
+        $this->LMF             = array_get($config, 'last_modified_format');
+
+        $this->locked_files_list = array_get($config, 'locked_files_list');
+        $this->disks             = config("filesystems.disks.{$this->fileSystem}");
     }
 
     /**
-     * [index description].
+     * main view.
      *
      * @return [type] [description]
      */
@@ -45,7 +51,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [files description].
+     * get files in path.
      *
      * @param Request $request [description]
      *
@@ -71,7 +77,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [get_all_dirs description].
+     * get all directories in path.
      *
      * @param Request $request [description]
      *
@@ -91,7 +97,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [upload description].
+     * upload new files.
      *
      * @param Request $request [description]
      *
@@ -128,7 +134,7 @@ class MediaController extends Controller
                 $saved_name = $one->storeAs($upload_path, $file_name, $this->fileSystem);
 
                 // fire event
-                event('MMFileUploaded', $this->getFilePath($this->fileSystem, $saved_name));
+                event('MMFileUploaded', $this->getFilePath($saved_name));
 
                 $result[] = [
                     'path'    => preg_replace('/^public\//', '', $saved_name),
@@ -148,7 +154,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [new_folder description].
+     * create new folder.
      *
      * @param Request $request [description]
      *
@@ -174,7 +180,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [delete_file description].
+     * delete files/folders.
      *
      * @param Request $request [description]
      *
@@ -209,7 +215,7 @@ class MediaController extends Controller
                 } else {
                     // fire event
                     event('MMFileDeleted', [
-                        'file_path' => $this->getFilePath($this->fileSystem, $file_name),
+                        'file_path' => $this->getFilePath($file_name),
                         'is_folder' => true,
                     ]);
                 }
@@ -222,7 +228,7 @@ class MediaController extends Controller
                 } else {
                     // fire event
                     event('MMFileDeleted', [
-                        'file_path' => $this->getFilePath($this->fileSystem, $file_name),
+                        'file_path' => $this->getFilePath($file_name),
                         'is_folder' => false,
                     ]);
                 }
@@ -233,7 +239,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [move_file description].
+     * move files/folders.
      *
      * @param Request $request [description]
      *
@@ -242,6 +248,7 @@ class MediaController extends Controller
     public function move_file(Request $request)
     {
         $folderLocation  = $request->folder_location;
+        $copy            = $request->use_copy;
         $result          = [];
 
         if (is_array($folderLocation)) {
@@ -268,22 +275,71 @@ class MediaController extends Controller
 
             try {
                 if (!file_exists($new_path)) {
-                    if ($this->storageDisk->move($old_path, $new_path)) {
-                        $result[] = [
-                            'success' => true,
-                            'name'    => $one['name'],
-                            'items'   => $file_items,
-                            'type'    => $file_type,
-                            'size'    => $file_size,
-                        ];
+                    // copy
+                    if ($copy) {
+                        // folders
+                        if ('folder' == $one['type']) {
+                            $old = $this->getFilePath($old_path);
+                            $new = $this->getFilePath($new_path);
 
-                        // fire event
-                        event('MMFileMoved', [
-                            'old_path' => $this->getFilePath($this->fileSystem, $old_path),
-                            'new_path' => $this->getFilePath($this->fileSystem, $new_path),
-                        ]);
-                    } else {
-                        throw new Exception(trans('MediaManager::messages.error_moving'));
+                            if (app('files')->copyDirectory($old, $new)) {
+                                $result[] = [
+                                    'success' => true,
+                                    'name'    => $one['name'],
+                                    'items'   => $file_items,
+                                    'type'    => $file_type,
+                                    'size'    => $file_size,
+                                ];
+                            } else {
+                                $exc = array_get($this->disks, 'root')
+                                    ? trans('MediaManager::messages.error_moving')
+                                    : trans('MediaManager::messages.error_moving_cloud');
+
+                                throw new Exception($exc);
+                            }
+                        }
+
+                        // files
+                        else {
+                            if ($this->storageDisk->copy($old_path, $new_path)) {
+                                $result[] = [
+                                    'success' => true,
+                                    'name'    => $one['name'],
+                                    'items'   => $file_items,
+                                    'type'    => $file_type,
+                                    'size'    => $file_size,
+                                ];
+                            } else {
+                                throw new Exception(trans('MediaManager::messages.error_moving'));
+                            }
+                        }
+                    }
+
+                    // move
+                    else {
+                        if ($this->storageDisk->move($old_path, $new_path)) {
+                            $result[] = [
+                                'success' => true,
+                                'name'    => $one['name'],
+                                'items'   => $file_items,
+                                'type'    => $file_type,
+                                'size'    => $file_size,
+                            ];
+
+                            // fire event
+                            event('MMFileMoved', [
+                                'old_path' => $this->getFilePath($old_path),
+                                'new_path' => $this->getFilePath($new_path),
+                            ]);
+                        } else {
+                            $exc = trans('MediaManager::messages.error_moving');
+
+                            if ('folder' == $one['type'] && !array_get($this->disks, 'root')) {
+                                $exc = trans('MediaManager::messages.error_moving_cloud');
+                            }
+
+                            throw new Exception($exc);
+                        }
                     }
                 } else {
                     throw new Exception(trans('MediaManager::messages.error_already_exists'));
@@ -300,7 +356,7 @@ class MediaController extends Controller
     }
 
     /**
-     * [rename_file description].
+     * rename item.
      *
      * @param Request $request [description]
      *
@@ -317,28 +373,34 @@ class MediaController extends Controller
             $folderLocation = rtrim(implode('/', $folderLocation), '/');
         }
 
-        if (!$this->storageDisk->exists("$folderLocation/$new_filename")) {
-            if ($this->storageDisk->move("$folderLocation/$filename", "$folderLocation/$new_filename")) {
-                $message = '';
-                $success = true;
+        $old_path = "$folderLocation/$filename";
+        $new_path = "$folderLocation/$new_filename";
 
-                // fire event
-                event('MMFileRenamed', [
-                    'old_path' => $this->getFilePath($this->fileSystem, "$folderLocation/$filename"),
-                    'new_path' => $this->getFilePath($this->fileSystem, "$folderLocation/$new_filename"),
-                ]);
+        try {
+            if (!$this->storageDisk->exists($new_path)) {
+                if ($this->storageDisk->move($old_path, $new_path)) {
+                    $success = true;
+
+                    // fire event
+                    event('MMFileRenamed', [
+                        'old_path' => $this->getFilePath($old_path),
+                        'new_path' => $this->getFilePath($new_path),
+                    ]);
+                } else {
+                    throw new Exception(trans('MediaManager::messages.error_moving'));
+                }
             } else {
-                $message = trans('MediaManager::messages.error_moving');
+                throw new Exception(trans('MediaManager::messages.error_already_exists'));
             }
-        } else {
-            $message = trans('MediaManager::messages.error_already_exists');
+        } catch (Exception $e) {
+            $message = $e->getMessage();
         }
 
         return compact('success', 'message', 'new_filename');
     }
 
     /**
-     * [lock_file description].
+     * lock/unlock files/folders.
      *
      * @param Request $request [description]
      *
@@ -358,7 +420,7 @@ class MediaController extends Controller
     }
 
     /**
-     * zip folder.
+     * zip folders.
      *
      * @param Request $request [description]
      *
@@ -375,10 +437,11 @@ class MediaController extends Controller
             ]);
 
             foreach ($this->storageDisk->allFiles($dir) as $file) {
-                $name = pathinfo($file, PATHINFO_BASENAME);
-                $stream = $this->storageDisk->readStream($file);
-
-                $zip->addFileFromStream($name, $stream);
+                if ($streamRead = $this->storageDisk->readStream($file)) {
+                    $zip->addFileFromStream(pathinfo($file, PATHINFO_BASENAME), $streamRead);
+                } else {
+                    die('Could not open stream for reading');
+                }
             }
 
             $zip->finish();
@@ -394,8 +457,8 @@ class MediaController extends Controller
      */
     public function files_download(Request $request)
     {
-        $name  = $request->name;
-        $list  = json_decode($request->list, true);
+        $name = $request->name;
+        $list = json_decode($request->list, true);
 
         return response()->stream(function () use ($name, $list) {
             $zip = new ZipStream("$name.zip", [
@@ -403,8 +466,11 @@ class MediaController extends Controller
             ]);
 
             foreach ($list as $file) {
-                $stream = fopen($file['path'], 'r');
-                $zip->addFileFromStream($file['name'], $stream);
+                if ($streamRead = fopen($file['path'], 'r')) {
+                    $zip->addFileFromStream($file['name'], $streamRead);
+                } else {
+                    die('Could not open stream for reading');
+                }
             }
 
             $zip->finish();
