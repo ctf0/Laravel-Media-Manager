@@ -43,6 +43,13 @@ class MediaManagerServiceProvider extends ServiceProvider
             'prefix'   => '',
         ]]);
 
+        // caching for zip-stream
+        config(['cache.stores.mediamanager' => [
+            'driver'     => 'database',
+            'table'      => 'cache',
+            'connection' => 'mediamanager',
+        ]]);
+
         // public
         $this->publishes([
             __DIR__ . '/dist' => public_path('assets/vendor/MediaManager'),

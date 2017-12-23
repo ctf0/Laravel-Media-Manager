@@ -22,6 +22,7 @@ class MediaRoutes
             Route::post('rename_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@rename_file', 'as' => 'rename_file']);
             Route::post('lock_file', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@lock_file', 'as' => 'lock_file']);
 
+            Route::get('zip_progress/{name?}', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@zip_progress', 'as' => 'zip_progress']);
             Route::post('folder_download', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@folder_download', 'as' => 'folder_download']);
             Route::post('files_download', ['uses' => '\ctf0\MediaManager\Controllers\MediaController@files_download', 'as' => 'files_download']);
         });

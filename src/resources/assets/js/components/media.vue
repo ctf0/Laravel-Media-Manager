@@ -33,6 +33,7 @@ export default {
         'filesRoute',
         'dirsRoute',
         'lockFileRoute',
+        'zipProgressRoute',
         'restrictPath',
         'uploadPanelImgList',
         'hideExt',
@@ -118,10 +119,10 @@ export default {
             let ls = this.$ls.get('mediamanager')
 
             if (ls) {
-                this.randomNames = ls.randomNames == 'undefined' ? false : ls.randomNames
-                this.folders = ls.folders == 'undefined' ? [] : ls.folders
-                this.toolBar = ls.toolBar == 'undefined' ? true : ls.toolBar
-                this.selectedFile = ls.selectedFileName == 'undefined' ? null : ls.selectedFileName
+                this.randomNames = ls.randomNames === undefined ? false : ls.randomNames
+                this.folders = ls.folders === undefined ? [] : ls.folders
+                this.toolBar = ls.toolBar === undefined ? true : ls.toolBar
+                this.selectedFile = ls.selectedFileName === undefined ? null : ls.selectedFileName
             }
         },
 

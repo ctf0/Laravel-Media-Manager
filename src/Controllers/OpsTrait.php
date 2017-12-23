@@ -120,10 +120,10 @@ trait OpsTrait
      */
     protected function getFilePath($name)
     {
-        $disks = $this->disks;
-        $url   = $this->storageDisk->url($name);
-        $dir   = str_replace(array_get($disks, 'url'), '', $url);
-        $root  = array_get($disks, 'root');
+        $info = $this->storageDiskInfo;
+        $url  = $this->storageDisk->url($name);
+        $dir  = str_replace(array_get($info, 'url'), '', $url);
+        $root = array_get($info, 'root');
 
         // for other disks without root ex."cloud"
         if (!$root) {

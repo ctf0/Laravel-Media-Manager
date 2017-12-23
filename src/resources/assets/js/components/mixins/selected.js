@@ -15,17 +15,41 @@ export default {
             if (e && e.shiftKey) {
                 this.bulkSelect = true
 
-                // normal
+                // forward
                 let begin = this.currentFileIndex
-                let end = index + 1
+                let end = index
+                let dir = 'forward'
 
-                // reverse
+                // backward
                 if (begin > index) {
                     begin = index
-                    end = this.currentFileIndex + 1
+                    end = this.currentFileIndex
+                    dir = 'backward'
                 }
 
-                return this.bulkList = this.allFiles.slice(begin, end)
+                // search
+                if (this.searchFor) {
+                    this.bulkList = []
+                    let indexList = this.getRange(begin, end)
+
+                    indexList.map((i) => {
+                        this.$refs[`file_${i}`][0].click()
+                    })
+
+                    // to have the same expected pattern as normal shift + click
+                    if (dir == 'forward') {
+                        this.selectedFile = this.bulkList[0]
+                        this.currentFileIndex = indexList[0]
+                    } else {
+                        this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+                        this.currentFileIndex = indexList[indexList.length - 1]
+                    }
+
+                    return
+                }
+
+                // default
+                return this.bulkList = this.allFiles.slice(begin, end + 1)
             }
 
             // normal selection
@@ -36,6 +60,9 @@ export default {
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }
+        },
+        getRange(start, end) {
+            return Array(end - start + 1).fill().map((_, idx) => start + idx)
         },
         selectedFileIs(val) {
             if (this.selectedFile !== null) {

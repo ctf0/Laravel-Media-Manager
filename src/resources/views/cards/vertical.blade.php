@@ -83,7 +83,7 @@
                 :disabled="!selectedFile || IsInLockedList(selectedFile)"
                 v-if="!isBulkSelecting()"
                 @click="renameItem()">
-                <span class="icon is-small"><icon name="i-cursor"></icon></span>
+                <span class="icon is-small"><icon name="terminal"></icon></span>
                 <span>{{ trans('MediaManager::messages.rename') }}</span>
             </button>
         </div>
@@ -94,7 +94,7 @@
                 v-multi-ref="'delete'"
                 :disabled="mv_dl()"
                 @click="deleteItem()">
-                <span class="icon is-small"><icon name="trash"></icon></span>
+                <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete') }}</span>
             </button>
         </div>

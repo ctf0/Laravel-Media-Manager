@@ -1,0 +1,10 @@
+- fix “select + click” for search
+- add support for zip progress
+- new styling for path breadcrumb on mobile
+- add animation for breadcrumbs
+- fix local-storage toolbar changing on its own
+- some cleanup to the controller
+
+- update assets
+- update db file
+- update language file

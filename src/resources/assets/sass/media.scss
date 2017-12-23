@@ -124,41 +124,81 @@
     overflow: scroll;
     align-items: center;
     width: 100%;
-    padding: 1rem 0;
+    padding: 1rem 0 2rem;
     list-style: none;
+    transition: all 0.25s ease-in-out;
 
     li {
+        position: relative;
         flex: 1;
         margin-right: 1rem;
+        padding: 2px;
         text-align: center;
+        border: 1px dashed darken($active_theme, 2%);
+        border-radius: 5px;
 
-        a {
-            display: block;
-        }
-
-        a,
-        &:only-of-type {
-            padding: 1rem;
-            transition: all 0.3s ease-in-out;
-            white-space: nowrap;
-            color: $blue;
-            border: 1px solid lighten($active_theme, 2%);
-            border-radius: 5px;
-            background: $white;
-
-            &:hover {
-                border-color: transparent;
-                box-shadow: $shadow_3;
-            }
-        }
-
-        &:only-of-type {
-            display: none;
+        // ---
+        &::after {
+            position: absolute;
+            top: 50%;
+            right: -1rem;
+            width: 1rem;
+            content: '';
+            border-top: 1px dashed darken($active_theme, 2%);
         }
 
         &:last-of-type {
             margin-right: 0;
-            padding-right: 3rem;
+            margin-left: 1px;
+            padding-right: 2rem;
+
+            &::after {
+                display: none;
+            }
+
+            // get around vue not animating items
+            // because of changeing border style
+            &::before {
+                position: absolute;
+                top: -1px;
+                right: -1px;
+                bottom: -1px;
+                left: 15%;
+                content: '';
+                border: 1px solid $white;
+                border-left: none;
+                border-radius: 0 5px 5px 0;
+            }
+        }
+
+        // ---•
+        &:nth-last-of-type(2)::before {
+            font-size: 1.8rem;
+            position: absolute;
+            z-index: 1;
+            top: 0.65rem;
+            right: -1.57rem;
+            content: '•';
+            color: darken($active_theme, 2%);
+        }
+
+        a,
+        p {
+            display: block;
+            padding: 1rem;
+            white-space: nowrap;
+            border-radius: 5px;
+            background: $white;
+        }
+
+        a {
+            transition: all 0.25s ease-in-out;
+            color: $blue;
+            box-shadow: $shadow_3;
+
+            &:hover {
+                box-shadow: none;
+            }
         }
     }
 }
@@ -427,6 +467,7 @@
         overflow: hidden;
         text-align: center;
         color: darken($active_theme, 50%);
+        border-bottom: 1px dashed darken($active_theme, 5%);
 
         .__sidebar-none-selected {
             display: flex;
@@ -474,10 +515,6 @@
 
             &:not(.__sidebar-count) {
                 flex: 1;
-
-                &:not(:empty) {
-                    border-top: 1px solid darken($active_theme, 5%);
-                }
 
                 h4 {
                     font-size: 1rem;
@@ -549,8 +586,7 @@
 
 /*                modal                */
 .__modal-preview {
-    align-items: center;
-    padding: 0.7rem;
+    padding: 0.7rem 0.7rem 0;
 
     * {
         color: $black;
@@ -735,17 +771,22 @@
     padding: 0;
     cursor: pointer;
     vertical-align: bottom;
+    color: darken($active_theme, 70%);
     border: none;
     border-radius: 0;
     background: transparent;
 
-    * {
-        color: darken($active_theme, 70%);
-    }
-
     &:focus {
         border: none;
         box-shadow: none !important;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+
+        * {
+            color: darken($active_theme, 20%);
+        }
     }
 }
 
@@ -811,25 +852,31 @@ a[target='_blank'] {
 }
 
 .modal {
+    overflow: scroll;
     align-items: flex-start;
 
+    .modal-background {
+        position: fixed;
+    }
+
+    .modal-card {
+        margin: 0;
+        padding: 1rem;
+    }
+
+    .modal-content {
+        box-shadow: $shadow_1;
+    }
+
+    .modal-card-foot {
+        justify-content: flex-end;
+        background-color: $white;
+    }
+
     &.is-active {
+        margin-bottom: 2%;
         padding-top: 4%;
     }
-}
-
-.modal-card {
-    margin: 0;
-    padding: 1rem;
-}
-
-.modal-content {
-    box-shadow: $shadow_1;
-}
-
-.modal-card-foot {
-    justify-content: flex-end;
-    background-color: $white;
 }
 
 .image {

@@ -11,33 +11,39 @@ class MediaController extends Controller
 {
     use OpsTrait;
 
+    // main
     protected $fileSystem;
     protected $storageDisk;
     protected $ignoreFiles;
     protected $fileChars;
     protected $folderChars;
     protected $sanitizedText;
-    protected $unallowed_mimes;
+    protected $unallowedMimes;
     protected $LMF;
 
-    protected $locked_files_list;
-    protected $disks;
+    // extra
+    protected $storageDiskInfo;
+    protected $lockedList;
+    protected $cacheStore;
+    protected $db;
 
     public function __construct()
     {
         $config = config('mediaManager');
 
-        $this->fileSystem      = array_get($config, 'storage_disk');
-        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
-        $this->ignoreFiles     = array_get($config, 'ignore_files');
-        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
-        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
-        $this->sanitizedText   = array_get($config, 'sanitized_text');
-        $this->unallowed_mimes = array_get($config, 'unallowed_mimes');
-        $this->LMF             = array_get($config, 'last_modified_format');
+        $this->fileSystem     = array_get($config, 'storage_disk');
+        $this->storageDisk    = app('filesystem')->disk($this->fileSystem);
+        $this->ignoreFiles    = array_get($config, 'ignore_files');
+        $this->fileChars      = array_get($config, 'allowed_fileNames_chars');
+        $this->folderChars    = array_get($config, 'allowed_folderNames_chars');
+        $this->sanitizedText  = array_get($config, 'sanitized_text');
+        $this->unallowedMimes = array_get($config, 'unallowed_mimes');
+        $this->LMF            = array_get($config, 'last_modified_format');
 
-        $this->locked_files_list = array_get($config, 'locked_files_list');
-        $this->disks             = config("filesystems.disks.{$this->fileSystem}");
+        $this->db              = app('db')->connection('mediamanager');
+        $this->lockedList      = $this->db->table('locked')->pluck('path');
+        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
+        $this->cacheStore      = app('cache')->store('mediamanager');
     }
 
     /**
@@ -68,7 +74,7 @@ class MediaController extends Controller
         }
 
         return response()->json([
-            'locked' => app('db')->connection('mediamanager')->table('locked')->pluck('path'),
+            'locked' => $this->lockedList,
             'files'  => [
                 'path'   => $folder,
                 'items'  => $this->getData($folder),
@@ -121,7 +127,7 @@ class MediaController extends Controller
 
             try {
                 // check for mime type
-                if (str_contains($file_type, $this->unallowed_mimes)) {
+                if (str_contains($file_type, $this->unallowedMimes)) {
                     throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
                 }
 
@@ -291,7 +297,7 @@ class MediaController extends Controller
                                     'size'    => $file_size,
                                 ];
                             } else {
-                                $exc = array_get($this->disks, 'root')
+                                $exc = array_get($this->storageDiskInfo, 'root')
                                     ? trans('MediaManager::messages.error_moving')
                                     : trans('MediaManager::messages.error_moving_cloud');
 
@@ -334,7 +340,7 @@ class MediaController extends Controller
                         } else {
                             $exc = trans('MediaManager::messages.error_moving');
 
-                            if ('folder' == $one['type'] && !array_get($this->disks, 'root')) {
+                            if ('folder' == $one['type'] && !array_get($this->storageDiskInfo, 'root')) {
                                 $exc = trans('MediaManager::messages.error_moving_cloud');
                             }
 
@@ -410,7 +416,7 @@ class MediaController extends Controller
     {
         $path  = $request->path;
         $state = $request->state;
-        $db    = app('db')->connection('mediamanager')->table('locked');
+        $db    = $this->db->table('locked');
 
         'locked' == $state
             ? $db->insert(['path'=>$path])
@@ -420,60 +426,136 @@ class MediaController extends Controller
     }
 
     /**
-     * zip folders.
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
+     * zip ops.
      */
     public function folder_download(Request $request)
     {
-        $name = $request->name;
-        $dir  = "{$request->folders}/$name";
-
-        return response()->stream(function () use ($name, $dir) {
-            $zip = new ZipStream("$name.zip", [
-                'content_type' => 'application/octet-stream',
-            ]);
-
-            foreach ($this->storageDisk->allFiles($dir) as $file) {
-                if ($streamRead = $this->storageDisk->readStream($file)) {
-                    $zip->addFileFromStream(pathinfo($file, PATHINFO_BASENAME), $streamRead);
-                } else {
-                    die('Could not open stream for reading');
-                }
-            }
-
-            $zip->finish();
-        });
+        return $this->download(
+            $request->name,
+            $this->storageDisk->allFiles("{$request->folders}/$request->name"),
+            'folder'
+        );
     }
 
-    /**
-     * zip files.
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
     public function files_download(Request $request)
     {
-        $name = $request->name;
-        $list = json_decode($request->list, true);
+        return $this->download(
+            $request->name . '-files',
+            json_decode($request->list, true),
+            'files'
+        );
+    }
 
-        return response()->stream(function () use ($name, $list) {
+    protected function download($name, $list, $type)
+    {
+        // track changes
+        $counter    = 100 / count($list);
+        $store      = $this->cacheStore;
+        $cache_name = $name;
+        $store->forever("$cache_name.progress", 0);
+
+        return response()->stream(function () use ($name, $list, $type, $counter, $store, $cache_name) {
             $zip = new ZipStream("$name.zip", [
                 'content_type' => 'application/octet-stream',
             ]);
 
             foreach ($list as $file) {
-                if ($streamRead = fopen($file['path'], 'r')) {
-                    $zip->addFileFromStream($file['name'], $streamRead);
+                if ('folder' == $type) {
+                    $file_name = pathinfo($file, PATHINFO_BASENAME);
+                    $streamRead = $this->storageDisk->readStream($file);
                 } else {
-                    die('Could not open stream for reading');
+                    $file_name = $file['name'];
+                    $streamRead = @fopen($file['path'], 'r');
+                }
+
+                if ($streamRead) {
+                    $store->increment("$cache_name.progress", round($counter, 2));
+                    $zip->addFileFromStream($file_name, $streamRead);
+                } else {
+                    $store->forever("$cache_name.abort", $file_name);
+                    die();
                 }
             }
 
+            $store->forever("$cache_name.done", true);
             $zip->finish();
         });
+    }
+
+    /**
+     * zip progress update.
+     */
+    public function zip_progress(Request $request)
+    {
+        // stop execution
+        $start        = time();
+        $maxExecution = ini_get('max_execution_time');
+        $sleep        = array_get($this->storageDiskInfo, 'root') ? 0.5 : 1.5;
+        $close        = false;
+
+        // params
+        $id    = $request->header('last-event-id');
+        $name  = $request->name;
+
+        // get changes
+        $store      = $this->cacheStore;
+        $cache_name = $name;
+
+        return response()->stream(function () use ($start, $maxExecution, $close, $sleep, $store, $cache_name) {
+            while (!$close) {
+                // progress
+                $this->es_msg($store->get("$cache_name.progress"), 'progress');
+
+                // avoid server crash
+                if (time() >= $start + $maxExecution) {
+                    $close = true;
+                    $this->es_msg(null, 'exit');
+                    $this->clearZipCache($store, $cache_name);
+                }
+
+                // abort
+                if ($store->has("$cache_name.abort")) {
+                    $close = true;
+                    $this->es_msg('Could not open "' . $store->get("$cache_name.abort") . '" stream for reading.', 'abort');
+                    $this->clearZipCache($store, $cache_name);
+                }
+
+                // done
+                if ($store->has("$cache_name.done")) {
+                    $close = true;
+                    $this->es_msg(100, 'progress');
+                    $this->es_msg('All Done', 'done');
+                    $this->clearZipCache($store, $cache_name);
+                }
+
+                ob_flush();
+                flush();
+
+                // don't wait unnecessary
+                if (!$close) {
+                    sleep($sleep);
+                }
+            }
+        }, 200, [
+            'Content-Type'                     => 'text/event-stream', // needed for SSE to work
+            'Cache-Control'                    => 'no-cache',          // make sure we dont cache this response
+            'X-Accel-Buffering'                => 'no',                // needed for while loop to work
+            'Access-Control-Allow-Origin'      => config('app.url'),   // for cors
+            'Access-Control-Expose-Headers'    => '*',                 // for cors
+            'Access-Control-Allow-Credentials' => true,                // for cors
+        ]);
+    }
+
+    protected function es_msg($data = null, $event = null)
+    {
+        echo $event ? "event: $event\n" : ':';
+        echo $data ? 'data: ' . json_encode(['response' => $data]) . "\n\n" : ':';
+    }
+
+    protected function clearZipCache($store, $item)
+    {
+        $store->forget("$item.progress");
+        $store->forget("$item.done");
+        $store->forget("$item.abort");
     }
 }

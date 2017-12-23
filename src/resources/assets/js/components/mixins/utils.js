@@ -179,20 +179,6 @@ export default {
             this.linkCopied = true
             this.$copyText(path)
         },
-        // download
-        saveFile(item) {
-            if (this.isBulkSelecting()) {
-                this.bulkList.forEach((e) => {
-                    downloadFile(e.path)
-                })
-
-                manager.$refs['success-audio'].play()
-                return this.showNotif('All Done')
-            }
-
-            downloadFile(item.path)
-            return this.showNotif(`"${item.name}" ${this.trans('downloaded')}`)
-        },
 
         // ls
         updateLs(obj) {

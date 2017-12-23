@@ -17,17 +17,19 @@
         'no_val' => trans('MediaManager::messages.no_val'),
         'single_char_folder' => trans('MediaManager::messages.single_char_folder'),
         'downloaded' => trans('MediaManager::messages.downloaded'),
+        'sep_download' => trans('MediaManager::messages.sep_download'),
         'upload_success' => trans('MediaManager::messages.upload_success'),
         'create_success' => trans('MediaManager::messages.create_success'),
         'rename_success' => trans('MediaManager::messages.rename_success'),
         'move_success' => trans('MediaManager::messages.move_success'),
         'delete_success' => trans('MediaManager::messages.delete_success'),
-        'copy_success' => trans('MediaManager::messages.copy_success')
+        'copy_success' => trans('MediaManager::messages.copy_success'),
     ]) }}"
     :upload-panel-img-list="{{ $patterns }}"
     files-route="{{ route('media.files') }}"
     dirs-route="{{ route('media.directories') }}"
     lock-file-route="{{ route('media.lock_file') }}"
+    zip-progress-route="{{ route('media.zip_progress') }}"
     :restrict-path="{{ isset($path) ? $path : 'null' }}">
 
     <div class="">
@@ -90,7 +92,7 @@
                                 :disabled="mv_dl() || !checkForFolders || isLoading"
                                 v-tippy title="m"
                                 @click="moveItem()">
-                                <span class="icon is-small"><icon name="share"></icon></span>
+                                <span class="icon is-small"><icon name="share" scale="0.9"></icon></span>
                                 <span>{{ trans('MediaManager::messages.move') }}</span>
                             </button>
                         </div>
@@ -101,7 +103,7 @@
                                 :disabled="!selectedFile || IsInLockedList(selectedFile) || isLoading"
                                 v-if="!isBulkSelecting()"
                                 @click="renameItem()">
-                                <span class="icon is-small"><icon name="i-cursor"></icon></span>
+                                <span class="icon is-small"><icon name="terminal"></icon></span>
                                 <span>{{ trans('MediaManager::messages.rename') }}</span>
                             </button>
                         </div>
@@ -286,11 +288,6 @@
             </div>
         </nav>
 
-        {{-- mobile breadCrumb --}}
-        @if ($alt_breadcrumb)
-            @include('MediaManager::extras._breadcrumb')
-        @endif
-
         {{-- ====================================================================== --}}
 
         {{-- dropzone --}}
@@ -315,6 +312,13 @@
                 <div class="progress-bar is-success progress-bar-striped active" :style="{width: progressCounter}"></div>
             </div>
         </transition-group>
+
+        {{-- ====================================================================== --}}
+
+        {{-- mobile breadCrumb --}}
+        @if ($alt_breadcrumb)
+            @include('MediaManager::extras._breadcrumb')
+        @endif
 
         {{-- ====================================================================== --}}
 
@@ -514,11 +518,11 @@
                                         <h4 v-if="!isBulkSelecting()">
                                             {{ trans('MediaManager::messages.download_folder') }}:
                                             <div class="__sidebar-zip">
-                                                <form action="{{ route('media.folder_download') }}" method="post">
+                                                <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder')">
                                                     {{ csrf_field() }}
                                                     <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
                                                     <input type="hidden" name="name" :value="this.selectedFile.name">
-                                                    <button type="submit" class="btn-plain">
+                                                    <button v-multi-ref="'zip'" type="submit" class="btn-plain" :disabled="selectedFile.items == 0">
                                                         <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                     </button>
                                                 </form>
@@ -543,11 +547,11 @@
                                             {{-- zip --}}
                                             <template v-if="isBulkSelecting()">
                                                 <div class="__sidebar-zip">
-                                                    <form action="{{ route('media.files_download') }}" method="post">
+                                                    <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files')">
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
                                                         <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
-                                                        <button type="submit" class="btn-plain">
+                                                        <button v-multi-ref="'zip'" type="submit" class="btn-plain" :disabled="hasFolder()">
                                                             <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                         </button>
                                                     </form>
@@ -605,10 +609,11 @@
 
             {{-- path toolbar --}}
             <section class="media-manager__stack-breadcrumb level is-mobile">
+                {{-- directories breadCrumb --}}
                 <div class="level-left">
-                    {{-- directories breadCrumb --}}
-                    <ol class="breadcrumb {{ !$alt_breadcrumb ?: 'is-hidden-touch' }}">
-                        <li v-if="!checkForRestrictedPath()">
+                    <transition-group tag="ul" name="list" mode="out-in"
+                        class="breadcrumb {{ !$alt_breadcrumb ?: 'is-hidden-touch' }}">
+                        <li key="library-bc" v-if="!checkForRestrictedPath()">
                             <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
                                 class="p-l-0"
                                 v-tippy title="backspace"
@@ -618,29 +623,32 @@
                             <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
                         </li>
 
-                        <template v-for="(folder,index) in folders">
-                            <li @click="folders.length > 1 ? goToFolder(index+1) : false">
-                                <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
-                                <a v-else v-tippy title="backspace">@{{ folder }}</a>
-                            </li>
-                        </template>
-                    </ol>
+                        <li v-for="(folder,index) in folders" :key="folder + '-bc'">
+                            <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
+                            <a v-else v-tippy title="backspace"
+                                @click="folders.length > 1 ? goToFolder(index+1) : false">
+                                @{{ folder }}
+                            </a>
+                        </li>
+                    </transition-group>
                 </div>
 
+                {{-- toggle sidebar --}}
                 <div class="level-right" v-show="!isLoading">
-                    {{-- toggle info --}}
                     <div class="is-hidden-touch"
                         @click="toggleInfoPanel()"
                         v-tippy title="t"
                         v-if="allItemsCount">
                         <transition :name="toggleInfo ? 'info-out' : 'info-in'" mode="out-in">
-                            <div key="1" v-if="toggleInfo" class="__stack-sidebar-toggle has-text-link">
-                                <span>{{ trans('MediaManager::messages.close') }}</span>
-                                <span class="icon"><icon name="angle-double-right"></icon></span>
-                            </div>
-                            <div key="2" v-else class="__stack-sidebar-toggle has-text-link">
-                                <span>{{ trans('MediaManager::messages.open') }}</span>
-                                <span class="icon"><icon name="angle-double-left"></icon></span>
+                            <div :key="toggleInfo ? 1 : 2" class="__stack-sidebar-toggle has-text-link">
+                                <template v-if="toggleInfo">
+                                    <span>{{ trans('MediaManager::messages.close') }}</span>
+                                    <span class="icon"><icon name="angle-double-right"></icon></span>
+                                </template>
+                                <template v-else>
+                                    <span>{{ trans('MediaManager::messages.open') }}</span>
+                                    <span class="icon"><icon name="angle-double-left"></icon></span>
+                                </template>
                             </div>
                         </transition>
                     </div>
@@ -716,7 +724,7 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
-                            <span class="icon"><icon name="i-cursor"></icon></span>
+                            <span class="icon"><icon name="terminal"></icon></span>
                             <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>

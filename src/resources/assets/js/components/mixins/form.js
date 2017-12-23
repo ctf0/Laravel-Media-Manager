@@ -1,4 +1,7 @@
+import Download from './download'
+
 export default {
+    mixins: [Download],
     methods: {
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
@@ -58,27 +61,25 @@ export default {
                     this.selectFirst()
                 }
 
-                // check for prev opened folder
-                if (prev_folder) {
-                    this.$nextTick(() => {
+                this.$nextTick(() => {
+                    // check for prev opened folder
+                    if (prev_folder) {
                         this.files.items.some((e, i) => {
                             if (e.name == prev_folder) {
                                 return this.setSelected(e, i)
                             }
                         })
-                    })
-                }
+                    }
 
-                // check for prev selected file
-                if (prev_file) {
-                    this.$nextTick(() => {
+                    // check for prev selected file
+                    if (prev_file) {
                         this.files.items.some((e, i) => {
                             if (e.name == prev_file) {
                                 return this.setSelected(e, i)
                             }
                         })
-                    })
-                }
+                    }
+                })
 
                 // we have files
                 if (this.allItemsCount) {
@@ -86,19 +87,17 @@ export default {
                     this.loadingFiles('hide')
                     this.toggleInfo = true
 
-                    // scroll to prev selected item
-                    setTimeout(() => {
+                    this.$nextTick(() => {
+                        // scroll to prev selected item
                         if (this.currentFileIndex) {
                             this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
                         }
-                    }, 800)
 
-                    // scroll to breadcrumb item
-                    setTimeout(() => {
+                        // scroll to breadcrumb item
                         let name = folders.split('/').pop()
-                        let count = document.getElementById(`${name ? name : 'home'}-bc`).offsetLeft
-                        this.$refs.bc.scrollBy({top: 0, left: count, behavior: 'smooth'})
-                    }, 100)
+                        let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
+                        this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                    })
 
                     return this.updateDirsList()
                 }
@@ -389,7 +388,7 @@ export default {
 
                 if (this.filteredItemsCount) {
                     this.filterdList.some((e) => {
-                        if (e.name == destination) {
+                        if (e.type == 'folder' && e.name == destination) {
                             e.items += parseInt(count)
                             e.size += parseInt(weight)
                         }
@@ -397,7 +396,7 @@ export default {
                 }
 
                 this.files.items.some((e) => {
-                    if (e.name == destination) {
+                    if (e.type == 'folder' && e.name == destination) {
                         e.items += parseInt(count)
                         e.size += parseInt(weight)
                     }
