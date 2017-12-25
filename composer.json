@@ -19,7 +19,7 @@
    ],
     "require": {
         "php" : "~7.0",
-       "illuminate/support": "~5.4.0 || ~5.5.0",
+       "illuminate/support": "^5.4 || ^5.5",
        "maennchen/zipstream-php": "^0.5.0",
        "ctf0/package-changelog": "^1.0"
     },
