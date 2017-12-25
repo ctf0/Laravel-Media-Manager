@@ -1,148 +1,227 @@
-import Download from './download'
-
 export default {
-    mixins: [Download],
     methods: {
+        /*                Upload                */
+        fileUpload() {
+            const manager = this
+
+            let items = 0
+            let progress = 0
+            let counter = 0
+            let last = null
+            let sendingComplete = false
+
+            new Dropzone('#new-upload', {
+                createImageThumbnails: false,
+                parallelUploads: 10,
+                hiddenInputContainer: '#new-upload',
+                uploadMultiple: true,
+                forceFallback: false,
+                ignoreHiddenFiles: true,
+                timeout: 3600000,
+                previewsContainer: '#uploadPreview',
+                addedfile() {
+                    manager.showProgress = true
+                    items++
+                    counter = 100 / items
+                },
+                sending() {
+                    progress += counter
+                    manager.progressCounter = `${progress.toFixed(2)}%`
+
+                    if (progress >= 100) {
+                        sendingComplete = true
+                    }
+                },
+                successmultiple(files, res) {
+                    res.data.map((item) => {
+                        if (item.success) {
+                            manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
+                            last = item.message
+                        } else {
+                            manager.showNotif(item.message, 'danger')
+                        }
+                    })
+
+                    if (sendingComplete) {
+                        items = 0
+                        progress = 0
+                        manager.progressCounter = 0
+                        manager.showProgress = false
+
+                        manager.$refs['success-audio'].play()
+                        manager.removeCachedResponse('../')
+
+                        last
+                            ? manager.getFiles(manager.folders, null, last)
+                            : manager.getFiles(manager.folders)
+                    }
+                },
+                errormultiple(files, res) {
+                    manager.showNotif(res, 'danger')
+                }
+            })
+        },
+
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
 
+            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
-
             if (!this.loading_files) {
                 this.toggleInfo = false
                 this.toggleLoading()
                 this.loadingFiles('show')
             }
 
-            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
-
             if (folders !== '/') {
                 folders = '/' + folders.join('/')
             }
 
-            // files list
-            axios.post(this.filesRoute, {
-                folder: folders
-            }).then(({data}) => {
-
-                // folder doesnt exist
-                if (data.error) {
-                    if (this.checkForRestrictedPath()) {
-                        EventHub.fire('get-folders', false)
-                    }
-
-                    return this.showNotif(data.error, 'danger')
-                }
-
-                // check for restricted path
-                if (this.checkForRestrictedPath()) {
-                    EventHub.fire('get-folders', true)
-                }
-
-                this.files = data.files
-                this.lockedList = data.locked
-
-                // check for hidden extensions
-                if (this.hideExt.length) {
-                    this.files.items = this.files.items.filter((e) => {
-                        return !this.checkForHiddenExt(e)
-                    })
-                }
-
-                // check for hidden folders
-                if (this.hidePath.length) {
-                    this.files.items = this.files.items.filter((e) => {
-                        return !this.checkForHiddenPath(e)
-                    })
-                }
-
-                // we have files
-                if (this.allItemsCount) {
-                    this.selectFirst()
-                }
-
-                this.$nextTick(() => {
-                    // check for prev opened folder
-                    if (prev_folder) {
-                        this.files.items.some((e, i) => {
-                            if (e.name == prev_folder) {
-                                return this.setSelected(e, i)
-                            }
-                        })
-                    }
-
-                    // check for prev selected file
-                    if (prev_file) {
-                        this.files.items.some((e, i) => {
-                            if (e.name == prev_file) {
-                                return this.setSelected(e, i)
-                            }
-                        })
-                    }
-                })
-
-                // we have files
-                if (this.allItemsCount) {
-                    this.toggleLoading()
-                    this.loadingFiles('hide')
-                    this.toggleInfo = true
-
-                    this.$nextTick(() => {
-                        // scroll to prev selected item
-                        if (this.currentFileIndex) {
-                            this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
-                        }
-
-                        // scroll to breadcrumb item
-                        let name = folders.split('/').pop()
-                        let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
-                        this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
-                    })
-
-                    return this.updateDirsList()
-                }
-
-                // we dont have files
-                this.toggleLoading()
-                this.loadingFiles('hide')
+            // get cache
+            this.getCachedResponse().then((res) => {
+                this.files = res.files
+                this.lockedList = res.lockedList
+                this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
 
             }).catch((err) => {
-                console.error(err)
-                this.ajaxError()
+                // console.warn('localforage.getItem', err)
+
+                // or make the call if nothing found
+                axios.post(this.filesRoute, {
+                    folder: folders,
+                    dirs: this.folders
+                }).then(({data}) => {
+
+                    // folder doesnt exist
+                    if (data.error) {
+                        if (this.checkForRestrictedPath()) {
+                            EventHub.fire('get-folders', false)
+                        }
+
+                        return this.showNotif(data.error, 'danger')
+                    }
+
+                    // check for restricted path
+                    if (this.checkForRestrictedPath()) {
+                        EventHub.fire('get-folders', true)
+                    }
+
+                    // normal
+                    this.files = data.files
+                    this.lockedList = data.locked
+                    this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
+
+                    // cache response
+                    this.cacheResponse({
+                        files: data.files,
+                        lockedList: data.locked,
+                        dirs: data.dirs
+                    })
+
+                }).catch((err) => {
+                    console.error(err)
+                    this.ajaxError()
+                })
             })
         },
         updateDirsList() {
             axios.post(this.dirsRoute, {
                 folder_location: this.folders
             }).then(({data}) => {
-
-                this.directories = data
-
-                // check for hidden folders
-                if (this.hidePath.length) {
-                    this.directories = this.directories.filter((e) => {
-                        return !this.checkForFolderName(e)
-                    })
-                }
-
-                if (this.lockedList.length) {
-                    // nested folders
-                    if (this.files.path !== '') {
-                        return this.directories = this.directories.filter((e) => {
-                            return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
-                        })
-                    }
-
-                    // root
-                    this.directories = this.directories.filter((e) => {
-                        return !this.lockedList.includes(`${this.baseUrl}${e}`)
-                    })
-                }
-
+                this.dirsListCheck(data)
             }).catch((err) => {
                 console.error(err)
                 this.ajaxError()
             })
+        },
+        filesListCheck(prev_folder, prev_file, folders, dirs) {
+            // check for hidden extensions
+            if (this.hideExt.length) {
+                this.files.items = this.files.items.filter((e) => {
+                    return !this.checkForHiddenExt(e)
+                })
+            }
+
+            // check for hidden folders in files
+            if (this.hidePath.length) {
+                this.files.items = this.files.items.filter((e) => {
+                    return !this.checkForHiddenPath(e)
+                })
+            }
+
+            // we have files
+            if (this.allItemsCount) {
+                this.selectFirst()
+            }
+
+            this.$nextTick(() => {
+                // check for prev opened folder
+                if (prev_folder) {
+                    this.files.items.some((e, i) => {
+                        if (e.name == prev_folder) {
+                            return this.setSelected(e, i)
+                        }
+                    })
+                }
+
+                // check for prev selected file
+                if (prev_file) {
+                    this.files.items.some((e, i) => {
+                        if (e.name == prev_file) {
+                            return this.setSelected(e, i)
+                        }
+                    })
+                }
+            })
+
+            // we have files
+            if (this.allItemsCount) {
+                this.toggleLoading()
+                this.loadingFiles('hide')
+                this.toggleInfo = true
+
+                this.$nextTick(() => {
+                    // scroll to prev selected item
+                    if (this.currentFileIndex) {
+                        this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
+                    }
+
+                    // scroll to breadcrumb item
+                    let name = folders.split('/').pop()
+                    let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
+                    this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                })
+
+                return this.dirsListCheck(dirs)
+            }
+
+            // we dont have files
+            this.toggleLoading()
+            this.loadingFiles('hide')
+        },
+        dirsListCheck(data) {
+            this.directories = data
+
+            // check for hidden folders in directories
+            if (this.hidePath.length) {
+                this.directories = this.directories.filter((e) => {
+                    return !this.checkForFolderName(e)
+                })
+            }
+
+            if (this.lockedList.length) {
+                // nested folders
+                if (this.files.path !== '') {
+                    return this.directories = this.directories.filter((e) => {
+                        return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
+                    })
+                }
+
+                // root
+                this.directories = this.directories.filter((e) => {
+                    return !this.lockedList.includes(`${this.baseUrl}${e}`)
+                })
+            }
         },
 
         /*                Tool-Bar                */
@@ -212,6 +291,7 @@ export default {
 
                 this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
                 this.updateItemName(this.selectedFile, filename, data.new_filename)
+                this.removeCachedResponse()
 
                 if (this.selectedFileIs('folder')) {
                     this.updateDirsList()
@@ -281,6 +361,7 @@ export default {
 
                 this.$refs['success-audio'].play()
                 this.toggleModal()
+                this.removeCachedResponse(destination)
 
                 this.isBulkSelecting()
                     ? this.blkSlct()
@@ -319,8 +400,10 @@ export default {
                 })
 
                 this.$refs['success-audio'].play()
+                this.removeCachedResponse()
                 this.toggleModal()
                 this.isBulkSelecting() ? this.blkSlct() : this.selectFirst()
+
                 if (this.searchFor) {
                     this.searchItemsCount = this.filesList.length
                 }
@@ -338,6 +421,7 @@ export default {
                 state: state
             }).then(({data}) => {
                 this.showNotif(data.message)
+                this.removeCachedResponse()
             }).catch((err) => {
                 console.error(err)
                 this.ajaxError()

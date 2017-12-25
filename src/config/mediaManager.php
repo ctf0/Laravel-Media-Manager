@@ -14,6 +14,11 @@ return [
     'storage_disk' => 'public',
 
     /*
+     * manager controller
+     */
+    'controller' => '\ctf0\MediaManager\Controllers\MediaController',
+
+    /*
      * remove any file special chars except (. _ -)
      */
     'allowed_fileNames_chars' => '.\_\-',

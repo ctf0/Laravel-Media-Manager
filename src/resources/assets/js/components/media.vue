@@ -1,5 +1,7 @@
 <script>
 import Utilities from './mixins/utils'
+import Download from './mixins/download'
+import Cache from './mixins/cache'
 import Form from './mixins/form'
 import FileFiltration from './mixins/filtration'
 import BulkSelect from './mixins/bulk'
@@ -16,6 +18,8 @@ export default {
     name: 'media-manager',
     mixins: [
         Utilities,
+        Download,
+        Cache,
         Form,
         FileFiltration,
         BulkSelect,
@@ -79,7 +83,7 @@ export default {
             active_modal: null,
 
             navDirection: null,
-            gradients: [
+            uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0%, #209cee 71%, #3287f5 100%)',
                 'linear-gradient(141deg, #12af2f 0%, #23d160 71%, #2ce28a 100%)',
@@ -116,7 +120,7 @@ export default {
     },
     methods: {
         preSaved() {
-            let ls = this.$ls.get('mediamanager')
+            let ls = this.getLs()
 
             if (ls) {
                 this.randomNames = ls.randomNames === undefined ? false : ls.randomNames
@@ -125,67 +129,6 @@ export default {
                 this.selectedFile = ls.selectedFileName === undefined ? null : ls.selectedFileName
             }
         },
-
-        fileUpload() {
-            const manager = this
-
-            let items = 0
-            let progress = 0
-            let counter = 0
-            let last = null
-            let sendingComplete = false
-
-            new Dropzone('#new-upload', {
-                createImageThumbnails: false,
-                parallelUploads: 10,
-                hiddenInputContainer: '#new-upload',
-                uploadMultiple: true,
-                forceFallback: false,
-                ignoreHiddenFiles: true,
-                timeout: 3600000,
-                previewsContainer: '#uploadPreview',
-                addedfile() {
-                    manager.showProgress = true
-                    items++
-                    counter = 100 / items
-                },
-                sending() {
-                    progress += counter
-                    manager.progressCounter = `${progress.toFixed(2)}%`
-
-                    if (progress >= 100) {
-                        sendingComplete = true
-                    }
-                },
-                successmultiple(files, res) {
-                    res.data.map((item) => {
-                        if (item.success) {
-                            manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
-                            last = item.message
-                        } else {
-                            manager.showNotif(item.message, 'danger')
-                        }
-                    })
-
-                    if (sendingComplete) {
-                        items = 0
-                        progress = 0
-                        manager.progressCounter = 0
-                        manager.showProgress = false
-
-                        manager.$refs['success-audio'].play()
-
-                        last
-                            ? manager.getFiles(manager.folders, null, last)
-                            : manager.getFiles(manager.folders)
-                    }
-                },
-                errormultiple(files, res) {
-                    manager.showNotif(res, 'danger')
-                }
-            })
-        },
-        /* end of upload */
 
         shortCuts(e) {
             if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey)) {

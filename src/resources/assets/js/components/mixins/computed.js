@@ -75,7 +75,7 @@ export default {
         uploadPanelImg() {
             if (this.toggleUploadArea) {
                 let imgs = this.uploadPanelImgList
-                let grds = this.gradients
+                let grds = this.uploadPanelGradients
 
                 let url = imgs[Math.floor(Math.random() * imgs.length)]
                 let color = grds[Math.floor(Math.random() * grds.length)]
@@ -85,6 +85,12 @@ export default {
                     'background-image': `url("${url}")`
                 }
             }
+        },
+
+        // caching
+        cacheName() {
+            let folders = this.folders
+            return folders.length ? '/' + folders.join('/') : 'root_'
         }
     }
 }

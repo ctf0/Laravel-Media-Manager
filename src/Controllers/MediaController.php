@@ -3,7 +3,6 @@
 namespace ctf0\MediaManager\Controllers;
 
 use Exception;
-use ZipStream\ZipStream;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -75,9 +74,10 @@ class MediaController extends Controller
 
         return response()->json([
             'locked' => $this->lockedList,
+            'dirs'   => $this->dirsList($request->dirs),
             'files'  => [
-                'path'   => $folder,
-                'items'  => $this->getData($folder),
+                'path'  => $folder,
+                'items' => $this->getData($folder),
             ],
         ]);
     }
@@ -97,9 +97,16 @@ class MediaController extends Controller
             $folderLocation = rtrim(implode('/', $folderLocation), '/');
         }
 
-        return response()->json(
-            str_replace($folderLocation, '', $this->storageDisk->allDirectories($folderLocation))
-        );
+        return response()->json($this->dirsList($folderLocation));
+    }
+
+    protected function dirsList($location)
+    {
+        if (is_array($location)) {
+            $location = rtrim(implode('/', $location), '/');
+        }
+
+        return str_replace($location, '', $this->storageDisk->allDirectories($location));
     }
 
     /**
@@ -117,12 +124,11 @@ class MediaController extends Controller
         $result      = [];
 
         foreach ($files as $one) {
-            $file_type   = $one->getMimeType();
-
             $original    = $one->getClientOriginalName();
-            $get_name    = pathinfo($original, PATHINFO_FILENAME);
-            $file_ext    = pathinfo($original, PATHINFO_EXTENSION);
-            $file_name   = $random_name ? uniqid() . ".$file_ext" : $this->cleanName($get_name, null) . ".$file_ext";
+            $name_only   = pathinfo($original, PATHINFO_FILENAME);
+            $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
+            $file_name   = $random_name ? uniqid() . ".$ext_only" : $this->cleanName($name_only, null) . ".$ext_only";
+            $file_type   = $one->getMimeType();
             $destination = "$upload_path/$file_name";
 
             try {
@@ -137,7 +143,7 @@ class MediaController extends Controller
                 }
 
                 // save file
-                $saved_name = $one->storeAs($upload_path, $file_name, $this->fileSystem);
+                $saved_name = $this->storeFile($one, $upload_path, $file_name);
 
                 // fire event
                 event('MMFileUploaded', $this->getFilePath($saved_name));
@@ -426,7 +432,11 @@ class MediaController extends Controller
     }
 
     /**
-     * zip ops.
+     * zip folder.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
      */
     public function folder_download(Request $request)
     {
@@ -437,6 +447,13 @@ class MediaController extends Controller
         );
     }
 
+    /**
+     * zip files.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
     public function files_download(Request $request)
     {
         return $this->download(
@@ -444,42 +461,6 @@ class MediaController extends Controller
             json_decode($request->list, true),
             'files'
         );
-    }
-
-    protected function download($name, $list, $type)
-    {
-        // track changes
-        $counter    = 100 / count($list);
-        $store      = $this->cacheStore;
-        $cache_name = $name;
-        $store->forever("$cache_name.progress", 0);
-
-        return response()->stream(function () use ($name, $list, $type, $counter, $store, $cache_name) {
-            $zip = new ZipStream("$name.zip", [
-                'content_type' => 'application/octet-stream',
-            ]);
-
-            foreach ($list as $file) {
-                if ('folder' == $type) {
-                    $file_name = pathinfo($file, PATHINFO_BASENAME);
-                    $streamRead = $this->storageDisk->readStream($file);
-                } else {
-                    $file_name = $file['name'];
-                    $streamRead = @fopen($file['path'], 'r');
-                }
-
-                if ($streamRead) {
-                    $store->increment("$cache_name.progress", round($counter, 2));
-                    $zip->addFileFromStream($file_name, $streamRead);
-                } else {
-                    $store->forever("$cache_name.abort", $file_name);
-                    die();
-                }
-            }
-
-            $store->forever("$cache_name.done", true);
-            $zip->finish();
-        });
     }
 
     /**
@@ -498,34 +479,34 @@ class MediaController extends Controller
         $name  = $request->name;
 
         // get changes
-        $store      = $this->cacheStore;
-        $cache_name = $name;
+        $store = $this->cacheStore;
 
-        return response()->stream(function () use ($start, $maxExecution, $close, $sleep, $store, $cache_name) {
+        return response()->stream(function () use ($start, $maxExecution, $close, $sleep, $store, $name) {
             while (!$close) {
                 // progress
-                $this->es_msg($store->get("$cache_name.progress"), 'progress');
+                $this->SSE_msg($store->get("$name.progress"), 'progress');
 
-                // avoid server crash
-                if (time() >= $start + $maxExecution) {
-                    $close = true;
-                    $this->es_msg(null, 'exit');
-                    $this->clearZipCache($store, $cache_name);
-                }
-
-                // abort
-                if ($store->has("$cache_name.abort")) {
-                    $close = true;
-                    $this->es_msg('Could not open "' . $store->get("$cache_name.abort") . '" stream for reading.', 'abort');
-                    $this->clearZipCache($store, $cache_name);
+                // warn
+                if ($store->has("$name.warn")) {
+                    $this->SSE_msg(
+                        trans('MediaManager::messages.stream_error', ['attr' => $store->pull("$name.warn")]),
+                        'warn'
+                    );
                 }
 
                 // done
-                if ($store->has("$cache_name.done")) {
+                if ($store->has("$name.done")) {
                     $close = true;
-                    $this->es_msg(100, 'progress');
-                    $this->es_msg('All Done', 'done');
-                    $this->clearZipCache($store, $cache_name);
+                    $this->SSE_msg(100, 'progress');
+                    $this->SSE_msg('All Done', 'done');
+                    $this->clearZipCache($store, $name);
+                }
+
+                // exit
+                if (time() >= $start + $maxExecution) {
+                    $close = true;
+                    $this->SSE_msg(null, 'exit');
+                    $this->clearZipCache($store, $name);
                 }
 
                 ob_flush();
@@ -538,24 +519,11 @@ class MediaController extends Controller
             }
         }, 200, [
             'Content-Type'                     => 'text/event-stream', // needed for SSE to work
-            'Cache-Control'                    => 'no-cache',          // make sure we dont cache this response
+            'Cache-Control'                    => 'no-cache',          // dont cache this response
             'X-Accel-Buffering'                => 'no',                // needed for while loop to work
             'Access-Control-Allow-Origin'      => config('app.url'),   // for cors
             'Access-Control-Expose-Headers'    => '*',                 // for cors
             'Access-Control-Allow-Credentials' => true,                // for cors
         ]);
-    }
-
-    protected function es_msg($data = null, $event = null)
-    {
-        echo $event ? "event: $event\n" : ':';
-        echo $data ? 'data: ' . json_encode(['response' => $data]) . "\n\n" : ':';
-    }
-
-    protected function clearZipCache($store, $item)
-    {
-        $store->forget("$item.progress");
-        $store->forget("$item.done");
-        $store->forget("$item.abort");
     }
 }

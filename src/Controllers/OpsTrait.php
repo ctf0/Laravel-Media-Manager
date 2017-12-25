@@ -3,15 +3,14 @@
 namespace ctf0\MediaManager\Controllers;
 
 use Carbon\Carbon;
+use ZipStream\ZipStream;
 
 trait OpsTrait
 {
     /**
-     * [getFiles description].
+     * get files list.
      *
-     * @param [type] $dir [description]
-     *
-     * @return [type] [description]
+     * @param mixed $dir
      */
     protected function getData($dir)
     {
@@ -53,6 +52,20 @@ trait OpsTrait
     }
 
     /**
+     * save file to disk.
+     *
+     * @param [type] $item        [description]
+     * @param [type] $upload_path [description]
+     * @param [type] $file_name   [description]
+     *
+     * @return [type] [description]
+     */
+    protected function storeFile($item, $upload_path, $file_name)
+    {
+        return $item->storeAs($upload_path, $file_name, $this->fileSystem);
+    }
+
+    /**
      * sanitize input.
      *
      * @param [type]     $text   [description]
@@ -81,16 +94,10 @@ trait OpsTrait
     /**
      * helpers for folder ops.
      *
-     * @param [type] $folder [description]
-     *
-     * @return [type] [description]
+     * @param mixed $folder
      */
     protected function folderCount($folder)
     {
-        // files + directories count
-        // return count($this->folderFiles($folder)) + count($this->storageDisk->allDirectories($folder));
-
-        // files only
         return count($this->folderFiles($folder));
     }
 
@@ -131,5 +138,59 @@ trait OpsTrait
         }
 
         return $root . $dir;
+    }
+
+    /**
+     * zip ops.
+     *
+     * @param mixed $name
+     * @param mixed $list
+     * @param mixed $type
+     */
+    protected function download($name, $list, $type)
+    {
+        // track changes
+        $counter    = 100 / count($list);
+        $store      = $this->cacheStore;
+        $store->forever("$name.progress", 0);
+
+        return response()->stream(function () use ($name, $list, $type, $counter, $store) {
+            $zip = new ZipStream("$name.zip", [
+                'content_type' => 'application/octet-stream',
+            ]);
+
+            foreach ($list as $file) {
+                if ('folder' == $type) {
+                    $file_name = pathinfo($file, PATHINFO_BASENAME);
+                    $streamRead = $this->storageDisk->readStream($file);
+                } else {
+                    $file_name = $file['name'];
+                    $streamRead = @fopen($file['path'], 'r');
+                }
+
+                if ($streamRead) {
+                    $store->increment("$name.progress", round($counter, 2));
+                    $zip->addFileFromStream($file_name, $streamRead);
+                } else {
+                    $store->forever("$name.warn", $file_name);
+                }
+            }
+
+            $store->forever("$name.done", true);
+            $zip->finish();
+        });
+    }
+
+    protected function SSE_msg($data = null, $event = null)
+    {
+        echo $event ? "event: $event\n" : ':';
+        echo $data ? 'data: ' . json_encode(['response' => $data]) . "\n\n" : ':';
+    }
+
+    protected function clearZipCache($store, $item)
+    {
+        $store->forget("$item.progress");
+        $store->forget("$item.done");
+        $store->forget("$item.abort");
     }
 }

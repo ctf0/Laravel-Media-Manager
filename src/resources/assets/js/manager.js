@@ -43,10 +43,14 @@ axios.defaults.headers.common = {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     'X-Requested-With': 'XMLHttpRequest'
 }
-axios.interceptors.response.use((response) => {
-    return response
-}, (error) => {
-    return Promise.reject(error.response)
+axios.interceptors.response.use((response) => {return response}, (error) => {return Promise.reject(error.response)})
+
+// storage
+window.localforage = require('./packages/localforage.min.js')
+localforage.config({
+    name: 'ctf0-Media_Manager',
+    storeName: 'cached',
+    description: 'laravel-media-manager cache store'
 })
 
 // vue-awesome

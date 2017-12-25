@@ -1,5 +1,3 @@
-require('./../../vendor/download.min')
-
 export default {
     methods: {
         isLastItem(item, list) {
@@ -178,14 +176,6 @@ export default {
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
-        },
-
-        // ls
-        updateLs(obj) {
-            let oldLs = this.$ls.get('mediamanager', {})
-
-            Object.assign(oldLs, obj)
-            this.$ls.set('mediamanager', oldLs)
         }
     }
 }

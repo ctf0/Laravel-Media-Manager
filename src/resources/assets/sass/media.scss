@@ -5,9 +5,9 @@
 @import './extra/vars';
 @import './extra/loaders';
 @import './extra/animation';
-@import './vendor/animate';
-@import './vendor/progress';
-@import './vendor/switcher';
+@import './packages/animate';
+@import './packages/progress';
+@import './packages/switcher';
 
 /*                toolbar                */
 .media-manager__toolbar {
@@ -465,6 +465,7 @@
 
     .__sidebar-preview {
         overflow: hidden;
+        flex: 0 0 auto;
         text-align: center;
         color: darken($active_theme, 50%);
         border-bottom: 1px dashed darken($active_theme, 5%);
@@ -636,7 +637,6 @@
 
 /* manager in modal */
 .modal-manager__Inmodal {
-    z-index: 65538; // overlap tinymce window
     padding-top: 2% !important;
 
     > div.modal-content {

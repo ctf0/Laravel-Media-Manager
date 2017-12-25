@@ -1,3 +1,5 @@
+require('./../../packages/download.min')
+
 export default {
     methods: {
         saveFile(item) {
@@ -45,9 +47,8 @@ export default {
                 this.progressCounter = `${this.getESData(e)}%`
             }, false)
 
-            es.addEventListener('abort', (e) => {
+            es.addEventListener('warn', (e) => {
                 this.showNotif(this.getESData(e), 'danger')
-                this.hideProgress(es)
             }, false)
 
             es.addEventListener('done', (e) => {
