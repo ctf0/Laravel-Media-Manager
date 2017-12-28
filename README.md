@@ -97,36 +97,36 @@ new Vue({
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-  |   navigation   |                   button                   |    keyboard   |      click / tap       |          touch          |
-  |----------------|--------------------------------------------|---------------|------------------------|-------------------------|
-  |                | upload *(toolbar)*                         | u             | *                      |                         |
-  |                | refresh *(toolbar)*                        | r             | * / hold *clear cache* |                         |
-  |                | move *(toolbar)*                           | m             | *                      | swipe up                |
-  |                | delete *(toolbar)*                         | d/del         | *                      | swipe down              |
-  |                | lock/unlock *(toolbar)*                    | l             | *                      |                         |
-  |                | (reset) bulk select *(toolbar)*            | b             | *                      |                         |
-  |                | (reset) bulk select all *(toolbar)*        | a             | *                      |                         |
-  |                | cancel bulk selection                      | esc           |                        |                         |
-  |                | cancel search *(toolbar)*                  | esc           | *                      |                         |
-  |                | &nbsp;                                     |               |                        |                         |
-  |                | toggle *(sidebar)*                         | t             | *                      |                         |
-  |                | play/pause media *(sidebar)*               | space         | *                      |                         |
-  |                | preview image/pdf/text *(sidebar)*         | space         | *                      |                         |
-  |                | &nbsp;                                     |               |                        |                         |
-  |                | confirm rename *(modal)*                   | enter         | *                      |                         |
-  |                | confirm delete *(modal)*                   | enter         | *                      |                         |
-  |                | confirm move *(modal)*                     | enter         | *                      |                         |
-  |                | create new folder *(modal)*                | enter         | *                      |                         |
-  |                | &nbsp;                                     |               |                        |                         |
-  |                | limit bulk select *(files container)*      | shift + click |                        |                         |
-  |                | preview image/pdf/text *(files container)* | space         | **                     |                         |
-  |                | hide *(preview)*                           | space/esc     | *                      |                         |
-  | select next    |                                            | right / down  | *                      | swipe left  *(preview)* |
-  | select prev    |                                            | left / up     | *                      | swipe right *(preview)* |
-  | select first   |                                            | home          | *                      |                         |
-  | select last    |                                            | end           | *                      |                         |
-  | open folder    |                                            | enter         | **                     |                         |
-  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                      | swipe right             |
+  |   navigation   |                   button                   |    keyboard   |       click / tap        |          touch          |
+  |----------------|--------------------------------------------|---------------|--------------------------|-------------------------|
+  |                | upload *(toolbar)*                         | u             | *                        |                         |
+  |                | refresh *(toolbar)*                        | r             | * / hold *"clear cache"* |                         |
+  |                | move *(toolbar)*                           | m             | *                        | swipe up                |
+  |                | delete *(toolbar)*                         | d/del         | *                        | swipe down              |
+  |                | lock/unlock *(toolbar)*                    | l             | *                        |                         |
+  |                | (reset) bulk select *(toolbar)*            | b             | *                        |                         |
+  |                | (reset) bulk select all *(toolbar)*        | a             | *                        |                         |
+  |                | cancel bulk selection                      | esc           |                          |                         |
+  |                | cancel search *(toolbar)*                  | esc           | *                        |                         |
+  |                | &nbsp;                                     |               |                          |                         |
+  |                | toggle *(sidebar)*                         | t             | *                        |                         |
+  |                | play/pause media *(sidebar)*               | space         | *                        |                         |
+  |                | preview image/pdf/text *(sidebar)*         | space         | *                        |                         |
+  |                | &nbsp;                                     |               |                          |                         |
+  |                | confirm rename *(modal)*                   | enter         | *                        |                         |
+  |                | confirm delete *(modal)*                   | enter         | *                        |                         |
+  |                | confirm move *(modal)*                     | enter         | *                        |                         |
+  |                | create new folder *(modal)*                | enter         | *                        |                         |
+  |                | &nbsp;                                     |               |                          |                         |
+  |                | limit bulk select *(files container)*      | shift + click |                          |                         |
+  |                | preview image/pdf/text *(files container)* | space         | **                       |                         |
+  |                | hide *(preview)*                           | space/esc     | *                        |                         |
+  | select next    |                                            | right / down  | *                        | swipe left  *(preview)* |
+  | select prev    |                                            | left / up     | *                        | swipe right *(preview)* |
+  | select first   |                                            | home          | *                        |                         |
+  | select last    |                                            | end           | *                        |                         |
+  | open folder    |                                            | enter         | **                       |                         |
+  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                        | swipe right             |
 
 - events
 
