@@ -58,9 +58,9 @@ new Vue({
 ## Features
 
 - multi
-    - upload
-    - move/copy ***"toggle between"***
-    - delete
+  + upload
+  + move/copy
+  + delete
 - bulk selection
 - restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
@@ -72,61 +72,61 @@ new Vue({
   + [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
   + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock/unlock selected files/folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) "***sqlite needs to be installed"***
+- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders
 - search
-- filter by type
-    + folder
-    + image
-    + audio
-    + video
-    + text/pdf
-- sortBy
-    + name "default"
-    + size
-    + last modified
+- filter by
+  + folder
+  + image
+  + audio
+  + video
+  + text/pdf
+- sort by
+  + name "default"
+  + size
+  + last modified
 - items count for
-    + all
-    + selected
-    + search found
+  + all
+  + selected
+  + search found
 - protection against overwriting (files/folders)
 - autoplay media files ***"if selected filter is audio/video"***
 - file name sanitization for
-    + upload
-    + rename
-    + new folder
+  + upload
+  + rename
+  + new folder
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts
 
-  |   navigation   |                   button                   |    keyboard   | mouse (click) |           touch           |
-  |----------------|--------------------------------------------|---------------|---------------|---------------------------|
-  |                | upload *(toolbar)*                         | u             | *             |                           |
-  |                | refresh *(toolbar)*                        | r             | *             |                           |
-  |                | move *(toolbar)*                           | m             | *             | swipe up                  |
-  |                | delete *(toolbar)*                         | d/del         | *             | swipe down                |
-  |                | lock/unlock *(toolbar)*                    | l             | *             |                           |
-  |                | (reset) bulk select *(toolbar)*            | b             | *             |                           |
-  |                | (reset) bulk select all *(toolbar)*        | a             | *             |                           |
-  |                | cancel bulk selection                      | esc           |               |                           |
-  |                | cancel search *(toolbar)*                  | esc           | *             |                           |
-  |                | &nbsp;                                     |               |               |                           |
-  |                | toggle *(sidebar)*                         | t             | *             |                           |
-  |                | play/pause media *(sidebar)*               | space         | *             |                           |
-  |                | preview image/pdf/text *(sidebar)*         | space         | *             | tap                       |
-  |                | &nbsp;                                     |               |               |                           |
-  |                | confirm rename *(modal)*                   | enter         | *             |                           |
-  |                | confirm delete *(modal)*                   | enter         | *             |                           |
-  |                | confirm move *(modal)*                     | enter         | *             |                           |
-  |                | create new folder *(modal)*                | enter         | *             |                           |
-  |                | &nbsp;                                     |               |               |                           |
-  |                | limit bulk select *(files container)*      | shift + click |               |                           |
-  |                | preview image/pdf/text *(files container)* | space         | **            | 2x tap                    |
-  |                | hide light-box                             | space/esc     | *             |                           |
-  | select next    |                                            | right / down  | *             | swipe left  *(light-box)* |
-  | select prev    |                                            | left / up     | *             | swipe right *(light-box)* |
-  | select first   |                                            | home          | *             |                           |
-  | select last    |                                            | end           | *             |                           |
-  | open folder    |                                            | enter         | **            | 2x tap                    |
-  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *             | swipe right               |
+  |   navigation   |                   button                   |    keyboard   |      click / tap       |          touch          |
+  |----------------|--------------------------------------------|---------------|------------------------|-------------------------|
+  |                | upload *(toolbar)*                         | u             | *                      |                         |
+  |                | refresh *(toolbar)*                        | r             | * / hold *clear cache* |                         |
+  |                | move *(toolbar)*                           | m             | *                      | swipe up                |
+  |                | delete *(toolbar)*                         | d/del         | *                      | swipe down              |
+  |                | lock/unlock *(toolbar)*                    | l             | *                      |                         |
+  |                | (reset) bulk select *(toolbar)*            | b             | *                      |                         |
+  |                | (reset) bulk select all *(toolbar)*        | a             | *                      |                         |
+  |                | cancel bulk selection                      | esc           |                        |                         |
+  |                | cancel search *(toolbar)*                  | esc           | *                      |                         |
+  |                | &nbsp;                                     |               |                        |                         |
+  |                | toggle *(sidebar)*                         | t             | *                      |                         |
+  |                | play/pause media *(sidebar)*               | space         | *                      |                         |
+  |                | preview image/pdf/text *(sidebar)*         | space         | *                      |                         |
+  |                | &nbsp;                                     |               |                        |                         |
+  |                | confirm rename *(modal)*                   | enter         | *                      |                         |
+  |                | confirm delete *(modal)*                   | enter         | *                      |                         |
+  |                | confirm move *(modal)*                     | enter         | *                      |                         |
+  |                | create new folder *(modal)*                | enter         | *                      |                         |
+  |                | &nbsp;                                     |               |                        |                         |
+  |                | limit bulk select *(files container)*      | shift + click |                        |                         |
+  |                | preview image/pdf/text *(files container)* | space         | **                     |                         |
+  |                | hide *(preview)*                           | space/esc     | *                      |                         |
+  | select next    |                                            | right / down  | *                      | swipe left  *(preview)* |
+  | select prev    |                                            | left / up     | *                      | swipe right *(preview)* |
+  | select first   |                                            | home          | *                      |                         |
+  | select last    |                                            | end           | *                      |                         |
+  | open folder    |                                            | enter         | **                     |                         |
+  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                      | swipe right             |
 
 - events
 
@@ -158,6 +158,11 @@ return [
      * filesystem disk
      */
     'storage_disk' => 'public',
+
+    /*
+     * manager controller
+     */
+    'controller' => '\ctf0\MediaManager\Controllers\MediaController',
 
     /*
      * remove any file special chars except (. _ -)

@@ -72,14 +72,16 @@
                 {{-- refresh --}}
                 <div class="level-item" v-if="!isBulkSelecting()">
                     <div class="control">
-                        <button class="button is-light"
+                        <v-touch class="button is-light"
+                            tag="button"
                             :disabled="isLoading"
                             v-tippy title="r"
-                            @click="refresh()">
+                            @tap="refresh()"
+                            @hold="clearCache()">
                             <span class="icon is-small">
                                 <icon name="refresh" :spin="isLoading"></icon>
                             </span>
-                        </button>
+                        </v-touch>
                     </div>
                 </div>
 
@@ -356,9 +358,7 @@
                     ref="__stack-files"
                     :class="{'__stack-sidebar-hidden': !toggleInfo}"
                     @dbltap="dbltap()"
-                    @swiperight="goToPrevFolder()"
-                    @swipeup="moveItem()"
-                    @swipedown="deleteItem()">
+                    @swiperight="goToPrevFolder()">
 
                     {{-- loadings --}}
                     <section>
@@ -378,9 +378,11 @@
                         <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
                             @click="setSelected(file, index, $event)">
-                            <div class="__file-box"
+                            <v-touch class="__file-box"
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
-                                :ref="'file_' + index">
+                                :ref="'file_' + index"
+                                @swipeup="moveItem()"
+                                @swipedown="deleteItem()">
 
                                 {{-- lock file --}}
                                 <div class="__box-lock-icon icon"
@@ -434,7 +436,7 @@
                                         </template>
                                     </div>
                                 </div>
-                            </div>
+                            </v-touch>
                         </li>
                     </transition-group>
                 </v-touch>
@@ -460,7 +462,7 @@
                                         v-tippy="{arrow: true, position: 'left'}"
                                         title="space"
                                         class="link image"
-                                        @click="toggleModal('preview_modal')"/>
+                                        @click="isBulkSelecting() ? false : toggleModal('preview_modal')"/>
                                 </template>
 
                                 {{-- video --}}

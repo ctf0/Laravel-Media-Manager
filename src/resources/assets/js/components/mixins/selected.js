@@ -6,7 +6,7 @@ export default {
                 let file = this.$refs.file_0[0]
 
                 if (file) {
-                    file.click()
+                    file.$el.click()
                 }
             })
         },
@@ -33,7 +33,7 @@ export default {
                     let indexList = this.getRange(begin, end)
 
                     indexList.map((i) => {
-                        this.$refs[`file_${i}`][0].click()
+                        this.$refs[`file_${i}`][0].$el.click()
                     })
 
                     // to have the same expected pattern as normal shift + click
@@ -175,7 +175,7 @@ export default {
             }
         },
         scrollToFile(file) {
-            file = file[0]
+            file = file[0].$el
             file.click()
 
             let container = this.$refs['__stack-files'].$el

@@ -41,6 +41,14 @@ export default {
                     console.warn('localforage.removeItem', err)
                 })
             })
+        },
+        clearCache() {
+            localforage.clear().then(() => {
+                this.showNotif('Cache Cleared')
+                this.refresh()
+            }).catch((err) => {
+                console.error(err)
+            })
         }
     }
 }

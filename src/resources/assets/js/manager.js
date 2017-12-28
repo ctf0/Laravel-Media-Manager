@@ -32,6 +32,10 @@ VueTouch.registerCustomEvent('dbltap', {
     type: 'tap',
     taps: 2
 })
+VueTouch.registerCustomEvent('hold', {
+    type: 'press',
+    time: 500
+})
 Vue.use(VueTouch, {name: 'v-touch'})
 
 // directive
