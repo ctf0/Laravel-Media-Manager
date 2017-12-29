@@ -123,7 +123,6 @@ class MediaManagerServiceProvider extends ServiceProvider
 <<<EOT
 
 // MediaManager
-require('dotenv').config()
 mix.js('resources/assets/vendor/MediaManager/js/manager.js', 'public/assets/vendor/MediaManager')
     .sass('resources/assets/vendor/MediaManager/sass/media.scss', 'public/assets/vendor/MediaManager/style.css')
     .version();
