@@ -34,7 +34,7 @@ class MediaManagerServiceProvider extends ServiceProvider
 
         // database
         $this->publishes([
-            __DIR__ . '/database' => storage_path('log'),
+            __DIR__ . '/database' => storage_path('logs'),
         ], 'db');
 
         config(['database.connections.mediamanager' => [
