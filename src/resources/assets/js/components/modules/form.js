@@ -251,6 +251,7 @@ export default {
                 }
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${data.full_path}"`)
+                this.removeCachedResponse('../')
                 this.getFiles(this.folders, data.new_folder_name)
 
             }).catch((err) => {
