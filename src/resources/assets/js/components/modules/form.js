@@ -62,10 +62,55 @@ export default {
             })
         },
 
+        // upload image from link
+        saveLinkForm(event) {
+            let url = this.urlToUpload
+
+            if (!url) {
+                return this.showNotif(this.trans('no_val'), 'warning')
+            }
+
+            this.toggleUploadArea = false
+            this.toggleLoading()
+            this.loadingFiles('show')
+
+            axios.post(event.target.action, {
+                path: this.files.path,
+                url: url,
+                random_names: this.randomNames
+            }).then(({data}) => {
+                this.toggleLoading()
+                this.loadingFiles('hide')
+
+                if (!data.success) {
+                    return this.showNotif(data.message, 'danger')
+                }
+
+                this.resetInput('urlToUpload')
+                this.$nextTick(() => {
+                    this.$refs.save_link_modal_input.focus()
+                })
+
+                this.showNotif(`${this.trans('save_success')} "${data.message}"`)
+                this.removeCachedResponse('../')
+                this.getFiles(this.folders, null, data.message)
+
+            }).catch((err) => {
+                console.error(err)
+                this.toggleLoading()
+                this.toggleModal()
+                this.loadingFiles('hide')
+                this.resetInput('urlToUpload')
+
+                this.ajaxError()
+            })
+        },
+
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
 
             this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
+
             this.noFiles('hide')
             if (!this.loading_files) {
                 this.toggleInfo = false
@@ -149,11 +194,6 @@ export default {
                 })
             }
 
-            // we have files
-            if (this.allItemsCount) {
-                this.selectFirst()
-            }
-
             this.$nextTick(() => {
                 // check for prev opened folder
                 if (prev_folder) {
@@ -171,6 +211,11 @@ export default {
                             return this.setSelected(e, i)
                         }
                     })
+                }
+
+                // if prevs not found
+                if (!this.selectedFile) {
+                    this.selectFirst()
                 }
             })
 
@@ -226,7 +271,7 @@ export default {
 
         /*                Tool-Bar                */
         NewFolderForm(event) {
-            let folder_name = this.new_folder_name
+            let folder_name = this.newFolderName
 
             if (!folder_name) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -240,19 +285,19 @@ export default {
 
             axios.post(event.target.action, {
                 current_path: this.files.path,
-                new_folder_name: folder_name
+                newFolderName: folder_name
             }).then(({data}) => {
                 this.toggleLoading()
-                this.resetInput('new_folder_name')
+                this.resetInput('newFolderName')
                 this.toggleModal()
 
                 if (!data.success) {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${data.full_path}"`)
-                this.removeCachedResponse('../')
-                this.getFiles(this.folders, data.new_folder_name)
+                this.showNotif(`${this.trans('create_success')} "${data.newFolderName}" at "${data.full_path}"`)
+                this.removeCachedResponse()
+                this.getFiles(this.folders, data.newFolderName)
 
             }).catch((err) => {
                 console.error(err)
@@ -262,7 +307,7 @@ export default {
 
         // rename
         RenameFileForm(event) {
-            let changed = this.new_filename
+            let changed = this.newFilename
 
             if (!changed) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -276,12 +321,12 @@ export default {
 
             let filename = this.selectedFile.name
             let ext = this.getExtension(filename)
-            let new_filename = ext == null ? changed : `${changed}.${ext}`
+            let newFilename = ext == null ? changed : `${changed}.${ext}`
 
             axios.post(event.target.action, {
                 folder_location: this.files.path,
                 filename: filename,
-                new_filename: new_filename
+                newFilename: newFilename
             }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
@@ -290,8 +335,8 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
-                this.updateItemName(this.selectedFile, filename, data.new_filename)
+                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.newFilename}"`)
+                this.updateItemName(this.selectedFile, filename, data.newFilename)
                 this.removeCachedResponse()
 
                 if (this.selectedFileIs('folder')) {
@@ -401,7 +446,7 @@ export default {
                 })
 
                 this.$refs['success-audio'].play()
-                this.removeCachedResponse()
+                this.removeCachedResponse('../')
                 this.toggleModal()
                 this.isBulkSelecting() ? this.blkSlct() : this.selectFirst()
 

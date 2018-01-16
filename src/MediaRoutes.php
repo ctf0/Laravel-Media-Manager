@@ -16,6 +16,9 @@ class MediaRoutes
         ], function () use ($controller) {
             Route::get('/', ['uses' => "$controller@index", 'as' => 'index']);
             Route::post('upload', ['uses' => "$controller@upload", 'as' => 'upload']);
+            Route::post('upload-cropped', ['uses' => "$controller@uploadCropped", 'as' => 'uploadCropped']);
+            Route::post('upload-link', ['uses' => "$controller@uploadLink", 'as' => 'uploadLink']);
+
             Route::post('files', ['uses' => "$controller@get_files", 'as' => 'files']);
             Route::post('directories', ['uses' => "$controller@get_dirs", 'as' => 'directories']);
             Route::post('new_folder', ['uses' => "$controller@new_folder", 'as' => 'new_folder']);

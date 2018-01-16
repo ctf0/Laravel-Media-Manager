@@ -24,6 +24,7 @@
         'move_success' => trans('MediaManager::messages.move_success'),
         'delete_success' => trans('MediaManager::messages.delete_success'),
         'copy_success' => trans('MediaManager::messages.copy_success'),
+        'save_success' => trans('MediaManager::messages.save_success'),
     ]) }}"
     :upload-panel-img-list="{{ $patterns }}"
     files-route="{{ route('media.files') }}"
@@ -52,7 +53,7 @@
                                 :disabled="isLoading"
                                 @click="toggleUploadPanel()"
                                 v-tippy title="u">
-                                <span class="icon is-small"><icon name="shopping-basket"></icon></span>
+                                <span class="icon"><icon name="shopping-basket"></icon></span>
                                 <span>{{ trans('MediaManager::messages.upload') }}</span>
                             </button>
                         </div>
@@ -62,7 +63,7 @@
                             <button class="button"
                                 :disabled="isLoading"
                                 @click="toggleModal('new_folder_modal')">
-                                <span class="icon is-small"><icon name="folder"></icon></span>
+                                <span class="icon"><icon name="folder"></icon></span>
                                 <span>{{ trans('MediaManager::messages.add_folder') }}</span>
                             </button>
                         </div>
@@ -78,7 +79,7 @@
                             v-tippy title="r"
                             @tap="refresh()"
                             @hold="clearCache()">
-                            <span class="icon is-small">
+                            <span class="icon">
                                 <icon name="refresh" :spin="isLoading"></icon>
                             </span>
                         </v-touch>
@@ -91,22 +92,33 @@
                         <div class="control">
                             <button class="button is-link"
                                 v-multi-ref="'move'"
-                                :disabled="mv_dl() || !checkForFolders || isLoading"
+                                :disabled="item_ops() || !checkForFolders || isLoading"
                                 v-tippy title="m"
                                 @click="moveItem()">
-                                <span class="icon is-small"><icon name="share" scale="0.9"></icon></span>
+                                <span class="icon"><icon name="share" scale="0.8"></icon></span>
                                 <span>{{ trans('MediaManager::messages.move') }}</span>
                             </button>
                         </div>
 
                         {{-- rename --}}
-                        <div class="control">
+                        <div class="control" v-if="!isBulkSelecting()">
                             <button class="button is-link"
-                                :disabled="!selectedFile || IsInLockedList(selectedFile) || isLoading"
-                                v-if="!isBulkSelecting()"
+                                :disabled="item_ops() || isLoading"
                                 @click="renameItem()">
-                                <span class="icon is-small"><icon name="terminal"></icon></span>
+                                <span class="icon"><icon name="terminal"></icon></span>
                                 <span>{{ trans('MediaManager::messages.rename') }}</span>
+                            </button>
+                        </div>
+
+                        {{-- editor --}}
+                        <div class="control" v-if="!isBulkSelecting()">
+                            <button class="button is-link"
+                                ref="image_editor"
+                                :disabled="item_ops() || isLoading || !selectedFileIs('image')"
+                                v-tippy title="c"
+                                @click="toggleModal('imageEditor_modal')">
+                                <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
+                                <span>{{ trans('MediaManager::messages.editor') }}</span>
                             </button>
                         </div>
 
@@ -114,10 +126,10 @@
                         <div class="control">
                             <button class="button is-link"
                                 v-multi-ref="'delete'"
-                                :disabled="mv_dl() || isLoading"
+                                :disabled="item_ops() || isLoading"
                                 v-tippy title="d / del"
                                 @click="deleteItem()">
-                                <span class="icon is-small"><icon name="trash"></icon></span>
+                                <span class="icon"><icon name="trash"></icon></span>
                                 <span>{{ trans('MediaManager::messages.delete') }}</span>
                             </button>
                         </div>
@@ -132,7 +144,7 @@
                             :disabled="lock()"
                             v-tippy title="l"
                             @click="pushToLockedList()">
-                            <span class="icon is-small">
+                            <span class="icon">
                                 <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'"></icon>
                             </span>
                         </button>
@@ -156,11 +168,11 @@
                                 :disabled="searchItemsCount == 0 || isLoading"
                                 v-tippy title="a">
                                 <template v-if="bulkSelectAll">
-                                    <span class="icon is-small"><icon name="minus" scale="0.8"></icon></span>
+                                    <span class="icon"><icon name="minus" scale="0.8"></icon></span>
                                     <span>{{ trans('MediaManager::messages.select_non') }}</span>
                                 </template>
                                 <template v-else>
-                                    <span class="icon is-small"><icon name="plus" scale="0.8"></icon></span>
+                                    <span class="icon"><icon name="plus" scale="0.8"></icon></span>
                                     <span>{{ trans('MediaManager::messages.select_all') }}</span>
                                 </template>
                             </button>
@@ -174,7 +186,7 @@
                                 :class="{'is-danger' : bulkSelect}"
                                 :disabled="searchItemsCount == 0 || !allItemsCount || isLoading"
                                 v-tippy title="b">
-                                <span class="icon is-small"><icon name="puzzle-piece"></icon></span>
+                                <span class="icon"><icon name="puzzle-piece"></icon></span>
                                 <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
                             </button>
                         </div>
@@ -192,7 +204,7 @@
                                         class="button"
                                         :class="{'is-link': filterNameIs('image')}"
                                         :disabled="!btnFilter('image') || isLoading">
-                                        <span class="icon is-small"><icon name="image"></icon></span>
+                                        <span class="icon"><icon name="image"></icon></span>
                                     </button>
                                 </div>
                                 <div class="control">
@@ -201,7 +213,7 @@
                                         class="button"
                                         :class="{'is-link': filterNameIs('video')}"
                                         :disabled="!btnFilter('video') || isLoading">
-                                        <span class="icon is-small"><icon name="video-camera"></icon></span>
+                                        <span class="icon"><icon name="video-camera"></icon></span>
                                     </button>
                                 </div>
                                 <div class="control">
@@ -210,7 +222,7 @@
                                         class="button"
                                         :class="{'is-link': filterNameIs('audio')}"
                                         :disabled="!btnFilter('audio') || isLoading">
-                                        <span class="icon is-small"><icon name="music"></icon></span>
+                                        <span class="icon"><icon name="music"></icon></span>
                                     </button>
                                 </div>
                                 <div class="control">
@@ -219,7 +231,7 @@
                                         class="button"
                                         :class="{'is-link': filterNameIs('folder')}"
                                         :disabled="!btnFilter('folder') || isLoading">
-                                        <span class="icon is-small"><icon name="folder"></icon></span>
+                                        <span class="icon"><icon name="folder"></icon></span>
                                     </button>
                                 </div>
                                 <div class="control">
@@ -228,7 +240,7 @@
                                         class="button"
                                         :class="{'is-link': filterNameIs('text')}"
                                         :disabled="!btnFilter('text') || isLoading">
-                                        <span class="icon is-small"><icon name="file-text-o"></icon></span>
+                                        <span class="icon"><icon name="file-text-o"></icon></span>
                                     </button>
                                 </div>
                                 <div class="control">
@@ -237,7 +249,7 @@
                                         class="button"
                                         :class="{'is-danger': btnFilter('all')}"
                                         :disabled="!btnFilter('all') || isLoading">
-                                        <span class="icon is-small"><icon name="times"></icon></span>
+                                        <span class="icon"><icon name="times"></icon></span>
                                     </button>
                                 </div>
                             </div>
@@ -255,7 +267,7 @@
                                     <option value="last_modified">{{ trans('MediaManager::messages.last_modified') }}</option>
                                 </select>
                             </div>
-                            <div class="icon is-small is-left">
+                            <div class="icon is-left">
                                 <icon name="bell-o"></icon>
                             </div>
                         </div>
@@ -272,7 +284,7 @@
                                         v-model="searchFor"
                                         data-search
                                         placeholder="{{ trans('MediaManager::messages.find') }}">
-                                    <span class="icon is-small is-left">
+                                    <span class="icon is-left">
                                         <icon name="search"></icon>
                                     </span>
                                 </p>
@@ -280,7 +292,7 @@
                                     <button class="button is-black" :disabled="!searchFor"
                                         v-tippy title="{{ trans('MediaManager::messages.clear',['attr'=>'search']) }}"
                                         @click="resetInput('searchFor')" >
-                                        <span class="icon is-small"><icon name="times"></icon></span>
+                                        <span class="icon"><icon name="times"></icon></span>
                                     </button>
                                 </p>
                             </div>
@@ -296,15 +308,30 @@
         <transition-group name="list" mode="out-in" tag="section">
             <div key="1" v-show="toggleUploadArea" class="media-manager__dz">
                 <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
-
                     {{ csrf_field() }}
+                    <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+
+                    {{-- text --}}
                     <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
-                    <div class="form-switcher" title="{{ trans('MediaManager::messages.use_random_names') }}" v-tippy>
+                    {{-- randomNames --}}
+                    <div class="form-switcher"
+                        title="{{ trans('MediaManager::messages.use_random_names') }}"
+                        v-tippy="{arrow: true, position: 'right'}">
                         <input type="checkbox" name="random_names" id="random_names" v-model="randomNames">
                         <label class="switcher" for="random_names"></label>
                     </div>
+                    {{-- urlToUpload --}}
+                    <div class="save_link" @click="toggleModal('save_link_modal')">
+                        <span class="icon is-large"
+                            title="{{ trans('MediaManager::messages.save_link') }}"
+                            v-tippy="{arrow: true, position: 'left'}">
 
-                    <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+                            <icon>
+                                <icon class="circle" name="circle" scale="2.5"></icon>
+                                <icon class="anchor" name="link"></icon>
+                            </icon>
+                        </span>
+                    </div>
                 </form>
 
                 <div id="uploadPreview"></div>
@@ -382,15 +409,17 @@
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 :ref="'file_' + index"
                                 @swipeup="moveItem()"
-                                @swipedown="deleteItem()">
+                                @swipedown="deleteItem()"
+                                @hold="imageEditor()">
 
                                 {{-- lock file --}}
-                                <div class="__box-lock-icon icon"
+                                <button class="__box-lock-icon icon"
+                                    :disabled="isLoading"
                                     :class="IsInLockedList(file) ? 'is-danger' : 'is-success'"
                                     :title="IsInLockedList(file) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
                                     v-tippy="{arrow: true, hideOnClick: false}"
                                     @click="toggleLock(file)">
-                                </div>
+                                </button>
 
                                 {{-- copy file link --}}
                                 <div v-if="!fileTypeIs(file, 'folder')"
@@ -673,8 +702,8 @@
             <div v-if="isActiveModal('preview_modal')"
                 class="modal mm-animated fadeIn is-active __modal-preview">
                 <div class="modal-background link" @click="toggleModal()"></div>
-                <div class="mm-animated fadeInDown">
-                    <transition :name="navDirection == 'next' ? 'img-nxt' : 'img-prv'" mode="out-in">
+                <div class="mm-animated fadeInDown __modal-content-wrapper">
+                    <transition :name="imageSlideDirection == 'next' ? 'img-nxt' : 'img-prv'" mode="out-in">
                         <div class="modal-content" :key="selectedFile.path">
                             {{-- card v --}}
                             @include('MediaManager::cards.vertical')
@@ -682,6 +711,67 @@
                     </transition>
                 </div>
                 <button class="modal-close is-large" @click="toggleModal()"></button>
+            </div>
+
+            {{-- image_editor --}}
+            <div v-if="isActiveModal('imageEditor_modal')"
+                class="modal mm-animated fadeIn is-active __modal-editor">
+                <div class="modal-background link" @click="toggleModal()"></div>
+                <div class="mm-animated fadeInDown __modal-content-wrapper">
+                    <cropper route="{{ route('media.uploadCropped') }}"
+                        :url="selectedFile.path"
+                        :crop-trans="{{ json_encode([
+                            'crop_reset' => trans('MediaManager::messages.crop_reset'),
+                            'clear' => trans('MediaManager::messages.clear', ['attr'=>'selection']),
+                            'crop_apply' => trans('MediaManager::messages.crop_apply'),
+                            'move' => trans('MediaManager::messages.move'),
+                            'crop' => trans('MediaManager::messages.crop'),
+                            'crop_zoom_in' => trans('MediaManager::messages.crop_zoom_in'),
+                            'crop_zoom_out' => trans('MediaManager::messages.crop_zoom_out'),
+                            'crop_rotate_left' => trans('MediaManager::messages.crop_rotate_left'),
+                            'crop_rotate_right' => trans('MediaManager::messages.crop_rotate_right'),
+                            'crop_flip_horizontal' => trans('MediaManager::messages.crop_flip_horizontal'),
+                            'crop_flip_vertical' => trans('MediaManager::messages.crop_flip_vertical'),
+                            'save_success' => trans('MediaManager::messages.save_success'),
+                        ]) }}">
+                    </cropper>
+                </div>
+                <button class="modal-close is-large" @click="toggleModal()"></button>
+            </div>
+
+            {{-- save_link --}}
+            <div class="modal mm-animated fadeIn"
+                :class="{'is-active': isActiveModal('save_link_modal')}">
+                <div class="modal-background link" @click="toggleModal()"></div>
+                <div class="modal-card mm-animated fadeInDown">
+                    <header class="modal-card-head is-black">
+                        <p class="modal-card-title">
+                            <span class="icon"><icon name="folder"></icon></span>
+                            <span>{{ trans('MediaManager::messages.save_link') }}</span>
+                        </p>
+                        <button type="button" class="delete" @click="toggleModal()"></button>
+                    </header>
+
+                    <form action="{{ route('media.uploadLink') }}" @submit.prevent="saveLinkForm($event)">
+                        <section class="modal-card-body">
+                            <input class="input" type="text"
+                                v-model="urlToUpload"
+                                placeholder="{{ trans('MediaManager::messages.add_url') }}"
+                                ref="save_link_modal_input">
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button type="reset" class="button" @click="toggleModal()">
+                                {{ trans('MediaManager::messages.cancel') }}
+                            </button>
+                            <button type="submit"
+                                class="button is-link"
+                                :disabled="isLoading"
+                                :class="{'is-loading': isLoading}">
+                                {{ trans('MediaManager::messages.upload') }}
+                            </button>
+                        </footer>
+                    </form>
+                </div>
             </div>
 
             {{-- new_folder_modal --}}
@@ -700,8 +790,8 @@
                     <form action="{{ route('media.new_folder') }}" @submit.prevent="NewFolderForm($event)">
                         <section class="modal-card-body">
                             <input class="input" type="text"
-                                v-model="new_folder_name"
-                                placeholder="{{ trans('MediaManager::messages.new_folder_name') }}"
+                                v-model="newFolderName"
+                                placeholder="{{ trans('MediaManager::messages.newFolderName') }}"
                                 ref="new_folder_modal_input">
                         </section>
                         <footer class="modal-card-foot">
@@ -737,9 +827,9 @@
                             <h3 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h3>
                             <input class="input" type="text"
                                 v-if="selectedFile"
-                                v-model="new_filename"
+                                v-model="newFilename"
                                 ref="rename_file_modal_input"
-                                @focus="new_filename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
+                                @focus="newFilename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
                         </section>
                         <footer class="modal-card-foot">
                             <button type="reset" class="button" @click="toggleModal()">
@@ -792,7 +882,7 @@
                                             </option>
                                         </select>
                                     </span>
-                                    <span class="icon is-small is-left">
+                                    <span class="icon is-left">
                                         <icon name="search"></icon>
                                     </span>
                                 </div>
@@ -950,4 +1040,5 @@
 
 {{-- scripts --}}
 <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
 <script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>

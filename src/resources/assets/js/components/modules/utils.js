@@ -4,7 +4,7 @@ export default {
             return item == list[list.length - 1]
         },
         isActiveModal(el) {
-            return this.active_modal == el
+            return this.activeModal == el
         },
         showNotif(msg, s = 'success') {
             if (msg) {
@@ -50,7 +50,7 @@ export default {
         },
 
         /*                Buttons                */
-        mv_dl() {
+        item_ops() {
             if (this.isBulkSelecting()) {
                 return this.bulkListFilter.length == 0
             }
@@ -103,13 +103,19 @@ export default {
         /*                Toggle                */
         toggleModal(selector = null) {
             if (!selector) {
+                // refresh if an image was edited
+                if (this.activeModal == 'imageEditor_modal' && this.imageWasEdited) {
+                    this.imageWasEdited = false
+                    this.refresh()
+                }
+
                 this.noScroll('remove')
-                this.resetInput('active_modal')
+                this.resetInput('activeModal')
                 return EventHub.fire('modal-hide')
             }
 
             this.noScroll('add')
-            this.active_modal = selector
+            this.activeModal = selector
             EventHub.fire('modal-show')
         },
         toggleLoading() {

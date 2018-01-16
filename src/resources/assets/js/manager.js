@@ -3,6 +3,9 @@ window.Vue = require('vue')
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
 window.Dropzone = require('dropzone')
+window.Cropper = require('cropperjs')
+import 'cropperjs/dist/cropper.css'
+
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
 Vue.use(require('vue-ls'))
@@ -58,36 +61,7 @@ localforage.config({
 })
 
 // vue-awesome
-import 'vue-awesome/icons/shopping-basket'
-import 'vue-awesome/icons/folder'
-import 'vue-awesome/icons/refresh'
-import 'vue-awesome/icons/share'
-import 'vue-awesome/icons/terminal'
-import 'vue-awesome/icons/trash'
-import 'vue-awesome/icons/minus'
-import 'vue-awesome/icons/plus'
-import 'vue-awesome/icons/puzzle-piece'
-import 'vue-awesome/icons/image'
-import 'vue-awesome/icons/video-camera'
-import 'vue-awesome/icons/music'
-import 'vue-awesome/icons/times'
-import 'vue-awesome/icons/bell-o'
-import 'vue-awesome/icons/search'
-import 'vue-awesome/icons/angle-double-right'
-import 'vue-awesome/icons/angle-double-left'
-import 'vue-awesome/icons/bars'
-import 'vue-awesome/icons/clone'
-import 'vue-awesome/icons/file-pdf-o'
-import 'vue-awesome/icons/power-off'
-import 'vue-awesome/icons/file-text-o'
-import 'vue-awesome/icons/download'
-import 'vue-awesome/icons/warning'
-import 'vue-awesome/icons/archive'
-import 'vue-awesome/icons/unlock'
-import 'vue-awesome/icons/lock'
-import 'vue-awesome/icons/eye'
-import 'vue-awesome/icons/film'
-Vue.component('icon', require('vue-awesome/components/Icon'))
+require('./icons')
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/media.vue'))

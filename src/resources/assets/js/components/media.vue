@@ -12,9 +12,10 @@ import Watchers from './modules/watch'
 import Computed from './modules/computed'
 
 import Bounty from 'vue-bounty'
+import Cropper from './ImageEditor/cropper.vue'
 
 export default {
-    components: {Bounty},
+    components: {Bounty, Cropper},
     name: 'media-manager',
     mixins: [
         Utilities,
@@ -45,11 +46,11 @@ export default {
     ],
     data() {
         return {
-            isLoading: false,
             no_files: false,
             loading_files: false,
             no_search: false,
             ajax_error: false,
+            isLoading: false,
             toggleInfo: true,
             toggleUploadArea: false,
             showProgress: false,
@@ -63,6 +64,7 @@ export default {
             randomNames: false,
             useCopy: false,
             toolBar: true,
+            imageWasEdited: false,
 
             files: [],
             folders: [],
@@ -78,11 +80,12 @@ export default {
             currentFilterName: null,
             searchItemsCount: null,
             searchFor: null,
-            new_folder_name: null,
-            new_filename: null,
-            active_modal: null,
+            urlToUpload: null,
+            newFolderName: null,
+            newFilename: null,
+            activeModal: null,
 
-            navDirection: null,
+            imageSlideDirection: null,
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0%, #209cee 71%, #3287f5 100%)',
@@ -106,6 +109,11 @@ export default {
     },
     mounted() {
         this.fileUpload()
+
+        // check if image was edited
+        EventHub.listen('image-edited', () => {
+            this.imageWasEdited = true
+        })
     },
     updated() {
         this.autoPlay()
@@ -133,7 +141,7 @@ export default {
         shortCuts(e) {
             if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey)) {
                 // when modal isnt visible
-                if (!this.active_modal) {
+                if (!this.activeModal) {
                     // when search is not focused
                     if (document.activeElement.dataset.search == undefined) {
                         // when no bulk selecting
@@ -180,6 +188,11 @@ export default {
                                         this.noScroll('add')
                                         this.toggleModal('preview_modal')
                                     }
+                                }
+
+                                // image editor
+                                if (keycode(e) == 'e') {
+                                    this.imageEditor()
                                 }
                             }
                             // end of when there are files
@@ -285,7 +298,20 @@ export default {
         /* end of short cuts */
 
         refresh() {
-            this.getFiles(this.folders, null, this.selectedFile.name)
+            this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
+        },
+        moveItem() {
+            if (this.$refs.move[0].disabled) {
+                return
+            }
+
+            this.toggleModal('move_file_modal')
+        },
+        renameItem() {
+            this.toggleModal('rename_file_modal')
+        },
+        imageEditor() {
+            return this.$refs['image_editor'].click()
         },
         deleteItem() {
             if (this.$refs.delete[0].disabled) {
@@ -308,16 +334,7 @@ export default {
 
             this.toggleModal('confirm_delete_modal')
         },
-        moveItem() {
-            if (this.$refs.move[0].disabled) {
-                return
-            }
 
-            this.toggleModal('move_file_modal')
-        },
-        renameItem() {
-            this.toggleModal('rename_file_modal')
-        },
         blkSlct() {
             this.bulkSelect = !this.bulkSelect
             this.bulkSelectAll = false

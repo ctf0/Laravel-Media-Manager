@@ -1,5 +1,0 @@
-- limit swipe “up & down” to the file it self instead of the whole container, so now you can swipe as usual without getting the modal showing up.
-- add press & hold for refresh button so you can clear the manager browser storage/cache.
-- disable file preview from sidebar in bulk selection
-- update rdme
-- update resources

@@ -5,7 +5,7 @@
 The only media manager with this number of features & flexibility.
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/34068133-75687998-e23f-11e7-98a8-cd7ded43d209.png">
+    <img src="https://user-images.githubusercontent.com/7388088/34976419-40c1bc90-fa9f-11e7-921f-f311e3099dcc.png">
 </p>
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
@@ -31,15 +31,15 @@ The only media manager with this number of features & flexibility.
 `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
 - after installation, package will auto-add
-    + package routes to `routes/web.php`
-    + package assets compiling to `webpack.mix.js`
+  + package routes to `routes/web.php`
+  + package assets compiling to `webpack.mix.js`
 
 - install dependencies
 
 ```bash
-yarn add vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone keycode babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -57,12 +57,13 @@ new Vue({
 
 ## Features
 
+- [image editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Image-Editor)
 - multi
   + upload
   + move/copy
   + delete
+- upload an image from a url
 - bulk selection
-- restrict access to [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Folder-Restriction)
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - toggle between `random names` & `original names` for uploaded files
@@ -100,8 +101,9 @@ new Vue({
   |   navigation   |                   button                   |    keyboard   |       click / tap        |          touch          |
   |----------------|--------------------------------------------|---------------|--------------------------|-------------------------|
   |                | upload *(toolbar)*                         | u             | *                        |                         |
-  |                | refresh *(toolbar)*                        | r             | * / hold *"clear cache"* |                         |
+  |                | refresh *(toolbar)*                        | r             | * / hold *(clear cache)* |                         |
   |                | move *(toolbar)*                           | m             | *                        | swipe up                |
+  |                | editor *(toolbar)*                         | e             | *                        |                         |
   |                | delete *(toolbar)*                         | d/del         | *                        | swipe down              |
   |                | lock/unlock *(toolbar)*                    | l             | *                        |                         |
   |                | (reset) bulk select *(toolbar)*            | b             | *                        |                         |
@@ -120,6 +122,7 @@ new Vue({
   |                | &nbsp;                                     |               |                          |                         |
   |                | limit bulk select *(files container)*      | shift + click |                          |                         |
   |                | preview image/pdf/text *(files container)* | space         | **                       |                         |
+  |                | image editor *(files container)*           |               | hold                     |                         |
   |                | hide *(preview)*                           | space/esc     | *                        |                         |
   | select next    |                                            | right / down  | *                        | swipe left  *(preview)* |
   | select prev    |                                            | left / up     | *                        | swipe right *(preview)* |
@@ -130,17 +133,23 @@ new Vue({
 
 - events
 
-  |   type  |               event-name              |               description                |
-  |---------|---------------------------------------|------------------------------------------|
-  | [JS](https://github.com/gocanto/vuemit)                                                    |
-  |         | modal-show                            | when modal is showen                     |
-  |         | modal-hide                            | when modal is hidden                     |
-  |         | file_selected *(when inside modal)*   | get selected file url                    |
-  | [Laravel](https://laravel.com/docs/5.5/events#manually-registering-events)                 |
-  |         | MMFileUploaded($file_path)            | get uploaded file full path              |
-  |         | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full path        |
-  |         | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" path |
-  |         | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" path   |
+  |       type      |               event-name              |                   description                    |
+  |-----------------|---------------------------------------|--------------------------------------------------|
+  | [JS][js]        |                                       |                                                  |
+  |                 | modal-show                            | when modal is showen                             |
+  |                 | modal-hide                            | when modal is hidden                             |
+  |                 | file_selected *(when inside modal)*   | get selected file url                            |
+  | [Laravel][lara] |                                       |                                                  |
+  |                 | MMFileUploaded($file_path)            | get uploaded file full [path][path]              |
+  |                 | [MMFileSaved][event]($file_path)      | get saved(edited/link) image full [path][path]   |
+  |                 | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full [path][path]        |
+  |                 | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" [path][path] |
+  |                 | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" [path][path]   |
+
+[js]: https://github.com/gocanto/vuemit
+[lara]: https://laravel.com/docs/5.5/events#manually-registering-events
+[event]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Image-Editor#optimize-edited-images-on-save
+[path]: https://gist.github.com/ctf0/9fa6013954654384052d2e2e809b9bf6
 
 <br>
 

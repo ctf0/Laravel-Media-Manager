@@ -5,7 +5,7 @@
 
         <template v-if="selectedFileIs('pdf') || selectedFileIs('text')">
             <object :data="selectedFile.path" :type="selectedFile.type" width="100%" height="100%">
-               <p v-if="selectedFileIs('pdf')">{{ trans('MediaManager::messages.pdf') }}</p>
+                 <p v-if="selectedFileIs('pdf')">{{ trans('MediaManager::messages.pdf') }}</p>
             </object>
         </template>
 
@@ -70,7 +70,7 @@
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 v-multi-ref="'move'"
-                :disabled="mv_dl() || !checkForFolders"
+                :disabled="item_ops() || !checkForFolders"
                 @click="moveItem()">
                 <span class="icon is-small"><icon name="share"></icon></span>
                 <span>{{ trans('MediaManager::messages.move') }}</span>
@@ -92,11 +92,11 @@
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 v-multi-ref="'delete'"
-                :disabled="mv_dl()"
+                :disabled="item_ops()"
                 @click="deleteItem()">
                 <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete') }}</span>
             </button>
         </div>
-      </footer>
+    </footer>
 </div>

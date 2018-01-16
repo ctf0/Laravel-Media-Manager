@@ -131,7 +131,7 @@ export default {
             // go to last item
             if (keycode(e) == 'end') {
                 e.preventDefault()
-                this.navDirection = 'next'
+                this.imageSlideDirection = 'next'
 
                 let last = this.filesList.length - 1
                 this.scrollToFile(this.$refs[`file_${last}`])
@@ -140,7 +140,7 @@ export default {
             // go to first item
             if (keycode(e) == 'home') {
                 e.preventDefault()
-                this.navDirection = 'prev'
+                this.imageSlideDirection = 'prev'
                 this.scrollToFile(this.$refs.file_0)
             }
 
@@ -160,7 +160,7 @@ export default {
             let curSelectedIndex = this.currentFileIndex
 
             if (curSelectedIndex !== 0) {
-                this.navDirection = 'prev'
+                this.imageSlideDirection = 'prev'
                 let newSelected = curSelectedIndex - 1
                 this.scrollToFile(this.$refs[`file_${newSelected}`])
             }
@@ -169,7 +169,7 @@ export default {
             let curSelectedIndex = this.currentFileIndex
 
             if (curSelectedIndex < this.allItemsCount - 1) {
-                this.navDirection = 'next'
+                this.imageSlideDirection = 'next'
                 let newSelected = curSelectedIndex + 1
                 this.scrollToFile(this.$refs[`file_${newSelected}`])
             }

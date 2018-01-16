@@ -32,11 +32,13 @@ export default {
                     : cacheName == 'root_' ? `/${destination}` : `${cacheName}${destination}`
             }
 
-            let items = destination ? [extra, cacheName] : [cacheName]
+            let items = destination
+                ? extra == cacheName ? [cacheName] : [extra, cacheName]
+                : [cacheName]
 
             items.forEach((one) => {
                 return localforage.removeItem(one).then(() => {
-                    console.log(`${one} is cleared!`)
+                    console.log(`${one} cache is cleared!`)
                 }).catch((err) => {
                     console.warn('localforage.removeItem', err)
                 })

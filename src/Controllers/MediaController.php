@@ -127,7 +127,7 @@ class MediaController extends Controller
             $original    = $one->getClientOriginalName();
             $name_only   = pathinfo($original, PATHINFO_FILENAME);
             $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
-            $file_name   = $random_name ? uniqid() . ".$ext_only" : $this->cleanName($name_only, null) . ".$ext_only";
+            $file_name   = $random_name ? $this->sanitizedText . ".$ext_only" : $this->cleanName($name_only, null) . ".$ext_only";
             $file_type   = $one->getMimeType();
             $destination = "$upload_path/$file_name";
 
@@ -149,13 +149,11 @@ class MediaController extends Controller
                 event('MMFileUploaded', $this->getFilePath($saved_name));
 
                 $result[] = [
-                    'path'    => preg_replace('/^public\//', '', $saved_name),
                     'success' => true,
                     'message' => $file_name,
                 ];
             } catch (Exception $e) {
                 $result[] = [
-                    'path'    => '',
                     'success' => false,
                     'message' => "\"$file_name\" " . $e->getMessage(),
                 ];
@@ -163,6 +161,101 @@ class MediaController extends Controller
         }
 
         return response()->json(['data'=>$result]);
+    }
+
+    /**
+     * save cropped image.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function uploadCropped(Request $request)
+    {
+        $path     = $request->path;
+        $data     = explode(',', $request->data)[1];
+        $original = $request->name;
+
+        $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->sanitizedText;
+        $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
+        $file_name   = "$name_only.$ext_only";
+        $destination = "$path/$file_name";
+
+        try {
+            // check existence
+            if ($this->storageDisk->exists($destination)) {
+                throw new Exception(trans('MediaManager::messages.error_already_exists'));
+            }
+
+            // save file
+            $this->storageDisk->put($destination, base64_decode($data));
+
+            // fire event
+            event('MMFileSaved', $this->getFilePath($destination));
+
+            $result = [
+                'success' => true,
+                'message' => $file_name,
+            ];
+        } catch (Exception $e) {
+            $result = [
+                'success' => false,
+                'message' => "\"$file_name\" " . $e->getMessage(),
+            ];
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * save image from link.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function uploadLink(Request $request)
+    {
+        $url         = $request->url;
+        $path        = $request->path;
+        $random_name = $request->random_names;
+
+        $original    = substr($url, strrpos($url, '/') + 1);
+        $name_only   = pathinfo($original, PATHINFO_FILENAME);
+        $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
+        $file_name   = $random_name ? $this->sanitizedText . ".$ext_only" : $this->cleanName($name_only, null) . ".$ext_only";
+        $destination = "$path/$file_name";
+        $file_type   = image_type_to_mime_type(exif_imagetype($url));
+
+        try {
+            // check for mime type
+            if (str_contains($file_type, $this->unallowedMimes)) {
+                throw new Exception(trans('MediaManager::messages.not_allowed_file_ext', ['attr'=>$file_type]));
+            }
+
+            // check existence
+            if ($this->storageDisk->exists($destination)) {
+                throw new Exception(trans('MediaManager::messages.error_already_exists'));
+            }
+
+            // save file
+            $this->storageDisk->put($destination, file_get_contents($url));
+
+            // fire event
+            event('MMFileSaved', $this->getFilePath($destination));
+
+            $result = [
+                'success' => true,
+                'message' => $file_name,
+            ];
+        } catch (Exception $e) {
+            $result = [
+                'success' => false,
+                'message' => "\"$file_name\" " . $e->getMessage(),
+            ];
+        }
+
+        return response()->json($result);
     }
 
     /**

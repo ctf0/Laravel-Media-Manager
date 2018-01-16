@@ -37,7 +37,7 @@ export default {
                 this.bulkSelectAll = true
             }
         },
-        active_modal(val) {
+        activeModal(val) {
             if (val == 'new_folder_modal') {
                 this.$nextTick(() => {
                     return this.$refs.new_folder_modal_input.focus()
@@ -59,6 +59,12 @@ export default {
             if (val == 'confirm_delete_modal') {
                 this.$nextTick(() => {
                     return this.$refs.confirm_delete_modal_submit.focus()
+                })
+            }
+
+            if (val == 'save_link_modal') {
+                this.$nextTick(() => {
+                    return this.$refs.save_link_modal_input.focus()
                 })
             }
         },

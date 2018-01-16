@@ -76,11 +76,44 @@
         color: $white;
     }
 
-    .form-switcher {
+    .form-switcher,
+    .save_link {
         position: absolute;
         z-index: 1;
+    }
+
+    .form-switcher {
         bottom: 0.5rem;
         left: 0.5rem;
+    }
+
+    .save_link {
+        right: 0.5rem;
+        bottom: 0;
+        filter: drop-shadow(0 0 0.1rem rgba($black, 0.3));
+
+        .circle,
+        .anchor {
+            transition: all 0.3s;
+        }
+
+        .circle {
+            color: $active_theme;
+        }
+
+        .anchor {
+            color: darken($active_theme, 50%);
+        }
+
+        &:hover {
+            .anchor {
+                color: $active_theme;
+            }
+
+            .circle {
+                color: darken($active_theme, 50%);
+            }
+        }
     }
 }
 
@@ -343,8 +376,13 @@
     right: 3px;
     width: 0.5rem;
     height: 0.5rem;
-    cursor: default;
+    padding: 0;
+    border: none;
     border-radius: 100vw;
+
+    &:disabled {
+        cursor: not-allowed;
+    }
 }
 
 .__box-copy-link {
@@ -464,7 +502,6 @@
     background-color: $active_theme;
 
     .__sidebar-preview {
-        overflow: hidden;
         flex: 0 0 auto;
         text-align: center;
         color: darken($active_theme, 50%);
@@ -587,8 +624,6 @@
 
 /*                modal                */
 .__modal-preview {
-    padding: 0.7rem 0.7rem 0;
-
     * {
         color: $black;
     }
@@ -631,6 +666,93 @@
 
 .__modal-folder-warning {
     margin-top: 15px;
+}
+
+.__modal-content-wrapper {
+    align-self: center;
+}
+
+/*                Editor                */
+$editorBtns: rgba(darken($active_theme, 70%), 0.8);
+
+.__modal-editor {
+    .__cropper {
+        min-width: unset;
+        background: transparent;
+        box-shadow: none;
+
+        .__cropper-top-toolbar,
+        .__cropper-side-toolbar,
+        .__cropper-bottom-toolbar {
+            display: flex;
+            align-self: flex-start;
+            background-color: $editorBtns;
+        }
+
+        .top,
+        .mid,
+        .bottom {
+            display: flex;
+        }
+
+        .mid {
+            .__cropper-side-toolbar {
+                flex-flow: column nowrap;
+            }
+
+            .card-image {
+                margin: 1rem 0 1rem 1rem;
+
+                .image {
+                    max-width: 50vw;
+                    max-height: 50vh;
+                }
+
+                img {
+                    max-width: 100%;
+                }
+            }
+        }
+
+        .bottom {
+            justify-content: flex-end;
+        }
+    }
+
+    .__caman {
+        position: relative;
+
+        .__caman-controls {
+            position: absolute;
+            z-index: 1;
+            top: -82px;
+            left: 0;
+            background-color: $editorBtns;
+        }
+    }
+
+    .btn-plain {
+        padding: 0.7rem;
+        transition: all 0.3s;
+        color: white;
+
+        &:hover,
+        &.is-active {
+            background-color: $blue;
+        }
+
+        &:disabled {
+            background-color: rgba(darken($active_theme, 80%), 0.8);
+        }
+    }
+}
+
+@include media('max', 1023) {
+    .__modal-editor {
+        .image {
+            max-width: 75vw !important;
+        }
+    }
 }
 
 /*                Options                */
@@ -730,8 +852,8 @@
         }
     }
 
-    .count-enter,
-    .count-leave-to {
+    .counter-enter,
+    .counter-leave-to {
         transform: translateX(-0.7rem);
         opacity: 0;
     }
@@ -842,8 +964,13 @@ a[target='_blank'] {
         background-color: $green;
     }
 
+    &.is-black {
+        background-color: darken($active_theme, 70%);
+    }
+
     &.is-danger,
     &.is-link,
+    &.is-black,
     &.is-success {
         * {
             color: $white;
@@ -861,7 +988,11 @@ a[target='_blank'] {
 
     .modal-card {
         margin: 0;
-        padding: 1rem;
+        padding-top: 3rem;
+    }
+
+    .modal-card-title {
+        max-width: calc(100% - 20px);
     }
 
     .modal-content {
@@ -875,7 +1006,7 @@ a[target='_blank'] {
 
     &.is-active {
         margin-bottom: 2%;
-        padding-top: 4%;
+        padding: 0.7rem 0.7rem 0;
     }
 }
 
