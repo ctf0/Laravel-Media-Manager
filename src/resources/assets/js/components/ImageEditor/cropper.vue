@@ -307,23 +307,25 @@ export default {
         },
         resetAll() {
             this.$nextTick(() => {
-                let cropper = this.imageCropper
-                let caman = this.imageCaman
-                this.dragMode = cropper.options.dragMode
-                this.hasChanged = false
-                this.reset = true
+                let vm = this
+                let cropper = vm.imageCropper
+                let caman = vm.imageCaman
+                vm.dragMode = cropper.options.dragMode
+                vm.hasChanged = false
+                vm.reset = true
 
                 cropper.reset() // position
                 cropper.clear() // selection
-                cropper.setDragMode(this.dragMode) // active btn
+                cropper.setDragMode(vm.dragMode) // active btn
 
                 caman.reset()
                 caman.render(function() {
                     cropper.replace(this.toBase64(), true) // image
+
+                    vm.$nextTick(() => {
+                        vm.reset = false
+                    })
                 })
-                setTimeout(() => {
-                    this.reset = false
-                }, 100)
             })
         },
 

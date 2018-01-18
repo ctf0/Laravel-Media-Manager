@@ -26,9 +26,7 @@ export default {
                 return EventHub.fire('modal-hide')
             }
 
-            setTimeout(() => {
-                EventHub.fire('modal-show')
-            }, 100)
+            EventHub.fire('modal-show')
         }
     },
     render() {}
