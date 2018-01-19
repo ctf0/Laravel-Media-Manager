@@ -213,7 +213,7 @@ export default {
                     })
                 }
 
-                // if prevs not found
+                // if prevs aint found
                 if (!this.selectedFile) {
                     this.selectFirst()
                 }
@@ -272,6 +272,7 @@ export default {
         /*                Tool-Bar                */
         NewFolderForm(event) {
             let folder_name = this.newFolderName
+            let path = this.files.path
 
             if (!folder_name) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -284,8 +285,8 @@ export default {
             this.toggleLoading()
 
             axios.post(event.target.action, {
-                current_path: this.files.path,
-                newFolderName: folder_name
+                current_path: path,
+                new_folder_name: folder_name
             }).then(({data}) => {
                 this.toggleLoading()
                 this.resetInput('newFolderName')
@@ -295,9 +296,9 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`${this.trans('create_success')} "${data.newFolderName}" at "${data.full_path}"`)
+                this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path}"`)
                 this.removeCachedResponse()
-                this.getFiles(this.folders, data.newFolderName)
+                this.getFiles(this.folders, data.new_folder_name)
 
             }).catch((err) => {
                 console.error(err)
@@ -326,7 +327,7 @@ export default {
             axios.post(event.target.action, {
                 folder_location: this.files.path,
                 filename: filename,
-                newFilename: newFilename
+                new_filename: newFilename
             }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
@@ -335,8 +336,8 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.newFilename}"`)
-                this.updateItemName(this.selectedFile, filename, data.newFilename)
+                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
+                this.updateItemName(this.selectedFile, filename, data.new_filename)
                 this.removeCachedResponse()
 
                 if (this.selectedFileIs('folder')) {
@@ -436,23 +437,32 @@ export default {
             }).then(({data}) => {
                 this.toggleLoading()
 
-                data.data.map((item) => {
+                data.res.map((item) => {
                     if (!item.success) {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
-                    this.removeFromLists(item.name, item.type)
+                    if (!data.fullCacheClear) {
+                        this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
+                        this.removeFromLists(item.name, item.type)
+                    }
                 })
 
                 this.$refs['success-audio'].play()
-                this.removeCachedResponse('../')
                 this.toggleModal()
                 this.isBulkSelecting() ? this.blkSlct() : this.selectFirst()
 
-                if (this.searchFor) {
-                    this.searchItemsCount = this.filesList.length
-                }
+                this.$nextTick(() => {
+                    if (data.fullCacheClear) {
+                        this.clearCache(false)
+                    } else {
+                        this.removeCachedResponse('../')
+                    }
+
+                    if (this.searchFor) {
+                        this.searchItemsCount = this.filesList.length
+                    }
+                })
 
             }).catch((err) => {
                 console.error(err)
@@ -486,7 +496,7 @@ export default {
                 })
             }
 
-            if (this.directories.length) {
+            if (type == 'folder' && this.directories.length) {
                 let list = this.directories
 
                 list.map((e) => {

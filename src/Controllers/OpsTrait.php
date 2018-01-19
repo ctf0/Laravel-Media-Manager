@@ -14,41 +14,41 @@ trait OpsTrait
      */
     protected function getData($dir)
     {
-        $files          = [];
+        $list           = [];
         $storageFiles   = $this->storageDisk->files($dir);
         $storageFolders = $this->storageDisk->directories($dir);
         $pattern        = $this->ignoreFiles;
 
         foreach ($storageFolders as $folder) {
             if (!preg_grep($pattern, [$folder])) {
-                $time    = $this->storageDisk->lastModified($folder);
-                $files[] = [
+                $time   = $this->storageDisk->lastModified($folder);
+                $list[] = [
                     'name'                   => pathinfo($folder, PATHINFO_BASENAME),
                     'type'                   => 'folder',
                     'path'                   => $this->storageDisk->url($folder),
                     'size'                   => $this->folderSize($folder),
                     'items'                  => $this->folderCount($folder),
                     'last_modified'          => $time,
-                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
+                    'last_modified_formated' => $this->getFileTime($time),
                 ];
             }
         }
 
         foreach ($storageFiles as $file) {
             if (!preg_grep($pattern, [$file])) {
-                $time    = $this->storageDisk->lastModified($file);
-                $files[] = [
+                $time   = $this->storageDisk->lastModified($file);
+                $list[] = [
                     'name'                   => pathinfo($file, PATHINFO_BASENAME),
                     'type'                   => $this->storageDisk->mimeType($file),
                     'path'                   => $this->storageDisk->url($file),
                     'size'                   => $this->storageDisk->size($file),
                     'last_modified'          => $time,
-                    'last_modified_formated' => Carbon::createFromTimestamp($time)->{$this->LMF}(),
+                    'last_modified_formated' => $this->getFileTime($time),
                 ];
             }
         }
 
-        return $files;
+        return $list;
     }
 
     /**
@@ -138,6 +138,11 @@ trait OpsTrait
         }
 
         return $root . $dir;
+    }
+
+    protected function getFileTime($time)
+    {
+        return Carbon::createFromTimestamp($time)->{$this->LMF}();
     }
 
     /**

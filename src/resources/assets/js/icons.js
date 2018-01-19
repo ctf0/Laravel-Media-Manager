@@ -31,6 +31,7 @@ import 'vue-awesome/icons/object-ungroup'
 import 'vue-awesome/icons/circle'
 import 'vue-awesome/icons/link'
 import 'vue-awesome/icons/spinner'
+import 'vue-awesome/icons/key'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'
@@ -57,4 +58,3 @@ import 'vue-awesome/icons/diamond'
 import 'vue-awesome/icons/filter'
 import 'vue-awesome/icons/cube'
 import 'vue-awesome/icons/shield'
-Vue.component('icon', require('vue-awesome/components/Icon'))

@@ -62,6 +62,7 @@ localforage.config({
 
 // vue-awesome
 require('./icons')
+Vue.component('icon', require('vue-awesome/components/Icon'))
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/media.vue'))

@@ -1,9 +1,0 @@
-- added full image editor https://github.com/ctf0/Laravel-Media-Manager/wiki/Image-Editor
-- you can now save images from url too, it follows the same flow as the normal upload (random names, upload to current folder, events)
-- added new event "MMFileSaved" for both of the above features.
-- fix setting selected file twice
-- fix clearing cache twice
-
-- update readme
-- update wiki
-- update resources

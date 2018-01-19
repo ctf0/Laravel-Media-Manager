@@ -1,11 +1,17 @@
 export default {
     methods: {
         btnFilter(val) {
+            let files = this.files.items
+
             if (val == 'all') {
                 return this.filteredItemsCount
+            } else if (val == 'locked') {
+                return files.some((item) => {
+                    return this.IsInLockedList(item)
+                })
             }
 
-            return this.files.items.some((item) => {
+            return files.some((item) => {
                 return this.fileTypeIs(item, val)
             })
         },
@@ -20,10 +26,18 @@ export default {
                 return
             }
 
+            let files = this.files.items
+
             if (val == 'all') {
                 this.resetInput('currentFilterName')
+            } else if (val == 'locked') {
+                this.filterdList = files.filter((item) => {
+                    return this.IsInLockedList(item)
+                })
+
+                this.currentFilterName = val
             } else {
-                this.filterdList = this.files.items.filter((item) => {
+                this.filterdList = files.filter((item) => {
                     if (val == 'text') {
                         return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
                     }

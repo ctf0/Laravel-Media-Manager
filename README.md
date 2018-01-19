@@ -81,6 +81,7 @@ new Vue({
   + audio
   + video
   + text/pdf
+  + locked items
 - sort by
   + name "default"
   + size

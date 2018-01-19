@@ -38,16 +38,21 @@ export default {
 
             items.forEach((one) => {
                 return localforage.removeItem(one).then(() => {
-                    console.log(`${one} cache is cleared!`)
+                    // console.log(`${one} cache is cleared!`)
                 }).catch((err) => {
                     console.warn('localforage.removeItem', err)
                 })
             })
         },
-        clearCache() {
+        clearCache(showNotif = true) {
             localforage.clear().then(() => {
-                this.showNotif('Cache Cleared')
-                this.refresh()
+                if (showNotif) {
+                    this.showNotif('Cache Cleared')
+                }
+
+                setTimeout(() => {
+                    this.refresh()
+                }, 100)
             }).catch((err) => {
                 console.error(err)
             })

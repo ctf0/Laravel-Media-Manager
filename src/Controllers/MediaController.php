@@ -39,8 +39,8 @@ class MediaController extends Controller
         $this->unallowedMimes = array_get($config, 'unallowed_mimes');
         $this->LMF            = array_get($config, 'last_modified_format');
 
-        $this->db              = app('db')->connection('mediamanager');
-        $this->lockedList      = $this->db->table('locked')->pluck('path');
+        $this->db              = app('db')->connection('mediamanager')->table('locked');
+        $this->lockedList      = $this->db->pluck('path');
         $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
         $this->cacheStore      = app('cache')->store('mediamanager');
     }
@@ -285,62 +285,47 @@ class MediaController extends Controller
     }
 
     /**
-     * delete files/folders.
+     * rename item.
      *
      * @param Request $request [description]
      *
      * @return [type] [description]
      */
-    public function delete_file(Request $request)
+    public function rename_file(Request $request)
     {
-        $folderLocation  = $request->folder_location;
-        $result          = [];
+        $folderLocation = $request->folder_location;
+        $filename       = $request->filename;
+        $new_filename   = $this->cleanName($request->new_filename);
+        $success        = false;
 
         if (is_array($folderLocation)) {
             $folderLocation = rtrim(implode('/', $folderLocation), '/');
         }
 
-        foreach ($request->deleted_files as $one) {
-            $file_name  = $one['name'];
-            $type       = $one['type'];
-            $result[]   = [
-                'success' => true,
-                'name'    => $file_name,
-                'type'    => $type,
-            ];
+        $old_path = "$folderLocation/$filename";
+        $new_path = "$folderLocation/$new_filename";
 
-            $file_name = "$folderLocation/$file_name";
+        try {
+            if (!$this->storageDisk->exists($new_path)) {
+                if ($this->storageDisk->move($old_path, $new_path)) {
+                    $success = true;
 
-            if ('folder' == $type) {
-                if (!$this->storageDisk->deleteDirectory($file_name)) {
-                    $result[] = [
-                        'success' => false,
-                        'message' => trans('MediaManager::messages.error_deleting_file'),
-                    ];
-                } else {
                     // fire event
-                    event('MMFileDeleted', [
-                        'file_path' => $this->getFilePath($file_name),
-                        'is_folder' => true,
+                    event('MMFileRenamed', [
+                        'old_path' => $this->getFilePath($old_path),
+                        'new_path' => $this->getFilePath($new_path),
                     ]);
+                } else {
+                    throw new Exception(trans('MediaManager::messages.error_moving'));
                 }
             } else {
-                if (!$this->storageDisk->delete($file_name)) {
-                    $result[] = [
-                        'success' => false,
-                        'message' => trans('MediaManager::messages.error_deleting_file'),
-                    ];
-                } else {
-                    // fire event
-                    event('MMFileDeleted', [
-                        'file_path' => $this->getFilePath($file_name),
-                        'is_folder' => false,
-                    ]);
-                }
+                throw new Exception(trans('MediaManager::messages.error_already_exists'));
             }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
         }
 
-        return response()->json(['data'=>$result]);
+        return compact('success', 'message', 'new_filename');
     }
 
     /**
@@ -461,47 +446,105 @@ class MediaController extends Controller
     }
 
     /**
-     * rename item.
+     * delete files/folders.
      *
      * @param Request $request [description]
      *
      * @return [type] [description]
      */
-    public function rename_file(Request $request)
+    public function delete_file(Request $request)
     {
-        $folderLocation = $request->folder_location;
-        $filename       = $request->filename;
-        $new_filename   = $this->cleanName($request->new_filename);
-        $success        = false;
+        $folderLocation  = $request->folder_location;
+        $result          = [];
+        $fullCacheClear  = false;
 
         if (is_array($folderLocation)) {
             $folderLocation = rtrim(implode('/', $folderLocation), '/');
         }
 
-        $old_path = "$folderLocation/$filename";
-        $new_path = "$folderLocation/$new_filename";
+        foreach ($request->deleted_files as $one) {
+            $file_name      = $one['name'];
+            $type           = $one['type'];
+            $result[]       = [
+                'success'    => true,
+                'name'       => $file_name,
+                'type'       => $type,
+            ];
 
-        try {
-            if (!$this->storageDisk->exists($new_path)) {
-                if ($this->storageDisk->move($old_path, $new_path)) {
-                    $success = true;
+            $file_name = "$folderLocation/$file_name";
 
-                    // fire event
-                    event('MMFileRenamed', [
-                        'old_path' => $this->getFilePath($old_path),
-                        'new_path' => $this->getFilePath($new_path),
-                    ]);
-                } else {
-                    throw new Exception(trans('MediaManager::messages.error_moving'));
+            // folder
+            if ('folder' == $type) {
+                // check for files in lock list
+                foreach ($this->storageDisk->allFiles($file_name) as $file) {
+                    if (in_array($this->storageDisk->url($file), $this->lockedList->toArray())) {
+                        $fullCacheClear  = true;
+                        $result[]        = [
+                            'success' => false,
+                            'message' => trans('MediaManager::messages.error_in_locked_list', ['attr'=>pathinfo($file, PATHINFO_BASENAME)]),
+                        ];
+                    }
+
+                    // remove file
+                    else {
+                        if (!$this->storageDisk->delete($file)) {
+                            $result[] = [
+                                'success' => false,
+                                'message' => trans('MediaManager::messages.error_deleting_file'),
+                            ];
+                        }
+                    }
                 }
-            } else {
-                throw new Exception(trans('MediaManager::messages.error_already_exists'));
+
+                // clear locked list of deleted dirs
+                foreach ($this->storageDisk->directories($file_name) as $dir) {
+                    $this->db->where('path', $this->storageDisk->url($dir))->delete();
+                }
+
+                // remove folder if its size is == 0
+                // even if it have locked folders without items
+                if (0 == $this->folderSize($file_name)) {
+                    if (!$this->storageDisk->deleteDirectory($file_name)) {
+                        $result[] = [
+                            'success' => false,
+                            'message' => trans('MediaManager::messages.error_deleting_file'),
+                        ];
+                    } else {
+                        // fire event
+                        event('MMFileDeleted', [
+                            'file_path' => $this->getFilePath($file_name),
+                            'is_folder' => true,
+                        ]);
+                    }
+                }
+
+                // still have locked items
+                else {
+                    $result[] = [
+                        'success' => false,
+                        'message' => trans('MediaManager::messages.error_delete_fwli', ['attr'=>$file_name]),
+                    ];
+                }
             }
-        } catch (Exception $e) {
-            $message = $e->getMessage();
+
+            // file
+            else {
+                if (!$this->storageDisk->delete($file_name)) {
+                    $result[] = [
+                        'success' => false,
+                        'message' => trans('MediaManager::messages.error_deleting_file'),
+                    ];
+                } else {
+                    // fire event
+                    event('MMFileDeleted', [
+                        'file_path' => $this->getFilePath($file_name),
+                        'is_folder' => false,
+                    ]);
+                }
+            }
         }
 
-        return compact('success', 'message', 'new_filename');
+        return response()->json(['res' => $result, 'fullCacheClear' => $fullCacheClear]);
     }
 
     /**
@@ -515,11 +558,10 @@ class MediaController extends Controller
     {
         $path  = $request->path;
         $state = $request->state;
-        $db    = $this->db->table('locked');
 
         'locked' == $state
-            ? $db->insert(['path'=>$path])
-            : $db->where('path', $path)->delete();
+            ? $this->db->insert(['path'=>$path])
+            : $this->db->where('path', $path)->delete();
 
         return response()->json(['message'=>"'$path' " . ucfirst($state)]);
     }

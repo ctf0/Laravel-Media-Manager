@@ -245,8 +245,17 @@
                                     </button>
                                 </div>
                                 <div class="control">
+                                    <button @click="showFilesOfType('locked')"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Locked Items']) }}"
+                                        class="button"
+                                        :class="{'is-link': filterNameIs('locked')}"
+                                        :disabled="!btnFilter('locked') || isLoading">
+                                        <span class="icon"><icon name="key"></icon></span>
+                                    </button>
+                                </div>
+                                <div class="control">
                                     <button @click="showFilesOfType('all')"
-                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr' => 'filter']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.clear', ['attr' => 'filter']) }}"
                                         class="button"
                                         :class="{'is-danger': btnFilter('all')}"
                                         :disabled="!btnFilter('all') || isLoading">
@@ -291,7 +300,7 @@
                                 </p>
                                 <p class="control">
                                     <button class="button is-black" :disabled="!searchFor"
-                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr' => 'search']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.clear', ['attr' => 'search']) }}"
                                         @click="resetInput('searchFor')" >
                                         <span class="icon"><icon name="times"></icon></span>
                                     </button>
@@ -403,7 +412,7 @@
                         ref="filesList"
                         v-on:after-enter="afterEnter"
                         v-on:after-leave="afterLeave">
-                        <li v-for="(file,index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
+                        <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
                             @click="setSelected(file, index, $event)">
                             <v-touch class="__file-box"
@@ -655,7 +664,7 @@
                             <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
                         </li>
 
-                        <li v-for="(folder,index) in folders" :key="folder + '-bc'">
+                        <li v-for="(folder, index) in folders" :key="folder + '-bc'">
                             <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
                             <a v-else v-tippy title="backspace"
                                 @click="folders.length > 1 ? goToFolder(index+1) : false">
@@ -792,7 +801,7 @@
                         <section class="modal-card-body">
                             <input class="input" type="text"
                                 v-model="newFolderName"
-                                placeholder="{{ trans('MediaManager::messages.newFolderName') }}"
+                                placeholder="{{ trans('MediaManager::messages.new_folder_name') }}"
                                 ref="new_folder_modal_input">
                         </section>
                         <footer class="modal-card-foot">
@@ -876,7 +885,7 @@
                                     <span class="select is-fullwidth">
                                         <select ref="move_folder_dropdown" v-model="moveToPath">
                                             <option v-if="moveUpCheck()" value="../">../</option>
-                                            <option v-for="(dir,index) in directories"
+                                            <option v-for="(dir, index) in directories"
                                                 v-if="filterDirList(dir)"
                                                 :key="index" :value="dir">
                                                 @{{ dir }}
