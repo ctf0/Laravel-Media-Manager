@@ -69,8 +69,7 @@
         {{-- move --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                v-multi-ref="'move'"
-                :disabled="item_ops() || !checkForFolders"
+                :disabled="item_ops() || !checkForFolders || isLoading"
                 @click="moveItem()">
                 <span class="icon is-small"><icon name="share"></icon></span>
                 <span>{{ trans('MediaManager::messages.move') }}</span>
@@ -80,19 +79,27 @@
         {{-- rename --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="!selectedFile || IsInLockedList(selectedFile)"
-                v-if="!isBulkSelecting()"
+                :disabled="item_ops() || isLoading"
                 @click="renameItem()">
                 <span class="icon is-small"><icon name="terminal"></icon></span>
                 <span>{{ trans('MediaManager::messages.rename') }}</span>
             </button>
         </div>
 
+        {{-- editor --}}
+        <div class="card-footer-item">
+            <button class="button btn-plain is-fullwidth"
+                :disabled="item_ops() || isLoading || !selectedFileIs('image')"
+                @click="imageEditorCard()">
+                <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
+                <span>{{ trans('MediaManager::messages.editor') }}</span>
+            </button>
+        </div>
+
         {{-- delete --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                v-multi-ref="'delete'"
-                :disabled="item_ops()"
+                :disabled="item_ops() || isLoading"
                 @click="deleteItem()">
                 <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete') }}</span>

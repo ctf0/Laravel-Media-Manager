@@ -192,14 +192,16 @@ export default {
 
                                 // image editor
                                 if (keycode(e) == 'e') {
-                                    this.imageEditor()
+                                    this.$refs.editor.click()
                                 }
                             }
                             // end of when there are files
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                this.refresh()
+                                if (!this.$refs.refresh.$el.disabled) {
+                                    this.refresh()
+                                }
                             }
 
                             // file upload
@@ -217,46 +219,34 @@ export default {
                                     return
                                 }
 
-                                if (this.$refs.bulkSelect) {
-                                    this.$refs.bulkSelect.click()
-                                }
+                                this.$refs.bulkSelect.click()
                             }
 
                             if (this.isBulkSelecting()) {
                                 // add all to bulk list
                                 if (keycode(e) == 'a') {
-                                    if (this.$refs.bulkSelectAll) {
-                                        this.$refs.bulkSelectAll.click()
-                                    }
+                                    this.$refs.bulkSelectAll.click()
                                 }
 
                                 // cancel bulk selection
                                 if (keycode(e) == 'esc') {
-                                    if (this.$refs.bulkSelect) {
-                                        this.$refs.bulkSelect.click()
-                                    }
+                                    this.$refs.bulkSelect.click()
                                 }
                             }
 
                             // delete file
                             if (keycode(e) == 'delete' || keycode(e) == 'd') {
-                                if (!this.$refs.delete[0].disabled) {
-                                    this.$refs.delete[0].click()
-                                }
+                                this.$refs.delete.click()
                             }
 
                             // move file
                             if (this.checkForFolders && keycode(e) == 'm') {
-                                if (!this.$refs.move[0].disabled) {
-                                    this.$refs.move[0].click()
-                                }
+                                this.$refs.move.click()
                             }
 
                             // lock files
                             if (keycode(e) == 'l') {
-                                if (this.$refs.lock) {
-                                    this.$refs.lock.click()
-                                }
+                                this.$refs.lock.click()
                             }
                         }
                         /* end of with or without bulk selection */
@@ -301,7 +291,7 @@ export default {
             this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
         },
         moveItem() {
-            if (this.$refs.move[0].disabled) {
+            if (this.$refs.move.disabled) {
                 return
             }
 
@@ -311,10 +301,18 @@ export default {
             this.toggleModal('rename_file_modal')
         },
         imageEditor() {
-            return this.$refs['image_editor'].click()
+            this.toggleModal('imageEditor_modal')
+        },
+        imageEditorCard() {
+            this.toggleModal()
+
+            // avoid flicker
+            setTimeout(() => {
+                this.imageEditor()
+            }, 10)
         },
         deleteItem() {
-            if (this.$refs.delete[0].disabled) {
+            if (this.$refs.delete.disabled) {
                 return
             }
 

@@ -74,6 +74,7 @@
                 <div class="level-item" v-if="!isBulkSelecting()">
                     <div class="control">
                         <v-touch class="button is-light"
+                            ref="refresh"
                             tag="button"
                             :disabled="isLoading"
                             v-tippy title="r"
@@ -91,7 +92,7 @@
                         {{-- move --}}
                         <div class="control">
                             <button class="button is-link"
-                                v-multi-ref="'move'"
+                                ref="move"
                                 :disabled="item_ops() || !checkForFolders || isLoading"
                                 v-tippy title="m"
                                 @click="moveItem()">
@@ -113,10 +114,10 @@
                         {{-- editor --}}
                         <div class="control" v-if="!isBulkSelecting()">
                             <button class="button is-link"
-                                ref="image_editor"
+                                ref="editor"
                                 :disabled="item_ops() || isLoading || !selectedFileIs('image')"
                                 v-tippy title="c"
-                                @click="toggleModal('imageEditor_modal')">
+                                @click="imageEditor()">
                                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                                 <span>{{ trans('MediaManager::messages.editor') }}</span>
                             </button>
@@ -125,7 +126,7 @@
                         {{-- delete --}}
                         <div class="control">
                             <button class="button is-link"
-                                v-multi-ref="'delete'"
+                                ref="delete"
                                 :disabled="item_ops() || isLoading"
                                 v-tippy title="d / del"
                                 @click="deleteItem()">
@@ -200,7 +201,7 @@
                             <div class="field has-addons">
                                 <div class="control">
                                     <button @click="showFilesOfType('image')"
-                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr'=>'Image']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Image']) }}"
                                         class="button"
                                         :class="{'is-link': filterNameIs('image')}"
                                         :disabled="!btnFilter('image') || isLoading">
@@ -209,7 +210,7 @@
                                 </div>
                                 <div class="control">
                                     <button @click="showFilesOfType('video')"
-                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr'=>'Video']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Video']) }}"
                                         class="button"
                                         :class="{'is-link': filterNameIs('video')}"
                                         :disabled="!btnFilter('video') || isLoading">
@@ -218,7 +219,7 @@
                                 </div>
                                 <div class="control">
                                     <button @click="showFilesOfType('audio')"
-                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr'=>'Audio']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Audio']) }}"
                                         class="button"
                                         :class="{'is-link': filterNameIs('audio')}"
                                         :disabled="!btnFilter('audio') || isLoading">
@@ -227,7 +228,7 @@
                                 </div>
                                 <div class="control">
                                     <button @click="showFilesOfType('folder')"
-                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr'=>'Folder']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Folder']) }}"
                                         class="button"
                                         :class="{'is-link': filterNameIs('folder')}"
                                         :disabled="!btnFilter('folder') || isLoading">
@@ -236,7 +237,7 @@
                                 </div>
                                 <div class="control">
                                     <button @click="showFilesOfType('text')"
-                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr'=>'Text']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.filter_by', ['attr' => 'Text']) }}"
                                         class="button"
                                         :class="{'is-link': filterNameIs('text')}"
                                         :disabled="!btnFilter('text') || isLoading">
@@ -245,7 +246,7 @@
                                 </div>
                                 <div class="control">
                                     <button @click="showFilesOfType('all')"
-                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr'=>'filter']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr' => 'filter']) }}"
                                         class="button"
                                         :class="{'is-danger': btnFilter('all')}"
                                         :disabled="!btnFilter('all') || isLoading">
@@ -290,7 +291,7 @@
                                 </p>
                                 <p class="control">
                                     <button class="button is-black" :disabled="!searchFor"
-                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr'=>'search']) }}"
+                                        v-tippy title="{{ trans('MediaManager::messages.clear',['attr' => 'search']) }}"
                                         @click="resetInput('searchFor')" >
                                         <span class="icon"><icon name="times"></icon></span>
                                     </button>
@@ -722,7 +723,7 @@
                         :url="selectedFile.path"
                         :crop-trans="{{ json_encode([
                             'crop_reset' => trans('MediaManager::messages.crop_reset'),
-                            'clear' => trans('MediaManager::messages.clear', ['attr'=>'selection']),
+                            'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']),
                             'crop_apply' => trans('MediaManager::messages.crop_apply'),
                             'move' => trans('MediaManager::messages.move'),
                             'crop' => trans('MediaManager::messages.crop'),
