@@ -852,6 +852,13 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
         }
     }
 
+    // animation
+    .slide-enter,
+    .slide-leave-to {
+        transform: translateX(0.7rem);
+        opacity: 0;
+    }
+
     .counter-enter,
     .counter-leave-to {
         transform: translateX(-0.7rem);

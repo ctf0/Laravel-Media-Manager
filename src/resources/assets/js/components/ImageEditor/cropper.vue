@@ -180,6 +180,7 @@ export default {
             imageCaman: null,
             dragMode: 'crop',
             hasChanged: false,
+            hasChangedByFilter: false,
             processing: false,
             reset: false
         }
@@ -301,7 +302,8 @@ export default {
                 getData.rotate != 0 ||
                 getData.scaleX != 1 ||
                 getData.scaleY != 1 ||
-                cropper.cropped
+                cropper.cropped ||
+                this.hasChangedByFilter
                     ? true
                     : false
         },
@@ -310,8 +312,10 @@ export default {
                 let vm = this
                 let cropper = vm.imageCropper
                 let caman = vm.imageCaman
+
                 vm.dragMode = cropper.options.dragMode
                 vm.hasChanged = false
+                vm.hasChangedByFilter = false
                 vm.reset = true
 
                 cropper.reset() // position
@@ -383,7 +387,7 @@ export default {
         updateFilter(name, val) {
             this.processing = true
 
-            this.hasChanged = true
+            this.hasChangedByFilter = true
             let caman = this.imageCaman
             let cropper = this.imageCropper
 
@@ -392,6 +396,13 @@ export default {
             caman[name](val).render(function() {
                 cropper.replace(this.toBase64(), true)
             })
+        }
+    },
+    watch: {
+        hasChangedByFilter(val) {
+            if (val == true) {
+                this.hasChanged = true
+            }
         }
     },
     render() {}
