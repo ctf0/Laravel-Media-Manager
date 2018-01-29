@@ -83,7 +83,7 @@ trait OpsTrait
 
         $text = preg_replace($pattern, '', $text);
 
-        return '' == $text ? $this->sanitizedText : $text;
+        return $text == '' ? $this->sanitizedText : $text;
     }
 
     protected function filePattern($item)
@@ -165,7 +165,7 @@ trait OpsTrait
             ]);
 
             foreach ($list as $file) {
-                if ('folder' == $type) {
+                if ($type == 'folder') {
                     $file_name = pathinfo($file, PATHINFO_BASENAME);
                     $streamRead = $this->storageDisk->readStream($file);
                 } else {

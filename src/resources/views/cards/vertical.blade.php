@@ -10,7 +10,12 @@
         </template>
 
         <template v-else>
-            <a :href="selectedFile.path" target="_blank" class="image"><img :src="selectedFile.path"></a>
+            <a :href="selectedFile.path"
+                target="_blank"
+                rel="noreferrer noopener"
+                class="image">
+                <img :src="selectedFile.path">
+            </a>
         </template>
     </v-touch>
 
@@ -41,7 +46,10 @@
                     </span>
 
                     {{-- pdf open --}}
-                    <a v-if="selectedFileIs('pdf')" :href="selectedFile.path" target="_blank">
+                    <a v-if="selectedFileIs('pdf')"
+                        :href="selectedFile.path"
+                        target="_blank"
+                        rel="noreferrer noopener">
                         <icon name="eye"></icon>
                     </a>
                 </p>

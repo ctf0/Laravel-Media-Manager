@@ -64,7 +64,7 @@ class MediaController extends Controller
      */
     public function get_files(Request $request)
     {
-        $folder = '/' !== $request->folder
+        $folder = $request->folder !== '/'
             ? $request->folder
             : '';
 
@@ -353,7 +353,7 @@ class MediaController extends Controller
 
             $destination = "{$request->destination}/$file_name";
             $old_path    = "$folderLocation/$file_name";
-            $new_path    = true == strpos($destination, '../')
+            $new_path    = strpos($destination, '../') == true
                             ? '/' . dirname($folderLocation) . '/' . str_replace('../', '', $destination)
                             : "$folderLocation/$destination";
 
@@ -368,7 +368,7 @@ class MediaController extends Controller
                     // copy
                     if ($copy) {
                         // folders
-                        if ('folder' == $one['type']) {
+                        if ($one['type'] == 'folder') {
                             $old = $this->getFilePath($old_path);
                             $new = $this->getFilePath($new_path);
 
@@ -424,7 +424,7 @@ class MediaController extends Controller
                         } else {
                             $exc = trans('MediaManager::messages.error_moving');
 
-                            if ('folder' == $one['type'] && !array_get($this->storageDiskInfo, 'root')) {
+                            if ($one['type'] == 'folder' && !array_get($this->storageDiskInfo, 'root')) {
                                 $exc = trans('MediaManager::messages.error_moving_cloud');
                             }
 
@@ -474,7 +474,7 @@ class MediaController extends Controller
             $file_name = "$folderLocation/$file_name";
 
             // folder
-            if ('folder' == $type) {
+            if ($type == 'folder') {
                 // check for files in lock list
                 foreach ($this->storageDisk->allFiles($file_name) as $file) {
                     if (in_array($this->storageDisk->url($file), $this->lockedList->toArray())) {
@@ -503,7 +503,7 @@ class MediaController extends Controller
 
                 // remove folder if its size is == 0
                 // even if it have locked folders without items
-                if (0 == $this->folderSize($file_name)) {
+                if ($this->folderSize($file_name) == 0) {
                     if (!$this->storageDisk->deleteDirectory($file_name)) {
                         $result[] = [
                             'success' => false,
@@ -559,7 +559,7 @@ class MediaController extends Controller
         $path  = $request->path;
         $state = $request->state;
 
-        'locked' == $state
+        $state == 'locked'
             ? $this->db->insert(['path'=>$path])
             : $this->db->where('path', $path)->delete();
 
