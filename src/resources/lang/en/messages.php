@@ -92,4 +92,5 @@ return array (
   'upload_text' => 'Drag & Drop Files<br>Or<br>Click To Upload',
   'use_random_names' => 'Use Random Names ?',
   'video_support' => 'Your browser does not support the video tag.',
+  'name' => 'Name',
 );

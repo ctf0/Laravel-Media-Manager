@@ -122,52 +122,54 @@ export default {
                 folders = '/' + folders.join('/')
             }
 
-            // get cache
-            this.getCachedResponse().then((res) => {
-                this.files = res.files
-                this.lockedList = res.lockedList
-                this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
-
-            }).catch((err) => {
-                // console.warn('localforage.getItem', err)
+            this.getCachedResponse()
+                // get cache
+                .then((res) => {
+                    this.files = res.files
+                    this.lockedList = res.lockedList
+                    this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
+                })
 
                 // or make the call if nothing found
-                axios.post(this.filesRoute, {
-                    folder: folders,
-                    dirs: this.folders
-                }).then(({data}) => {
+                .catch((err) => {
+                    // console.warn('localforage.getItem', err)
 
-                    // folder doesnt exist
-                    if (data.error) {
-                        if (this.checkForRestrictedPath()) {
-                            EventHub.fire('get-folders', false)
+                    axios.post(this.filesRoute, {
+                        folder: folders,
+                        dirs: this.folders
+                    }).then(({data}) => {
+
+                        // folder doesnt exist
+                        if (data.error) {
+                            if (this.checkForRestrictedPath()) {
+                                EventHub.fire('get-folders', false)
+                            }
+
+                            return this.showNotif(data.error, 'danger')
                         }
 
-                        return this.showNotif(data.error, 'danger')
-                    }
+                        // check for restricted path
+                        if (this.checkForRestrictedPath()) {
+                            EventHub.fire('get-folders', true)
+                        }
 
-                    // check for restricted path
-                    if (this.checkForRestrictedPath()) {
-                        EventHub.fire('get-folders', true)
-                    }
+                        // normal
+                        this.files = data.files
+                        this.lockedList = data.locked
+                        this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
 
-                    // normal
-                    this.files = data.files
-                    this.lockedList = data.locked
-                    this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
+                        // cache response
+                        this.cacheResponse({
+                            files: data.files,
+                            lockedList: data.locked,
+                            dirs: data.dirs
+                        })
 
-                    // cache response
-                    this.cacheResponse({
-                        files: data.files,
-                        lockedList: data.locked,
-                        dirs: data.dirs
+                    }).catch((err) => {
+                        console.error(err)
+                        this.ajaxError()
                     })
-
-                }).catch((err) => {
-                    console.error(err)
-                    this.ajaxError()
                 })
-            })
         },
         updateDirsList() {
             axios.post(this.dirsRoute, {
@@ -194,31 +196,6 @@ export default {
                 })
             }
 
-            this.$nextTick(() => {
-                // check for prev opened folder
-                if (prev_folder) {
-                    this.files.items.some((e, i) => {
-                        if (e.name == prev_folder) {
-                            return this.setSelected(e, i)
-                        }
-                    })
-                }
-
-                // check for prev selected file
-                if (prev_file) {
-                    this.files.items.some((e, i) => {
-                        if (e.name == prev_file) {
-                            return this.setSelected(e, i)
-                        }
-                    })
-                }
-
-                // if prevs aint found
-                if (!this.selectedFile) {
-                    this.selectFirst()
-                }
-            })
-
             // we have files
             if (this.allItemsCount) {
                 this.toggleLoading()
@@ -226,9 +203,41 @@ export default {
                 this.toggleInfo = true
 
                 this.$nextTick(() => {
+                    // lazy loading is not active
+                    if (!this.config.lazyLoad) {
+                        // check for prev opened folder
+                        if (prev_folder) {
+                            this.files.items.some((e, i) => {
+                                if (e.name == prev_folder) {
+                                    return this.setSelected(e, i)
+                                }
+                            })
+                        }
+
+                        // check for prev selected file
+                        if (prev_file) {
+                            this.files.items.some((e, i) => {
+                                if (e.name == prev_file) {
+                                    return this.setSelected(e, i)
+                                }
+                            })
+                        }
+
+                        // if no prevs found
+                        if (!this.selectedFile) {
+                            this.selectFirst()
+                        }
+                    }
+
                     // scroll to prev selected item
-                    if (this.currentFileIndex) {
-                        this.scrollToFile(this.$refs[`file_${this.currentFileIndex}`])
+                    let curIndex = this.currentFileIndex
+                    if (curIndex) {
+                        let t = setInterval(() => {
+                            if (document.readyState === 'complete') {
+                                this.scrollToFile(this.$refs[`file_${curIndex}`])
+                                clearInterval(t)
+                            }
+                        }, 500)
                     }
 
                     // scroll to breadcrumb item
@@ -258,13 +267,13 @@ export default {
                 // nested folders
                 if (this.files.path !== '') {
                     return this.directories = this.directories.filter((e) => {
-                        return !this.lockedList.includes(`${this.baseUrl}${this.folders.join('/')}${e}`)
+                        return !this.lockedList.includes(`${this.config.baseUrl}${this.folders.join('/')}${e}`)
                     })
                 }
 
                 // root
                 this.directories = this.directories.filter((e) => {
-                    return !this.lockedList.includes(`${this.baseUrl}${e}`)
+                    return !this.lockedList.includes(`${this.config.baseUrl}${e}`)
                 })
             }
         },
@@ -412,7 +421,11 @@ export default {
 
                 this.isBulkSelecting()
                     ? this.blkSlct()
-                    : error ? false : this.selectFirst()
+                    : error
+                        ? false
+                        : this.config.lazyLoad
+                            ? false
+                            : this.selectFirst()
 
             }).catch((err) => {
                 console.error(err)
@@ -450,7 +463,11 @@ export default {
 
                 this.$refs['success-audio'].play()
                 this.toggleModal()
-                this.isBulkSelecting() ? this.blkSlct() : this.selectFirst()
+                this.isBulkSelecting()
+                    ? this.blkSlct()
+                    : this.config.lazyLoad
+                        ? false
+                        : this.selectFirst()
 
                 this.$nextTick(() => {
                     if (data.fullCacheClear) {

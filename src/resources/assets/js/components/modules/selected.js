@@ -55,6 +55,7 @@ export default {
             // normal selection
             this.selectedFile = file
             this.currentFileIndex = index
+            this.lazyImageActive(file.path)
 
             // bulk selection
             if (this.isBulkSelecting()) {
@@ -70,9 +71,13 @@ export default {
             }
         },
         dbltap() {
-            return this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')
-                ? this.toggleModal('preview_modal')
-                : this.openFolder(this.selectedFile)
+            if (!this.isBulkSelecting()) {
+                return this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')
+                    ? this.toggleModal('preview_modal')
+                    : this.openFolder(this.selectedFile)
+            }
+
+            return
         },
 
         /*                Folder                */
@@ -161,8 +166,7 @@ export default {
 
             if (curSelectedIndex !== 0) {
                 this.imageSlideDirection = 'prev'
-                let newSelected = curSelectedIndex - 1
-                this.scrollToFile(this.$refs[`file_${newSelected}`])
+                this.scrollToFile(this.$refs[`file_${curSelectedIndex - 1}`])
             }
         },
         goToNext() {
@@ -170,8 +174,7 @@ export default {
 
             if (curSelectedIndex < this.allItemsCount - 1) {
                 this.imageSlideDirection = 'next'
-                let newSelected = curSelectedIndex + 1
-                this.scrollToFile(this.$refs[`file_${newSelected}`])
+                this.scrollToFile(this.$refs[`file_${curSelectedIndex + 1}`])
             }
         },
         scrollToFile(file) {

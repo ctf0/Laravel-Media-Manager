@@ -1,0 +1,24 @@
+## Fix
+
+- making too many requests to collect item metadata https://github.com/ctf0/Laravel-Media-Manager/issues/28
+- wrong selected files size count
+- sidebar item title wrong key
+- dbl click while bulk selection is on
+- reset for effects only
+- more optimization to the backend
+- better scroll to item on load
+
+## New
+
+- option to enable lazy load image on click/interaction (when set to ‘true’ auto selecting first item will be disabled)
+- option to support more image mime-types
+- holding refresh btn will now clear both local storage & cache
+
+## Update
+
+- remove file list animation “blame vue”
+- upgrade laravel version
+- remove vue-multi-ref dep
+- readme
+- wiki
+- resources

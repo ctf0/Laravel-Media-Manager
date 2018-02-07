@@ -2,7 +2,6 @@
 
 namespace ctf0\MediaManager\Controllers;
 
-use Carbon\Carbon;
 use ZipStream\ZipStream;
 
 trait OpsTrait
@@ -15,19 +14,25 @@ trait OpsTrait
     protected function getData($dir)
     {
         $list           = [];
-        $storageFiles   = $this->storageDisk->files($dir);
-        $storageFolders = $this->storageDisk->directories($dir);
+        $dirList        = $this->getFolderContent($dir);
+        $storageFiles   = $this->getFolderListByType($dirList, 'file');
+        $storageFolders = $this->getFolderListByType($dirList, 'dir');
         $pattern        = $this->ignoreFiles;
 
         foreach ($storageFolders as $folder) {
-            if (!preg_grep($pattern, [$folder])) {
-                $time   = $this->storageDisk->lastModified($folder);
+            $path = $folder['path'];
+            $time = $folder['timestamp'];
+            $name = $folder['basename'];
+
+            if (!preg_grep($pattern, [$path])) {
+                $info = $this->getFolderInfo($path);
+
                 $list[] = [
-                    'name'                   => pathinfo($folder, PATHINFO_BASENAME),
+                    'name'                   => $name,
                     'type'                   => 'folder',
-                    'path'                   => $this->storageDisk->url($folder),
-                    'size'                   => $this->folderSize($folder),
-                    'items'                  => $this->folderCount($folder),
+                    'path'                   => $this->resolveUrl($path),
+                    'size'                   => $info['files_size'],
+                    'items'                  => $info['files_count'],
                     'last_modified'          => $time,
                     'last_modified_formated' => $this->getFileTime($time),
                 ];
@@ -35,13 +40,19 @@ trait OpsTrait
         }
 
         foreach ($storageFiles as $file) {
-            if (!preg_grep($pattern, [$file])) {
-                $time   = $this->storageDisk->lastModified($file);
+            $path = $file['path'];
+            $size = $file['size'];
+            $time = $file['timestamp'];
+            $name = $file['basename'];
+
+            if (!preg_grep($pattern, [$path])) {
+                $mime = $file['mimetype'];
+
                 $list[] = [
-                    'name'                   => pathinfo($file, PATHINFO_BASENAME),
-                    'type'                   => $this->storageDisk->mimeType($file),
-                    'path'                   => $this->storageDisk->url($file),
-                    'size'                   => $this->storageDisk->size($file),
+                    'name'                   => $name,
+                    'type'                   => $mime,
+                    'path'                   => $this->resolveUrl($path),
+                    'size'                   => $size,
                     'last_modified'          => $time,
                     'last_modified_formated' => $this->getFileTime($time),
                 ];
@@ -52,17 +63,38 @@ trait OpsTrait
     }
 
     /**
-     * save file to disk.
+     * helpers for folder ops.
      *
-     * @param [type] $item        [description]
-     * @param [type] $upload_path [description]
-     * @param [type] $file_name   [description]
-     *
-     * @return [type] [description]
+     * @param mixed $folder
+     * @param mixed $rec
      */
-    protected function storeFile($item, $upload_path, $file_name)
+    protected function getFolderContent($folder, $rec = false)
     {
-        return $item->storeAs($upload_path, $file_name, $this->fileSystem);
+        return $this->storageDisk->listWith(['mimetype'], $folder, $rec);
+    }
+
+    protected function getFolderListByType($list, $type)
+    {
+        return array_filter($list, function ($item) use ($type) {
+            return $item['type'] == $type;
+        });
+    }
+
+    protected function getFolderInfo($folder)
+    {
+        $files = $this->getFolderContent($folder);
+        $size  = 0;
+
+        foreach ($files as $file) {
+            if ($file['type'] == 'file') {
+                $size += $file['size'];
+            }
+        }
+
+        return [
+            'files_count'=> count($files),
+            'files_size' => $size,
+        ];
     }
 
     /**
@@ -92,44 +124,16 @@ trait OpsTrait
     }
 
     /**
-     * helpers for folder ops.
-     *
-     * @param mixed $folder
-     */
-    protected function folderCount($folder)
-    {
-        return count($this->folderFiles($folder));
-    }
-
-    protected function folderSize($folder)
-    {
-        $file_size = 0;
-
-        foreach ($this->folderFiles($folder) as $file) {
-            $file_size += $this->storageDisk->size($file);
-        }
-
-        return $file_size;
-    }
-
-    protected function folderFiles($folder)
-    {
-        return $this->storageDisk->allFiles($folder);
-    }
-
-    /**
      * get file path from storage.
      *
-     * @param [type] $disk [description]
-     * @param [type] $name [description]
+     * @param [type] $path [description]
      *
      * @return [type] [description]
      */
-    protected function getFilePath($name)
+    protected function getFilePath($path)
     {
         $info = $this->storageDiskInfo;
-        $url  = $this->storageDisk->url($name);
-        $dir  = str_replace(array_get($info, 'url'), '', $url);
+        $url  = $this->resolveUrl($path);
         $root = array_get($info, 'root');
 
         // for other disks without root ex."cloud"
@@ -137,12 +141,42 @@ trait OpsTrait
             return preg_replace('/(.*\/\/.*?)\//', '', $url);
         }
 
+        $dir = str_replace(array_get($info, 'url'), '', $url);
+
         return $root . $dir;
     }
 
     protected function getFileTime($time)
     {
-        return Carbon::createFromTimestamp($time)->{$this->LMF}();
+        return $this->carbon->createFromTimestamp($time)->{$this->LMF}();
+    }
+
+    /**
+     * resolve url for "file/dir path" instead of laravel builtIn.
+     *
+     * laravel builtIn needs to make extra call just to resolve the url
+     *
+     * @param [type] $path [description]
+     *
+     * @return [type] [description]
+     */
+    protected function resolveUrl($path)
+    {
+        return preg_replace('/\/+$/', '/', $this->baseUrl) . $path;
+    }
+
+    /**
+     * save file to disk.
+     *
+     * @param [type] $item        [description]
+     * @param [type] $upload_path [description]
+     * @param [type] $file_name   [description]
+     *
+     * @return [type] [description]
+     */
+    protected function storeFile($item, $upload_path, $file_name)
+    {
+        return $item->storeAs($upload_path, $file_name, $this->fileSystem);
     }
 
     /**
@@ -156,7 +190,7 @@ trait OpsTrait
     {
         // track changes
         $counter    = 100 / count($list);
-        $store      = $this->cacheStore;
+        $store      = $this->zipCacheStore;
         $store->forever("$name.progress", 0);
 
         return response()->stream(function () use ($name, $list, $type, $counter, $store) {

@@ -7,7 +7,7 @@ export default {
         }
     },
     methods: {
-        toggleModal() {
+        hideModal() {
             this.showModal = !this.showModal
         }
     },

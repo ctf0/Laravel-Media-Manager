@@ -3,6 +3,7 @@
 namespace ctf0\MediaManager;
 
 use Illuminate\Support\ServiceProvider;
+use ctf0\PackageChangeLog\PackageChangeLogServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,7 @@ class MediaManagerServiceProvider extends ServiceProvider
     }
 
     /**
-     * [packagePublish description].
+     * publish package assets.
      *
      * @return [type] [description]
      */
@@ -37,18 +38,7 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/database' => storage_path('logs'),
         ], 'db');
 
-        config(['database.connections.mediamanager' => [
-            'driver'   => 'sqlite',
-            'database' => storage_path('logs/MediaManager.sqlite'),
-            'prefix'   => '',
-        ]]);
-
-        // caching for zip-stream
-        config(['cache.stores.mediamanager' => [
-            'driver'     => 'database',
-            'table'      => 'cache',
-            'connection' => 'mediamanager',
-        ]]);
+        $this->extraConfigs();
 
         // public
         $this->publishes([
@@ -77,6 +67,27 @@ class MediaManagerServiceProvider extends ServiceProvider
         }
     }
 
+    protected function extraConfigs()
+    {
+        // database
+        config(['database.connections.mediamanager' => [
+            'driver'   => 'sqlite',
+            'database' => storage_path('logs/MediaManager.sqlite'),
+        ]]);
+
+        // caching for zip-stream
+        config(['cache.stores.mediamanager' => [
+            'driver'     => 'database',
+            'table'      => 'cache',
+            'connection' => 'mediamanager',
+        ]]);
+    }
+
+    /**
+     * share data with view.
+     *
+     * @return [type] [description]
+     */
     protected function viewComp()
     {
         $url = app('filesystem')
@@ -91,14 +102,14 @@ class MediaManagerServiceProvider extends ServiceProvider
 
         view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns) {
             $view->with([
-               'base_url' => $url,
+               'base_url' => preg_replace('/\/+$/', '/', $url),
                'patterns' => json_encode($patterns),
            ]);
         });
     }
 
     /**
-     * [autoReg description].
+     * autoReg package resources.
      *
      * @return [type] [description]
      */
@@ -137,26 +148,18 @@ EOT;
         });
     }
 
-    /**
-     * [checkExist description].
-     *
-     * @param [type] $file   [description]
-     * @param [type] $search [description]
-     *
-     * @return [type] [description]
-     */
     protected function checkExist($file, $search)
     {
         return $this->file->exists($file) && !str_contains($this->file->get($file), $search);
     }
 
     /**
-     * [register description].
+     * extra functionality.
      *
      * @return [type] [description]
      */
     public function register()
     {
-        $this->app->register(\ctf0\PackageChangeLog\PackageChangeLogServiceProvider::class);
+        $this->app->register(PackageChangeLogServiceProvider::class);
     }
 }

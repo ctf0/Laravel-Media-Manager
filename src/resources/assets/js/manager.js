@@ -19,30 +19,17 @@ Vue.use(require('vue-tippy'), {
     flipDuration: 0,
     popperOptions: {
         modifiers: {
-            preventOverflow: {
-                enabled: false
-            },
-            hide: {
-                enabled: false
-            }
+            preventOverflow: {enabled: false},
+            hide: {enabled: false}
         }
     }
 })
 
 // v-touch
 let VueTouch = require('vue-touch')
-VueTouch.registerCustomEvent('dbltap', {
-    type: 'tap',
-    taps: 2
-})
-VueTouch.registerCustomEvent('hold', {
-    type: 'press',
-    time: 500
-})
+VueTouch.registerCustomEvent('dbltap', {type: 'tap', taps: 2})
+VueTouch.registerCustomEvent('hold', {type: 'press', time: 500})
 Vue.use(VueTouch, {name: 'v-touch'})
-
-// directive
-require('vue-multi-ref')
 
 // axios
 window.axios = require('axios')

@@ -1,7 +1,7 @@
 export default {
     computed: {
         filesList() {
-            return this.$refs.filesList.$el.children
+            return this.$refs.filesList.children
         },
         allFiles() {
             if (this.filteredItemsCount) {
@@ -30,7 +30,9 @@ export default {
         bulkItemsSize() {
             let count = 0
 
-            this.bulkList.map((item) => {count += item.size})
+            this.bulkList.forEach((item) => {
+                count += parseInt(item.size)
+            })
 
             return count !== 0 ? this.getFileSize(count) : false
         },

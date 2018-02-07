@@ -19,6 +19,10 @@ export default {
             return this.currentFilterName == val
         },
         fileTypeIs(item, val) {
+            if (val == 'image' && this.config.imageTypes.includes(item.type)) {
+                return true
+            }
+
             return item.type.includes(val)
         },
         showFilesOfType(val) {
@@ -50,6 +54,9 @@ export default {
 
             if (!this.isBulkSelecting()) {
                 this.resetInput(['selectedFile', 'currentFileIndex'])
+            }
+
+            if (!this.isBulkSelecting() && !this.config.lazyLoad) {
                 this.selectFirst()
             }
 

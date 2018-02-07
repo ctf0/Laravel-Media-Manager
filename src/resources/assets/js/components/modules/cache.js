@@ -1,6 +1,6 @@
 export default {
     methods: {
-        // ls
+        // local storage
         getLs() {
             return this.$ls.get('ctf0-Media_Manager', {})
         },
@@ -9,6 +9,9 @@ export default {
 
             Object.assign(storage, obj)
             this.$ls.set('ctf0-Media_Manager', storage)
+        },
+        removeLs() {
+            this.$ls.remove('ctf0-Media_Manager')
         },
 
         // cache
@@ -38,7 +41,7 @@ export default {
 
             items.forEach((one) => {
                 return localforage.removeItem(one).then(() => {
-                    // console.log(`${one} cache is cleared!`)
+                    console.log(`${one} cache is cleared!`)
                 }).catch((err) => {
                     console.warn('localforage.removeItem', err)
                 })

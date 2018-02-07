@@ -294,12 +294,12 @@
 .media-manager__stack-container {
     position: relative;
     display: flex;
+    min-height: 50vh;
     background-color: $white;
 }
 
 .media-manager__stack-container,
 .media-manager__stack-sidebar {
-    min-height: 50vh;
     transition: all 0.25s ease-in;
 }
 
@@ -403,13 +403,33 @@
         margin: 0 1rem 0 0.3rem;
         color: darken($active_theme, 50%);
 
-        .__box-img {
+        .__box-img,
+        .__box-img-lazy {
+            overflow: hidden;
             width: 53px;
             height: 53px;
             border-radius: 3px;
+        }
+
+        .__box-img {
             background-repeat: no-repeat;
             background-position: top;
             background-size: cover;
+        }
+
+        .__box-img-lazy {
+            border: 1px dashed darken($active_theme, 20%);
+
+            img {
+                visibility: hidden;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+
+                &[src] {
+                    visibility: unset;
+                }
+            }
         }
     }
 

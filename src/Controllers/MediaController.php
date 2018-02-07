@@ -3,46 +3,50 @@
 namespace ctf0\MediaManager\Controllers;
 
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use League\Flysystem\Plugin\ListWith;
 
 class MediaController extends Controller
 {
     use OpsTrait;
 
-    // main
-    protected $fileSystem;
-    protected $storageDisk;
-    protected $ignoreFiles;
-    protected $fileChars;
-    protected $folderChars;
-    protected $sanitizedText;
-    protected $unallowedMimes;
-    protected $LMF;
-
-    // extra
-    protected $storageDiskInfo;
-    protected $lockedList;
-    protected $cacheStore;
+    protected $baseUrl;
+    protected $carbon;
     protected $db;
+    protected $fileChars;
+    protected $fileSystem;
+    protected $folderChars;
+    protected $ignoreFiles;
+    protected $LMF;
+    protected $lockedList;
+    protected $sanitizedText;
+    protected $storageDisk;
+    protected $storageDiskInfo;
+    protected $unallowedMimes;
+    protected $zipCacheStore;
 
-    public function __construct()
+    public function __construct(Carbon $carbon)
     {
         $config = config('mediaManager');
 
-        $this->fileSystem     = array_get($config, 'storage_disk');
-        $this->storageDisk    = app('filesystem')->disk($this->fileSystem);
-        $this->ignoreFiles    = array_get($config, 'ignore_files');
-        $this->fileChars      = array_get($config, 'allowed_fileNames_chars');
-        $this->folderChars    = array_get($config, 'allowed_folderNames_chars');
-        $this->sanitizedText  = array_get($config, 'sanitized_text');
-        $this->unallowedMimes = array_get($config, 'unallowed_mimes');
-        $this->LMF            = array_get($config, 'last_modified_format');
+        $this->carbon             = $carbon;
+        $this->fileSystem         = array_get($config, 'storage_disk');
+        $this->storageDisk        = app('filesystem')->disk($this->fileSystem);
+        $this->baseUrl            = $this->storageDisk->url('/');
+        $this->ignoreFiles        = array_get($config, 'ignore_files');
+        $this->fileChars          = array_get($config, 'allowed_fileNames_chars');
+        $this->folderChars        = array_get($config, 'allowed_folderNames_chars');
+        $this->sanitizedText      = array_get($config, 'sanitized_text');
+        $this->unallowedMimes     = array_get($config, 'unallowed_mimes');
+        $this->LMF                = array_get($config, 'last_modified_format');
+        $this->db                 = app('db')->connection('mediamanager')->table('locked');
+        $this->lockedList         = $this->db->pluck('path');
+        $this->storageDiskInfo    = config("filesystems.disks.{$this->fileSystem}");
+        $this->zipCacheStore      = app('cache')->store('mediamanager');
 
-        $this->db              = app('db')->connection('mediamanager')->table('locked');
-        $this->lockedList      = $this->db->pluck('path');
-        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
-        $this->cacheStore      = app('cache')->store('mediamanager');
+        $this->storageDisk->addPlugin(new ListWith());
     }
 
     /**
@@ -477,11 +481,11 @@ class MediaController extends Controller
             if ($type == 'folder') {
                 // check for files in lock list
                 foreach ($this->storageDisk->allFiles($file_name) as $file) {
-                    if (in_array($this->storageDisk->url($file), $this->lockedList->toArray())) {
+                    if (in_array($this->resolveUrl($file), $this->lockedList->toArray())) {
                         $fullCacheClear  = true;
                         $result[]        = [
                             'success' => false,
-                            'message' => trans('MediaManager::messages.error_in_locked_list', ['attr'=>pathinfo($file, PATHINFO_BASENAME)]),
+                            'message' => trans('MediaManager::messages.error_in_locked_list', ['attr' => pathinfo($file, PATHINFO_BASENAME)]),
                         ];
                     }
 
@@ -498,7 +502,7 @@ class MediaController extends Controller
 
                 // clear locked list of deleted dirs
                 foreach ($this->storageDisk->directories($file_name) as $dir) {
-                    $this->db->where('path', $this->storageDisk->url($dir))->delete();
+                    $this->db->where('path', $this->resolveUrl($dir))->delete();
                 }
 
                 // remove folder if its size is == 0
@@ -614,7 +618,7 @@ class MediaController extends Controller
         $name  = $request->name;
 
         // get changes
-        $store = $this->cacheStore;
+        $store = $this->zipCacheStore;
 
         return response()->stream(function () use ($start, $maxExecution, $close, $sleep, $store, $name) {
             while (!$close) {

@@ -32,6 +32,11 @@ export default {
                 this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
             }
         },
+        allItemsCount(val) {
+            if (val.length == 0) {
+                this.resetInput(['selectedFile', 'currentFileIndex'])
+            }
+        },
         bulkItemsCount(val) {
             if (val > 1 && !this.bulkSelectAll) {
                 this.bulkSelectAll = true
@@ -96,7 +101,7 @@ export default {
                     this.resetInput('sortBy')
                 }
 
-                if (!this.isBulkSelecting()) {
+                if (!this.isBulkSelecting() && !this.config.lazyLoad) {
                     this.selectFirst()
                 }
             }
@@ -109,7 +114,7 @@ export default {
 
         // search
         searchFor(val) {
-            if (!this.isBulkSelecting()) {
+            if (!this.isBulkSelecting() && !this.config.lazyLoad) {
                 this.selectFirst()
             }
 
@@ -118,6 +123,10 @@ export default {
                 this.noSearch('hide')
 
                 this.selectFirstInBulkList()
+            }
+
+            if (val) {
+                this.updateSearchCount()
             }
         },
         searchItemsCount(val) {

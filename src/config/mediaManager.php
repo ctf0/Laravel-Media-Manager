@@ -37,6 +37,13 @@ return [
     'unallowed_mimes' => ['php', 'java'],
 
     /*
+     * other mime-types for images
+     */
+    'image_extended_mimes' => [
+        'binary/octet-stream', // aws
+    ],
+
+    /*
      * when file names gets cleand up
      */
     'sanitized_text' => uniqid(),
@@ -52,4 +59,9 @@ return [
      * hide file extension in files list
      */
     'hide_files_ext' => true,
+
+    /*
+     * load image preview when item is clicked
+     */
+    'lazy_load_image_on_click' => true,
 ];

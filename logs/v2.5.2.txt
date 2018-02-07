@@ -1,6 +1,0 @@
-- fix “new folder name, rename” issue
-- add editor btn to preview
-- fix delay for caman filters reset
-- add new filter for locked items
-- now folders with locked items wont be deleted, neither will its locked content
-- update locked list when item is deleted “locked folder within non-locked folder”

@@ -10,9 +10,10 @@ import SelectedFile from './modules/selected'
 import Restriction from './modules/restriction'
 import Watchers from './modules/watch'
 import Computed from './modules/computed'
+import Image from './modules/image'
 
 import Bounty from 'vue-bounty'
-import Cropper from './ImageEditor/cropper.vue'
+import Cropper from './imageEditor/cropper.vue'
 
 export default {
     components: {Bounty, Cropper},
@@ -28,12 +29,12 @@ export default {
         SelectedFile,
         Restriction,
         Computed,
-        Watchers
+        Watchers,
+        Image
     ],
     props: [
-        'baseUrl',
+        'config',
         'inModal',
-        'hideFilesExt',
         'mediaTrans',
         'filesRoute',
         'dirsRoute',
@@ -97,6 +98,7 @@ export default {
         }
     },
     created() {
+        document.addEventListener('keydown', this.shortCuts)
         this.preSaved()
 
         if (this.checkForRestrictedPath()) {
@@ -104,8 +106,6 @@ export default {
         }
 
         this.getFiles(this.folders, null, this.selectedFile)
-
-        document.addEventListener('keydown', this.shortCuts)
     },
     mounted() {
         this.fileUpload()
@@ -300,17 +300,6 @@ export default {
         renameItem() {
             this.toggleModal('rename_file_modal')
         },
-        imageEditor() {
-            this.toggleModal('imageEditor_modal')
-        },
-        imageEditorCard() {
-            this.toggleModal()
-
-            // avoid flicker
-            setTimeout(() => {
-                this.imageEditor()
-            }, 10)
-        },
         deleteItem() {
             if (this.$refs.delete.disabled) {
                 return
@@ -333,79 +322,6 @@ export default {
             this.toggleModal('confirm_delete_modal')
         },
 
-        blkSlct() {
-            this.bulkSelect = !this.bulkSelect
-            this.bulkSelectAll = false
-            this.resetInput('bulkList', [])
-            this.resetInput(['selectedFile', 'currentFileIndex'])
-
-            if (!this.isBulkSelecting()) {
-                this.selectFirst()
-            }
-        },
-        blkSlctAll() {
-            // if no items in bulk list
-            if (this.bulkList == 0) {
-                // if no search query
-                if (!this.searchFor) {
-                    this.bulkSelectAll = true
-                    this.bulkList = this.allFiles.slice(0)
-                }
-
-                // if found search items
-                if (this.searchFor && this.searchItemsCount) {
-                    this.bulkSelectAll = true
-
-                    let list = this.filesList
-                    for (let i = list.length - 1; i >= 0; i--) {
-                        list[i].click()
-                    }
-                }
-            }
-
-            // if having search + having bulk items < search found items
-            else if (this.searchFor && this.bulkItemsCount < this.searchItemsCount) {
-                this.resetInput('bulkList', [])
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-
-                if (this.bulkSelectAll) {
-                    this.bulkSelectAll = false
-                } else {
-                    this.bulkSelectAll = true
-
-                    let list = this.filesList
-                    for (let i = list.length - 1; i >= 0; i--) {
-                        list[i].click()
-                    }
-                }
-            }
-
-            // if NO search + having bulk items < all items
-            else if (!this.searchFor && this.bulkItemsCount < this.allItemsCount) {
-                if (this.bulkSelectAll) {
-                    this.bulkSelectAll = false
-                    this.resetInput('bulkList', [])
-                } else {
-                    this.bulkSelectAll = true
-                    this.bulkList = this.allFiles.slice(0)
-                }
-
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-            }
-
-            // otherwise
-            else {
-                this.bulkSelectAll = false
-                this.resetInput('bulkList', [])
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-            }
-
-            // if we have items in bulk list, select first item
-            if (this.bulkItemsCount) {
-                this.selectedFile = this.bulkList[0]
-            }
-        },
-
         /**
          * autoplay media
          */
@@ -426,27 +342,6 @@ export default {
                         }
                     }
                 }
-            }
-        },
-
-        /**
-         * animation
-         *
-         * because $nextTick doesnt work correctly
-         * with transition-group
-         */
-        afterEnter() {
-            if (this.searchFor) {
-                this.updateSearchCount()
-            }
-        },
-        afterLeave() {
-            if (this.searchFor) {
-                this.updateSearchCount()
-            }
-
-            if (!this.allItemsCount) {
-                this.resetInput(['selectedFile', 'currentFileIndex'])
             }
         }
     },

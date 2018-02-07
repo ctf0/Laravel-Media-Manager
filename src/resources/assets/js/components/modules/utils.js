@@ -68,12 +68,15 @@ export default {
             this.bulkSelectAll = false
             this.resetInput('bulkList', [])
             this.resetInput('searchFor')
-            this.selectFirst()
+
+            if (!this.config.lazyLoad) {
+                this.selectFirst()
+            }
         },
 
         /*                Resolve                */
         getFileName(name) {
-            if (!this.hideFilesExt) {
+            if (!this.config.hideFilesExt) {
                 return name
             }
 

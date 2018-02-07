@@ -28,7 +28,7 @@ export default {
             this.showProgress = true
 
             // de-select download btn
-            this.$refs.zip.forEach((e) => {
+            Array.from(document.querySelectorAll('.zip')).forEach((e) => {
                 e.blur()
             })
 

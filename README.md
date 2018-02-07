@@ -37,9 +37,9 @@ The only media manager with this number of features & flexibility.
 - install dependencies
 
 ```bash
-yarn add vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue vue-ls vue-multi-ref vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -63,10 +63,11 @@ new Vue({
   + move/copy
   + delete
 - upload an image from a url
+- lazy load image preview
 - bulk selection
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
-- toggle between `random names` & `original names` for uploaded files
+- toggle between `random/original` names for uploaded files
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
 - use the manager
@@ -104,7 +105,7 @@ new Vue({
   |                | upload *(toolbar)*                         | u             | *                        |                         |
   |                | refresh *(toolbar)*                        | r             | * / hold *(clear cache)* |                         |
   |                | move *(toolbar)*                           | m             | *                        | swipe up                |
-  |                | editor *(toolbar)*                         | e             | *                        |                         |
+  |                | image editor *(toolbar)*                   | e             | *                        |                         |
   |                | delete *(toolbar)*                         | d/del         | *                        | swipe down              |
   |                | lock/unlock *(toolbar)*                    | l             | *                        |                         |
   |                | (reset) bulk select *(toolbar)*            | b             | *                        |                         |
@@ -127,8 +128,8 @@ new Vue({
   |                | hide *(preview)*                           | space/esc     | *                        |                         |
   | select next    |                                            | right / down  | *                        | swipe left  *(preview)* |
   | select prev    |                                            | left / up     | *                        | swipe right *(preview)* |
-  | select first   |                                            | home          | *                        |                         |
-  | select last    |                                            | end           | *                        |                         |
+  | select first   |                                            | home          |                          |                         |
+  | select last    |                                            | end           |                          |                         |
   | open folder    |                                            | enter         | **                       |                         |
   | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                        | swipe right             |
 
@@ -191,6 +192,13 @@ return [
     'unallowed_mimes' => ['php', 'java'],
 
     /*
+     * other mime-types for images
+     */
+    'image_extended_mimes' => [
+        'binary/octet-stream', // aws
+    ],
+
+    /*
      * when file names gets cleand up
      */
     'sanitized_text' => uniqid(),
@@ -204,7 +212,12 @@ return [
     /**
      * hide file extension in files list
      */
-    'hide_files_ext' => true
+    'hide_files_ext' => true,
+
+    /*
+     * load image preview when item is clicked
+     */
+    'lazy_load_image_on_click' => false,
 ];
 ```
 
@@ -214,4 +227,4 @@ return [
 
 - visit `localhost:8000/media`
 - [Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)
-
+- [Cacheing Strategy](https://github.com/ctf0/Laravel-Media-Manager/issues/29)
