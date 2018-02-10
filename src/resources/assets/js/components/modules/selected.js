@@ -76,17 +76,11 @@ export default {
                     ? this.toggleModal('preview_modal')
                     : this.openFolder(this.selectedFile)
             }
-
-            return
         },
 
         /*                Folder                */
         openFolder(file) {
-            if (!this.isBulkSelecting()) {
-                if (!this.fileTypeIs(file, 'folder')) {
-                    return
-                }
-
+            if (!this.isBulkSelecting() && this.fileTypeIs(file, 'folder')) {
                 this.folders.push(file.name)
                 this.getFiles(this.folders)
             }
@@ -112,11 +106,9 @@ export default {
             let length = this.folders.length
             let newSelected = length - 1
 
-            if (length == 0 || this.restrictPath && this.files.path == `/${this.restrictPath}`) {
-                return
-            }
-
-            this.goToFolder(newSelected)
+            return length == 0 || this.restrictPath && this.files.path == `/${this.restrictPath}`
+                ? false
+                : this.goToFolder(newSelected)
         },
 
         /*                Navigation                */

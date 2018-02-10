@@ -67,11 +67,7 @@ export default {
         filterDirList(dir) {
             // dont show dirs that have similarity with selected item(s)
             if (this.bulkItemsCount) {
-                if (this.bulkList.filter((e) => dir.match(`(/?)${e.name}(/?)`)).length > 0) {
-                    return false
-                }
-
-                return true
+                return this.bulkList.filter((e) => dir.match(`(/?)${e.name}(/?)`)).length > 0 ? false : true
             }
 
             return this.selectedFile && !dir.includes(this.selectedFile.name)
@@ -85,11 +81,7 @@ export default {
                 this.searchItemsCount = this.filesList.length
 
                 if (this.searchItemsCount == 0) {
-                    if (oldCount == 0) {
-                        return
-                    }
-
-                    return this.noSearch('show')
+                    return oldCount == 0 ? false : this.noSearch('show')
                 }
 
                 this.noSearch('hide')

@@ -11,7 +11,9 @@ export default {
             this.$ls.set('ctf0-Media_Manager', storage)
         },
         removeLs() {
+            this.folders = []
             this.$ls.remove('ctf0-Media_Manager')
+            // location.reload()
         },
 
         // cache

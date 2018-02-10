@@ -2,7 +2,9 @@ export default {
     methods: {
         // btns
         imageEditor() {
-            this.toggleModal('imageEditor_modal')
+            if (this.selectedFileIs('image')) {
+                this.toggleModal('imageEditor_modal')
+            }
         },
         imageEditorCard() {
             this.toggleModal()

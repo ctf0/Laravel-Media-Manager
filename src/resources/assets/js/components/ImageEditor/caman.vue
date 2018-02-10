@@ -74,10 +74,8 @@ export default {
     },
     watch: {
         reset(val) {
-            if (val) {
-                this.controls = false
-                this.range = 0
-            }
+            this.controls = false
+            this.range = 0
         }
     }
 }

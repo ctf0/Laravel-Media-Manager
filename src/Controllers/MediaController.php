@@ -507,7 +507,7 @@ class MediaController extends Controller
 
                 // remove folder if its size is == 0
                 // even if it have locked folders without items
-                if ($this->folderSize($file_name) == 0) {
+                if ($this->getFolderInfo($file_name)['files_size'] == 0) {
                     if (!$this->storageDisk->deleteDirectory($file_name)) {
                         $result[] = [
                             'success' => false,

@@ -418,9 +418,9 @@
                             <v-touch class="__file-box"
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 :ref="'file_' + index"
-                                @swipeup="moveItem()"
-                                @swipedown="deleteItem()"
-                                @hold="imageEditor()">
+                                @swipeup="moveItem(), setSelected(file, index)"
+                                @swipedown="deleteItem(), setSelected(file, index)"
+                                @hold="imageEditor(), setSelected(file, index)">
 
                                 {{-- lock file --}}
                                 <button class="__box-lock-icon icon"

@@ -4,29 +4,41 @@
         <!-- effects -->
         <div class="top">
             <div class="__cropper-top-toolbar" v-if="imageCaman">
-                <camann :step="10" :min="-100" :max="100" icon="sun-o" filter-name="brightness"
+                <camann :step="10" :min="-100" :max="100"
+                        icon="sun-o" filter-name="brightness"
                         :reset="reset" :processing="processing"/>
-                <camann :step="10" :min="-100" :max="100" icon="adjust" filter-name="contrast"
+                <camann :step="10" :min="-100" :max="100"
+                        icon="adjust" filter-name="contrast"
                         :reset="reset" :processing="processing"/>
-                <camann :step="10" :min="-100" :max="100" icon="eye-slash" filter-name="saturation"
+                <camann :step="10" :min="-100" :max="100"
+                        icon="eye-slash" filter-name="saturation"
                         :reset="reset" :processing="processing"/>
-                <camann :step="10" :min="-100" :max="100" icon="flash" filter-name="vibrance"
+                <camann :step="10" :min="-100" :max="100"
+                        icon="flash" filter-name="vibrance"
                         :reset="reset" :processing="processing"/>
-                <camann :step="10" :min="-100" :max="100" icon="thermometer-half" filter-name="exposure"
+                <camann :step="10" :min="-100" :max="100"
+                        icon="thermometer-half" filter-name="exposure"
                         :reset="reset" :processing="processing"/>
-                <camann :step="5" :min="0" :max="100" icon="eyedropper" filter-name="hue"
+                <camann :step="5" :min="0" :max="100"
+                        icon="eyedropper" filter-name="hue"
                         :reset="reset" :processing="processing"/>
-                <camann :step="5" :min="0" :max="100" icon="lemon-o" filter-name="sepia"
+                <camann :step="5" :min="0" :max="100"
+                        icon="lemon-o" filter-name="sepia"
                         :reset="reset" :processing="processing"/>
-                <camann :step="0.1" :min="0" :max="10" icon="flask" filter-name="gamma"
+                <camann :step="0.1" :min="0" :max="10"
+                        icon="flask" filter-name="gamma"
                         :reset="reset" :processing="processing"/>
-                <camann :step="5" :min="0" :max="100" icon="dot-circle-o" filter-name="noise"
+                <camann :step="5" :min="0" :max="100"
+                        icon="dot-circle-o" filter-name="noise"
                         :reset="reset" :processing="processing"/>
-                <camann :step="5" :min="0" :max="100" icon="scissors" filter-name="clip"
+                <camann :step="5" :min="0" :max="100"
+                        icon="scissors" filter-name="clip"
                         :reset="reset" :processing="processing"/>
-                <camann :step="5" :min="0" :max="100" icon="diamond" filter-name="sharpen"
+                <camann :step="5" :min="0" :max="100"
+                        icon="diamond" filter-name="sharpen"
                         :reset="reset" :processing="processing"/>
-                <camann :step="1" :min="0" :max="20" icon="filter" filter-name="stackBlur"
+                <camann :step="1" :min="0" :max="20"
+                        icon="filter" filter-name="stackBlur"
                         :reset="reset" :processing="processing"/>
                 <camann icon="shield" filter-name="greyscale"
                         :reset="reset" :processing="processing"/>
@@ -35,8 +47,8 @@
             </div>
         </div>
 
-        <!-- controls -->
         <div class="mid">
+            <!-- controls -->
             <div class="__cropper-side-toolbar" v-if="imageCropper">
                 <button class="btn-plain"
                         :class="{'is-active': dragModeIs('move')}"
@@ -90,28 +102,31 @@
                 </button>
             </div>
 
+            <!-- img -->
             <div class="card-image">
                 <figure class="image">
-                    <img :src="url" id="cropper">
+                    <img :src="url" id="cropper" crossOrigin="anonymous">
                 </figure>
             </div>
         </div>
 
-        <!-- save/reset -->
         <div class="bottom">
             <div class="__cropper-bottom-toolbar" v-if="imageCropper">
+                <!-- reset -->
                 <button class="btn-plain"
                         :disabled="processing"
                         @click="Ops('reset')"
                         v-tippy :title="trans('crop_reset')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
                 </button>
+                <!-- clear -->
                 <button class="btn-plain"
                         :disabled="processing || !imageCropper.cropped"
                         @click="Ops('clear')"
                         v-tippy :title="trans('clear')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
                 </button>
+                <!-- apply -->
                 <button class="btn-plain"
                         :disabled="processing || !hasChanged"
                         @click="applyChanges()"
@@ -207,14 +222,18 @@ export default {
             return final
         }
     },
+
     mounted() {
         this.camanStart()
-        this.editorEvents()
     },
     methods: {
         camanStart() {
             this.imageCaman = Caman('#cropper', () => {
                 this.cropperStart()
+            })
+
+            Caman.Event.listen('renderFinished', () => {
+                this.processing = false
             })
         },
         cropperStart() {
@@ -236,12 +255,6 @@ export default {
 
                     vm.hasChanged = true
                 }
-            })
-        },
-        editorEvents() {
-            // caman
-            Caman.Event.listen('renderFinished', () => {
-                this.processing = false
             })
         },
 
@@ -343,7 +356,7 @@ export default {
                 imageSmoothingQuality: 'high'
             }).toDataURL(type)
 
-            cropper.replace(data)
+            // cropper.replace(data)
             this.saveToDisk(data, file.name)
         },
         saveToDisk(data, name) {
@@ -386,10 +399,9 @@ export default {
         // filters
         updateFilter(name, val) {
             this.processing = true
-
             this.hasChangedByFilter = true
-            let caman = this.imageCaman
             let cropper = this.imageCropper
+            let caman = this.imageCaman
 
             // val ? caman.revert(false) : false
 

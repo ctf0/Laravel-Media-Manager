@@ -107,11 +107,9 @@ trait OpsTrait
      */
     protected function cleanName($text, $folder = null)
     {
-        $pattern = $this->filePattern($this->fileChars);
-
-        if ($folder) {
-            $pattern = $this->filePattern($this->folderChars);
-        }
+        $pattern = $folder
+            ? $this->filePattern($this->folderChars)
+            : $this->filePattern($this->fileChars);
 
         $text = preg_replace($pattern, '', $text);
 
