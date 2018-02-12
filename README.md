@@ -74,7 +74,7 @@ new Vue({
   + [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
   + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders
+- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders **"sqLite must be installed"**
 - search
 - filter by
   + folder
