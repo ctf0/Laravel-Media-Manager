@@ -35,10 +35,14 @@ export default {
             this.bulkSelect = !this.bulkSelect
             this.bulkSelectAll = false
             this.resetInput('bulkList', [])
+
+            let file = this.selectedFile
+            let index = this.currentFileIndex
+
             this.resetInput(['selectedFile', 'currentFileIndex'])
 
             if (!this.isBulkSelecting() && !this.config.lazyLoad) {
-                this.selectFirst()
+                file ? this.setSelected(file, index) : this.selectFirst()
             }
         },
         blkSlctAll() {

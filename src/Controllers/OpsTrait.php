@@ -40,10 +40,11 @@ trait OpsTrait
         }
 
         foreach ($storageFiles as $file) {
-            $path = $file['path'];
-            $size = $file['size'];
-            $time = $file['timestamp'];
-            $name = $file['basename'];
+            $path       = $file['path'];
+            $size       = $file['size'];
+            $time       = $file['timestamp'];
+            $name       = $file['basename'];
+            $visibility = $file['visibility'];
 
             if (!preg_grep($pattern, [$path])) {
                 $mime = $file['mimetype'];
@@ -53,6 +54,7 @@ trait OpsTrait
                     'type'                   => $mime,
                     'path'                   => $this->resolveUrl($path),
                     'size'                   => $size,
+                    'visibility'             => $visibility,
                     'last_modified'          => $time,
                     'last_modified_formated' => $this->getFileTime($time),
                 ];
@@ -70,7 +72,7 @@ trait OpsTrait
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        return $this->storageDisk->listWith(['mimetype'], $folder, $rec);
+        return $this->storageDisk->listWith(['mimetype', 'visibility'], $folder, $rec);
     }
 
     protected function getFolderListByType($list, $type)
@@ -82,19 +84,30 @@ trait OpsTrait
 
     protected function getFolderInfo($folder)
     {
-        $files = $this->getFolderContent($folder);
+        $files = $this->getFolderContent($folder, true);
+        $count = 0;
         $size  = 0;
 
         foreach ($files as $file) {
             if ($file['type'] == 'file') {
+                $count += 1;
                 $size += $file['size'];
             }
         }
 
         return [
-            'files_count'=> count($files),
+            'files_count'=> $count, // count($files) == files + folders
             'files_size' => $size,
         ];
+    }
+
+    protected function dirsList($location)
+    {
+        if (is_array($location)) {
+            $location = rtrim(implode('/', $location), '/');
+        }
+
+        return str_replace($location, '', $this->storageDisk->allDirectories($location));
     }
 
     /**

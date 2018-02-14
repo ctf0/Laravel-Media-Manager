@@ -1,0 +1,7 @@
+- folder restriction option is no longer available
+- fix uploading never finishing
+- fix some errors
+- fix wrong folder total count & size
+- add file visibility info to sidebar
+- new button to set item visibility 
+- small UI/UX changes

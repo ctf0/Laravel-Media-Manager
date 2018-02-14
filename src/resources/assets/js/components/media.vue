@@ -40,7 +40,6 @@ export default {
         'dirsRoute',
         'lockFileRoute',
         'zipProgressRoute',
-        'restrictPath',
         'uploadPanelImgList',
         'hideExt',
         'hidePath'
@@ -65,6 +64,7 @@ export default {
             randomNames: false,
             useCopy: false,
             toolBar: true,
+            visibilityType: 'public',
             imageWasEdited: false,
 
             files: [],
@@ -100,11 +100,6 @@ export default {
     created() {
         document.addEventListener('keydown', this.shortCuts)
         this.preSaved()
-
-        if (this.checkForRestrictedPath()) {
-            return this.restrictAccess()
-        }
-
         this.getFiles(this.folders, null, this.selectedFile)
     },
     mounted() {
@@ -247,6 +242,11 @@ export default {
                             // lock files
                             if (keycode(e) == 'l') {
                                 this.$refs.lock.click()
+                            }
+
+                            // set visibility
+                            if (keycode(e) == 'v') {
+                                this.$refs.vis.click()
                             }
                         }
                         /* end of with or without bulk selection */

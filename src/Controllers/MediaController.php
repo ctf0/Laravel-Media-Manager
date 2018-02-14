@@ -31,20 +31,20 @@ class MediaController extends Controller
     {
         $config = config('mediaManager');
 
-        $this->carbon             = $carbon;
-        $this->fileSystem         = array_get($config, 'storage_disk');
-        $this->storageDisk        = app('filesystem')->disk($this->fileSystem);
-        $this->baseUrl            = $this->storageDisk->url('/');
-        $this->ignoreFiles        = array_get($config, 'ignore_files');
-        $this->fileChars          = array_get($config, 'allowed_fileNames_chars');
-        $this->folderChars        = array_get($config, 'allowed_folderNames_chars');
-        $this->sanitizedText      = array_get($config, 'sanitized_text');
-        $this->unallowedMimes     = array_get($config, 'unallowed_mimes');
-        $this->LMF                = array_get($config, 'last_modified_format');
-        $this->db                 = app('db')->connection('mediamanager')->table('locked');
-        $this->lockedList         = $this->db->pluck('path');
-        $this->storageDiskInfo    = config("filesystems.disks.{$this->fileSystem}");
-        $this->zipCacheStore      = app('cache')->store('mediamanager');
+        $this->carbon          = $carbon;
+        $this->fileSystem      = array_get($config, 'storage_disk');
+        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
+        $this->baseUrl         = $this->storageDisk->url('/');
+        $this->ignoreFiles     = array_get($config, 'ignore_files');
+        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
+        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
+        $this->sanitizedText   = array_get($config, 'sanitized_text');
+        $this->unallowedMimes  = array_get($config, 'unallowed_mimes');
+        $this->LMF             = array_get($config, 'last_modified_format');
+        $this->db              = app('db')->connection('mediamanager')->table('locked');
+        $this->lockedList      = $this->db->pluck('path');
+        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
+        $this->zipCacheStore   = app('cache')->store('mediamanager');
 
         $this->storageDisk->addPlugin(new ListWith());
     }
@@ -102,15 +102,6 @@ class MediaController extends Controller
         }
 
         return response()->json($this->dirsList($folderLocation));
-    }
-
-    protected function dirsList($location)
-    {
-        if (is_array($location)) {
-            $location = rtrim(implode('/', $location), '/');
-        }
-
-        return str_replace($location, '', $this->storageDisk->allDirectories($location));
     }
 
     /**
@@ -302,10 +293,6 @@ class MediaController extends Controller
         $new_filename   = $this->cleanName($request->new_filename);
         $success        = false;
 
-        if (is_array($folderLocation)) {
-            $folderLocation = rtrim(implode('/', $folderLocation), '/');
-        }
-
         $old_path = "$folderLocation/$filename";
         $new_path = "$folderLocation/$new_filename";
 
@@ -344,10 +331,6 @@ class MediaController extends Controller
         $folderLocation  = $request->folder_location;
         $copy            = $request->use_copy;
         $result          = [];
-
-        if (is_array($folderLocation)) {
-            $folderLocation = rtrim(implode('/', $folderLocation), '/');
-        }
 
         foreach ($request->moved_files as $one) {
             $file_type    = $one['type'];
@@ -462,10 +445,6 @@ class MediaController extends Controller
         $result          = [];
         $fullCacheClear  = false;
 
-        if (is_array($folderLocation)) {
-            $folderLocation = rtrim(implode('/', $folderLocation), '/');
-        }
-
         foreach ($request->deleted_files as $one) {
             $file_name      = $one['name'];
             $type           = $one['type'];
@@ -549,6 +528,44 @@ class MediaController extends Controller
         }
 
         return response()->json(['res' => $result, 'fullCacheClear' => $fullCacheClear]);
+    }
+
+    /**
+     * change file visibility.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function change_vis(Request $request)
+    {
+        $path   = $request->path;
+        $files  = $request->list;
+        $type   = $request->type;
+        $result = [];
+
+        try {
+            foreach ($files as $file) {
+                $name      = $file['name'];
+                $file_path = "$path/$name";
+
+                if (!$this->storageDisk->setVisibility($file_path, $type)) {
+                    throw new Exception(trans('MediaManager::messages.visibility_error', ['attr'=>$name]));
+                }
+
+                $result[] = [
+                    'success' => true,
+                    'message' => trans('MediaManager::messages.visibility_success', ['attr'=>$name]),
+                ];
+            }
+        } catch (Exception $e) {
+            $result[] = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        return response()->json(['res' => $result]);
     }
 
     /**

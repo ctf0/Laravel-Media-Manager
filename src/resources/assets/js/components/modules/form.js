@@ -28,7 +28,7 @@ export default {
                     progress += counter
                     manager.progressCounter = `${progress.toFixed(2)}%`
 
-                    if (progress >= 100) {
+                    if (progress.toFixed(2) >= 100) {
                         sendingComplete = true
                     }
                 },
@@ -141,16 +141,7 @@ export default {
 
                         // folder doesnt exist
                         if (data.error) {
-                            if (this.checkForRestrictedPath()) {
-                                EventHub.fire('get-folders', false)
-                            }
-
                             return this.showNotif(data.error, 'danger')
-                        }
-
-                        // check for restricted path
-                        if (this.checkForRestrictedPath()) {
-                            EventHub.fire('get-folders', true)
                         }
 
                         // normal
@@ -181,6 +172,7 @@ export default {
                 this.ajaxError()
             })
         },
+
         filesListCheck(prev_folder, prev_file, folders, dirs) {
             // check for hidden extensions
             if (this.hideExt.length) {
@@ -241,9 +233,11 @@ export default {
                     }
 
                     // scroll to breadcrumb item
-                    let name = folders.split('/').pop()
-                    let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
-                    this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                    if (this.$refs.bc) {
+                        let name = folders.split('/').pop()
+                        let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
+                        this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                    }
                 })
 
                 return this.dirsListCheck(dirs)
@@ -298,8 +292,8 @@ export default {
                 new_folder_name: folder_name
             }).then(({data}) => {
                 this.toggleLoading()
-                this.resetInput('newFolderName')
                 this.toggleModal()
+                this.resetInput('newFolderName')
 
                 if (!data.success) {
                     return this.showNotif(data.message, 'danger')
@@ -383,6 +377,7 @@ export default {
                 use_copy: copy
             }).then(({data}) => {
                 this.toggleLoading()
+                this.toggleModal()
 
                 data.data.map((item) => {
                     if (!item.success) {
@@ -416,7 +411,6 @@ export default {
                 })
 
                 this.$refs['success-audio'].play()
-                this.toggleModal()
                 this.removeCachedResponse(destination)
 
                 this.isBulkSelecting()
@@ -449,6 +443,7 @@ export default {
                 deleted_files: files
             }).then(({data}) => {
                 this.toggleLoading()
+                this.toggleModal()
 
                 data.res.map((item) => {
                     if (!item.success) {
@@ -462,7 +457,6 @@ export default {
                 })
 
                 this.$refs['success-audio'].play()
-                this.toggleModal()
                 this.isBulkSelecting()
                     ? this.blkSlct()
                     : this.config.lazyLoad
@@ -480,6 +474,45 @@ export default {
                         this.searchItemsCount = this.filesList.length
                     }
                 })
+
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
+        // visibility
+        SetVisibilityForm(event) {
+            let list = this.bulkItemsCount
+                ? this.bulkListFilter
+                : [this.selectedFile]
+
+            this.toggleLoading()
+
+            axios.post(event.target.action, {
+                type: this.visibilityType,
+                list: list,
+                path: this.files.path
+            }).then(({data}) => {
+                this.toggleLoading()
+                this.toggleModal()
+
+                data.res.map((item) => {
+                    if (item.success) {
+                        this.showNotif(item.message)
+                    } else {
+                        this.showNotif(item.message, 'danger')
+                    }
+                })
+
+                list.map((e) => {
+                    return e.visibility = this.visibilityType
+                })
+
+                this.$refs['success-audio'].play()
+                this.removeCachedResponse()
+                this.isBulkSelecting()
+                    ? this.blkSlct()
+                    : false
 
             }).catch((err) => {
                 console.error(err)

@@ -1,6 +1,0 @@
-- fix long press on folder opens image editor
-- fix clear cache & local storage didnt reset folder hierarchy
-- fix swipeUp,swipeDown,hold not working unless a file is selected first
-- fix applying a filters after saving a cropped image reset it back to original, instead now image wont be replaced on saving
-- cleanups
-- missing method

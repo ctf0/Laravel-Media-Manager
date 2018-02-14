@@ -33,7 +33,7 @@ export default {
             }
         },
         allItemsCount(val) {
-            if (val.length == 0) {
+            if (val && val.length == 0) {
                 this.resetInput(['selectedFile', 'currentFileIndex'])
             }
         },

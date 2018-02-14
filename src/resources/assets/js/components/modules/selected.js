@@ -92,10 +92,6 @@ export default {
                 this.noFiles('hide')
                 this.resetInput('currentFilterName')
 
-                if (this.checkForRestrictedPath() && index == 0) {
-                    return
-                }
-
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
@@ -106,7 +102,7 @@ export default {
             let length = this.folders.length
             let newSelected = length - 1
 
-            return length == 0 || this.restrictPath && this.files.path == `/${this.restrictPath}`
+            return length == 0
                 ? false
                 : this.goToFolder(newSelected)
         },

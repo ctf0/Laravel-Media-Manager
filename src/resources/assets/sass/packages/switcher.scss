@@ -584,3 +584,11 @@
         }
     }
 }
+
+// extra
+.form-switcher.is-danger {
+    .switcher {
+        border: 2px solid $red;
+        background-color: $red;
+    }
+}

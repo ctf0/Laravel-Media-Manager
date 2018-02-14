@@ -65,6 +65,7 @@ new Vue({
 - upload an image from a url
 - lazy load image preview
 - bulk selection
+- change item/s visibility
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
 - dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - toggle between `random/original` names for uploaded files
@@ -108,6 +109,7 @@ new Vue({
   |                | image editor *(toolbar)*                   | e             | *                        |                         |
   |                | delete *(toolbar)*                         | d/del         | *                        | swipe down              |
   |                | lock/unlock *(toolbar)*                    | l             | *                        |                         |
+  |                | change visibility *(toolbar)*              | v             | *                        |                         |
   |                | (reset) bulk select *(toolbar)*            | b             | *                        |                         |
   |                | (reset) bulk select all *(toolbar)*        | a             | *                        |                         |
   |                | cancel bulk selection                      | esc           |                          |                         |

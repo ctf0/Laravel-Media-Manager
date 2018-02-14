@@ -46,7 +46,7 @@ export default {
             this[input] = val
         },
         moveUpCheck() {
-            return this.allItemsCount && this.folders.length && !this.restrictAndLast()
+            return this.allItemsCount && this.folders.length
         },
 
         /*                Buttons                */
