@@ -19,7 +19,7 @@
     background: darken($active_theme, 3%);
 }
 
-@include media('max', 1299) {
+@include media('max', 1023) {
     .media-manager__toolbar {
         .level-left + .level-right {
             margin-top: 0.75rem;

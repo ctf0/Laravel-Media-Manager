@@ -413,6 +413,10 @@ export default {
                 this.$refs['success-audio'].play()
                 this.removeCachedResponse(destination)
 
+                if (copy) {
+                    this.removeCachedResponse('../')
+                }
+
                 this.isBulkSelecting()
                     ? this.blkSlct()
                     : error

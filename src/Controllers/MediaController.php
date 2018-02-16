@@ -546,17 +546,21 @@ class MediaController extends Controller
 
         try {
             foreach ($files as $file) {
-                $name      = $file['name'];
-                $file_path = "$path/$name";
+                if ($file['type'] != 'folder') {
+                    $name      = $file['name'];
+                    $file_path = "$path/$name";
 
-                if (!$this->storageDisk->setVisibility($file_path, $type)) {
+                    if (!$this->storageDisk->setVisibility($file_path, $type)) {
+                        throw new Exception(trans('MediaManager::messages.visibility_error', ['attr'=>$name]));
+                    }
+
+                    $result[] = [
+                        'success' => true,
+                        'message' => trans('MediaManager::messages.visibility_success', ['attr'=>$name]),
+                    ];
+                } else {
                     throw new Exception(trans('MediaManager::messages.visibility_error', ['attr'=>$name]));
                 }
-
-                $result[] = [
-                    'success' => true,
-                    'message' => trans('MediaManager::messages.visibility_success', ['attr'=>$name]),
-                ];
             }
         } catch (Exception $e) {
             $result[] = [

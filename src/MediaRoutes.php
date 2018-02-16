@@ -25,6 +25,7 @@ class MediaRoutes
             Route::post('delete_file', ['uses' => "$controller@delete_file", 'as' => 'delete_file']);
             Route::post('move_file', ['uses' => "$controller@move_file", 'as' => 'move_file']);
             Route::post('rename_file', ['uses' => "$controller@rename_file", 'as' => 'rename_file']);
+            Route::post('change_vis', ['uses' => "$controller@change_vis", 'as' => 'change_vis']);
             Route::post('lock_file', ['uses' => "$controller@lock_file", 'as' => 'lock_file']);
 
             Route::get('zip_progress/{name?}', ['uses' => "$controller@zip_progress", 'as' => 'zip_progress']);

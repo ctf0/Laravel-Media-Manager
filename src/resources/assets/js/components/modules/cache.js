@@ -37,6 +37,7 @@ export default {
                     : cacheName == 'root_' ? `/${destination}` : `${cacheName}${destination}`
             }
 
+            // avoid clearing twice
             let items = destination
                 ? extra == cacheName ? [cacheName] : [extra, cacheName]
                 : [cacheName]

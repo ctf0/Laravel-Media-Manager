@@ -47,6 +47,7 @@
 
             {{-- left toolbar --}}
             <div class="level-left">
+                {{-- first --}}
                 <div class="level-item" v-if="!isBulkSelecting()">
                     <div class="field has-addons">
                         {{-- upload --}}
@@ -73,23 +74,7 @@
                     </div>
                 </div>
 
-                {{-- refresh --}}
-                <div class="level-item" v-if="!isBulkSelecting()">
-                    <div class="control">
-                        <v-touch class="button is-light"
-                            ref="refresh"
-                            tag="button"
-                            :disabled="isLoading"
-                            v-tippy title="r"
-                            @tap="refresh()"
-                            @hold="clearCache(), removeLs()">
-                            <span class="icon">
-                                <icon name="refresh" :spin="isLoading"></icon>
-                            </span>
-                        </v-touch>
-                    </div>
-                </div>
-
+                {{-- middle --}}
                 <div class="level-item">
                     <div class="field has-addons">
                         {{-- move --}}
@@ -140,33 +125,50 @@
                     </div>
                 </div>
 
-                {{-- lock --}}
+                {{-- last --}}
                 <div class="level-item">
-                    <div class="control">
-                        <button class="button is-warning"
-                            ref="lock"
-                            :disabled="lock()"
-                            v-tippy title="l"
-                            @click="pushToLockedList()">
-                            <span class="icon">
-                                <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'"></icon>
-                            </span>
-                        </button>
+                    <div class="field has-addons">
+                        {{-- refresh --}}
+                        <div class="control" v-if="!isBulkSelecting()">
+                            <v-touch class="button is-primary"
+                                ref="refresh"
+                                tag="button"
+                                :disabled="isLoading"
+                                v-tippy title="r"
+                                @tap="refresh()"
+                                @hold="clearCache(), removeLs()">
+                                <span class="icon">
+                                    <icon name="refresh" :spin="isLoading"></icon>
+                                </span>
+                            </v-touch>
+                        </div>
+
+                        {{-- lock --}}
+                        <div class="control">
+                            <button class="button is-warning"
+                                ref="lock"
+                                :disabled="lock()"
+                                v-tippy title="l"
+                                @click="pushToLockedList()">
+                                <span class="icon">
+                                    <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'"></icon>
+                                </span>
+                            </button>
+                        </div>
+
+                        {{-- visibility --}}
+                        <div class="control">
+                            <button class="button is-light"
+                                ref="vis"
+                                :disabled="selectedFileIs('folder') || isLoading || !this.selectedFile"
+                                v-tippy title="v"
+                                @click="toggleModal('change_vis_modal')">
+                                <span class="icon"><icon name="eye"></icon></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {{-- visibility --}}
-                <div class="level-item">
-                    <div class="control">
-                        <button class="button is-light"
-                            ref="vis"
-                            :disabled="selectedFileIs('folder')"
-                            v-tippy title="v"
-                            @click="toggleModal('change_vis_modal')">
-                            <span class="icon"><icon name="eye"></icon></span>
-                        </button>
-                    </div>
-                </div>
             </div>
 
             {{-- ====================================================================== --}}

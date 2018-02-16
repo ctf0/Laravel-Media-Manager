@@ -2,8 +2,6 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager)
 
-The only media manager with this number of features & flexibility.
-
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7388088/34976419-40c1bc90-fa9f-11e7-921f-f311e3099dcc.png">
 </p>
@@ -72,7 +70,7 @@ new Vue({
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
 - use the manager
-  + [from modal with ease](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
+  + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
   + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
 - [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders **"sqLite must be installed"**
