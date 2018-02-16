@@ -3,7 +3,7 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager)
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/34976419-40c1bc90-fa9f-11e7-921f-f311e3099dcc.png">
+    <img src="https://user-images.githubusercontent.com/7388088/36298904-278ede2a-1303-11e8-8413-0bf02984019a.png">
 </p>
 
 - to optimize uploaded files on the fly try [approached](https://github.com/approached/laravel-image-optimizer) or [spatie](https://github.com/spatie/laravel-image-optimizer)
