@@ -1,6 +1,7 @@
 # Laravel Media Manager
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg?style=for-the-badge)](https://packagist.org/packages/ctf0/media-manager)
+[![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager)
+[![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/16ri7Hh848bw7vxbEevKHFuHXLmsV8Vc9L)](https://en.cryptobadges.io/donate/16ri7Hh848bw7vxbEevKHFuHXLmsV8Vc9L)
 
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7388088/36298904-278ede2a-1303-11e8-8413-0bf02984019a.png">
