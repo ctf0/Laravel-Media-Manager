@@ -863,7 +863,6 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-link">
                         <p class="modal-card-title">
-                            <span class="icon"><icon name="folder"></icon></span>
                             <span>{{ trans('MediaManager::messages.add_new_folder') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
@@ -898,7 +897,6 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
-                            <span class="icon"><icon name="terminal"></icon></span>
                             <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
@@ -1012,7 +1010,6 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-danger">
                         <p class="modal-card-title">
-                            <span class="icon"><icon name="warning"></icon></span>
                             <span>{{ trans('MediaManager::messages.are_you_sure_delete') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>

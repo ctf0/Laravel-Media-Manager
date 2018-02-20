@@ -1,0 +1,4 @@
+- fix rare bug happens on upload caused by upload > delete all > upload
+- move modules folder outside of components
+- add support for getting selected folder path
+- cleaups

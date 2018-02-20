@@ -48,7 +48,7 @@ localforage.config({
 })
 
 // vue-awesome
-require('./icons')
+require('./modules/icons')
 Vue.component('icon', require('vue-awesome/components/Icon'))
 
 /*                Components                */
@@ -57,4 +57,4 @@ Vue.component('EditorMediaManager', require('./components/editor.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */
-require('./events')
+require('./modules/events')

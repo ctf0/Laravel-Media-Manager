@@ -17,7 +17,7 @@ export default {
                 uploadMultiple: true,
                 forceFallback: false,
                 ignoreHiddenFiles: true,
-                timeout: 3600000,
+                timeout: 3600000, // 60 mins
                 previewsContainer: '#uploadPreview',
                 addedfile() {
                     manager.showProgress = true
@@ -28,9 +28,7 @@ export default {
                     progress += counter
                     manager.progressCounter = `${progress.toFixed(2)}%`
 
-                    if (progress.toFixed(2) >= 100) {
-                        sendingComplete = true
-                    }
+                    sendingComplete = parseInt(progress.toFixed(2)) == 100 ? true : false
                 },
                 successmultiple(files, res) {
                     res.data.map((item) => {
@@ -42,7 +40,7 @@ export default {
                         }
                     })
 
-                    if (sendingComplete) {
+                    if (sendingComplete == true) {
                         items = 0
                         progress = 0
                         manager.progressCounter = 0
@@ -356,93 +354,86 @@ export default {
         // move
         MoveFileForm(event) {
             if (this.checkForFolders) {
-                let list = this.bulkItemsCount
+                let destination = this.moveToPath
+                let copy = this.useCopy
+                let error = false
+                let files = this.bulkItemsCount
                     ? this.bulkListFilter
                     : [this.selectedFile]
 
-                this.move_file(list, event.target.action)
-            }
-        },
-        move_file(files, routeUrl) {
-            this.toggleLoading()
-
-            let destination = this.moveToPath
-            let copy = this.useCopy
-            let error = false
-
-            axios.post(routeUrl, {
-                folder_location: this.files.path,
-                destination: destination,
-                moved_files: files,
-                use_copy: copy
-            }).then(({data}) => {
                 this.toggleLoading()
-                this.toggleModal()
 
-                data.data.map((item) => {
-                    if (!item.success) {
-                        error = true
-                        return this.showNotif(item.message, 'danger')
-                    }
+                axios.post(event.target.action, {
+                    folder_location: this.files.path,
+                    destination: destination,
+                    moved_files: files,
+                    use_copy: copy
+                }).then(({data}) => {
+                    this.toggleLoading()
+                    this.toggleModal()
 
-                    // copy
-                    if (copy) {
-                        this.showNotif(`${this.trans('copy_success')} "${item.name}" to "${destination}"`)
-                    }
-
-                    // move
-                    else {
-                        this.showNotif(`${this.trans('move_success')} "${item.name}" to "${destination}"`)
-                        this.removeFromLists(item.name, item.type)
-
-                        // update dirs list after move
-                        this.updateDirsList()
-
-                        // update search count
-                        if (this.searchFor) {
-                            this.searchItemsCount = this.filesList.length
+                    data.data.map((item) => {
+                        if (!item.success) {
+                            error = true
+                            return this.showNotif(item.message, 'danger')
                         }
+
+                        // copy
+                        if (copy) {
+                            this.showNotif(`${this.trans('copy_success')} "${item.name}" to "${destination}"`)
+                        }
+
+                        // move
+                        else {
+                            this.showNotif(`${this.trans('move_success')} "${item.name}" to "${destination}"`)
+                            this.removeFromLists(item.name, item.type)
+
+                            // update dirs list after move
+                            this.updateDirsList()
+
+                            // update search count
+                            if (this.searchFor) {
+                                this.searchItemsCount = this.filesList.length
+                            }
+                        }
+
+                        // update folder count when folder is moved/copied into another
+                        this.fileTypeIs(item, 'folder')
+                            ? this.updateFolderCount(destination, item.items, item.size)
+                            : this.updateFolderCount(destination, 1, item.size)
+                    })
+
+                    this.$refs['success-audio'].play()
+                    this.removeCachedResponse(destination)
+
+                    if (copy) {
+                        this.removeCachedResponse('../')
                     }
 
-                    // update folder count when folder is moved/copied into another
-                    this.fileTypeIs(item, 'folder')
-                        ? this.updateFolderCount(destination, item.items, item.size)
-                        : this.updateFolderCount(destination, 1, item.size)
-                })
-
-                this.$refs['success-audio'].play()
-                this.removeCachedResponse(destination)
-
-                if (copy) {
-                    this.removeCachedResponse('../')
-                }
-
-                this.isBulkSelecting()
-                    ? this.blkSlct()
-                    : error
-                        ? false
-                        : this.config.lazyLoad
+                    this.isBulkSelecting()
+                        ? this.blkSlct()
+                        : error
                             ? false
-                            : this.selectFirst()
+                            : this.config.lazyLoad
+                                ? false
+                                : this.selectFirst()
 
-            }).catch((err) => {
-                console.error(err)
-                this.ajaxError()
-            })
+                }).catch((err) => {
+                    console.error(err)
+                    this.ajaxError()
+                })
+            }
         },
 
         // delete
         DeleteFileForm(event) {
-            let list = this.bulkItemsCount
+            let files = this.bulkItemsCount
                 ? this.bulkListFilter
                 : [this.selectedFile]
 
-            this.delete_file(list, event.target.action)
-        },
-        delete_file(files, routeUrl) {
             this.toggleLoading()
 
-            axios.post(routeUrl, {
+            axios.post(event.target.action, {
                 folder_location: this.files.path,
                 deleted_files: files
             }).then(({data}) => {
@@ -484,6 +475,7 @@ export default {
                 this.ajaxError()
             })
         },
+        
         // visibility
         SetVisibilityForm(event) {
             let list = this.bulkItemsCount

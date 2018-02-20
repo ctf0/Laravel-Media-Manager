@@ -1,4 +1,4 @@
-require('./../../packages/download.min')
+require('../packages/download.min')
 
 export default {
     methods: {
@@ -8,6 +8,7 @@ export default {
                     if (e.type == 'folder') {
                         return this.showNotif(this.trans('sep_download'), 'warning')
                     }
+
                     downloadFile(e.path)
                 })
 

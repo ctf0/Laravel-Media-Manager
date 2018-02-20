@@ -3,7 +3,8 @@ export default {
     data() {
         return {
             showModal: false,
-            selectedFile: ''
+            selectedFile: '',
+            selectedFolder: ''
         }
     },
     mounted() {
@@ -13,6 +14,10 @@ export default {
 
         EventHub.listen('file_selected', (data) => {
             this.selectedFile = data
+        })
+
+        EventHub.listen('folder_selected', (data) => {
+            this.selectedFolder = data
         })
     },
     methods: {

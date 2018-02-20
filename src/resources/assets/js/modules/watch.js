@@ -7,8 +7,10 @@ export default {
         },
         selectedFile(val) {
             if (val) {
-                if (this.inModal && !this.selectedFileIs('folder')) {
-                    EventHub.fire('file_selected', val.path)
+                if (this.inModal) {
+                    this.selectedFileIs('folder')
+                        ? EventHub.fire('folder_selected', `${this.files.path}/${val.name}`)
+                        : EventHub.fire('file_selected', val.path)
                 }
 
                 if (this.checkForFolders) {

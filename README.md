@@ -142,6 +142,7 @@ new Vue({
   |                 | modal-show                            | when modal is showen                             |
   |                 | modal-hide                            | when modal is hidden                             |
   |                 | file_selected *(when inside modal)*   | get selected file url                            |
+  |                 | folder_selected *(when inside modal)* | get selected folder path                         |
   | [Laravel][lara] |                                       |                                                  |
   |                 | MMFileUploaded($file_path)            | get uploaded file full [path][path]              |
   |                 | [MMFileSaved][event]($file_path)      | get saved(edited/link) image full [path][path]   |
