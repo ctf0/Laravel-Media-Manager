@@ -2,7 +2,7 @@
     class="__stack-breadcrumb-mobile is-hidden-desktop"
     ref="bc" v-show="folders.length > 0"
     name="list" mode="out-in">
-    <li id="library-bc" key="library-bc" v-if="!checkForRestrictedPath()">
+    <li id="library-bc" key="library-bc">
         <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
             v-tippy title="backspace"
             @click="goToFolder(0)">
