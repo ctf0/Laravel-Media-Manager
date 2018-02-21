@@ -1,0 +1,4 @@
+- fix https://github.com/ctf0/Laravel-Media-Manager/issues/34
+- better modal & editor workflow “re-check wiki”
+- un-disable refresh btn
+- cleanups

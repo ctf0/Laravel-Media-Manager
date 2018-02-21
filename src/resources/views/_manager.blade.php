@@ -133,7 +133,6 @@
                             <v-touch class="button is-primary"
                                 ref="refresh"
                                 tag="button"
-                                :disabled="isLoading"
                                 v-tippy title="r"
                                 @tap="refresh()"
                                 @hold="clearCache(), removeLs()">

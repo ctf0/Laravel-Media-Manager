@@ -194,7 +194,7 @@ export default {
 
                             // refresh
                             if (keycode(e) == 'r') {
-                                if (!this.$refs.refresh.$el.disabled) {
+                                if (!this.$refs.refresh.$el.disabled && !this.isLoading) {
                                     this.refresh()
                                 }
                             }

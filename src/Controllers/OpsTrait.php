@@ -90,7 +90,7 @@ trait OpsTrait
 
         foreach ($files as $file) {
             if ($file['type'] == 'file') {
-                $count += 1;
+                ++$count;
                 $size += $file['size'];
             }
         }

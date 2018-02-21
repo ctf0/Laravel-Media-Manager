@@ -820,7 +820,8 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     }
 }
 
-.__Inmodal-editor {
+.__Inmodal-editor,
+.__Inmodal-editor-hide {
     display: none;
 }
 
