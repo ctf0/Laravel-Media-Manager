@@ -264,45 +264,45 @@ export default {
             let getData = cropper.getData()
 
             switch (action) {
-            case 'move':
-            case 'crop':
-                this.dragMode = action
-                cropper.setDragMode(action)
-                break
-            case 'zoom-in':
-                cropper.zoom(0.1)
-                break
-            case 'zoom-out':
-                cropper.zoom(-0.1)
-                break
-            case 'rotate-left':
-                cropper.rotate(-this.rotation)
-                break
-            case 'rotate-right':
-                cropper.rotate(this.rotation)
-                break
-            case 'flip-horizontal':
-                if (this.ranges.includes(getData.rotate)) {
-                    return cropper.scaleY(-getData.scaleY)
-                }
+                case 'move':
+                case 'crop':
+                    this.dragMode = action
+                    cropper.setDragMode(action)
+                    break
+                case 'zoom-in':
+                    cropper.zoom(0.1)
+                    break
+                case 'zoom-out':
+                    cropper.zoom(-0.1)
+                    break
+                case 'rotate-left':
+                    cropper.rotate(-this.rotation)
+                    break
+                case 'rotate-right':
+                    cropper.rotate(this.rotation)
+                    break
+                case 'flip-horizontal':
+                    if (this.ranges.includes(getData.rotate)) {
+                        return cropper.scaleY(-getData.scaleY)
+                    }
 
-                cropper.scaleX(-getData.scaleX)
-                break
-            case 'flip-vertical':
-                if (this.ranges.includes(getData.rotate)) {
-                    return cropper.scaleX(-getData.scaleX)
-                }
+                    cropper.scaleX(-getData.scaleX)
+                    break
+                case 'flip-vertical':
+                    if (this.ranges.includes(getData.rotate)) {
+                        return cropper.scaleX(-getData.scaleX)
+                    }
 
-                cropper.scaleY(-getData.scaleY)
-                break
+                    cropper.scaleY(-getData.scaleY)
+                    break
 
-            case 'reset':
-                this.resetAll()
-                break
-            case 'clear':
-                cropper.clear()
-                break
-            default:
+                case 'reset':
+                    this.resetAll()
+                    break
+                case 'clear':
+                    cropper.clear()
+                    break
+                default:
             }
 
             this.checkForChanges()
@@ -416,7 +416,6 @@ export default {
                 this.hasChanged = true
             }
         }
-    },
-    render() {}
+    }
 }
 </script>

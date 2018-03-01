@@ -18,7 +18,6 @@ export default {
                 this.$parent[this.item] = path
             }
         })
-    },
-    render () {}
+    }
 }
 </script>

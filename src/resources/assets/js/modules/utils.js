@@ -16,16 +16,16 @@ export default {
                 let duration = 3
 
                 switch (s) {
-                case 'black':
-                case 'danger':
-                    title = 'Error'
-                    duration = null
-                    break
-                case 'warning':
-                    title = 'Warning'
-                    break
-                default:
-                    title = 'Success'
+                    case 'black':
+                    case 'danger':
+                        title = 'Error'
+                        duration = null
+                        break
+                    case 'warning':
+                        title = 'Warning'
+                        break
+                    default:
+                        title = 'Success'
                 }
 
                 EventHub.fire('showNotif', {

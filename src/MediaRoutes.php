@@ -2,35 +2,33 @@
 
 namespace ctf0\MediaManager;
 
-use Illuminate\Support\Facades\Route;
-
 class MediaRoutes
 {
     public static function routes()
     {
         $controller = array_get(config('mediaManager'), 'controller', '\ctf0\MediaManager\Controllers\MediaController');
 
-        Route::group([
+        app('router')->group([
             'prefix'    => 'media',
             'as'        => 'media.',
         ], function () use ($controller) {
-            Route::get('/', ['uses' => "$controller@index", 'as' => 'index']);
-            Route::post('upload', ['uses' => "$controller@upload", 'as' => 'upload']);
-            Route::post('upload-cropped', ['uses' => "$controller@uploadCropped", 'as' => 'uploadCropped']);
-            Route::post('upload-link', ['uses' => "$controller@uploadLink", 'as' => 'uploadLink']);
+            app('router')->get('/', ['uses' => "$controller@index", 'as' => 'index']);
+            app('router')->post('upload', ['uses' => "$controller@upload", 'as' => 'upload']);
+            app('router')->post('upload-cropped', ['uses' => "$controller@uploadCropped", 'as' => 'uploadCropped']);
+            app('router')->post('upload-link', ['uses' => "$controller@uploadLink", 'as' => 'uploadLink']);
 
-            Route::post('files', ['uses' => "$controller@get_files", 'as' => 'files']);
-            Route::post('directories', ['uses' => "$controller@get_dirs", 'as' => 'directories']);
-            Route::post('new_folder', ['uses' => "$controller@new_folder", 'as' => 'new_folder']);
-            Route::post('delete_file', ['uses' => "$controller@delete_file", 'as' => 'delete_file']);
-            Route::post('move_file', ['uses' => "$controller@move_file", 'as' => 'move_file']);
-            Route::post('rename_file', ['uses' => "$controller@rename_file", 'as' => 'rename_file']);
-            Route::post('change_vis', ['uses' => "$controller@change_vis", 'as' => 'change_vis']);
-            Route::post('lock_file', ['uses' => "$controller@lock_file", 'as' => 'lock_file']);
+            app('router')->post('files', ['uses' => "$controller@get_files", 'as' => 'files']);
+            app('router')->post('directories', ['uses' => "$controller@get_dirs", 'as' => 'directories']);
+            app('router')->post('new_folder', ['uses' => "$controller@new_folder", 'as' => 'new_folder']);
+            app('router')->post('delete_file', ['uses' => "$controller@delete_file", 'as' => 'delete_file']);
+            app('router')->post('move_file', ['uses' => "$controller@move_file", 'as' => 'move_file']);
+            app('router')->post('rename_file', ['uses' => "$controller@rename_file", 'as' => 'rename_file']);
+            app('router')->post('change_vis', ['uses' => "$controller@change_vis", 'as' => 'change_vis']);
+            app('router')->post('lock_file', ['uses' => "$controller@lock_file", 'as' => 'lock_file']);
 
-            Route::get('zip_progress/{name?}', ['uses' => "$controller@zip_progress", 'as' => 'zip_progress']);
-            Route::post('folder_download', ['uses' => "$controller@folder_download", 'as' => 'folder_download']);
-            Route::post('files_download', ['uses' => "$controller@files_download", 'as' => 'files_download']);
+            app('router')->get('zip_progress/{name?}', ['uses' => "$controller@zip_progress", 'as' => 'zip_progress']);
+            app('router')->post('folder_download', ['uses' => "$controller@folder_download", 'as' => 'folder_download']);
+            app('router')->post('files_download', ['uses' => "$controller@files_download", 'as' => 'files_download']);
         });
     }
 }

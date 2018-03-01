@@ -344,7 +344,6 @@ export default {
                 }
             }
         }
-    },
-    render() {}
+    }
 }
 </script>

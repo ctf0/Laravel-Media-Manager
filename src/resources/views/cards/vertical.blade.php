@@ -36,7 +36,7 @@
 
             <div class="media-content">
                 {{-- name --}}
-                <p class="title is-marginless is-spaced">
+                <p class="title is-marginless">
                     <span class="link"
                         @click="copyLink(selectedFile.path)"
                         :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
@@ -55,7 +55,7 @@
                 </p>
 
                 {{-- date --}}
-                <p class="subtitle is-6">@{{ selectedFile.last_modified_formated }}</p>
+                <p class="subtitle is-6 m-t-5">@{{ selectedFile.last_modified_formated }}</p>
             </div>
 
             <div class="media-right has-text-centered">
