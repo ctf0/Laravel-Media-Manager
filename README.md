@@ -45,7 +45,7 @@ npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipbo
     - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
 
 ```js
-require('./../vendor/MediaManager/js/manager')
+require('../vendor/MediaManager/js/manager')
 
 new Vue({
     el: '#app'

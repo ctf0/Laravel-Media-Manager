@@ -17,7 +17,7 @@
             <my-notification></my-notification>
         </div>
 
-        <div class="container is-fluid is-marginless">
+        <div class="container is-fluid">
             <div class="columns">
                 {{-- media manager --}}
                 <div class="column">
@@ -28,6 +28,8 @@
     </section>
 
     {{-- footer --}}
-    <script src="{{ asset("path/to/app.js") }}"></script>
+    @stack('styles')
+    @stack('scripts')
+    <script src="{{ asset("js/app.js") }}"></script>
 </body>
 </html>

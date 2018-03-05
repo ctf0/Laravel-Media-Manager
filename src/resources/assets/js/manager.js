@@ -3,8 +3,6 @@ window.Vue = require('vue')
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
 window.Dropzone = require('dropzone')
-window.Cropper = require('cropperjs')
-import 'cropperjs/dist/cropper.css'
 
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))

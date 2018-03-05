@@ -1,6 +1,3 @@
-{{-- styles --}}
-<link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
-
 {{-- mobile breadCrumb --}}
 @php
     $alt_breadcrumb = true;
@@ -39,8 +36,8 @@
     <div class="">
 
         {{-- notif-audio --}}
-        <audio ref="alert-audio"><source src="/assets/vendor/MediaManager/audio/alert.mp3" type="audio/mpeg"></audio>
-        <audio ref="success-audio"><source src="/assets/vendor/MediaManager/audio/success.mp3" type="audio/mpeg"></audio>
+        <audio ref="alert-audio"><source src="{{ asset('assets/vendor/MediaManager/audio/alert.mp3') }}" type="audio/mpeg"></audio>
+        <audio ref="success-audio"><source src="{{ asset('assets/vendor/MediaManager/audio/success.mp3') }}" type="audio/mpeg"></audio>
 
         {{-- top toolbar --}}
         <nav class="media-manager__toolbar level" v-show="toolBar">
@@ -468,6 +465,7 @@
 
                                         <span class="icon is-large" v-else>
                                             <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
+                                            <icon v-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
                                             <icon v-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
                                             <icon v-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
                                             <icon v-if="fileTypeIs(file, 'pdf')" name="file-pdf-o" scale="2.6"></icon>
@@ -546,13 +544,14 @@
                                 </template>
 
                                 {{-- icons --}}
-                                <icon v-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
-                                <div key="1" v-if="selectedFileIs('pdf')" class="link"
+                                <icon key="1" v-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
+                                <icon key="2" v-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
+                                <div key="3" v-if="selectedFileIs('pdf')" class="link"
                                     v-tippy="{arrow: true, position: 'left'}" title="space"
                                     @click="toggleModal('preview_modal')">
                                     <icon name="file-pdf-o" scale="4"></icon>
                                 </div>
-                                <div key="2" v-if="selectedFileIs('text')" class="link"
+                                <div key="4" v-if="selectedFileIs('text')" class="link"
                                     v-tippy="{arrow: true, position: 'left'}" title="space"
                                     @click="toggleModal('preview_modal')">
                                     <icon name="file-text-o" scale="4"></icon>
@@ -1023,6 +1022,7 @@
                                         <figure class="media-left">
                                             <span class="icon has-text-link">
                                                 <icon v-if="fileTypeIs(one, 'folder')" name="folder" scale="1.2"></icon>
+                                                <icon v-if="fileTypeIs(one, 'application')" name="cogs" scale="1.2"></icon>
                                                 <icon v-if="fileTypeIs(one, 'image')" name="image" scale="1.2"></icon>
                                                 <icon v-if="fileTypeIs(one, 'video')" name="film" scale="1.2"></icon>
                                                 <icon v-if="fileTypeIs(one, 'audio')" name="music" scale="1.2"></icon>
@@ -1069,6 +1069,7 @@
                                         <figure class="media-left">
                                             <span class="icon has-text-link">
                                                 <icon v-if="selectedFileIs('folder')" name="folder" scale="1.8"></icon>
+                                                <icon v-if="selectedFileIs('application')" name="cogs" scale="1.8"></icon>
                                                 <icon v-if="selectedFileIs('image')" name="image" scale="1.8"></icon>
                                                 <icon v-if="selectedFileIs('video')" name="film" scale="1.8"></icon>
                                                 <icon v-if="selectedFileIs('audio')" name="music" scale="1.8"></icon>
@@ -1116,7 +1117,15 @@
     </div>
 </media-manager>
 
+{{-- styles --}}
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
+@endpush
+
 {{-- scripts --}}
-<script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
-<script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>
+@push('scripts')
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>
+@endpush
+

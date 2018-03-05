@@ -63,5 +63,5 @@ return [
     /*
      * load image preview when item is clicked
      */
-    'lazy_load_image_on_click' => true,
+    'lazy_load_image_on_click' => false,
 ];

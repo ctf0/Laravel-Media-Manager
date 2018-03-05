@@ -32,6 +32,7 @@ import 'vue-awesome/icons/circle'
 import 'vue-awesome/icons/link'
 import 'vue-awesome/icons/spinner'
 import 'vue-awesome/icons/key'
+import 'vue-awesome/icons/cogs'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'

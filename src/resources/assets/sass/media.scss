@@ -2,6 +2,10 @@
     backface-visibility: hidden;
 }
 
+[v-cloak] {
+    display: none;
+}
+
 @import './extra/vars';
 @import './extra/loaders';
 @import './extra/animation';
