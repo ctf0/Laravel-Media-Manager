@@ -190,7 +190,7 @@ import 'cropperjs/dist/cropper.css'
 
 export default {
     components: {Camann},
-    props: ['url', 'cropTrans', 'route'],
+    props: ['url', 'translations', 'route'],
     data() {
         return {
             imageCropper: null,
@@ -395,7 +395,7 @@ export default {
             return this.dragMode == val
         },
         trans(val) {
-            return this.cropTrans[val]
+            return this.translations[val]
         },
 
         // filters

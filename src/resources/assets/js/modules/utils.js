@@ -100,7 +100,7 @@ export default {
             return index > 0 ? name.substring(index + 1) : null
         },
         trans(key) {
-            return this.mediaTrans[key]
+            return this.translations[key]
         },
 
         /*                Toggle                */

@@ -109,20 +109,22 @@ export default {
 
         /*                Navigation                */
         navigation(e) {
+            let key = keycode(e)
+
             // go to prev item
-            if (keycode(e) == 'left' || keycode(e) == 'up') {
+            if (key == 'left' || key == 'up') {
                 e.preventDefault()
                 this.goToPrev()
             }
 
             // go to next item
-            if (keycode(e) == 'right' || keycode(e) == 'down') {
+            if (key == 'right' || key == 'down') {
                 e.preventDefault()
                 this.goToNext()
             }
 
             // go to last item
-            if (keycode(e) == 'end') {
+            if (key == 'end') {
                 e.preventDefault()
                 this.imageSlideDirection = 'next'
 
@@ -131,7 +133,7 @@ export default {
             }
 
             // go to first item
-            if (keycode(e) == 'home') {
+            if (key == 'home') {
                 e.preventDefault()
                 this.imageSlideDirection = 'prev'
                 this.scrollToFile(this.$refs.file_0)

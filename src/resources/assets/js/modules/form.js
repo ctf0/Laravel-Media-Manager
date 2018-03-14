@@ -475,7 +475,7 @@ export default {
                 this.ajaxError()
             })
         },
-        
+
         // visibility
         SetVisibilityForm(event) {
             let list = this.bulkItemsCount

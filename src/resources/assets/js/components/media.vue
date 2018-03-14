@@ -35,7 +35,7 @@ export default {
     props: [
         'config',
         'inModal',
-        'mediaTrans',
+        'translations',
         'filesRoute',
         'dirsRoute',
         'lockFileRoute',
@@ -134,6 +134,8 @@ export default {
         },
 
         shortCuts(e) {
+            let key = keycode(e)
+
             if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey)) {
                 // when modal isnt visible
                 if (!this.activeModal) {
@@ -143,12 +145,13 @@ export default {
                         if (!this.isBulkSelecting()) {
 
                             // open folder
-                            if (keycode(e) == 'enter' && this.selectedFile) {
+                            if (key == 'enter' && this.selectedFile) {
                                 this.openFolder(this.selectedFile)
                             }
 
                             // go up a dir
-                            if (keycode(e) == 'backspace' && this.folders.length) {
+                            if (key == 'backspace' && this.folders.length) {
+                                e.preventDefault()
                                 this.goToPrevFolder()
                             }
 
@@ -157,7 +160,7 @@ export default {
                                 this.navigation(e)
 
                                 if (
-                                    keycode(e) == 'space' &&
+                                    key == 'space' &&
                                     e.target == document.body &&
                                     (
                                         this.selectedFileIs('video') ||
@@ -186,21 +189,21 @@ export default {
                                 }
 
                                 // image editor
-                                if (keycode(e) == 'e') {
+                                if (key == 'e') {
                                     this.$refs.editor.click()
                                 }
                             }
                             // end of when there are files
 
                             // refresh
-                            if (keycode(e) == 'r') {
+                            if (key == 'r') {
                                 if (!this.$refs.refresh.$el.disabled && !this.isLoading) {
                                     this.refresh()
                                 }
                             }
 
                             // file upload
-                            if (keycode(e) == 'u') {
+                            if (key == 'u') {
                                 this.$refs.upload.click()
                             }
                         }
@@ -209,7 +212,7 @@ export default {
                         // with or without bulk selection
                         if (this.allItemsCount) {
                             // bulk select
-                            if (keycode(e) == 'b') {
+                            if (key == 'b') {
                                 if (this.searchFor && this.searchItemsCount == 0) {
                                     return
                                 }
@@ -219,47 +222,47 @@ export default {
 
                             if (this.isBulkSelecting()) {
                                 // add all to bulk list
-                                if (keycode(e) == 'a') {
+                                if (key == 'a') {
                                     this.$refs.bulkSelectAll.click()
                                 }
 
                                 // cancel bulk selection
-                                if (keycode(e) == 'esc') {
+                                if (key == 'esc') {
                                     this.$refs.bulkSelect.click()
                                 }
                             }
 
                             // delete file
-                            if (keycode(e) == 'delete' || keycode(e) == 'd') {
+                            if (key == 'delete' || key == 'd') {
                                 this.$refs.delete.click()
                             }
 
                             // move file
-                            if (this.checkForFolders && keycode(e) == 'm') {
+                            if (this.checkForFolders && key == 'm') {
                                 this.$refs.move.click()
                             }
 
                             // lock files
-                            if (keycode(e) == 'l') {
+                            if (key == 'l') {
                                 this.$refs.lock.click()
                             }
 
                             // set visibility
-                            if (keycode(e) == 'v') {
+                            if (key == 'v') {
                                 this.$refs.vis.click()
                             }
                         }
                         /* end of with or without bulk selection */
 
                         // toggle file details sidebar
-                        if (keycode(e) == 't') {
+                        if (key == 't') {
                             this.toggleInfoPanel()
                         }
                     }
                     /* end of search is not focused */
 
                     // cancel search
-                    else if (keycode(e) == 'esc') {
+                    else if (key == 'esc') {
                         this.resetInput('searchFor')
                     }
                 }
@@ -269,7 +272,7 @@ export default {
                 else {
                     if (this.isActiveModal('preview_modal')) {
                         // hide lb
-                        if (keycode(e) == 'space') {
+                        if (key == 'space') {
                             e.preventDefault()
                             this.toggleModal()
                         }
@@ -278,7 +281,7 @@ export default {
                     }
 
                     // hide lb
-                    if (keycode(e) == 'esc') {
+                    if (key == 'esc') {
                         this.toggleModal()
                     }
                 }
@@ -344,6 +347,7 @@ export default {
                 }
             }
         }
-    }
+    },
+    render() {}
 }
 </script>

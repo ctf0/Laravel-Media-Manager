@@ -103,7 +103,8 @@ return array (
   'video' => 'Video',
   'video_support' => 'Your browser does not support the video tag',
   'visibility' => 'Visibility',
+  'visibility_error' => '":attr" Visibility Couldn\'t Be Changed',
   'visibility_set' => 'Change File(s) Visibility',
   'visibility_success' => '":attr" Visibility Was Updated',
-  'visibility_error' => '":attr" Visibility Couldn\'t Be Changed',
+  'clear_cache' => 'Cache Cleared !',
 );

@@ -20,7 +20,6 @@ class MediaController extends Controller
     protected $folderChars;
     protected $ignoreFiles;
     protected $LMF;
-    protected $lockedList;
     protected $sanitizedText;
     protected $storageDisk;
     protected $storageDiskInfo;
@@ -42,7 +41,6 @@ class MediaController extends Controller
         $this->unallowedMimes  = array_get($config, 'unallowed_mimes');
         $this->LMF             = array_get($config, 'last_modified_format');
         $this->db              = app('db')->connection('mediamanager')->table('locked');
-        $this->lockedList      = $this->db->pluck('path');
         $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
         $this->zipCacheStore   = app('cache')->store('mediamanager');
 
@@ -77,7 +75,7 @@ class MediaController extends Controller
         }
 
         return response()->json([
-            'locked' => $this->lockedList,
+            'locked' => $this->db->pluck('path'),
             'dirs'   => $this->dirsList($request->dirs),
             'files'  => [
                 'path'  => $folder,
@@ -460,7 +458,7 @@ class MediaController extends Controller
             if ($type == 'folder') {
                 // check for files in lock list
                 foreach ($this->storageDisk->allFiles($file_name) as $file) {
-                    if (in_array($this->resolveUrl($file), $this->lockedList->toArray())) {
+                    if (in_array($this->resolveUrl($file), $this->db->pluck('path')->toArray())) {
                         $fullCacheClear  = true;
                         $result[]        = [
                             'success' => false,

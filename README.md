@@ -36,9 +36,9 @@
 - install dependencies
 
 ```bash
-yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome vue-touch@next idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.

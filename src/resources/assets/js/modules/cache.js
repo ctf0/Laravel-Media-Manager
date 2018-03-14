@@ -1,3 +1,9 @@
+import { Store, set, get, del, clear } from 'idb-keyval'
+const idbKeyVal = new Store(
+    'ctf0-Media_Manager', // db
+    'laravel-media-manager' // store
+)
+
 export default {
     methods: {
         // local storage
@@ -18,12 +24,12 @@ export default {
 
         // cache
         cacheResponse(value) {
-            return localforage.setItem(this.cacheName, value).catch((err) => {
-                console.warn('localforage.setItem', err)
+            return set(this.cacheName, value, idbKeyVal).catch((err) => {
+                console.warn('cacheStore.setItem', err)
             })
         },
         getCachedResponse() {
-            return localforage.getItem(this.cacheName)
+            return get(this.cacheName, idbKeyVal)
         },
         removeCachedResponse(destination = null) {
             let cacheName = this.cacheName
@@ -43,17 +49,17 @@ export default {
                 : [cacheName]
 
             items.forEach((one) => {
-                return localforage.removeItem(one).then(() => {
-                    console.log(`${one} cache is cleared!`)
+                return del(one, idbKeyVal).then(() => {
+                    console.log(`${one} ${this.trans('clear_cache')}`)
                 }).catch((err) => {
-                    console.warn('localforage.removeItem', err)
+                    console.warn('cacheStore.removeItem', err)
                 })
             })
         },
         clearCache(showNotif = true) {
-            localforage.clear().then(() => {
+            clear(idbKeyVal).then(() => {
                 if (showNotif) {
-                    this.showNotif('Cache Cleared')
+                    this.showNotif(this.trans('clear_cache'))
                 }
 
                 setTimeout(() => {

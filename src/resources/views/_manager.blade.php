@@ -14,7 +14,7 @@
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
     :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
-    :media-trans="{{ json_encode([
+    :translations="{{ json_encode([
         'no_val' => trans('MediaManager::messages.no_val'), 
         'single_char_folder' => trans('MediaManager::messages.single_char_folder'), 
         'downloaded' => trans('MediaManager::messages.downloaded'), 
@@ -26,6 +26,7 @@
         'delete_success' => trans('MediaManager::messages.delete_success'), 
         'copy_success' => trans('MediaManager::messages.copy_success'), 
         'save_success' => trans('MediaManager::messages.save_success'), 
+        'clear_cache' => trans('MediaManager::messages.clear_cache'), 
     ]) }}"
     :upload-panel-img-list="{{ $patterns }}"
     files-route="{{ route('media.files') }}"
@@ -676,7 +677,7 @@
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
                     <transition-group tag="ul" name="list" mode="out-in"
-                        class="breadcrumb {{ !$alt_breadcrumb ?: 'is-hidden-touch' }}">
+                        class="breadcrumb {{ !$alt_breadcrumb ?? 'is-hidden-touch' }}">
                         <li key="library-bc">
                             <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
                                 class="p-l-0"
@@ -753,7 +754,7 @@
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <cropper route="{{ route('media.uploadCropped') }}"
                         :url="selectedFile.path"
-                        :crop-trans="{{ json_encode([
+                        :translations="{{ json_encode([
                             'crop_reset' => trans('MediaManager::messages.crop_reset'), 
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
                             'crop_apply' => trans('MediaManager::messages.crop_apply'), 
