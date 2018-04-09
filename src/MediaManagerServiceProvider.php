@@ -70,10 +70,14 @@ class MediaManagerServiceProvider extends ServiceProvider
     protected function extraConfigs()
     {
         // database
-        config(['database.connections.mediamanager' => [
-            'driver'   => 'sqlite',
-            'database' => storage_path('logs/MediaManager.sqlite'),
-        ]]);
+        $db = storage_path('logs/MediaManager.sqlite');
+
+        if ($this->file->exists($db)) {
+            config(['database.connections.mediamanager' => [
+                'driver'   => 'sqlite',
+                'database' => $db,
+            ]]);
+        }
 
         // caching for zip-stream
         config(['cache.stores.mediamanager' => [
@@ -148,6 +152,14 @@ EOT;
         });
     }
 
+    /**
+     * [checkExist description].
+     *
+     * @param [type] $file   [description]
+     * @param [type] $search [description]
+     *
+     * @return [type] [description]
+     */
     protected function checkExist($file, $search)
     {
         return $this->file->exists($file) && !str_contains($this->file->get($file), $search);
