@@ -370,7 +370,7 @@
         {{-- ====================================================================== --}}
 
         {{-- mobile breadCrumb --}}
-        @if ($alt_breadcrumb)
+        @if($alt_breadcrumb)
             @include('MediaManager::extras._breadcrumb')
         @endif
 
@@ -676,26 +676,27 @@
             <section class="media-manager__stack-breadcrumb level is-mobile">
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
-                    <transition-group tag="ul" name="list" mode="out-in"
-                        class="breadcrumb {{ !$alt_breadcrumb ?? 'is-hidden-touch' }}">
-                        <li key="library-bc">
-                            <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
-                                class="p-l-0"
-                                v-tippy title="backspace"
-                                @click="goToFolder(0)">
-                                {{ trans('MediaManager::messages.library') }}
-                            </a>
-                            <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
-                        </li>
+                    <nav class="breadcrumb {{ !$alt_breadcrumb ? '' : 'is-hidden-touch' }}">
+                        <transition-group tag="ul" name="list" mode="out-in">
+                            <li key="library-bc">
+                                <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
+                                    class="p-l-0"
+                                    v-tippy title="backspace"
+                                    @click="goToFolder(0)">
+                                    {{ trans('MediaManager::messages.library') }}
+                                </a>
+                                <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
+                            </li>
 
-                        <li v-for="(folder, index) in folders" :key="folder + '-bc'">
-                            <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
-                            <a v-else v-tippy title="backspace"
-                                @click="folders.length > 1 ? goToFolder(index+1) : false">
-                                @{{ folder }}
-                            </a>
-                        </li>
-                    </transition-group>
+                            <li v-for="(folder, index) in folders" :key="folder + '-bc'">
+                                <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
+                                <a v-else v-tippy title="backspace"
+                                    @click="folders.length > 1 ? goToFolder(index+1) : false">
+                                    @{{ folder }}
+                                </a>
+                            </li>
+                        </transition-group>
+                    </nav>
                 </div>
 
                 {{-- toggle sidebar --}}

@@ -1,10 +1,5 @@
 * {
     backface-visibility: hidden;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-
-    &::-webkit-scrollbar {
-        width: 0 !important;
-    }
 }
 
 [v-cloak] {
@@ -166,7 +161,7 @@
     overflow: scroll;
     align-items: center;
     width: 100%;
-    padding: 1rem 0 2rem;
+    padding: 1rem 0 0;
     list-style: none;
     transition: all 0.25s ease-in-out;
 
@@ -318,7 +313,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    bottom: -1.2rem; // fix the fucken extra space at bottom
+    bottom: 0;
     left: 20%;
     overflow: scroll;
     padding: 0.7rem;
@@ -789,10 +784,14 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
 /* manager in modal */
 .modal-manager__Inmodal {
-    padding-top: 2% !important;
+    padding-top: 5% !important;
 
     > div.modal-content {
         width: 85%;
+    }
+
+    .__stack-breadcrumb-mobile {
+        padding-bottom: 1rem;
     }
 
     .media-manager__stack {
@@ -802,7 +801,6 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     .media-manager__stack-sidebar {
         overflow: scroll;
         max-height: 65vh;
-        margin-bottom: -1.2rem; // fix the fucken extra space at bottom
     }
 
     .__stack-sidebar-toggle {
