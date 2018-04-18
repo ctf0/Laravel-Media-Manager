@@ -136,19 +136,20 @@ new Vue({
 
 - events
 
-  |       type      |               event-name              |                   description                    |
-  |-----------------|---------------------------------------|--------------------------------------------------|
-  | [JS][js]        |                                       |                                                  |
-  |                 | modal-show                            | when modal is showen                             |
-  |                 | modal-hide                            | when modal is hidden                             |
-  |                 | file_selected *(when inside modal)*   | get selected file url                            |
-  |                 | folder_selected *(when inside modal)* | get selected folder path                         |
-  | [Laravel][lara] |                                       |                                                  |
-  |                 | MMFileUploaded($file_path)            | get uploaded file full [path][path]              |
-  |                 | [MMFileSaved][event]($file_path)      | get saved(edited/link) image full [path][path]   |
-  |                 | MMFileDeleted($file_path, $is_folder) | get deleted file/folder full [path][path]        |
-  |                 | MMFileRenamed($old_path, $new_path)   | get renamed file/folder "old & new" [path][path] |
-  |                 | MMFileMoved($old_path, $new_path)     | get moved file/folder "old & new" [path][path]   |
+  |       type      |                 event-name                |                   description                    |
+  |-----------------|-------------------------------------------|--------------------------------------------------|
+  | [JS][js]        |                                           |                                                  |
+  |                 | modal-show                                | when modal is showen                             |
+  |                 | modal-hide                                | when modal is hidden                             |
+  |                 | file_selected *(when inside modal)*       | get selected file url                            |
+  |                 | multi_file_selected *(when inside modal)* | get bulk selected files url                      |
+  |                 | folder_selected *(when inside modal)*     | get selected folder path                         |
+  | [Laravel][lara] |                                           |                                                  |
+  |                 | MMFileUploaded($file_path)                | get uploaded file full [path][path]              |
+  |                 | [MMFileSaved][event]($file_path)          | get saved(edited/link) image full [path][path]   |
+  |                 | MMFileDeleted($file_path, $is_folder)     | get deleted file/folder full [path][path]        |
+  |                 | MMFileRenamed($old_path, $new_path)       | get renamed file/folder "old & new" [path][path] |
+  |                 | MMFileMoved($old_path, $new_path)         | get moved file/folder "old & new" [path][path]   |
 
 [js]: https://github.com/gocanto/vuemit
 [lara]: https://laravel.com/docs/5.5/events#manually-registering-events

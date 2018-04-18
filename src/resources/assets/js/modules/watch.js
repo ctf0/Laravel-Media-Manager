@@ -7,7 +7,7 @@ export default {
         },
         selectedFile(val) {
             if (val) {
-                if (this.inModal) {
+                if (this.inModal && !this.isBulkSelecting()) {
                     this.selectedFileIs('folder')
                         ? EventHub.fire('folder_selected', `${this.files.path}/${val.name}`)
                         : EventHub.fire('file_selected', val.path)
@@ -40,6 +40,11 @@ export default {
             }
         },
         bulkItemsCount(val) {
+            if (val > 0 && this.inModal && !this.selectedFileIs('folder')) {
+                let links = this.bulkList.map((e) => e.path)
+                EventHub.fire('multi_file_selected', links)
+            }
+
             if (val > 1 && !this.bulkSelectAll) {
                 this.bulkSelectAll = true
             }
