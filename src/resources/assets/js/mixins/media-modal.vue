@@ -32,8 +32,12 @@ export default {
         }
 
         EventHub.listen('file_selected', (path) => {
-            if (this.item == this.name && this.type !== 'folder' && !this.multi) {
-                this.$parent[this.item] = path
+            if (this.item == this.name && this.type !== 'folder') {
+                if (!this.multi) {
+                    this.$parent[this.item] = path
+                } else {
+                    this.$parent[this.item] = new Object( [path] );
+                }
             }
         })
 
