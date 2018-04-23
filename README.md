@@ -36,9 +36,9 @@
 - install dependencies
 
 ```bash
-yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
+yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2
 # or
-npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
+npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode babel-preset-es2015-node6 babel-preset-stage-2 --save
 ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -221,6 +221,12 @@ return [
      * load image preview when item is clicked
      */
     'lazy_load_image_on_click' => false,
+
+    /*
+     * automatically invalidate cache after ?
+     * in "Minutes"
+     */
+    'cacheExpiresAfter'=> 60,
 ];
 ```
 
@@ -230,4 +236,3 @@ return [
 
 - visit `localhost:8000/media`
 - [Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)
-- [Cacheing Strategy](https://github.com/ctf0/Laravel-Media-Manager/issues/29)

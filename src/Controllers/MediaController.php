@@ -12,6 +12,7 @@ class MediaController extends Controller
 {
     use OpsTrait;
 
+    protected $config;
     protected $baseUrl;
     protected $carbon;
     protected $db;
@@ -28,21 +29,20 @@ class MediaController extends Controller
 
     public function __construct(Carbon $carbon)
     {
-        $config = config('mediaManager');
-
         $this->carbon          = $carbon;
-        $this->fileSystem      = array_get($config, 'storage_disk');
+        $this->config          = config('mediaManager');
+        $this->fileSystem      = array_get($this->config, 'storage_disk');
         $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->baseUrl         = $this->storageDisk->url('/');
-        $this->ignoreFiles     = array_get($config, 'ignore_files');
-        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
-        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
-        $this->sanitizedText   = array_get($config, 'sanitized_text');
-        $this->unallowedMimes  = array_get($config, 'unallowed_mimes');
-        $this->LMF             = array_get($config, 'last_modified_format');
+        $this->ignoreFiles     = array_get($this->config, 'ignore_files');
+        $this->fileChars       = array_get($this->config, 'allowed_fileNames_chars');
+        $this->folderChars     = array_get($this->config, 'allowed_folderNames_chars');
+        $this->sanitizedText   = array_get($this->config, 'sanitized_text');
+        $this->unallowedMimes  = array_get($this->config, 'unallowed_mimes');
+        $this->LMF             = array_get($this->config, 'last_modified_format');
         $this->db              = app('db')->connection('mediamanager')->table('locked');
-        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
         $this->zipCacheStore   = app('cache')->store('mediamanager');
+        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
 
         $this->storageDisk->addPlugin(new ListWith());
     }
@@ -54,7 +54,10 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view('MediaManager::media');
+        return view('MediaManager::media')->with([
+            'randId'   => uniqid(),
+            'cacheExp' => array_get($this->config, 'cacheExpiresAfter'),
+        ]);
     }
 
     /**
@@ -600,6 +603,7 @@ class MediaController extends Controller
     {
         return $this->download(
             $request->name,
+            $request->id,
             $this->storageDisk->allFiles("{$request->folders}/$request->name"),
             'folder'
         );
@@ -616,6 +620,7 @@ class MediaController extends Controller
     {
         return $this->download(
             $request->name . '-files',
+            $request->id,
             json_decode($request->list, true),
             'files'
         );
@@ -634,7 +639,7 @@ class MediaController extends Controller
 
         // params
         $id    = $request->header('last-event-id');
-        $name  = $request->name;
+        $name  = "{$request->name}-{$request->id}";
 
         // get changes
         $store = $this->zipCacheStore;

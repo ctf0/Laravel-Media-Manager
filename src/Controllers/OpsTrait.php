@@ -196,15 +196,18 @@ trait OpsTrait
      * @param mixed $name
      * @param mixed $list
      * @param mixed $type
+     * @param mixed $id
      */
-    protected function download($name, $list, $type)
+    protected function download($name, $id, $list, $type)
     {
+        $cacheName = "$name-$id";
+
         // track changes
         $counter    = 100 / count($list);
         $store      = $this->zipCacheStore;
-        $store->forever("$name.progress", 0);
+        $store->forever("$cacheName.progress", 0);
 
-        return response()->stream(function () use ($name, $list, $type, $counter, $store) {
+        return response()->stream(function () use ($name, $list, $type, $counter, $store, $cacheName) {
             $zip = new ZipStream("$name.zip", [
                 'content_type' => 'application/octet-stream',
             ]);
@@ -219,14 +222,14 @@ trait OpsTrait
                 }
 
                 if ($streamRead) {
-                    $store->increment("$name.progress", round($counter, 2));
+                    $store->increment("$cacheName.progress", round($counter, 2));
                     $zip->addFileFromStream($file_name, $streamRead);
                 } else {
-                    $store->forever("$name.warn", $file_name);
+                    $store->forever("$cacheName.warn", $file_name);
                 }
             }
 
-            $store->forever("$name.done", true);
+            $store->forever("$cacheName.done", true);
             $zip->finish();
         });
     }

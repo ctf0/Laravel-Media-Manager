@@ -11,6 +11,7 @@
         'lazyLoad' => config('mediaManager.lazy_load_image_on_click') ? true : false, 
         'imageTypes' => config('mediaManager.image_extended_mimes'), 
     ]) }}"
+    :cache-exp="{{ $cacheExp }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
     :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
@@ -410,7 +411,8 @@
                     ref="__stack-files"
                     :class="{'__stack-sidebar-hidden': !toggleInfo}"
                     @dbltap="dbltap()"
-                    @swiperight="goToPrevFolder()">
+                    @swiperight="goToPrevFolder()"
+                    v-scroll-stop>
 
                     {{-- loadings --}}
                     <section>
@@ -578,8 +580,9 @@
                                         <h4 v-if="!isBulkSelecting()">
                                             {{ trans('MediaManager::messages.download_folder') }}:
                                             <div class="__sidebar-zip">
-                                                <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder')">
+                                                <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder', '{{ $randId }}')">
                                                     {{ csrf_field() }}
+                                                    <input type="hidden" name="id" value="{{ $randId }}">
                                                     <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
                                                     <input type="hidden" name="name" :value="this.selectedFile.name">
                                                     <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
@@ -612,8 +615,9 @@
                                             {{-- zip --}}
                                             <template v-if="isBulkSelecting()">
                                                 <div class="__sidebar-zip">
-                                                    <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files')">
+                                                    <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')">
                                                         {{ csrf_field() }}
+                                                        <input type="hidden" name="id" value="{{ $randId }}">
                                                         <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
                                                         <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
                                                         <button type="submit" class="btn-plain zip" :disabled="hasFolder()">

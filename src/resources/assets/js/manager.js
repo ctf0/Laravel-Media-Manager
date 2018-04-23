@@ -7,6 +7,7 @@ window.Dropzone = require('dropzone')
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
 Vue.use(require('vue-ls'))
+Vue.use(require('vue-scroll-stop'))
 
 // vue-tippy
 Vue.use(require('vue-tippy'), {
@@ -36,8 +37,8 @@ axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 axios.interceptors.response.use(
-    (response) => {return response},
-    (error) => {return Promise.reject(error.response)}
+    (response) => response,
+    (error) => Promise.reject(error.response)
 )
 
 // vue-awesome

@@ -82,7 +82,10 @@ export default {
         openFolder(file) {
             if (!this.isBulkSelecting() && this.fileTypeIs(file, 'folder')) {
                 this.folders.push(file.name)
-                this.getFiles(this.folders)
+
+                this.invalidateCache().then(() => {
+                    this.getFiles(this.folders)
+                })
             }
 
             this.resetInput('currentFilterName')
