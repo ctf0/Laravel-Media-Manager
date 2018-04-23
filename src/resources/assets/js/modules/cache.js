@@ -1,5 +1,8 @@
-import { Store, set, get, del, clear } from 'idb-keyval'
-const idbKeyVal = new Store(
+import addMinutes from 'date-fns/add_minutes'
+import getTime from 'date-fns/get_time'
+
+import { Store, get, set, del, clear, keys } from 'idb-keyval'
+const cacheStore = new Store(
     'ctf0-Media_Manager', // db
     'laravel-media-manager' // store
 )
@@ -11,25 +14,35 @@ export default {
             return this.$ls.get('ctf0-Media_Manager', {})
         },
         updateLs(obj) {
-            let storage = this.getLs()
-
-            Object.assign(storage, obj)
+            let storage = Object.assign(this.getLs(), obj)
             this.$ls.set('ctf0-Media_Manager', storage)
         },
         removeLs() {
             this.folders = []
             this.$ls.remove('ctf0-Media_Manager')
-            // location.reload()
+        },
+        preSaved() {
+            let ls = this.getLs()
+
+            if (ls) {
+                this.randomNames = ls.randomNames || false
+                this.folders = ls.folders || []
+                this.toolBar = ls.toolBar || true
+                this.selectedFile = ls.selectedFileName || null
+            }
         },
 
         // cache
-        cacheResponse(value) {
-            return set(this.cacheName, value, idbKeyVal).catch((err) => {
+        getCachedResponse(key = this.cacheName) {
+            return get(key, cacheStore)
+        },
+        cacheResponse(val) {
+            let date = getTime(addMinutes(new Date(), this.cacheExp))
+            val = Object.assign(val, {expire: date})
+
+            return set(this.cacheName, val, cacheStore).catch((err) => {
                 console.warn('cacheStore.setItem', err)
             })
-        },
-        getCachedResponse() {
-            return get(this.cacheName, idbKeyVal)
         },
         removeCachedResponse(destination = null) {
             let cacheName = this.cacheName
@@ -49,15 +62,18 @@ export default {
                 : [cacheName]
 
             items.forEach((one) => {
-                return del(one, idbKeyVal).then(() => {
-                    console.log(`${one} ${this.trans('clear_cache')}`)
-                }).catch((err) => {
-                    console.warn('cacheStore.removeItem', err)
-                })
+                return this.deleteCache(one)
+            })
+        },
+        deleteCache(item) {
+            return del(item, cacheStore).then(() => {
+                console.log(`${item} ${this.trans('clear_cache')}`)
+            }).catch((err) => {
+                console.error('cacheStore.removeItem', err)
             })
         },
         clearCache(showNotif = true) {
-            clear(idbKeyVal).then(() => {
+            clear(cacheStore).then(() => {
                 if (showNotif) {
                     this.showNotif(this.trans('clear_cache'))
                 }
@@ -65,6 +81,21 @@ export default {
                 setTimeout(() => {
                     this.refresh()
                 }, 100)
+            }).catch((err) => {
+                console.error(err)
+            })
+        },
+        invalidateCache() {
+            let now = getTime(new Date())
+
+            return keys(cacheStore).then((keys) => {
+                keys.map((key) => {
+                    this.getCachedResponse(key).then((item) => {
+                        if (item.expire < now) {
+                            return this.deleteCache(key)
+                        }
+                    })
+                })
             }).catch((err) => {
                 console.error(err)
             })

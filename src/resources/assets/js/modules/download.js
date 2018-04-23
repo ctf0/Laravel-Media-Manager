@@ -25,7 +25,7 @@ export default {
             })
         },
 
-        ZipDownload(type) {
+        ZipDownload(type, id) {
             this.showProgress = true
 
             // de-select download btn
@@ -39,7 +39,7 @@ export default {
                 : folders.length ? `${folders[folders.length - 1]}-files` : 'media_manager-files'
 
             let es = new EventSource(
-                `${this.zipProgressRoute}/${name}`,
+                `${this.zipProgressRoute}/${name}/${id}`,
                 {withCredentials: true}
             )
 

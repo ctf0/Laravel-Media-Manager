@@ -42,7 +42,8 @@ export default {
         'zipProgressRoute',
         'uploadPanelImgList',
         'hideExt',
-        'hidePath'
+        'hidePath',
+        'cacheExp'
     ],
     data() {
         return {
@@ -99,8 +100,12 @@ export default {
     },
     created() {
         document.addEventListener('keydown', this.shortCuts)
-        this.preSaved()
-        this.getFiles(this.folders, null, this.selectedFile)
+
+        this.invalidateCache().then(() => {
+            this.preSaved()
+            this.getFiles(this.folders, null, this.selectedFile)
+        })
+
     },
     mounted() {
         this.fileUpload()
@@ -122,17 +127,6 @@ export default {
         document.removeEventListener('keydown', this.shortCuts)
     },
     methods: {
-        preSaved() {
-            let ls = this.getLs()
-
-            if (ls) {
-                this.randomNames = ls.randomNames === undefined ? false : ls.randomNames
-                this.folders = ls.folders === undefined ? [] : ls.folders
-                this.toolBar = ls.toolBar === undefined ? true : ls.toolBar
-                this.selectedFile = ls.selectedFileName === undefined ? null : ls.selectedFileName
-            }
-        },
-
         shortCuts(e) {
             let key = keycode(e)
 

@@ -1,5 +1,0 @@
-- fix the fucken extra space at bottom
-- replace localforage with idb-keyval (removes 53kb “547 > 494”)
-- fix ff backspace btn
-- finalize the new cache lib
-- optimization

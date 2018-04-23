@@ -64,4 +64,10 @@ return [
      * load image preview when item is clicked
      */
     'lazy_load_image_on_click' => false,
+
+    /*
+     * automatically invalidate cache after ?
+     * in "Minutes"
+     */
+    'cacheExpiresAfter'=> 60,
 ];
