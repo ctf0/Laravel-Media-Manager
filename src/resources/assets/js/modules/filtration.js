@@ -56,8 +56,10 @@ export default {
                 this.resetInput(['selectedFile', 'currentFileIndex'])
             }
 
-            if (!this.isBulkSelecting() && !this.config.lazyLoad) {
-                this.selectFirst()
+            if (!this.isBulkSelecting()) {
+                !this.config.lazyLoad
+                    ? this.selectFirst()
+                    : this.lazySelectFirst()
             }
 
             if (this.searchFor) {

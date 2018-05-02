@@ -66,8 +66,7 @@ new Vue({
 - bulk selection
 - change item/s visibility
 - [cache requests](https://github.com/ctf0/Laravel-Media-Manager/wiki/Customization-&--Optimization#starting-from-v240-any-call-to-the-server-will-be-cached)
-- dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension)
-- dynamically hide [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
+- dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension) / [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - toggle between `random/original` names for uploaded files
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
@@ -75,7 +74,7 @@ new Vue({
   + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
   + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders **"sqLite must be installed"**
+- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders ***"sqLite must be installed"***
 - search
 - filter by
   + folder
@@ -133,7 +132,7 @@ new Vue({
   | select first   |                                            | home          |                          |                         |
   | select last    |                                            | end           |                          |                         |
   | open folder    |                                            | enter         | **                       |                         |
-  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                        | swipe right             |
+  | go to prev dir | folderName *(breadcrumb)*                  | backspace     | *                        | swipe right *(files container)* |
 
 - events
 
@@ -143,7 +142,7 @@ new Vue({
   |                 | modal-show                                | when modal is showen                             |
   |                 | modal-hide                                | when modal is hidden                             |
   |                 | file_selected *(when inside modal)*       | get selected file url                            |
-  |                 | multi_file_selected *(when inside modal)* | get bulk selected files url                      |
+  |                 | multi_file_selected *(when inside modal)* | get bulk selected files urls                     |
   |                 | folder_selected *(when inside modal)*     | get selected folder path                         |
   | [Laravel][lara] |                                           |                                                  |
   |                 | MMFileUploaded($file_path)                | get uploaded file full [path][path]              |
@@ -219,13 +218,12 @@ return [
     'hide_files_ext' => true,
 
     /*
-     * load image preview when item is clicked
+     * load image preview only when item is clicked ?
      */
     'lazy_load_image_on_click' => false,
 
     /*
-     * automatically invalidate cache after ?
-     * in "Minutes"
+     * automatically invalidate cache after "in Minutes"
      */
     'cacheExpiresAfter'=> 60,
 ];

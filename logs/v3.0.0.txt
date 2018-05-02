@@ -1,8 +1,0 @@
-- use a unique id for the zip progress tracking to avoid issues with multiple download of the same zip at the same time
-
-- add auto invalidate cache option, note that to keep things as performance friendly while making sure the cache invalidation updates as regularly as possible, every time the user navigate into a folder the invalidation check will fire.
-
-- add new enhancement to stop scrolling the main page when the manager scroll has reached the end “i focken hated that”
-
-- updated resources
-- update readme

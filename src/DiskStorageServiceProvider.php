@@ -10,6 +10,13 @@ use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Cached\CachedAdapter;
 use League\Flysystem\Cached\Storage\Adapter;
 
+/**
+ * create a dynamic filesystem disk with cache capabilities.
+ *
+ * 1- install: composer require league/flysystem-cached-adapter
+ * 2- register: DiskStorageServiceProvider
+ * 3- usage: app('filesystem')->disk('ctf0-media').
+ */
 class DiskStorageServiceProvider extends ServiceProvider
 {
     /**

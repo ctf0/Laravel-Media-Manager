@@ -43,7 +43,7 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.25s ease-out;
     border-radius: 5px;
     background-color: $black;
     background-repeat: repeat;
@@ -56,7 +56,7 @@
         width: 25vw;
         height: 25vw;
         content: '';
-        transition: all 0.3s ease-in-out;
+        transition: all 0.25s ease-out;
         transform: translate(-50%, -50%);
         opacity: 0.9;
         border-radius: 100vw;
@@ -98,7 +98,7 @@
 
         .circle,
         .anchor {
-            transition: all 0.3s;
+            transition: all 0.25s ease-out;
         }
 
         .circle {
@@ -163,7 +163,7 @@
     width: 100%;
     padding: 1rem 0 0;
     list-style: none;
-    transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-out;
 
     li {
         position: relative;
@@ -229,7 +229,7 @@
         }
 
         a {
-            transition: all 0.25s ease-in-out;
+            transition: all 0.25s ease-out;
             color: $blue;
             box-shadow: $shadow_3;
 
@@ -305,7 +305,7 @@
 
 .media-manager__stack-container,
 .media-manager__stack-sidebar {
-    transition: all 0.25s ease-in;
+    transition: all 0.25s ease-out;
 }
 
 // left "files list"
@@ -317,7 +317,7 @@
     left: 20%;
     overflow: scroll;
     padding: 0.7rem;
-    transition: left 0.5s ease-in-out;
+    transition: left 0.25s ease-out;
 }
 
 .__stack-sidebar-hidden {
@@ -338,7 +338,7 @@
         max-width: 244px;
         min-height: 95px;
         max-height: 95px;
-        transition: all 0.25s ease-in-out;
+        transition: all 0.25s ease-out;
     }
 }
 
@@ -350,7 +350,7 @@
     margin: 0.7rem;
     padding: 0.7rem;
     cursor: pointer;
-    transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-out;
     color: darken($active_theme, 55%);
     border: 1px solid darken($active_theme, 3%);
     border-radius: 4px;
@@ -522,7 +522,7 @@
     display: flex;
     flex-direction: column;
     width: 20%;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.25s ease-out;
     border-right: 1px solid darken($active_theme, 5%);
 
     .__sidebar-preview {
@@ -570,8 +570,9 @@
         display: flex;
         flex: 1 0 auto;
         flex-direction: column;
-        transition: background 0.8s ease-in-out;
+        transition: background 0.25s ease-out;
         word-break: break-all;
+        background-color: $active_theme;
 
         > div {
             padding: 0.75rem;
@@ -619,7 +620,7 @@
 
             &:not(:only-of-type) {
                 flex: 1;
-                transition: all 0.3s ease-in-out;
+                transition: all 0.25s ease-out;
             }
 
             &:only-of-type {
@@ -758,7 +759,7 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
     .btn-plain {
         padding: 0.7rem;
-        transition: all 0.3s;
+        transition: all 0.25s ease-out;
         color: white;
 
         &:hover,

@@ -16,7 +16,7 @@ export default {
         },
 
         // lazy
-        lazyImageActive(item) {
+        lazyImageActivate(item) {
             this.$nextTick(() => {
                 let img = this.$refs[item]
 
@@ -28,8 +28,14 @@ export default {
                 }
             })
         },
+        lazySelectFirst() {
+            if (this.fileTypeIs(this.allFiles[0], 'folder')) {
+                return this.selectFirst()
+            }
+        },
         imageIsCached(url) {
             // TODO
+            // check if img is in browser cache and show it
             return false
         }
     }

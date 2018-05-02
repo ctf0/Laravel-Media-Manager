@@ -40,6 +40,7 @@ EventHub.listen('ajax-error-show', () => {
 
 /**
  * body movin animation
+ * you can remove it / replace it, do what you want
  */
 function bm(el, name) {
     bodymovin.loadAnimation({

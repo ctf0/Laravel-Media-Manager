@@ -54,10 +54,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        return view('MediaManager::media')->with([
-            'randId'   => uniqid(),
-            'cacheExp' => array_get($this->config, 'cacheExpiresAfter'),
-        ]);
+        return view('MediaManager::media');
     }
 
     /**

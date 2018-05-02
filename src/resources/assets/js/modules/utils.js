@@ -69,9 +69,9 @@ export default {
             this.resetInput('bulkList', [])
             this.resetInput('searchFor')
 
-            if (!this.config.lazyLoad) {
-                this.selectFirst()
-            }
+            !this.config.lazyLoad
+                ? this.selectFirst()
+                : this.lazySelectFirst()
         },
 
         /*                Resolve                */

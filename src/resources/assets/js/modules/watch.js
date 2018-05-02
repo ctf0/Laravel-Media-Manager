@@ -108,8 +108,10 @@ export default {
                     this.resetInput('sortBy')
                 }
 
-                if (!this.isBulkSelecting() && !this.config.lazyLoad) {
-                    this.selectFirst()
+                if (!this.isBulkSelecting()) {
+                    !this.config.lazyLoad
+                        ? this.selectFirst()
+                        : this.lazySelectFirst()
                 }
             }
         },
@@ -121,8 +123,10 @@ export default {
 
         // search
         searchFor(val) {
-            if (!this.isBulkSelecting() && !this.config.lazyLoad) {
-                this.selectFirst()
+            if (!this.isBulkSelecting()) {
+                !this.config.lazyLoad
+                    ? this.selectFirst()
+                    : this.lazySelectFirst()
             }
 
             if (!val) {

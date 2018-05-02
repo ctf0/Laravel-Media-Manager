@@ -107,7 +107,7 @@ export default {
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
 
-            this.resetInput(['searchFor', 'sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
+            this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
 
             this.noFiles('hide')
             if (!this.loading_files) {
@@ -130,8 +130,6 @@ export default {
 
                 // or make the call if nothing found
                 .catch((err) => {
-                    // console.warn('localforage.getItem', err)
-
                     axios.post(this.filesRoute, {
                         folder: folders,
                         dirs: this.folders
@@ -179,7 +177,7 @@ export default {
                 })
             }
 
-            // check for hidden folders in files
+            // check for hidden folders
             if (this.hidePath.length) {
                 this.files.items = this.files.items.filter((e) => {
                     return !this.checkForHiddenPath(e)
@@ -188,56 +186,66 @@ export default {
 
             // we have files
             if (this.allItemsCount) {
-                this.toggleLoading()
                 this.loadingFiles('hide')
+                this.isLoading = false
                 this.toggleInfo = true
 
-                this.$nextTick(() => {
-                    // lazy loading is not active
-                    if (!this.config.lazyLoad) {
-                        // check for prev opened folder
-                        if (prev_folder) {
-                            this.files.items.some((e, i) => {
-                                if (e.name == prev_folder) {
-                                    return this.setSelected(e, i)
-                                }
-                            })
+                // check for prev opened folder
+                if (prev_folder) {
+                    this.files.items.some((e, i) => {
+                        if (e.name == prev_folder) {
+                            return this.currentFileIndex = i
                         }
+                    })
+                }
 
-                        // check for prev selected file
-                        if (prev_file) {
-                            this.files.items.some((e, i) => {
-                                if (e.name == prev_file) {
-                                    return this.setSelected(e, i)
-                                }
-                            })
-                        }
-
-                        // if no prevs found
-                        if (!this.selectedFile) {
-                            this.selectFirst()
-                        }
+                // lazy loading is not active
+                if (!this.config.lazyLoad) {
+                    // check for prev selected file
+                    if (prev_file) {
+                        this.files.items.some((e, i) => {
+                            if (e.name == prev_file) {
+                                return this.currentFileIndex = i
+                            }
+                        })
                     }
 
-                    // scroll to prev selected item
+                    // if no prevs found
+                    if (!this.currentFileIndex) {
+                        this.selectFirst()
+                    }
+                } else {
+                    // lazy loading is active & first file is a folder
+                    if (this.fileTypeIs(this.allFiles[0], 'folder')) {
+                        this.selectFirst()
+                    }
+                }
+
+                // scroll & click on prev selected item
+                this.$nextTick(() => {
                     let curIndex = this.currentFileIndex
                     if (curIndex) {
-                        let t = setInterval(() => {
-                            if (document.readyState === 'complete') {
-                                this.scrollToFile(this.$refs[`file_${curIndex}`])
-                                clearInterval(t)
-                            }
-                        }, 500)
-                    }
-
-                    // scroll to breadcrumb item
-                    if (this.$refs.bc) {
-                        let name = folders.split('/').pop()
-                        let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
-                        this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                        if (document.readyState === 'complete') {
+                            this.scrollToFile(this.$refs[`file_${curIndex}`])
+                        } else {
+                            let t = setInterval(() => {
+                                if (document.readyState === 'complete') {
+                                    this.scrollToFile(this.$refs[`file_${curIndex}`])
+                                    clearInterval(t)
+                                }
+                            }, 500)
+                        }
                     }
                 })
 
+                // scroll to breadcrumb item
+                if (this.$refs.bc) {
+                    let name = folders.split('/').pop()
+                    let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
+                    this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
+                }
+
+                if (this.searchFor) {this.updateSearchCount()}
                 return this.dirsListCheck(dirs)
             }
 
@@ -298,7 +306,7 @@ export default {
                 }
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path}"`)
-                this.removeCachedResponse()
+                this.removeCachedResponse('../')
                 this.getFiles(this.folders, data.new_folder_name)
 
             }).catch((err) => {
@@ -339,10 +347,12 @@ export default {
 
                 this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
                 this.updateItemName(this.selectedFile, filename, data.new_filename)
-                this.removeCachedResponse()
 
                 if (this.selectedFileIs('folder')) {
                     this.updateDirsList()
+                    this.removeCachedResponse('../')
+                } else {
+                    this.removeCachedResponse()
                 }
 
             }).catch((err) => {
@@ -406,17 +416,13 @@ export default {
                     this.$refs['success-audio'].play()
                     this.removeCachedResponse(destination)
 
-                    if (copy) {
-                        this.removeCachedResponse('../')
-                    }
-
                     this.isBulkSelecting()
                         ? this.blkSlct()
                         : error
                             ? false
-                            : this.config.lazyLoad
-                                ? false
-                                : this.selectFirst()
+                            : !this.config.lazyLoad
+                                ? this.selectFirst()
+                                : this.lazySelectFirst()
 
                 }).catch((err) => {
                     console.error(err)
@@ -454,9 +460,9 @@ export default {
                 this.$refs['success-audio'].play()
                 this.isBulkSelecting()
                     ? this.blkSlct()
-                    : this.config.lazyLoad
-                        ? false
-                        : this.selectFirst()
+                    : !this.config.lazyLoad
+                        ? this.selectFirst()
+                        : this.lazySelectFirst()
 
                 this.$nextTick(() => {
                     if (data.fullCacheClear) {
@@ -523,7 +529,13 @@ export default {
                 state: state
             }).then(({data}) => {
                 this.showNotif(data.message)
-                this.removeCachedResponse()
+
+                if (this.selectedFileIs('folder')) {
+                    this.removeCachedResponse('../')
+                } else {
+                    this.removeCachedResponse()
+                }
+
             }).catch((err) => {
                 console.error(err)
                 this.ajaxError()

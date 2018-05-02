@@ -55,7 +55,7 @@ export default {
             // normal selection
             this.selectedFile = file
             this.currentFileIndex = index
-            this.lazyImageActive(file.path)
+            this.lazyImageActivate(file.path)
 
             // bulk selection
             if (this.isBulkSelecting()) {
@@ -98,16 +98,17 @@ export default {
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
-                this.getFiles(this.folders, prev_folder_name)
+                this.invalidateCache().then(() => {
+                    this.getFiles(this.folders, prev_folder_name)
+                })
             }
         },
         goToPrevFolder() {
             let length = this.folders.length
-            let newSelected = length - 1
 
             return length == 0
                 ? false
-                : this.goToFolder(newSelected)
+                : this.goToFolder(length - 1)
         },
 
         /*                Navigation                */

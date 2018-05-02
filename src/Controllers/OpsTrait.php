@@ -200,14 +200,17 @@ trait OpsTrait
      */
     protected function download($name, $id, $list, $type)
     {
-        $cacheName = "$name-$id";
+        return response()->stream(function () use ($name, $list, $type, $id) {
+            // track changes
+            $cacheName  = "$name-$id";
+            $counter    = 100 / count($list);
+            $store      = $this->zipCacheStore;
+            $store->forever("$cacheName.progress", 0);
 
-        // track changes
-        $counter    = 100 / count($list);
-        $store      = $this->zipCacheStore;
-        $store->forever("$cacheName.progress", 0);
+            // name duplication
+            $names = [];
+            $order = 0;
 
-        return response()->stream(function () use ($name, $list, $type, $counter, $store, $cacheName) {
             $zip = new ZipStream("$name.zip", [
                 'content_type' => 'application/octet-stream',
             ]);
@@ -221,6 +224,18 @@ trait OpsTrait
                     $streamRead = @fopen($file['path'], 'r');
                 }
 
+                // check if file name was used b4
+                $name_only = pathinfo($file, PATHINFO_FILENAME);
+                $ext_only  = pathinfo($file, PATHINFO_EXTENSION);
+
+                if (in_array($file_name, $names)) {
+                    ++$order;
+                    $file_name = "{$name_only}_{$order}.{$ext_only}";
+                } else {
+                    $names[] = $file_name;
+                }
+
+                // add to zip
                 if ($streamRead) {
                     $store->increment("$cacheName.progress", round($counter, 2));
                     $zip->addFileFromStream($file_name, $streamRead);

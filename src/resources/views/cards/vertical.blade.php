@@ -97,7 +97,7 @@
         {{-- editor --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || isLoading || !selectedFileIs('image')"
+                :disabled="item_ops() || !selectedFileIs('image') || isLoading"
                 @click="imageEditorCard()">
                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.editor') }}</span>

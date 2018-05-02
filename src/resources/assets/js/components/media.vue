@@ -42,8 +42,7 @@ export default {
         'zipProgressRoute',
         'uploadPanelImgList',
         'hideExt',
-        'hidePath',
-        'cacheExp'
+        'hidePath'
     ],
     data() {
         return {
@@ -105,7 +104,6 @@ export default {
             this.preSaved()
             this.getFiles(this.folders, null, this.selectedFile)
         })
-
     },
     mounted() {
         this.fileUpload()
@@ -153,17 +151,13 @@ export default {
                             if (this.allItemsCount) {
                                 this.navigation(e)
 
-                                if (
-                                    key == 'space' &&
-                                    e.target == document.body &&
-                                    (
-                                        this.selectedFileIs('video') ||
-                                        this.selectedFileIs('audio') ||
-                                        this.selectedFileIs('image') ||
-                                        this.selectedFileIs('pdf') ||
-                                        this.selectedFileIs('text')
-                                    )
-                                ) {
+                                if (key == 'space' && e.target == document.body && (
+                                    this.selectedFileIs('video') ||
+                                    this.selectedFileIs('audio') ||
+                                    this.selectedFileIs('image') ||
+                                    this.selectedFileIs('pdf') ||
+                                    this.selectedFileIs('text')
+                                )) {
                                     e.preventDefault()
 
                                     // play-pause media
@@ -285,6 +279,7 @@ export default {
         /* end of short cuts */
 
         refresh() {
+            this.resetInput('searchFor')
             this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
         },
         moveItem() {
