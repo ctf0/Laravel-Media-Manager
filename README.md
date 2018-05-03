@@ -19,15 +19,15 @@
 
 - (Laravel < 5.5) add the service provider to `config/app.php`
 
-```php
-'providers' => [
-    ctf0\MediaManager\MediaManagerServiceProvider::class,
-]
-```
+  ```php
+  'providers' => [
+      ctf0\MediaManager\MediaManagerServiceProvider::class,
+  ]
+  ```
 
 - publish the package assets with
 
-`php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
+  `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
 - after installation, package will auto-add
   + package routes to `routes/web.php`
@@ -35,22 +35,22 @@
 
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
-```bash
-yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode date-fns babel-preset-es2015-node6 babel-preset-stage-2
-# or
-npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode date-fns babel-preset-es2015-node6 babel-preset-stage-2 --save
-```
+  ```bash
+  yarn add vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode date-fns babel-preset-es2015-node6 babel-preset-stage-2
+  # or
+  npm install vue vue-ls vue-tippy@v1 vue2-filters vue-bounty vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-scroll-stop idb-keyval axios dropzone cropperjs keycode date-fns babel-preset-es2015-node6 babel-preset-stage-2 --save
+  ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
     - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
 
-```js
-require('../vendor/MediaManager/js/manager')
+  ```js
+  require('../vendor/MediaManager/js/manager')
 
-new Vue({
-    el: '#app'
-})
-```
+  new Vue({
+      el: '#app'
+  })
+  ```
 
 <br>
 
