@@ -1,19 +1,16 @@
 export default {
     methods: {
-        /*                Selected                */
+        /*                Item                */
         selectFirst() {
             this.$nextTick(() => {
-                let file = this.$refs.file_0[0]
-
-                if (file) {
-                    file.$el.click()
-                }
+                this.scrollToFile(this.getElementByIndex(0))
             })
         },
         setSelected(file, index, e = null) {
             // select with shift
             if (e && e.shiftKey) {
                 this.bulkSelect = true
+                this.bulkList = []
 
                 // forward
                 let begin = this.currentFileIndex
@@ -27,43 +24,33 @@ export default {
                     dir = 'backward'
                 }
 
-                // search
-                if (this.searchFor) {
-                    this.bulkList = []
-                    let indexList = this.getRange(begin, end)
+                let indexList = this.getIndexRange(begin, end)
 
-                    indexList.map((i) => {
-                        this.$refs[`file_${i}`][0].$el.click()
-                    })
+                indexList.map((i) => {
+                    this.getElementByIndex(i).click()
+                })
 
-                    // to have the same expected pattern as normal shift + click
-                    if (dir == 'forward') {
-                        this.selectedFile = this.bulkList[0]
-                        this.currentFileIndex = indexList[0]
-                    } else {
-                        this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
-                        this.currentFileIndex = indexList[indexList.length - 1]
-                    }
-
-                    return
+                // to have the same expected pattern as normal shift + click
+                if (dir == 'forward') {
+                    this.selectedFile = this.bulkList[0]
+                    this.currentFileIndex = indexList[0]
+                } else {
+                    this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
+                    this.currentFileIndex = indexList[indexList.length - 1]
                 }
 
-                // default
-                return this.bulkList = this.allFiles.slice(begin, end + 1)
+                return
             }
 
             // normal selection
             this.selectedFile = file
             this.currentFileIndex = index
-            this.lazyImageActivate(file.path)
+            this.lazyImageActivate(index)
 
             // bulk selection
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)
             }
-        },
-        getRange(start, end) {
-            return Array(end - start + 1).fill().map((_, idx) => start + idx)
         },
         selectedFileIs(val) {
             if (this.selectedFile !== null) {
@@ -72,9 +59,24 @@ export default {
         },
         dbltap() {
             if (!this.isBulkSelecting()) {
-                return this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')
-                    ? this.toggleModal('preview_modal')
-                    : this.openFolder(this.selectedFile)
+                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
+                    return this.toggleModal('preview_modal')
+                }
+
+                if (this.selectedFileIs('audio') || this.selectedFileIs('video')) {
+                    return this.playMedia()
+                }
+
+                this.openFolder(this.selectedFile)
+            }
+        },
+        playMedia() {
+            let player = this.$refs.player
+
+            if (player) {
+                return player.paused
+                    ? player.play()
+                    : player.pause()
             }
         },
 
@@ -82,10 +84,8 @@ export default {
         openFolder(file) {
             if (!this.isBulkSelecting() && this.fileTypeIs(file, 'folder')) {
                 this.folders.push(file.name)
-
-                this.invalidateCache().then(() => {
-                    this.getFiles(this.folders)
-                })
+                this.getFiles(this.folders)
+                this.updatePageUrl()
             }
 
             this.resetInput('currentFilterName')
@@ -98,9 +98,8 @@ export default {
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
-                this.invalidateCache().then(() => {
-                    this.getFiles(this.folders, prev_folder_name)
-                })
+                this.getFiles(this.folders, prev_folder_name)
+                this.updatePageUrl()
             }
         },
         goToPrevFolder() {
@@ -133,14 +132,14 @@ export default {
                 this.imageSlideDirection = 'next'
 
                 let last = this.filesList.length - 1
-                this.scrollToFile(this.$refs[`file_${last}`])
+                this.scrollToFile(this.getElementByIndex(last))
             }
 
             // go to first item
             if (key == 'home') {
                 e.preventDefault()
                 this.imageSlideDirection = 'prev'
-                this.scrollToFile(this.$refs.file_0)
+                this.scrollToFile(this.getElementByIndex(0))
             }
 
             // toggle modal off
@@ -160,7 +159,7 @@ export default {
 
             if (curSelectedIndex !== 0) {
                 this.imageSlideDirection = 'prev'
-                this.scrollToFile(this.$refs[`file_${curSelectedIndex - 1}`])
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex - 1))
             }
         },
         goToNext() {
@@ -168,20 +167,25 @@ export default {
 
             if (curSelectedIndex < this.allItemsCount - 1) {
                 this.imageSlideDirection = 'next'
-                this.scrollToFile(this.$refs[`file_${curSelectedIndex + 1}`])
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
             }
         },
         scrollToFile(file) {
-            file = file[0].$el
-            file.click()
+            if (file) {
+                file.click()
 
-            let container = this.$refs['__stack-files'].$el
-            let count = file.offsetTop - container.scrollTop - 20
-            container.scrollBy({top: count, left: 0, behavior: 'smooth'})
+                this.$nextTick(() => {
+                    this.$nextTick(() => {
+                        let container = this.$refs['__stack-files'].$el
+                        let count = file.offsetTop - container.scrollTop - 20
+                        container.scrollBy({top: count, left: 0, behavior: 'smooth'})
 
-            // when scrollBy() doesnt work
-            if (!(container.scrollHeight > container.clientHeight)) {
-                file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
+                        // when scrollBy() doesnt work
+                        if (!(container.scrollHeight > container.clientHeight)) {
+                            file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
+                        }
+                    })
+                })
             }
         }
     }

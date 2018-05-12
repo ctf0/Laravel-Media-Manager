@@ -11,6 +11,7 @@ import Restriction from '../modules/restriction'
 import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
 import Image from '../modules/image'
+import Url from '../modules/url'
 
 import Bounty from 'vue-bounty'
 import Cropper from './imageEditor/cropper.vue'
@@ -30,7 +31,8 @@ export default {
         Restriction,
         Computed,
         Watchers,
-        Image
+        Image,
+        Url
     ],
     props: [
         'config',
@@ -98,16 +100,12 @@ export default {
         }
     },
     created() {
+        window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
 
-        this.invalidateCache().then(() => {
-            this.preSaved()
-            this.getFiles(this.folders, null, this.selectedFile)
-        })
+        this.init()
     },
     mounted() {
-        this.fileUpload()
-
         // check if image was edited
         EventHub.listen('image-edited', () => {
             this.imageWasEdited = true
@@ -122,9 +120,19 @@ export default {
         })
     },
     beforeDestroy() {
+        window.removeEventListener('popstate', this.urlNavigation)
         document.removeEventListener('keydown', this.shortCuts)
     },
     methods: {
+        init() {
+            this.getPathFromUrl().then(() => {
+                return this.preSaved()
+            }).then(() => {
+                return this.getFiles(this.folders, null, this.selectedFile).then(() => {
+                    this.fileUpload()
+                })
+            })
+        },
         shortCuts(e) {
             let key = keycode(e)
 
@@ -162,11 +170,7 @@ export default {
 
                                     // play-pause media
                                     if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                                        let player = this.$refs.player
-
-                                        return player.paused
-                                            ? player.play()
-                                            : player.pause()
+                                        this.playMedia()
                                     }
 
                                     // "show" image/pdf/text quick view
@@ -320,18 +324,16 @@ export default {
         autoPlay() {
             if (this.filterNameIs('audio') || this.filterNameIs('video')) {
                 let player = this.$refs.player
-                if (player) {
-                    player.onended = () => {
-                        // stop at the end of list
-                        if (this.currentFileIndex < this.allItemsCount - 1) {
-                            // nav to next
-                            this.goToNext()
+                player.onended = () => {
+                    // stop at the end of list
+                    if (this.currentFileIndex < this.allItemsCount - 1) {
+                        // nav to next
+                        this.goToNext()
 
-                            // play navigated to
-                            this.$nextTick(() => {
-                                this.$refs.player.play()
-                            })
-                        }
+                        // play navigated to
+                        this.$nextTick(() => {
+                            this.$refs.player.play()
+                        })
                     }
                 }
             }

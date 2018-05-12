@@ -19,11 +19,13 @@ export default {
             return this.currentFilterName == val
         },
         fileTypeIs(item, val) {
-            if (val == 'image' && this.config.imageTypes.includes(item.type)) {
-                return true
-            }
+            if (item.type) {
+                if (val == 'image' && this.config.imageTypes.includes(item.type)) {
+                    return true
+                }
 
-            return item.type.includes(val)
+                return item.type.includes(val)
+            }
         },
         showFilesOfType(val) {
             if (this.currentFilterName == val) {

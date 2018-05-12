@@ -14,7 +14,7 @@
                 target="_blank"
                 rel="noreferrer noopener"
                 class="image">
-                <img :src="selectedFile.path">
+                <img :src="selectedFile.path" :alt="file.name">
             </a>
         </template>
     </v-touch>
@@ -61,8 +61,10 @@
             <div class="media-right has-text-centered">
                 <div>
                     {{-- download --}}
-                    <button class="button btn-plain" @click.prevent="saveFile(selectedFile)"
-                        v-tippy title="{{ trans('MediaManager::messages.download_file') }}">
+                    <button class="button btn-plain"
+                        @click.prevent="saveFile(selectedFile)"
+                        v-tippy
+                        title="{{ trans('MediaManager::messages.download_file') }}">
                         <span class="icon"><icon name="download" scale="4"></icon></span>
                     </button>
 

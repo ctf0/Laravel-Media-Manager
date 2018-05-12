@@ -47,11 +47,11 @@ export default {
                         manager.showProgress = false
 
                         manager.$refs['success-audio'].play()
-                        manager.removeCachedResponse('../')
-
-                        last
-                            ? manager.getFiles(manager.folders, null, last)
-                            : manager.getFiles(manager.folders)
+                        manager.removeCachedResponse('../').then(() => {
+                            last
+                                ? manager.getFiles(manager.folders, null, last)
+                                : manager.getFiles(manager.folders)
+                        })
                     }
                 },
                 errormultiple(files, res) {
@@ -90,8 +90,9 @@ export default {
                 })
 
                 this.showNotif(`${this.trans('save_success')} "${data.message}"`)
-                this.removeCachedResponse('../')
-                this.getFiles(this.folders, null, data.message)
+                this.removeCachedResponse('../').then(() => {
+                    this.getFiles(this.folders, null, data.message)
+                })
 
             }).catch((err) => {
                 console.error(err)
@@ -106,9 +107,7 @@ export default {
 
         /*                Main                */
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
-
             this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
-
             this.noFiles('hide')
             if (!this.loading_files) {
                 this.toggleInfo = false
@@ -120,43 +119,45 @@ export default {
                 folders = '/' + folders.join('/')
             }
 
-            this.getCachedResponse()
-                // get cache
-                .then((res) => {
-                    this.files = res.files
-                    this.lockedList = res.lockedList
-                    this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
-                })
-
-                // or make the call if nothing found
-                .catch((err) => {
-                    axios.post(this.filesRoute, {
-                        folder: folders,
-                        dirs: this.folders
-                    }).then(({data}) => {
-
-                        // folder doesnt exist
-                        if (data.error) {
-                            return this.showNotif(data.error, 'danger')
+            // clear expired cache
+            return this.invalidateCache().then(() => {
+                // get data
+                return this.getCachedResponse()
+                    .then((res) => {
+                        // return cache
+                        if (res) {
+                            this.files = res.files
+                            return this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
                         }
 
-                        // normal
-                        this.files = data.files
-                        this.lockedList = data.locked
-                        this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
+                        // or make new call
+                        return axios.post(this.filesRoute, {
+                            folder: folders,
+                            dirs: this.folders
+                        }).then(({data}) => {
 
-                        // cache response
-                        this.cacheResponse({
-                            files: data.files,
-                            lockedList: data.locked,
-                            dirs: data.dirs
+                            // folder doesnt exist
+                            if (data.error) {
+                                return this.showNotif(data.error, 'danger')
+                            }
+
+                            // normal
+                            this.files = data.files
+                            this.lockedList = data.locked
+                            this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
+
+                            // cache response
+                            this.cacheResponse({
+                                files: data.files,
+                                dirs: data.dirs
+                            })
+
+                        }).catch((err) => {
+                            console.error(err)
+                            this.ajaxError()
                         })
-
-                    }).catch((err) => {
-                        console.error(err)
-                        this.ajaxError()
                     })
-                })
+            })
         },
         updateDirsList() {
             axios.post(this.dirsRoute, {
@@ -225,16 +226,7 @@ export default {
                 this.$nextTick(() => {
                     let curIndex = this.currentFileIndex
                     if (curIndex) {
-                        if (document.readyState === 'complete') {
-                            this.scrollToFile(this.$refs[`file_${curIndex}`])
-                        } else {
-                            let t = setInterval(() => {
-                                if (document.readyState === 'complete') {
-                                    this.scrollToFile(this.$refs[`file_${curIndex}`])
-                                    clearInterval(t)
-                                }
-                            }, 500)
-                        }
+                        this.scrollToFile(this.getElementByIndex(curIndex))
                     }
                 })
 
@@ -306,8 +298,9 @@ export default {
                 }
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path}"`)
-                this.removeCachedResponse('../')
-                this.getFiles(this.folders, data.new_folder_name)
+                this.removeCachedResponse('../').then(() => {
+                    this.getFiles(this.folders, data.new_folder_name)
+                })
 
             }).catch((err) => {
                 console.error(err)
@@ -318,6 +311,9 @@ export default {
         // rename
         RenameFileForm(event) {
             let changed = this.newFilename
+            let filename = this.selectedFile.name
+            let ext = this.getExtension(filename)
+            let newFilename = ext == null ? changed : `${changed}.${ext}`
 
             if (!changed) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -328,10 +324,6 @@ export default {
             }
 
             this.toggleLoading()
-
-            let filename = this.selectedFile.name
-            let ext = this.getExtension(filename)
-            let newFilename = ext == null ? changed : `${changed}.${ext}`
 
             axios.post(event.target.action, {
                 folder_location: this.files.path,
@@ -350,7 +342,7 @@ export default {
 
                 if (this.selectedFileIs('folder')) {
                     this.updateDirsList()
-                    this.removeCachedResponse('../')
+                    this.removeCachedResponse('../', [this.getCacheName(filename)])
                 } else {
                     this.removeCachedResponse()
                 }
@@ -433,6 +425,8 @@ export default {
 
         // delete
         DeleteFileForm(event) {
+            let clearCache = false
+            let foldersList = []
             let files = this.bulkItemsCount
                 ? this.bulkListFilter
                 : [this.selectedFile]
@@ -451,26 +445,27 @@ export default {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    if (!data.fullCacheClear) {
-                        this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
-                        this.removeFromLists(item.name, item.type)
+                    // clear nested folders cache
+                    if (item.type == 'folder' || item.parent_path) {
+                        foldersList.push(this.getCacheName(item.parent_path || item.name))
                     }
+
+                    clearCache = true
+                    this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
+                    this.removeFromLists(item.name, item.type)
                 })
 
-                this.$refs['success-audio'].play()
-                this.isBulkSelecting()
-                    ? this.blkSlct()
-                    : !this.config.lazyLoad
-                        ? this.selectFirst()
-                        : this.lazySelectFirst()
+                if (clearCache) {
+                    this.$refs['success-audio'].play()
+                    this.removeCachedResponse('../', foldersList)
+                    this.isBulkSelecting()
+                        ? this.blkSlct()
+                        : !this.config.lazyLoad
+                            ? this.selectFirst()
+                            : this.lazySelectFirst()
+                }
 
                 this.$nextTick(() => {
-                    if (data.fullCacheClear) {
-                        this.clearCache(false)
-                    } else {
-                        this.removeCachedResponse('../')
-                    }
-
                     if (this.searchFor) {
                         this.searchItemsCount = this.filesList.length
                     }

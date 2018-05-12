@@ -16,9 +16,9 @@ export default {
         },
 
         // lazy
-        lazyImageActivate(item) {
+        lazyImageActivate(index) {
             this.$nextTick(() => {
-                let img = this.$refs[item]
+                let img = this.$refs[`img_${index}`]
 
                 if (img && img.length && img[0].dataset.src) {
                     img = img[0]

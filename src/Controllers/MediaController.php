@@ -441,36 +441,44 @@ class MediaController extends Controller
     {
         $folderLocation  = $request->folder_location;
         $result          = [];
-        $fullCacheClear  = false;
+        $lockedList      = $this->db->pluck('path')->toArray();
 
         foreach ($request->deleted_files as $one) {
-            $file_name      = $one['name'];
-            $type           = $one['type'];
-            $result[]       = [
-                'success'    => true,
-                'name'       => $file_name,
-                'type'       => $type,
-            ];
-
-            $file_name = "$folderLocation/$file_name";
+            $file_name = $one['name'];
+            $file_type = $one['type'];
+            $file_name = $folderLocation == '' ? $file_name : "$folderLocation/$file_name";
 
             // folder
-            if ($type == 'folder') {
+            if ($file_type == 'folder') {
                 // check for files in lock list
-                foreach ($this->storageDisk->allFiles($file_name) as $file) {
-                    if (in_array($this->resolveUrl($file), $this->db->pluck('path')->toArray())) {
-                        $fullCacheClear  = true;
-                        $result[]        = [
+                foreach ($this->getFolderListByType($this->getFolderContent($file_name, true), 'file') as $file) {
+                    $item_name = $file['basename'];
+                    $item_type = $file['mimetype'];
+                    $item_path = $file['path'];
+
+                    if (in_array($this->resolveUrl($item_path), $lockedList)) {
+                        $result[] = [
                             'success' => false,
-                            'message' => trans('MediaManager::messages.error_in_locked_list', ['attr' => pathinfo($file, PATHINFO_BASENAME)]),
+                            'name'    => $item_name,
+                            'type'    => $item_type,
+                            'message' => trans('MediaManager::messages.error_in_locked_list', ['attr' => $item_name]),
                         ];
                     }
 
                     // remove file
                     else {
-                        if (!$this->storageDisk->delete($file)) {
+                        if ($this->storageDisk->delete($item_path)) {
+                            $result[]  = [
+                                'success'      => true,
+                                'name'         => $item_name,
+                                'type'         => $item_type,
+                                'parent_path'  => dirname($item_path),
+                            ];
+                        } else {
                             $result[] = [
                                 'success' => false,
+                                'name'    => $item_name,
+                                'type'    => $item_type,
                                 'message' => trans('MediaManager::messages.error_deleting_file'),
                             ];
                         }
@@ -485,17 +493,25 @@ class MediaController extends Controller
                 // remove folder if its size is == 0
                 // even if it have locked folders without items
                 if ($this->getFolderInfo($file_name)['files_size'] == 0) {
-                    if (!$this->storageDisk->deleteDirectory($file_name)) {
-                        $result[] = [
-                            'success' => false,
-                            'message' => trans('MediaManager::messages.error_deleting_file'),
+                    if ($this->storageDisk->deleteDirectory($file_name)) {
+                        $result[]  = [
+                            'success' => true,
+                            'name'    => $file_name,
+                            'type'    => $file_type,
                         ];
-                    } else {
+
                         // fire event
                         event('MMFileDeleted', [
                             'file_path' => $this->getFilePath($file_name),
                             'is_folder' => true,
                         ]);
+                    } else {
+                        $result[] = [
+                            'success' => false,
+                            'name'    => $file_name,
+                            'type'    => $file_type,
+                            'message' => trans('MediaManager::messages.error_deleting_file'),
+                        ];
                     }
                 }
 
@@ -503,6 +519,8 @@ class MediaController extends Controller
                 else {
                     $result[] = [
                         'success' => false,
+                        'name'    => $file_name,
+                        'type'    => $file_type,
                         'message' => trans('MediaManager::messages.error_delete_fwli', ['attr'=>$file_name]),
                     ];
                 }
@@ -510,22 +528,30 @@ class MediaController extends Controller
 
             // file
             else {
-                if (!$this->storageDisk->delete($file_name)) {
-                    $result[] = [
-                        'success' => false,
-                        'message' => trans('MediaManager::messages.error_deleting_file'),
+                if ($this->storageDisk->delete($file_name)) {
+                    $result[]  = [
+                        'success' => true,
+                        'name'    => $file_name,
+                        'type'    => $file_type,
                     ];
-                } else {
+
                     // fire event
                     event('MMFileDeleted', [
                         'file_path' => $this->getFilePath($file_name),
                         'is_folder' => false,
                     ]);
+                } else {
+                    $result[] = [
+                        'success' => false,
+                        'name'    => $file_name,
+                        'type'    => $file_type,
+                        'message' => trans('MediaManager::messages.error_deleting_file'),
+                    ];
                 }
             }
         }
 
-        return response()->json(['res' => $result, 'fullCacheClear' => $fullCacheClear]);
+        return response()->json(['res' => $result]);
     }
 
     /**

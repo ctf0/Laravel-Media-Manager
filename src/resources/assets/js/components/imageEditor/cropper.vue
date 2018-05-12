@@ -3,101 +3,101 @@
 
         <!-- effects -->
         <div class="top">
-            <div class="__cropper-top-toolbar" v-if="imageCaman">
+            <div v-if="imageCaman" class="__cropper-top-toolbar">
                 <camann :step="10" :min="-100" :max="100"
-                        icon="sun-o" filter-name="brightness"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="sun-o" filter-name="brightness"/>
                 <camann :step="10" :min="-100" :max="100"
-                        icon="adjust" filter-name="contrast"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="adjust" filter-name="contrast"/>
                 <camann :step="10" :min="-100" :max="100"
-                        icon="eye-slash" filter-name="saturation"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="eye-slash" filter-name="saturation"/>
                 <camann :step="10" :min="-100" :max="100"
-                        icon="flash" filter-name="vibrance"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="flash" filter-name="vibrance"/>
                 <camann :step="10" :min="-100" :max="100"
-                        icon="thermometer-half" filter-name="exposure"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="thermometer-half" filter-name="exposure"/>
                 <camann :step="5" :min="0" :max="100"
-                        icon="eyedropper" filter-name="hue"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="eyedropper" filter-name="hue"/>
                 <camann :step="5" :min="0" :max="100"
-                        icon="lemon-o" filter-name="sepia"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="lemon-o" filter-name="sepia"/>
                 <camann :step="0.1" :min="0" :max="10"
-                        icon="flask" filter-name="gamma"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="flask" filter-name="gamma"/>
                 <camann :step="5" :min="0" :max="100"
-                        icon="dot-circle-o" filter-name="noise"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="dot-circle-o" filter-name="noise"/>
                 <camann :step="5" :min="0" :max="100"
-                        icon="scissors" filter-name="clip"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="scissors" filter-name="clip"/>
                 <camann :step="5" :min="0" :max="100"
-                        icon="diamond" filter-name="sharpen"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="diamond" filter-name="sharpen"/>
                 <camann :step="1" :min="0" :max="20"
-                        icon="filter" filter-name="stackBlur"
-                        :reset="reset" :processing="processing"/>
-                <camann icon="shield" filter-name="greyscale"
-                        :reset="reset" :processing="processing"/>
-                <camann icon="cube" filter-name="invert"
-                        :reset="reset" :processing="processing"/>
+                        :reset="reset" :processing="processing"
+                        icon="filter" filter-name="stackBlur"/>
+                <camann :reset="reset" :processing="processing"
+                        icon="shield" filter-name="greyscale"/>
+                <camann :reset="reset" :processing="processing"
+                        icon="cube" filter-name="invert"/>
             </div>
         </div>
 
         <div class="mid">
             <!-- controls -->
-            <div class="__cropper-side-toolbar" v-if="imageCropper">
-                <button class="btn-plain"
+            <div v-if="imageCropper" class="__cropper-side-toolbar">
+                <button v-tippy
                         :class="{'is-active': dragModeIs('move')}"
                         :disabled="processing"
-                        @click="Ops('move')"
-                        v-tippy :title="trans('move')">
+                        :title="trans('move')"
+                        class="btn-plain" @click="Ops('move')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'arrows'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :class="{'is-active': dragModeIs('crop')}"
                         :disabled="processing"
-                        @click="Ops('crop')"
-                        v-tippy :title="trans('crop')">
+                        :title="trans('crop')"
+                        class="btn-plain" @click="Ops('crop')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'crop'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('zoom-in')"
-                        v-tippy :title="trans('crop_zoom_in')">
+                        :title="trans('crop_zoom_in')"
+                        class="btn-plain" @click="Ops('zoom-in')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'search-plus'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('zoom-out')"
-                        v-tippy :title="trans('crop_zoom_out')">
+                        :title="trans('crop_zoom_out')"
+                        class="btn-plain" @click="Ops('zoom-out')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'search-minus'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('rotate-left')"
-                        v-tippy :title="trans('crop_rotate_left')">
+                        :title="trans('crop_rotate_left')"
+                        class="btn-plain" @click="Ops('rotate-left')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'rotate-left'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('rotate-right')"
-                        v-tippy :title="trans('crop_rotate_right')">
+                        :title="trans('crop_rotate_right')"
+                        class="btn-plain" @click="Ops('rotate-right')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'rotate-right'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('flip-horizontal')"
-                        v-tippy :title="trans('crop_flip_horizontal')">
+                        :title="trans('crop_flip_horizontal')"
+                        class="btn-plain" @click="Ops('flip-horizontal')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'arrows-h'" :pulse="processing"/></span>
                 </button>
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('flip-vertical')"
-                        v-tippy :title="trans('crop_flip_vertical')">
+                        :title="trans('crop_flip_vertical')"
+                        class="btn-plain" @click="Ops('flip-vertical')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'arrows-v'" :pulse="processing"/></span>
                 </button>
             </div>
@@ -105,32 +105,32 @@
             <!-- img -->
             <div class="card-image">
                 <figure class="image">
-                    <img :src="url" id="cropper" crossOrigin="anonymous">
+                    <img id="cropper" :src="url" crossOrigin>
                 </figure>
             </div>
         </div>
 
         <div class="bottom">
-            <div class="__cropper-bottom-toolbar" v-if="imageCropper">
+            <div v-if="imageCropper" class="__cropper-bottom-toolbar">
                 <!-- reset -->
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing"
-                        @click="Ops('reset')"
-                        v-tippy :title="trans('crop_reset')">
+                        :title="trans('crop_reset')"
+                        class="btn-plain" @click="Ops('reset')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
                 </button>
                 <!-- clear -->
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing || !imageCropper.cropped"
-                        @click="Ops('clear')"
-                        v-tippy :title="trans('clear')">
+                        :title="trans('clear')"
+                        class="btn-plain" @click="Ops('clear')">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
                 </button>
                 <!-- apply -->
-                <button class="btn-plain"
+                <button v-tippy
                         :disabled="processing || !hasChanged"
-                        @click="applyChanges()"
-                        v-tippy :title="trans('crop_apply')">
+                        :title="trans('crop_apply')"
+                        class="btn-plain" @click="applyChanges()">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'check'" :pulse="processing"/></span>
                 </button>
             </div>
@@ -203,6 +203,10 @@ export default {
         }
     },
 
+    mounted() {
+        this.camanStart()
+    },
+
     // make cropperjs rotation follow the new value
     computed: {
         rotation() {
@@ -223,10 +227,6 @@ export default {
 
             return final
         }
-    },
-
-    mounted() {
-        this.camanStart()
     },
     methods: {
         camanStart() {

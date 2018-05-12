@@ -1,7 +1,3 @@
-* {
-    backface-visibility: hidden;
-}
-
 [v-cloak] {
     display: none;
 }
@@ -161,7 +157,7 @@
     overflow: scroll;
     align-items: center;
     width: 100%;
-    padding: 1rem 0 0;
+    padding: 1rem 0;
     list-style: none;
     transition: all 0.25s ease-out;
 
@@ -300,12 +296,14 @@
     display: flex;
     overflow: hidden;
     min-height: 50vh;
+    transition: all 0.25s;
     background-color: $white;
 }
 
-.media-manager__stack-container,
-.media-manager__stack-sidebar {
-    transition: all 0.25s ease-out;
+@include media('max', 1023) {
+    .media-manager__stack-container {
+        max-height: 100vh;
+    }
 }
 
 // left "files list"
@@ -317,7 +315,7 @@
     left: 20%;
     overflow: scroll;
     padding: 0.7rem;
-    transition: left 0.25s ease-out;
+    transition: all 0.25s;
 }
 
 .__stack-sidebar-hidden {
@@ -417,9 +415,21 @@
         }
 
         .__box-img {
-            background-repeat: no-repeat;
-            background-position: top;
-            background-size: cover;
+            position: relative;
+
+            &::before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                content: '';
+                background-image: var(--imageSrc);
+                background-repeat: no-repeat;
+                background-position: top;
+                background-size: cover;
+                will-change: transform;
+            }
         }
 
         .__box-img-lazy {
@@ -570,7 +580,7 @@
         display: flex;
         flex: 1 0 auto;
         flex-direction: column;
-        transition: background 0.25s ease-out;
+        transition: all 0.25s ease-out;
         word-break: break-all;
         background-color: $active_theme;
 
@@ -917,6 +927,10 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
 .m-t-5 {
     margin-top: 5px !important;
+}
+
+.m-b-10 {
+    margin-bottom: 10px !important;
 }
 
 .m-l-50 {

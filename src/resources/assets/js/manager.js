@@ -7,7 +7,6 @@ window.Dropzone = require('dropzone')
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
 Vue.use(require('vue-ls'))
-Vue.use(require('vue-scroll-stop'))
 
 // vue-tippy
 Vue.use(require('vue-tippy'), {

@@ -100,6 +100,9 @@ export default {
         toolBar(val) {
             this.updateLs({'toolBar': val})
         },
+        lockedList(val) {
+            this.updateLs({'lockedList': val})
+        },
 
         // filter
         sortBy(val) {

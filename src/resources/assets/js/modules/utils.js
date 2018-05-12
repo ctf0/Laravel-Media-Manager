@@ -1,49 +1,11 @@
 export default {
     methods: {
+        /*                Check                */
         isLastItem(item, list) {
             return item == list[list.length - 1]
         },
         isActiveModal(el) {
             return this.activeModal == el
-        },
-        showNotif(msg, s = 'success') {
-            if (msg) {
-                if (s == 'danger') {
-                    this.$refs['alert-audio'].play()
-                }
-
-                let title
-                let duration = 3
-
-                switch (s) {
-                    case 'black':
-                    case 'danger':
-                        title = 'Error'
-                        duration = null
-                        break
-                    case 'warning':
-                        title = 'Warning'
-                        break
-                    default:
-                        title = 'Success'
-                }
-
-                EventHub.fire('showNotif', {
-                    title: title,
-                    body: msg,
-                    type: s,
-                    duration: duration
-                })
-            }
-        },
-        resetInput(input, val = null) {
-            if (Array.isArray(input)) {
-                return input.forEach((e) => {
-                    this[e] = val
-                })
-            }
-
-            this[input] = val
         },
         moveUpCheck() {
             return this.allItemsCount && this.folders.length
@@ -98,6 +60,12 @@ export default {
             let index = name.lastIndexOf('.')
 
             return index > 0 ? name.substring(index + 1) : null
+        },
+        getIndexRange(start, end) {
+            return Array(end - start + 1).fill().map((_, idx) => start + idx)
+        },
+        getElementByIndex(i) {
+            return document.querySelector(`[data-file-index='${i}']`)
         },
         trans(key) {
             return this.translations[key]
@@ -180,11 +148,50 @@ export default {
             EventHub.fire('ajax-error-show')
         },
 
-        /*                Ops                */
+        /*                Helpers                */
         // copy to clipboard
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+        resetInput(input, val = null) {
+            if (Array.isArray(input)) {
+                return input.forEach((e) => {
+                    this[e] = val
+                })
+            }
+
+            this[input] = val
+        },
+        showNotif(msg, s = 'success') {
+            if (msg) {
+                if (s == 'danger') {
+                    this.$refs['alert-audio'].play()
+                }
+
+                let title
+                let duration = 3
+
+                switch (s) {
+                    case 'black':
+                    case 'danger':
+                        title = 'Error'
+                        duration = null
+                        break
+                    case 'warning':
+                        title = 'Warning'
+                        break
+                    default:
+                        title = 'Success'
+                }
+
+                EventHub.fire('showNotif', {
+                    title: title,
+                    body: msg,
+                    type: s,
+                    duration: duration
+                })
+            }
         }
     }
 }

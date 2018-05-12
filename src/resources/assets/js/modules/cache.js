@@ -28,6 +28,7 @@ export default {
             if (ls) {
                 this.randomNames = ls.randomNames || false
                 this.folders = ls.folders || []
+                this.lockedList = ls.lockedList || []
                 this.toolBar = ls.toolBar || true
                 this.selectedFile = ls.selectedFileName || null
             }
@@ -37,17 +38,18 @@ export default {
         getCachedResponse(key = this.cacheName) {
             return get(key, cacheStore)
         },
-        cacheResponse(val) {
+        cacheResponse(val, key = this.cacheName) {
             let date = getTime(addMinutes(new Date(), this.config.cacheExp))
             val = Object.assign(val, {expire: date})
 
-            return set(this.cacheName, val, cacheStore).catch((err) => {
+            return set(key, val, cacheStore).catch((err) => {
                 console.warn('cacheStore.setItem', err)
             })
         },
-        removeCachedResponse(destination = null) {
+        removeCachedResponse(destination = null, extra = []) {
             let cacheName = this.cacheName
-            let items = []
+            let items = ['root_']
+            let promises = []
 
             // current path only
             if (!destination) {
@@ -55,27 +57,22 @@ export default {
             }
 
             // up & down
-            destination == '../'
-                ? false
-                : cacheName = cacheName == 'root_'
-                    ? `/${destination}`
-                    : `${cacheName}${destination}`
+            destination == '../' ? false : cacheName = this.getCacheName(destination)
 
-            let arr = cacheName.split('/').filter((e) => e)
-            let i = arr.length - 1
-            for (i; i >= 0; i--) {
-                items.push(cacheName)           // add current
-                arr.pop()                       // remove last
-                cacheName = `/${arr.join('/')}` // regroup remaining
+            // clear nested folders cache too
+            items.push(...this.getRecursivePathParent(cacheName))
+            if (extra.length) {
+                extra.forEach((e) => {
+                    items.push(...this.getRecursivePathParent(e))
+                })
             }
 
-            if (!items.includes('root_')) {
-                items.push('root_')
-            }
-
-            items.forEach((one) => {
-                return this.deleteCache(one)
+            // clear dups and delete items
+            Array.from(new Set(items)).forEach((one) => {
+                promises.push(this.deleteCache(one))
             })
+
+            return Promise.all(promises)
         },
         deleteCache(item) {
             return del(item, cacheStore).then(() => {
@@ -101,16 +98,40 @@ export default {
             let now = getTime(new Date())
 
             return keys(cacheStore).then((keys) => {
-                keys.map((key) => {
-                    this.getCachedResponse(key).then((item) => {
-                        if (item.expire < now) {
-                            this.deleteCache(key)
-                        }
+                return Promise.all(
+                    keys.map((key) => {
+                        return this.getCachedResponse(key).then((item) => {
+                            if (item.expire <= now) {
+                                return this.deleteCache(key)
+                            }
+                        })
                     })
-                })
+                )
             }).catch((err) => {
                 console.error(err)
             })
+        },
+
+        /*                helpers                */
+        getCacheName(path) {
+            let str = this.cacheName == 'root_'
+                ? `/${path}`
+                : `${this.cacheName}/${path}`
+
+            return str.replace('//', '/')
+        },
+        getRecursivePathParent(path) {
+            let list = []
+            let arr = path.split('/').filter((e) => e)
+            let i = arr.length - 1
+
+            for (i; i >= 0; i--) {
+                list.push(path)           // add current
+                arr.pop()                       // remove last
+                path = `/${arr.join('/')}` // regroup remaining
+            }
+
+            return list
         }
     }
 }
