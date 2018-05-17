@@ -1,40 +1,60 @@
 export default {
     methods: {
-        IsInLockedList(file) {
-            if (file) {
-                return this.lockedList.includes(file.path)
-            }
-        },
-        toggleLock(file) {
-            // remove item
-            if (this.IsInLockedList(file)) {
-                if (this.fileTypeIs(file, 'folder')) {
-                    this.directories.push(file.name)
-                    this.directories.sort()
+        IsLocked(item) {
+            if (item) {
+                if (item.path) {
+                    return this.lockedList.includes(item.path)
                 }
 
-                this.lockForm(file.path, 'unlocked')
-                return this.lockedList.splice(this.lockedList.indexOf(file.path), 1)
+                return this.lockedList.includes(item)
             }
-
-            // add item
-            if (this.fileTypeIs(file, 'folder')) {
-                this.directories.splice(this.directories.indexOf(file.name), 1)
-            }
-
-            this.lockForm(file.path, 'locked')
-            this.lockedList.push(file.path)
         },
-        pushToLockedList() {
-            if (this.isBulkSelecting()) {
-                return this.bulkList.map((e) => {
-                    this.toggleLock(e)
-                })
-            }
+        // for folders with nested items
+        hasLockedItems(name, cacheName) {
+            return this.lockedList.some((e) => {
+                return e.startsWith(this.clearDblSlash(`${this.config.baseUrl}/${cacheName}`))
+            })
+        },
+        checkNestedLockedItems(list) {
+            list.map((e) => {
+                if (e.type == 'folder') {
+                    let name = e.name
+                    let cacheName = this.getCacheName(name)
 
-            if (this.selectedFile) {
-                this.toggleLock(this.selectedFile)
-            }
+                    if (this.hasLockedItems(name, cacheName)) {
+                        this.showNotif(`"${cacheName}" ${this.trans('error_altered_fwli')}`, 'danger')
+                        list.splice(list.indexOf(e), 1)
+                    }
+                }
+            })
+
+            return list
+        },
+
+        // form
+        lockFileForm() {
+            let list = this.bulkItemsCount
+                ? this.bulkList
+                : [this.selectedFile]
+
+            axios.post(this.routes.lock, {
+                list: list
+            }).then(({data}) => {
+
+                data.map((item) => {
+                    this.showNotif(item.message)
+                })
+
+                this.$refs['success-audio'].play()
+                this.isBulkSelecting() ? this.blkSlct() : false
+                this.removeCachedResponse().then(() => {
+                    this.getFiles(this.folders)
+                })
+
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
         }
     }
 }

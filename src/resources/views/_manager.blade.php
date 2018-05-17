@@ -29,12 +29,16 @@
         'copy_success' => trans('MediaManager::messages.copy_success'), 
         'save_success' => trans('MediaManager::messages.save_success'), 
         'clear_cache' => trans('MediaManager::messages.clear_cache'), 
+        'error_altered_fwli' => trans('MediaManager::messages.error_altered_fwli'), 
     ]) }}"
-    :upload-panel-img-list="{{ $patterns }}"
-    files-route="{{ route('media.files') }}"
-    dirs-route="{{ route('media.directories') }}"
-    lock-file-route="{{ route('media.lock_file') }}"
-    zip-progress-route="{{ route('media.zip_progress') }}">
+    :routes="{{ json_encode([
+        'files' => route('media.files'), 
+        'dirs' => route('media.directories'), 
+        'lock' => route('media.lock_file'), 
+        'visibility' => route('media.change_vis'), 
+        'zipProgress' => route('media.zip_progress'), 
+    ]) }}"
+    :upload-panel-img-list="{{ $patterns }}">
 
     <div class="">
 
@@ -108,7 +112,7 @@
                                     ref="editor"
                                     :disabled="item_ops() || !selectedFileIs('image') || isLoading"
                                     v-tippy
-                                    title="c"
+                                    title="e"
                                     @click="imageEditor()">
                                     <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                                     <span>{{ trans('MediaManager::messages.editor') }}</span>
@@ -139,9 +143,9 @@
                                     ref="refresh"
                                     tag="button"
                                     v-tippy
-                                    title="r"
+                                    title="(R) efresh"
                                     @tap="refresh()"
-                                    @hold="clearCache(), removeLs()">
+                                    @hold="clearLs(), clearCache(), clearImageCache()">
                                     <span class="icon">
                                         <icon name="refresh" :spin="isLoading"></icon>
                                     </span>
@@ -152,12 +156,12 @@
                             <div class="control">
                                 <button class="button is-warning"
                                     ref="lock"
-                                    :disabled="lock()"
+                                    :disabled="lock_btn()"
                                     v-tippy
-                                    title="l"
-                                    @click="pushToLockedList()">
+                                    title="(L) ock"
+                                    @click="lockFileForm()">
                                     <span class="icon">
-                                        <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'"></icon>
+                                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'"></icon>
                                     </span>
                                 </button>
                             </div>
@@ -166,11 +170,13 @@
                             <div class="control">
                                 <button class="button is-light"
                                     ref="vis"
-                                    :disabled="selectedFileIs('folder') || !this.selectedFile || isLoading"
+                                    :disabled="vis_btn()"
                                     v-tippy
-                                    title="v"
-                                    @click="toggleModal('change_vis_modal')">
-                                    <span class="icon"><icon name="eye"></icon></span>
+                                    title="(V) isibility"
+                                    @click="FileVisibilityForm()">
+                                    <span class="icon">
+                                        <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'"></icon>
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -355,7 +361,7 @@
             <div key="1" v-show="toggleUploadArea" class="media-manager__dz">
                 <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
                     {{ csrf_field() }}
-                    <input type="hidden" name="upload_path" :value="files.path ? files.path : '/'">
+                    <input type="hidden" name="upload_path" :value="files.path">
 
                     {{-- text --}}
                     <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
@@ -459,12 +465,13 @@
                                 @hold="setSelected(file, index), imageEditor()">
 
                                 {{-- lock file --}}
-                                <button class="__box-lock-icon icon"
+                                <button v-if="$refs.lock"
+                                    class="__box-lock-icon icon"
                                     :disabled="isLoading"
-                                    :class="IsInLockedList(file) ? 'is-danger' : 'is-success'"
-                                    :title="IsInLockedList(file) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
+                                    :class="IsLocked(file) ? 'is-danger' : 'is-success'"
+                                    :title="IsLocked(file) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
                                     v-tippy="{arrow: true, hideOnClick: false}"
-                                    @click.stop="toggleLock(file)">
+                                    @click.stop="$refs.lock.click()">
                                 </button>
 
                                 {{-- copy file link --}}
@@ -481,11 +488,7 @@
                                     <div class="__box-preview">
 
                                         <template v-if="fileTypeIs(file, 'image')">
-                                            <div class="__box-img-lazy" v-if="config.lazyLoad">
-                                                <img v-if="imageIsCached(file.path)" src="file.path" :alt="file.name">
-                                                <img v-else :data-src="file.path" :ref="`img_${index}`" :alt="file.name">
-                                            </div>
-
+                                            <lazy-image v-if="config.lazyLoad" :file="file" :index="index" :db="CDBN"></lazy-image>
                                             <div v-else :style="{'--imageSrc': `url('${file.path}')`}" class="__box-img"/>
                                         </template>
 
@@ -539,7 +542,7 @@
 
                                 {{-- img --}}
                                 <template v-if="selectedFileIs('image')">
-                                    <img :src="selectedFile.path"
+                                    <img :src="selectedFilePreview"
                                         :alt="selectedFile.name"
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}"
@@ -618,7 +621,7 @@
                                                     {{ csrf_field() }}
                                                     <input type="hidden" name="id" value="{{ $randId }}">
                                                     <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
-                                                    <input type="hidden" name="name" :value="this.selectedFile.name">
+                                                    <input type="hidden" name="name" :value="selectedFile.name">
                                                     <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
                                                         <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                     </button>
@@ -632,7 +635,9 @@
                                         <h4>{{ trans('MediaManager::messages.visibility') }}: <span>@{{ selectedFile.visibility }}</span></h4>
                                         <h4>
                                             {{ trans('MediaManager::messages.preview') }}:
-                                            <a :href="selectedFile.path" target="_blank" rel="noreferrer noopener">
+                                            <a :href="selectedFile.path"
+                                                target="_blank"
+                                                rel="noreferrer noopener">
                                                 {{ trans('MediaManager::messages.public_url') }}
                                             </a>
                                         </h4>
@@ -793,7 +798,7 @@
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <cropper route="{{ route('media.uploadCropped') }}"
-                        :url="selectedFile.path"
+                        :url="selectedFilePreview"
                         :translations="{{ json_encode([
                             'crop_reset' => trans('MediaManager::messages.crop_reset'), 
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
@@ -841,54 +846,6 @@
                                 :disabled="isLoading"
                                 :class="{'is-loading': isLoading}">
                                 {{ trans('MediaManager::messages.upload') }}
-                            </button>
-                        </footer>
-                    </form>
-                </div>
-            </div>
-
-            {{-- change visibility --}}
-            <div class="modal mm-animated fadeIn"
-                :class="{'is-active': isActiveModal('change_vis_modal')}">
-                <div class="modal-background link" @click="toggleModal()"></div>
-                <div class="modal-card mm-animated fadeInDown">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">
-                            <span>{{ trans('MediaManager::messages.visibility_set') }}</span>
-                        </p>
-                        <button type="button" class="delete" @click="toggleModal()"></button>
-                    </header>
-
-                    <form action="{{ route('media.change_vis') }}" @submit.prevent="SetVisibilityForm($event)">
-                        <section class="modal-card-body">
-                            <div class="level">
-                                <div class="level-left">
-                                    <div class="level-item">
-                                        <div class="form-switcher is-danger">
-                                            <input type="checkbox" name="visibility" id="visibility"
-                                                v-model="visibilityType"
-                                                true-value="public"
-                                                false-value="private">
-                                            <label class="switcher" for="visibility"></label>
-                                        </div>
-                                    </div>
-                                    <div class="level-item">
-                                        <p class="title is-4">@{{ visibilityType }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <footer class="modal-card-foot">
-                            <button type="reset" class="button" @click="toggleModal()">
-                                {{ trans('MediaManager::messages.cancel') }}
-                            </button>
-                            <button type="submit"
-                                class="button"
-                                :class="visibilityType == 'public' ? 'is-success' : 'is-danger'"
-                                :disabled="isLoading"
-                                :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.save') }}
                             </button>
                         </footer>
                     </form>
@@ -988,9 +945,6 @@
 
                     <form action="{{ route('media.move_file') }}" @submit.prevent="MoveFileForm($event)">
                         <section class="modal-card-body">
-                            @include('MediaManager::partials._modal-files-info')
-                            <br>
-
                             {{-- destination --}}
                             <h5 class="subtitle m-b-10">{{ trans('MediaManager::messages.destination_folder') }}</h5>
                             <div class="field">
@@ -1029,6 +983,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <br>
+                            @include('MediaManager::partials._modal-files-info')
                         </section>
                         <footer class="modal-card-foot">
                             <button type="reset" class="button" @click="toggleModal()">

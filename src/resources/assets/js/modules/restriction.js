@@ -13,7 +13,7 @@ export default {
         checkForFolderName(name) {
             if (this.folders.length) {
                 let path = this.folders.join('/')
-                path = `${path}/${name}`.replace('//', '/')
+                path = this.clearDblSlash(`${path}/${name}`)
                 return this.hidePath.includes(path)
             }
 

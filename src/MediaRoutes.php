@@ -14,21 +14,21 @@ class MediaRoutes
         ], function () use ($controller) {
             app('router')->get('/', ['uses' => "$controller@index", 'as' => 'index']);
             app('router')->post('upload', ['uses' => "$controller@upload", 'as' => 'upload']);
-            app('router')->post('upload-cropped', ['uses' => "$controller@uploadCropped", 'as' => 'uploadCropped']);
+            app('router')->post('upload-cropped', ['uses' => "$controller@uploadEditedImage", 'as' => 'uploadCropped']);
             app('router')->post('upload-link', ['uses' => "$controller@uploadLink", 'as' => 'uploadLink']);
 
-            app('router')->post('files', ['uses' => "$controller@get_files", 'as' => 'files']);
-            app('router')->post('directories', ['uses' => "$controller@get_dirs", 'as' => 'directories']);
-            app('router')->post('new_folder', ['uses' => "$controller@new_folder", 'as' => 'new_folder']);
-            app('router')->post('delete_file', ['uses' => "$controller@delete_file", 'as' => 'delete_file']);
-            app('router')->post('move_file', ['uses' => "$controller@move_file", 'as' => 'move_file']);
-            app('router')->post('rename_file', ['uses' => "$controller@rename_file", 'as' => 'rename_file']);
-            app('router')->post('change_vis', ['uses' => "$controller@change_vis", 'as' => 'change_vis']);
-            app('router')->post('lock_file', ['uses' => "$controller@lock_file", 'as' => 'lock_file']);
+            app('router')->post('files', ['uses' => "$controller@getFiles", 'as' => 'files']);
+            app('router')->post('directories', ['uses' => "$controller@getFolders", 'as' => 'directories']);
+            app('router')->post('new-folder', ['uses' => "$controller@createNewFolder", 'as' => 'new_folder']);
+            app('router')->post('delete-file', ['uses' => "$controller@deleteItem", 'as' => 'delete_file']);
+            app('router')->post('move-file', ['uses' => "$controller@moveItem", 'as' => 'move_file']);
+            app('router')->post('rename-file', ['uses' => "$controller@renameItem", 'as' => 'rename_file']);
+            app('router')->post('change-vis', ['uses' => "$controller@changeItemVisibility", 'as' => 'change_vis']);
+            app('router')->post('lock-file', ['uses' => "$controller@lockItem", 'as' => 'lock_file']);
 
-            app('router')->get('zip_progress/{name?}/{id?}', ['uses' => "$controller@zip_progress", 'as' => 'zip_progress']);
-            app('router')->post('folder_download', ['uses' => "$controller@folder_download", 'as' => 'folder_download']);
-            app('router')->post('files_download', ['uses' => "$controller@files_download", 'as' => 'files_download']);
+            app('router')->get('zip-progress/{name?}/{id?}', ['uses' => "$controller@zipProgress", 'as' => 'zip_progress']);
+            app('router')->post('folder-download', ['uses' => "$controller@downloadFolder", 'as' => 'folder_download']);
+            app('router')->post('files-download', ['uses' => "$controller@downloadFiles", 'as' => 'files_download']);
         });
     }
 }

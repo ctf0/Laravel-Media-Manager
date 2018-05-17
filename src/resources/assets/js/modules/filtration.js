@@ -7,7 +7,7 @@ export default {
                 return this.filteredItemsCount
             } else if (val == 'locked') {
                 return files.some((item) => {
-                    return this.IsInLockedList(item)
+                    return this.IsLocked(item)
                 })
             }
 
@@ -38,7 +38,7 @@ export default {
                 this.resetInput('currentFilterName')
             } else if (val == 'locked') {
                 this.filterdList = files.filter((item) => {
-                    return this.IsInLockedList(item)
+                    return this.IsLocked(item)
                 })
 
                 this.currentFilterName = val

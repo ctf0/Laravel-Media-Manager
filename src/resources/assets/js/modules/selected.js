@@ -84,22 +84,19 @@ export default {
         openFolder(file) {
             if (!this.isBulkSelecting() && this.fileTypeIs(file, 'folder')) {
                 this.folders.push(file.name)
-                this.getFiles(this.folders)
-                this.updatePageUrl()
+                this.getFiles(this.folders).then(() => {
+                    this.updatePageUrl()
+                })
             }
-
-            this.resetInput('currentFilterName')
         },
         goToFolder(index) {
             if (!this.isBulkSelecting()) {
-                this.noFiles('hide')
-                this.resetInput('currentFilterName')
-
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
-                this.getFiles(this.folders, prev_folder_name)
-                this.updatePageUrl()
+                this.getFiles(this.folders, prev_folder_name).then(() => {
+                    this.updatePageUrl()
+                })
             }
         },
         goToPrevFolder() {

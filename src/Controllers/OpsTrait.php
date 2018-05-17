@@ -34,7 +34,7 @@ trait OpsTrait
                     'size'                   => $info['files_size'],
                     'items'                  => $info['files_count'],
                     'last_modified'          => $time,
-                    'last_modified_formated' => $this->getFileTime($time),
+                    'last_modified_formated' => $this->getItemTime($time),
                 ];
             }
         }
@@ -56,7 +56,7 @@ trait OpsTrait
                     'size'                   => $size,
                     'visibility'             => $visibility,
                     'last_modified'          => $time,
-                    'last_modified_formated' => $this->getFileTime($time),
+                    'last_modified_formated' => $this->getItemTime($time),
                 ];
             }
         }
@@ -72,23 +72,26 @@ trait OpsTrait
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        return $this->storageDisk->listWith(['mimetype', 'visibility'], $folder, $rec);
-    }
-
-    protected function getFolderListByType($list, $type)
-    {
-        return array_filter($list, function ($item) use ($type) {
-            return $item['type'] == $type;
-        });
+        return $this->storageDisk->listWith(
+            ['mimetype', 'visibility'],
+            $folder,
+            $rec
+        );
     }
 
     protected function getFolderInfo($folder)
     {
-        $files = $this->getFolderContent($folder, true);
+        return $this->getFolderInfoFromList(
+            $this->getFolderContent($folder, true)
+        );
+    }
+
+    protected function getFolderInfoFromList($list)
+    {
         $count = 0;
         $size  = 0;
 
-        foreach ($files as $file) {
+        foreach ($list as $file) {
             if ($file['type'] == 'file') {
                 ++$count;
                 $size += $file['size'];
@@ -101,7 +104,14 @@ trait OpsTrait
         ];
     }
 
-    protected function dirsList($location)
+    protected function getFolderListByType($list, $type)
+    {
+        return array_filter($list, function ($item) use ($type) {
+            return $item['type'] == $type;
+        });
+    }
+
+    protected function getDirectoriesList($location)
     {
         if (is_array($location)) {
             $location = rtrim(implode('/', $location), '/');
@@ -141,7 +151,7 @@ trait OpsTrait
      *
      * @return [type] [description]
      */
-    protected function getFilePath($path)
+    protected function getItemPath($path)
     {
         $info = $this->storageDiskInfo;
         $url  = $this->resolveUrl($path);
@@ -157,15 +167,14 @@ trait OpsTrait
         return $root . $dir;
     }
 
-    protected function getFileTime($time)
+    protected function getItemTime($time)
     {
         return $this->carbon->createFromTimestamp($time)->{$this->LMF}();
     }
 
     /**
      * resolve url for "file/dir path" instead of laravel builtIn.
-     *
-     * laravel builtIn needs to make extra call just to resolve the url
+     * which needs to make extra call just to resolve the url.
      *
      * @param [type] $path [description]
      *
@@ -173,7 +182,15 @@ trait OpsTrait
      */
     protected function resolveUrl($path)
     {
-        return preg_replace('/\/+$/', '/', $this->baseUrl) . $path;
+        return $this->clearDblSlash("{$this->baseUrl}/{$path}");
+    }
+
+    protected function clearDblSlash($str)
+    {
+        $str = preg_replace('/\/+/', '/', $str);
+        $str = str_replace(':/', '://', $str);
+
+        return $str;
     }
 
     /**
@@ -198,7 +215,7 @@ trait OpsTrait
      * @param mixed $type
      * @param mixed $id
      */
-    protected function download($name, $id, $list, $type)
+    protected function zipAndDownload($name, $id, $list, $type)
     {
         return response()->stream(function () use ($name, $list, $type, $id) {
             // track changes
@@ -251,8 +268,13 @@ trait OpsTrait
 
     protected function SSE_msg($data = null, $event = null)
     {
-        echo $event ? "event: $event\n" : ':';
-        echo $data ? 'data: ' . json_encode(['response' => $data]) . "\n\n" : ':';
+        echo $event
+            ? "event: $event\n"
+            : ':';
+
+        echo $data
+            ? 'data: ' . json_encode(['response' => $data]) . "\n\n"
+            : ':';
     }
 
     protected function clearZipCache($store, $item)

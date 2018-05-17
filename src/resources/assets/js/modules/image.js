@@ -18,25 +18,13 @@ export default {
         // lazy
         lazyImageActivate(index) {
             this.$nextTick(() => {
-                let img = this.$refs[`img_${index}`]
-
-                if (img && img.length && img[0].dataset.src) {
-                    img = img[0]
-                    img.src = img.dataset.src
-                    img.removeAttribute('data-src')
-                    img.parentElement.style.border = 'none'
-                }
+                EventHub.fire('lazy-image-activate', index)
             })
         },
         lazySelectFirst() {
             if (this.fileTypeIs(this.allFiles[0], 'folder')) {
                 return this.selectFirst()
             }
-        },
-        imageIsCached(url) {
-            // TODO
-            // check if img is in browser cache and show it
-            return false
         }
     }
 }

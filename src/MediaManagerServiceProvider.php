@@ -108,6 +108,7 @@ class MediaManagerServiceProvider extends ServiceProvider
             $view->with([
                'base_url' => preg_replace('/\/+$/', '/', $url),
                'patterns' => json_encode($patterns),
+               'randId'   => uniqid(),
            ]);
         });
     }

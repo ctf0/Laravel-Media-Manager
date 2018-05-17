@@ -36,13 +36,6 @@ export default {
 
             return count !== 0 ? this.getFileSize(count) : false
         },
-        bulkListFilterSize() {
-            let count = 0
-
-            this.bulkListFilter.map((item) => {count += item.size})
-
-            return count !== 0 ? this.getFileSize(count) : false
-        },
         bulkItemsChild() {
             let bulk = this.bulkItemsCount
 
@@ -64,13 +57,15 @@ export default {
                 return count
             }
         },
-        // this is made so we can still use move/delete
-        // incase we have multiple files selected
-        // and one or more of them is locked
-        bulkListFilter() {
+        bulkItemsFilter() {
             return this.lockedList.length
-                ? this.bulkList.filter((e) => {return !this.lockedList.includes(e.path)})
+                ? this.bulkList.filter((e) => !this.IsLocked(e.path))
                 : this.bulkList
+        },
+        bulkItemsFilterSize() {
+            let count = 0
+            this.bulkItemsFilter.map((item) => {count += item.size})
+            return count !== 0 ? this.getFileSize(count) : false
         },
 
         // upload panel
@@ -90,9 +85,37 @@ export default {
         },
 
         // caching
+        CDBN() {
+            return 'ctf0-Media_Manager'
+        },
         cacheName() {
             let folders = this.folders
             return folders.length ? '/' + folders.join('/') : 'root_'
+        }
+    },
+    asyncComputed: {
+        selectedFilePreview() {
+            if (this.selectedFileIs('image')) {
+                let url = this.selectedFile.path
+
+                if ( !this.config.lazyLoad || this.config.lazyLoad && !('caches' in window) ) {
+                    return url
+                }
+
+                // get cache or serve the url
+                // warning: url is now being downloaded twice
+                return caches.open(this.CDBN).then((cache) => {
+                    return cache.match(url).then((response) => {
+                        return response ? response.blob() : url
+                    }).then((blob) => {
+                        if (blob && blob.size) {
+                            return URL.createObjectURL(blob)
+                        } else {
+                            return blob
+                        }
+                    })
+                })
+            }
         }
     }
 }

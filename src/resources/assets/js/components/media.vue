@@ -3,31 +3,34 @@ import Utilities from '../modules/utils'
 import Download from '../modules/download'
 import Cache from '../modules/cache'
 import Form from '../modules/form'
-import FileFiltration from '../modules/filtration'
+import ItemFiltration from '../modules/filtration'
 import BulkSelect from '../modules/bulk'
-import LockFile from '../modules/lock'
-import SelectedFile from '../modules/selected'
+import LockItem from '../modules/lock'
+import ItemVisibility from '../modules/visibility'
+import Selected from '../modules/selected'
 import Restriction from '../modules/restriction'
-import Watchers from '../modules/watch'
-import Computed from '../modules/computed'
 import Image from '../modules/image'
 import Url from '../modules/url'
+import Watchers from '../modules/watch'
+import Computed from '../modules/computed'
 
 import Bounty from 'vue-bounty'
 import Cropper from './imageEditor/cropper.vue'
+import LazyImage from './lazy.vue'
 
 export default {
-    components: {Bounty, Cropper},
+    components: {Bounty, Cropper, LazyImage},
     name: 'media-manager',
     mixins: [
         Utilities,
         Download,
         Cache,
         Form,
-        FileFiltration,
+        ItemFiltration,
         BulkSelect,
-        LockFile,
-        SelectedFile,
+        LockItem,
+        ItemVisibility,
+        Selected,
         Restriction,
         Computed,
         Watchers,
@@ -36,12 +39,9 @@ export default {
     ],
     props: [
         'config',
+        'routes',
         'inModal',
         'translations',
-        'filesRoute',
-        'dirsRoute',
-        'lockFileRoute',
-        'zipProgressRoute',
         'uploadPanelImgList',
         'hideExt',
         'hidePath'
@@ -66,7 +66,6 @@ export default {
             randomNames: false,
             useCopy: false,
             toolBar: true,
-            visibilityType: 'public',
             imageWasEdited: false,
 
             files: [],
@@ -102,13 +101,16 @@ export default {
     created() {
         window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
-
         this.init()
     },
     mounted() {
         // check if image was edited
-        EventHub.listen('image-edited', () => {
+        EventHub.listen('image-edited', (msg) => {
             this.imageWasEdited = true
+            this.$refs['success-audio'].play()
+            this.removeCachedResponse().then(() => {
+                this.showNotif(`${this.trans('save_success')} "${msg}"`)
+            })
         })
     },
     updated() {
@@ -284,7 +286,7 @@ export default {
 
         refresh() {
             this.resetInput('searchFor')
-            this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
+            return this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
         },
         moveItem() {
             if (this.$refs.move.disabled) {
@@ -308,7 +310,7 @@ export default {
             }
 
             if (this.bulkItemsCount) {
-                this.bulkListFilter.some((item) => {
+                this.bulkItemsFilter.some((item) => {
                     return this.fileTypeIs(item, 'folder')
                         ? this.folderWarning = true
                         : this.folderWarning = false

@@ -362,31 +362,27 @@ export default {
             this.saveToDisk(data, file.name)
         },
         saveToDisk(data, name) {
-            this.$parent.toggleLoading()
-            let files = this.$parent.files
+            const parent = this.$parent
+            parent.toggleLoading()
 
             axios.post(this.route, {
-                path: files.path ? files.path : '/',
+                path: parent.files.path,
                 data: data,
                 name: name
             }).then(({data}) => {
 
-                this.$parent.toggleLoading()
+                parent.toggleLoading()
 
                 if (data.success) {
                     // notify parent to refresh on finish
-                    EventHub.fire('image-edited')
-
-                    this.$parent.$refs['success-audio'].play()
-                    this.$parent.removeCachedResponse('../')
-                    this.$parent.showNotif(`${this.trans('save_success')} "${data.message}"`)
+                    EventHub.fire('image-edited', data.message)
                 } else {
-                    this.$parent.showNotif(data.message, 'danger')
+                    parent.showNotif(data.message, 'danger')
                 }
 
             }).catch((err) => {
                 console.error(err)
-                this.$parent.ajaxError()
+                parent.ajaxError()
             })
         },
 

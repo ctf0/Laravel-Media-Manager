@@ -39,7 +39,7 @@ export default {
                 : folders.length ? `${folders[folders.length - 1]}-files` : 'media_manager-files'
 
             let es = new EventSource(
-                `${this.zipProgressRoute}/${name}/${id}`,
+                `${this.routes.zipProgress}/${name}/${id}`,
                 {withCredentials: true}
             )
 

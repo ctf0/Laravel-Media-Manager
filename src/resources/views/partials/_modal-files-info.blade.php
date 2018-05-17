@@ -1,7 +1,7 @@
 {{-- multi --}}
-<template v-if="bulkListFilter.length">
-    <template v-if="bulkListFilter.length <= 8">
-        <div class="media" v-for="one in bulkListFilter">
+<template v-if="bulkItemsFilter.length">
+    <template v-if="bulkItemsFilter.length <= 8">
+        <div class="media" v-for="one in bulkItemsFilter">
             <figure class="media-left">
                 <span class="icon has-text-link">
                     <icon v-if="fileTypeIs(one, 'folder')" name="folder" scale="1.2"></icon>
@@ -31,7 +31,7 @@
             </figure>
             <div class="media-content">
                 <p class="title is-4">
-                    <strong>"@{{ bulkListFilter.length }}"</strong>
+                    <strong>"@{{ bulkItemsFilter.length }}"</strong>
                     <small class="has-text-link">{{ trans('MediaManager::messages.too_many_files') }}</small>
                 </p>
             </div>
@@ -39,8 +39,8 @@
     </template>
 
     {{-- total size --}}
-    <p class="__modal-delete-total">
-        <span class="title">@{{ bulkListFilterSize }}</span>
+    <p v-if="bulkItemsFilterSize" class="__modal-delete-total">
+        <span class="title">@{{ bulkItemsFilterSize }}</span>
         <span class="heading">{{ trans('MediaManager::messages.total') }}</span>
     </p>
 </template>

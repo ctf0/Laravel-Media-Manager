@@ -14,26 +14,13 @@
                 target="_blank"
                 rel="noreferrer noopener"
                 class="image">
-                <img :src="selectedFile.path" :alt="file.name">
+                <img :src="selectedFilePreview" :alt="selectedFile.name">
             </a>
         </template>
     </v-touch>
 
     <div class="card-content">
         <div class="media">
-            {{-- lock / unlock --}}
-            <div class="media-left link">
-                <span class="icon is-large"
-                    :class="IsInLockedList(selectedFile) ? 'is-danger' : 'is-success'"
-                    :title="IsInLockedList(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
-                    v-tippy="{arrow: true, hideOnClick: false}"
-                    @click="toggleLock(selectedFile)">
-                    <span class="icon is-small">
-                        <icon :name="IsInLockedList(selectedFile) ? 'unlock' : 'lock'" scale="1.5"></icon>
-                    </span>
-                </span>
-            </div>
-
             <div class="media-content">
                 {{-- name --}}
                 <p class="title is-marginless">
@@ -50,12 +37,35 @@
                         :href="selectedFile.path"
                         target="_blank"
                         rel="noreferrer noopener">
-                        <icon name="eye"></icon>
+                        <icon name="search"></icon>
                     </a>
                 </p>
 
                 {{-- date --}}
                 <p class="subtitle is-6 m-t-5">@{{ selectedFile.last_modified_formated }}</p>
+
+                {{-- ops --}}
+                <p>
+                    {{-- lock / unlock --}}
+                    <span v-if="$refs.lock"
+                        class="icon is-large link"
+                        :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
+                        :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
+                        v-tippy="{arrow: true, hideOnClick: false}"
+                        @click="$refs.lock.click()">
+                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.2"></icon>
+                    </span>
+
+                    {{-- visibility --}}
+                    <span v-if="$refs.vis"
+                        class="icon is-large link"
+                        :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
+                        title="{{ trans('MediaManager::messages.visibility_set') }}"
+                        v-tippy
+                        @click="$refs.vis.click()">
+                        <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.2"></icon>
+                    </span>
+                </p>
             </div>
 
             <div class="media-right has-text-centered">

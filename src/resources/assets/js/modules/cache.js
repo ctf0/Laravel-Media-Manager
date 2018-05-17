@@ -2,25 +2,24 @@ import addMinutes from 'date-fns/add_minutes'
 import getTime from 'date-fns/get_time'
 
 import { Store, get, set, del, clear, keys } from 'idb-keyval'
-const DBNAME = 'ctf0-Media_Manager'
 const cacheStore = new Store(
-    DBNAME, // db
+    'ctf0-Media_Manager',   // db
     'laravel-media-manager' // store
 )
 
 export default {
     methods: {
-        // local storage
+        /*                Local Storage                */
         getLs() {
-            return this.$ls.get(DBNAME, {})
+            return this.$ls.get(this.CDBN, {})
         },
         updateLs(obj) {
             let storage = Object.assign(this.getLs(), obj)
-            this.$ls.set(DBNAME, storage)
+            this.$ls.set(this.CDBN, storage)
         },
-        removeLs() {
+        clearLs() {
             this.folders = []
-            this.$ls.remove(DBNAME)
+            this.$ls.remove(this.CDBN)
         },
         preSaved() {
             let ls = this.getLs()
@@ -34,7 +33,7 @@ export default {
             }
         },
 
-        // cache
+        /*                IndexedDb                */
         getCachedResponse(key = this.cacheName) {
             return get(key, cacheStore)
         },
@@ -47,20 +46,12 @@ export default {
             })
         },
         removeCachedResponse(destination = null, extra = []) {
-            let cacheName = this.cacheName
+            let cacheName = this.getCacheName(destination || this.cacheName)
             let items = ['root_']
             let promises = []
 
-            // current path only
-            if (!destination) {
-                return this.deleteCache(cacheName)
-            }
-
-            // up & down
-            destination == '../' ? false : cacheName = this.getCacheName(destination)
-
-            // clear nested folders cache too
             items.push(...this.getRecursivePathParent(cacheName))
+
             if (extra.length) {
                 extra.forEach((e) => {
                     items.push(...this.getRecursivePathParent(e))
@@ -69,27 +60,24 @@ export default {
 
             // clear dups and delete items
             Array.from(new Set(items)).forEach((one) => {
-                promises.push(this.deleteCache(one))
+                promises.push(this.deleteCachedResponse(one))
             })
 
             return Promise.all(promises)
         },
-        deleteCache(item) {
+        deleteCachedResponse(item) {
             return del(item, cacheStore).then(() => {
                 console.log(`${item} ${this.trans('clear_cache')}`)
             }).catch((err) => {
                 console.error('cacheStore.removeItem', err)
             })
         },
-        clearCache(showNotif = true) {
+        clearCache(notif = true) {
             clear(cacheStore).then(() => {
-                if (showNotif) {
-                    this.showNotif(this.trans('clear_cache'))
-                }
+                this.refresh().then(() => {
+                    if (notif) this.showNotif(this.trans('clear_cache'))
+                })
 
-                setTimeout(() => {
-                    this.refresh()
-                }, 100)
             }).catch((err) => {
                 console.error(err)
             })
@@ -102,7 +90,7 @@ export default {
                     keys.map((key) => {
                         return this.getCachedResponse(key).then((item) => {
                             if (item.expire <= now) {
-                                return this.deleteCache(key)
+                                return this.deleteCachedResponse(key)
                             }
                         })
                     })
@@ -112,13 +100,17 @@ export default {
             })
         },
 
-        /*                helpers                */
+        // helpers
         getCacheName(path) {
             let str = this.cacheName == 'root_'
-                ? `/${path}`
-                : `${this.cacheName}/${path}`
+                ? path == 'root_'
+                    ? path
+                    : `/${path}`
+                : this.cacheName == path
+                    ? `/${path}`
+                    : `${this.cacheName}/${path}`
 
-            return str.replace('//', '/')
+            return this.clearDblSlash(str)
         },
         getRecursivePathParent(path) {
             let list = []
@@ -126,12 +118,34 @@ export default {
             let i = arr.length - 1
 
             for (i; i >= 0; i--) {
-                list.push(path)           // add current
-                arr.pop()                       // remove last
+                list.push(path)            // add current
+                arr.pop()                  // remove last
                 path = `/${arr.join('/')}` // regroup remaining
             }
 
             return list
+        },
+
+        /*                Cache Storage Api                */
+        removeImageCache(url) {
+            if ('caches' in window) {
+                return caches.open(this.CDBN).then((cache) => {
+                    return cache.delete(url)
+                })
+            }
+        },
+        clearImageCache() {
+            if ('caches' in window) {
+                caches.keys().then((keys) => {
+                    return Promise.all(
+                        keys.map((item) => {
+                            if (item == this.CDBN) {
+                                return caches.delete(item)
+                            }
+                        })
+                    )
+                })
+            }
         }
     }
 }

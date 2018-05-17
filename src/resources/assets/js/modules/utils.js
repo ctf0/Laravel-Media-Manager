@@ -14,15 +14,22 @@ export default {
         /*                Buttons                */
         item_ops() {
             if (this.isBulkSelecting()) {
-                return this.bulkListFilter.length == 0
+                return this.bulkItemsFilter.length == 0
             }
 
-            return !this.selectedFile || this.IsInLockedList(this.selectedFile)
+            return !this.selectedFile || this.IsLocked(this.selectedFile)
         },
-        lock() {
+        lock_btn() {
+            return this.searchItemsCount == 0 ||
+                this.isLoading ||
+                !this.allItemsCount ||
+                this.isBulkSelecting() && !this.bulkItemsCount
+        },
+        vis_btn() {
             return this.searchItemsCount == 0 ||
             this.isLoading ||
             !this.allItemsCount ||
+            !this.isBulkSelecting() && this.selectedFileIs('folder') ||
             this.isBulkSelecting() && !this.bulkItemsCount
         },
         reset() {
@@ -163,6 +170,12 @@ export default {
 
             this[input] = val
         },
+        clearDblSlash(str) {
+            str = str.replace(/\/+/g, '/')
+            str = str.replace(/:\//, '://')
+
+            return str
+        },
         showNotif(msg, s = 'success') {
             if (msg) {
                 if (s == 'danger') {
@@ -180,6 +193,9 @@ export default {
                         break
                     case 'warning':
                         title = 'Warning'
+                        break
+                    case 'info':
+                        title = 'Info'
                         break
                     default:
                         title = 'Success'

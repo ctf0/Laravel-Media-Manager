@@ -31,7 +31,7 @@ export default {
                     sendingComplete = parseInt(progress.toFixed(2)) == 100 ? true : false
                 },
                 successmultiple(files, res) {
-                    res.data.map((item) => {
+                    res.map((item) => {
                         if (item.success) {
                             manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
                             last = item.message
@@ -47,7 +47,7 @@ export default {
                         manager.showProgress = false
 
                         manager.$refs['success-audio'].play()
-                        manager.removeCachedResponse('../').then(() => {
+                        manager.removeCachedResponse().then(() => {
                             last
                                 ? manager.getFiles(manager.folders, null, last)
                                 : manager.getFiles(manager.folders)
@@ -90,7 +90,7 @@ export default {
                 })
 
                 this.showNotif(`${this.trans('save_success')} "${data.message}"`)
-                this.removeCachedResponse('../').then(() => {
+                this.removeCachedResponse().then(() => {
                     this.getFiles(this.folders, null, data.message)
                 })
 
@@ -131,7 +131,7 @@ export default {
                         }
 
                         // or make new call
-                        return axios.post(this.filesRoute, {
+                        return axios.post(this.routes.files, {
                             folder: folders,
                             dirs: this.folders
                         }).then(({data}) => {
@@ -160,7 +160,7 @@ export default {
             })
         },
         updateDirsList() {
-            axios.post(this.dirsRoute, {
+            axios.post(this.routes.dirs, {
                 folder_location: this.folders
             }).then(({data}) => {
                 this.dirsListCheck(data)
@@ -246,6 +246,7 @@ export default {
             this.loadingFiles('hide')
         },
         dirsListCheck(data) {
+            const baseUrl = this.config.baseUrl
             this.directories = data
 
             // check for hidden folders in directories
@@ -259,13 +260,13 @@ export default {
                 // nested folders
                 if (this.files.path !== '') {
                     return this.directories = this.directories.filter((e) => {
-                        return !this.lockedList.includes(`${this.config.baseUrl}${this.folders.join('/')}${e}`)
+                        return !this.IsLocked(this.clearDblSlash(`${baseUrl}/${this.folders.join('/')}/${e}`))
                     })
                 }
 
                 // root
                 this.directories = this.directories.filter((e) => {
-                    return !this.lockedList.includes(`${this.config.baseUrl}${e}`)
+                    return !this.IsLocked(this.clearDblSlash(`${baseUrl}/${e}`))
                 })
             }
         },
@@ -286,7 +287,7 @@ export default {
             this.toggleLoading()
 
             axios.post(event.target.action, {
-                current_path: path,
+                path: path,
                 new_folder_name: folder_name
             }).then(({data}) => {
                 this.toggleLoading()
@@ -298,7 +299,7 @@ export default {
                 }
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path}"`)
-                this.removeCachedResponse('../').then(() => {
+                this.deleteCachedResponse(this.cacheName).then(() => {
                     this.getFiles(this.folders, data.new_folder_name)
                 })
 
@@ -312,6 +313,7 @@ export default {
         RenameFileForm(event) {
             let changed = this.newFilename
             let filename = this.selectedFile.name
+            let cacheName = this.getCacheName(filename)
             let ext = this.getExtension(filename)
             let newFilename = ext == null ? changed : `${changed}.${ext}`
 
@@ -319,14 +321,21 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            if (this.selectedFileIs('folder') && changed.match(/^.\/.*|^.$/)) {
-                return this.showNotif(this.trans('single_char_folder'), 'danger')
+            if (this.selectedFileIs('folder')) {
+                if (changed.match(/^.\/.*|^.$/)) {
+                    return this.showNotif(this.trans('single_char_folder'), 'danger')
+                }
+
+                if (this.hasLockedItems(filename, cacheName)) {
+                    this.showNotif(`"${filename}" ${this.trans('error_altered_fwli')}`, 'danger')
+                    return this.toggleModal()
+                }
             }
 
             this.toggleLoading()
 
             axios.post(event.target.action, {
-                folder_location: this.files.path,
+                path: this.files.path,
                 filename: filename,
                 new_filename: newFilename
             }).then(({data}) => {
@@ -337,12 +346,18 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
+                // clear image cache
+                if (this.selectedFileIs('image')) {
+                    this.removeImageCache(this.selectedFile.path)
+                }
+
                 this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
                 this.updateItemName(this.selectedFile, filename, data.new_filename)
 
+                // clear folders cache
                 if (this.selectedFileIs('folder')) {
                     this.updateDirsList()
-                    this.removeCachedResponse('../', [this.getCacheName(filename)])
+                    this.removeCachedResponse(null, [cacheName])
                 } else {
                     this.removeCachedResponse()
                 }
@@ -359,14 +374,20 @@ export default {
                 let destination = this.moveToPath
                 let copy = this.useCopy
                 let error = false
-                let files = this.bulkItemsCount
-                    ? this.bulkListFilter
-                    : [this.selectedFile]
+                let files = this.checkNestedLockedItems(
+                    this.bulkItemsCount
+                        ? this.bulkItemsFilter
+                        : [this.selectedFile]
+                )
+
+                if (!files.length) {
+                    return this.toggleModal()
+                }
 
                 this.toggleLoading()
 
                 axios.post(event.target.action, {
-                    folder_location: this.files.path,
+                    path: this.files.path,
                     destination: destination,
                     moved_files: files,
                     use_copy: copy
@@ -374,7 +395,7 @@ export default {
                     this.toggleLoading()
                     this.toggleModal()
 
-                    data.data.map((item) => {
+                    data.map((item) => {
                         if (!item.success) {
                             error = true
                             return this.showNotif(item.message, 'danger')
@@ -405,16 +426,19 @@ export default {
                             : this.updateFolderCount(destination, 1, item.size)
                     })
 
+                    this.clearImageCache()
                     this.$refs['success-audio'].play()
-                    this.removeCachedResponse(destination)
-
-                    this.isBulkSelecting()
-                        ? this.blkSlct()
-                        : error
-                            ? false
-                            : !this.config.lazyLoad
-                                ? this.selectFirst()
-                                : this.lazySelectFirst()
+                    this.removeCachedResponse(destination == '../' ? null : destination).then(() => {
+                        if (this.allItemsCount) {
+                            this.isBulkSelecting()
+                                ? this.blkSlct()
+                                : error
+                                    ? false
+                                    : !this.config.lazyLoad
+                                        ? this.selectFirst()
+                                        : this.lazySelectFirst()
+                        }
+                    })
 
                 }).catch((err) => {
                     console.error(err)
@@ -427,42 +451,55 @@ export default {
         DeleteFileForm(event) {
             let clearCache = false
             let foldersList = []
-            let files = this.bulkItemsCount
-                ? this.bulkListFilter
-                : [this.selectedFile]
+            let files = this.checkNestedLockedItems(
+                this.bulkItemsCount
+                    ? this.bulkItemsFilter
+                    : [this.selectedFile]
+            )
+
+            if (!files.length) {
+                return this.toggleModal()
+            }
 
             this.toggleLoading()
 
             axios.post(event.target.action, {
-                folder_location: this.files.path,
+                path: this.files.path,
                 deleted_files: files
             }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
 
-                data.res.map((item) => {
+                data.map((item) => {
                     if (!item.success) {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    // clear nested folders cache
-                    if (item.type == 'folder' || item.parent_path) {
-                        foldersList.push(this.getCacheName(item.parent_path || item.name))
+                    // clear folders cache
+                    if (item.type == 'folder') {
+                        foldersList.push(this.getCacheName(item.name))
+                    }
+                    // clear image cache
+                    if (item.type != 'folder') {
+                        this.removeImageCache(this.clearDblSlash(item.path))
                     }
 
                     clearCache = true
-                    this.showNotif(`${this.trans('delete_success')} "${item.name}"`, 'warning')
+                    this.showNotif(`${this.trans('delete_success')} "${item.name}"`)
                     this.removeFromLists(item.name, item.type)
                 })
 
                 if (clearCache) {
                     this.$refs['success-audio'].play()
-                    this.removeCachedResponse('../', foldersList)
-                    this.isBulkSelecting()
-                        ? this.blkSlct()
-                        : !this.config.lazyLoad
-                            ? this.selectFirst()
-                            : this.lazySelectFirst()
+                    this.removeCachedResponse(null, foldersList).then(() => {
+                        if (this.allItemsCount) {
+                            this.isBulkSelecting()
+                                ? this.blkSlct()
+                                : !this.config.lazyLoad
+                                    ? this.selectFirst()
+                                    : this.lazySelectFirst()
+                        }
+                    })
                 }
 
                 this.$nextTick(() => {
@@ -470,66 +507,6 @@ export default {
                         this.searchItemsCount = this.filesList.length
                     }
                 })
-
-            }).catch((err) => {
-                console.error(err)
-                this.ajaxError()
-            })
-        },
-
-        // visibility
-        SetVisibilityForm(event) {
-            let list = this.bulkItemsCount
-                ? this.bulkListFilter
-                : [this.selectedFile]
-
-            this.toggleLoading()
-
-            axios.post(event.target.action, {
-                type: this.visibilityType,
-                list: list,
-                path: this.files.path
-            }).then(({data}) => {
-                this.toggleLoading()
-                this.toggleModal()
-
-                data.res.map((item) => {
-                    if (item.success) {
-                        this.showNotif(item.message)
-                    } else {
-                        this.showNotif(item.message, 'danger')
-                    }
-                })
-
-                list.map((e) => {
-                    return e.visibility = this.visibilityType
-                })
-
-                this.$refs['success-audio'].play()
-                this.removeCachedResponse()
-                this.isBulkSelecting()
-                    ? this.blkSlct()
-                    : false
-
-            }).catch((err) => {
-                console.error(err)
-                this.ajaxError()
-            })
-        },
-
-        // lock / unlock
-        lockForm(path, state) {
-            axios.post(this.lockFileRoute, {
-                path: path,
-                state: state
-            }).then(({data}) => {
-                this.showNotif(data.message)
-
-                if (this.selectedFileIs('folder')) {
-                    this.removeCachedResponse('../')
-                } else {
-                    this.removeCachedResponse()
-                }
 
             }).catch((err) => {
                 console.error(err)
@@ -559,10 +536,10 @@ export default {
                 })
             }
 
-            this.files.items.map((e) => {
-                if (e.name.includes(name) && e.type.includes(type)) {
-                    let list = this.files.items
+            let list = this.files.items
 
+            this.files.items.map((e) => {
+                if (e.name == name && e.type == type) {
                     list.splice(list.indexOf(e), 1)
                 }
             })
