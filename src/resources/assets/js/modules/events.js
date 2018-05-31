@@ -1,3 +1,5 @@
+import lottie from 'lottie-web'
+
 // M O D A L
 EventHub.listen('modal-show', () => {})
 EventHub.listen('modal-hide', () => {})
@@ -11,7 +13,7 @@ EventHub.listen('loading-files-show', () => {
 
 EventHub.listen('loading-files-hide', () => {
     setTimeout(() => {
-        bodymovin.destroy('loading_files_anim')
+        lottie.destroy('loading_files_anim')
     }, 50)
 })
 
@@ -21,7 +23,7 @@ EventHub.listen('no-files-show', () => {
 })
 
 EventHub.listen('no-files-hide', () => {
-    bodymovin.destroy('no_files_anim')
+    lottie.destroy('no_files_anim')
 })
 
 // N O - S E A R C H
@@ -30,7 +32,7 @@ EventHub.listen('no-search-show', () => {
 })
 
 EventHub.listen('no-search-hide', () => {
-    bodymovin.destroy('no_search_anim')
+    lottie.destroy('no_search_anim')
 })
 
 // A J A X  - E R R O R
@@ -40,10 +42,9 @@ EventHub.listen('ajax-error-show', () => {
 
 /**
  * body movin animation
- * you can remove it / replace it, do what you want
  */
 function bm(el, name) {
-    bodymovin.loadAnimation({
+    lottie.loadAnimation({
         container: el,
         renderer: 'svg',
         loop: true,

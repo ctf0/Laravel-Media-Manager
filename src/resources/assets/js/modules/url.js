@@ -3,8 +3,11 @@ export default {
         checkForUrlQuery() {
             return window.location.href.split('?')[0]
         },
+        clearUrlQuery() {
+            window.history.replaceState(null, null, window.location.href.replace(/\?path.*/, ''))
+        },
         getPathFromUrl() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 if (!this.inModal) {
                     let path = window.location.search
                     this.folders = path.includes('path') ? path.replace('?path=', '').split('/') : []

@@ -45,7 +45,10 @@ export default {
             // normal selection
             this.selectedFile = file
             this.currentFileIndex = index
-            this.lazyImageActivate(index)
+
+            if (this.config.lazyLoad) {
+                this.lazyImageActivate(index)
+            }
 
             // bulk selection
             if (this.isBulkSelecting()) {
@@ -82,7 +85,7 @@ export default {
 
         /*                Folder                */
         openFolder(file) {
-            if (!this.isBulkSelecting() && this.fileTypeIs(file, 'folder')) {
+            if (this.fileTypeIs(file, 'folder')) {
                 this.folders.push(file.name)
                 this.getFiles(this.folders).then(() => {
                     this.updatePageUrl()
@@ -94,12 +97,17 @@ export default {
                 let prev_folder_name = this.folders[index]
 
                 this.folders = this.folders.splice(0, index)
+
                 this.getFiles(this.folders, prev_folder_name).then(() => {
                     this.updatePageUrl()
                 })
             }
         },
         goToPrevFolder() {
+            if (this.restrictModeIsOn()) {
+                return false
+            }
+
             let length = this.folders.length
 
             return length == 0
@@ -171,6 +179,8 @@ export default {
             if (file) {
                 file.click()
 
+                // to make sure the DOM has finished updating
+                // especially for long lists
                 this.$nextTick(() => {
                     this.$nextTick(() => {
                         let container = this.$refs['__stack-files'].$el

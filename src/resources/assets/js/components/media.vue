@@ -14,12 +14,12 @@ import Url from '../modules/url'
 import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
 
-import Bounty from 'vue-bounty'
 import Cropper from './imageEditor/cropper.vue'
-import LazyImage from './lazy.vue'
+import imageCache from './lazyLoading/cache.vue'
+import imageIntersect from './lazyLoading/normal.vue'
 
 export default {
-    components: {Bounty, Cropper, LazyImage},
+    components: {Cropper, imageCache, imageIntersect},
     name: 'media-manager',
     mixins: [
         Utilities,
@@ -44,7 +44,8 @@ export default {
         'translations',
         'uploadPanelImgList',
         'hideExt',
-        'hidePath'
+        'hidePath',
+        'restrict'
     ],
     data() {
         return {
@@ -116,17 +117,33 @@ export default {
     updated() {
         this.autoPlay()
         this.$nextTick(() => {
-            return this.$refs.move_folder_dropdown.options[0]
-                ? this.checkForFolders = true
-                : this.checkForFolders = false
+            this.activeModal || this.inModal
+                ? this.noScroll('add')
+                : this.noScroll('remove')
+
+            return this.checkForFolders = this.$refs.move_folder_dropdown.options[0]
+                ? true
+                : false
         })
     },
     beforeDestroy() {
         window.removeEventListener('popstate', this.urlNavigation)
         document.removeEventListener('keydown', this.shortCuts)
+        this.noScroll('remove')
     },
     methods: {
         init() {
+            // restricted
+            if (this.restrictModeIsOn()) {
+                this.clearUrlQuery()
+                this.resolveRestrictFolders()
+
+                return this.getFiles(this.folders).then(() => {
+                    this.fileUpload()
+                })
+            }
+
+            // normal
             this.getPathFromUrl().then(() => {
                 return this.preSaved()
             }).then(() => {
@@ -177,7 +194,6 @@ export default {
 
                                     // "show" image/pdf/text quick view
                                     if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
-                                        this.noScroll('add')
                                         this.toggleModal('preview_modal')
                                     }
                                 }
@@ -200,10 +216,15 @@ export default {
                             if (key == 'u') {
                                 this.$refs.upload.click()
                             }
+
+                            // hide upload panel
+                            if (this.toggleUploadArea && key == 'esc') {
+                                this.toggleUploadPanel()
+                            }
                         }
                         /* end of no bulk selection */
 
-                        // with or without bulk selection
+                        // we have files
                         if (this.allItemsCount) {
                             // bulk select
                             if (key == 'b') {
@@ -246,7 +267,7 @@ export default {
                                 this.$refs.vis.click()
                             }
                         }
-                        /* end of with or without bulk selection */
+                        /* end of we have files */
 
                         // toggle file details sidebar
                         if (key == 't') {
@@ -265,7 +286,6 @@ export default {
                 // when modal is visible
                 else {
                     if (this.isActiveModal('preview_modal')) {
-                        // hide lb
                         if (key == 'space') {
                             e.preventDefault()
                             this.toggleModal()
@@ -274,7 +294,6 @@ export default {
                         this.navigation(e)
                     }
 
-                    // hide lb
                     if (key == 'esc') {
                         this.toggleModal()
                     }

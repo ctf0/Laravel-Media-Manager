@@ -3,12 +3,11 @@ export default {
         /*                Upload                */
         fileUpload() {
             const manager = this
+            let uploadTypes = this.restrict.uploadTypes ? this.restrict.uploadTypes.join(',') : null
+            let uploadsize = this.restrict.uploadsize ? this.restrict.uploadsize : 256
 
-            let items = 0
-            let progress = 0
-            let counter = 0
             let last = null
-            let sendingComplete = false
+            let sending = false
 
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
@@ -17,18 +16,18 @@ export default {
                 uploadMultiple: true,
                 forceFallback: false,
                 ignoreHiddenFiles: true,
+                acceptedFiles: uploadTypes,
+                maxFilesize: uploadsize,
                 timeout: 3600000, // 60 mins
                 previewsContainer: '#uploadPreview',
-                addedfile() {
+                processingmultiple() {
                     manager.showProgress = true
-                    items++
-                    counter = 100 / items
                 },
                 sending() {
-                    progress += counter
-                    manager.progressCounter = `${progress.toFixed(2)}%`
-
-                    sendingComplete = parseInt(progress.toFixed(2)) == 100 ? true : false
+                    sending = true
+                },
+                totaluploadprogress(uploadProgress) {
+                    manager.progressCounter = `${uploadProgress}%`
                 },
                 successmultiple(files, res) {
                     res.map((item) => {
@@ -40,22 +39,24 @@ export default {
                         }
                     })
 
-                    if (sendingComplete == true) {
-                        items = 0
-                        progress = 0
+                    sending = false
+                },
+                errormultiple(file, res) {
+                    file = Array.isArray(file) ? file[0] : file
+                    manager.showNotif(`"${file.name}" ${res}`, 'danger')
+                },
+                queuecomplete() {
+                    if (!sending) {
+                        manager.$refs['success-audio'].play()
                         manager.progressCounter = 0
                         manager.showProgress = false
 
-                        manager.$refs['success-audio'].play()
                         manager.removeCachedResponse().then(() => {
                             last
                                 ? manager.getFiles(manager.folders, null, last)
                                 : manager.getFiles(manager.folders)
                         })
                     }
-                },
-                errormultiple(files, res) {
-                    manager.showNotif(res, 'danger')
                 }
             })
         },
@@ -109,14 +110,15 @@ export default {
         getFiles(folders = '/', prev_folder = null, prev_file = null) {
             this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
+
             if (!this.loading_files) {
                 this.toggleInfo = false
                 this.toggleLoading()
                 this.loadingFiles('show')
             }
 
-            if (folders !== '/') {
-                folders = '/' + folders.join('/')
+            if (folders != '/') {
+                folders = this.clearDblSlash(`/${folders.join('/')}`)
             }
 
             // clear expired cache
@@ -185,10 +187,17 @@ export default {
                 })
             }
 
+            // hide folders for restrictionMode
+            if (this.restrictModeIsOn()) {
+                this.files.items = this.files.items.filter((e) => {
+                    return e.type != 'folder'
+                })
+            }
+
             // we have files
             if (this.allItemsCount) {
                 this.loadingFiles('hide')
-                this.isLoading = false
+                this.toggleLoading()
                 this.toggleInfo = true
 
                 // check for prev opened folder
@@ -298,7 +307,11 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path}"`)
+                this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path || '/'}"`)
+                this.isBulkSelecting()
+                    ? this.blkSlct()
+                    : false
+
                 this.deleteCachedResponse(this.cacheName).then(() => {
                     this.getFiles(this.folders, data.new_folder_name)
                 })
@@ -373,7 +386,7 @@ export default {
             if (this.checkForFolders) {
                 let destination = this.moveToPath
                 let copy = this.useCopy
-                let error = false
+                let hasErrors = false
                 let files = this.checkNestedLockedItems(
                     this.bulkItemsCount
                         ? this.bulkItemsFilter
@@ -397,7 +410,7 @@ export default {
 
                     data.map((item) => {
                         if (!item.success) {
-                            error = true
+                            hasErrors = true
                             return this.showNotif(item.message, 'danger')
                         }
 
@@ -432,7 +445,7 @@ export default {
                         if (this.allItemsCount) {
                             this.isBulkSelecting()
                                 ? this.blkSlct()
-                                : error
+                                : hasErrors
                                     ? false
                                     : !this.config.lazyLoad
                                         ? this.selectFirst()
@@ -450,7 +463,7 @@ export default {
         // delete
         DeleteFileForm(event) {
             let clearCache = false
-            let foldersList = []
+            let cacheNamesList = []
             let files = this.checkNestedLockedItems(
                 this.bulkItemsCount
                     ? this.bulkItemsFilter
@@ -475,11 +488,11 @@ export default {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    // clear folders cache
+                    // clear indexdb cache
                     if (item.type == 'folder') {
-                        foldersList.push(this.getCacheName(item.name))
+                        cacheNamesList.push(this.getCacheName(item.name))
                     }
-                    // clear image cache
+                    // clear cache storage cache
                     if (item.type != 'folder') {
                         this.removeImageCache(this.clearDblSlash(item.path))
                     }
@@ -491,14 +504,14 @@ export default {
 
                 if (clearCache) {
                     this.$refs['success-audio'].play()
-                    this.removeCachedResponse(null, foldersList).then(() => {
-                        if (this.allItemsCount) {
-                            this.isBulkSelecting()
-                                ? this.blkSlct()
-                                : !this.config.lazyLoad
+                    this.removeCachedResponse(null, cacheNamesList).then(() => {
+                        this.isBulkSelecting()
+                            ? this.blkSlct()
+                            : this.allItemsCount
+                                ? !this.config.lazyLoad
                                     ? this.selectFirst()
                                     : this.lazySelectFirst()
-                        }
+                                : false
                     })
                 }
 

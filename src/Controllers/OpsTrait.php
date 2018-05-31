@@ -185,6 +185,11 @@ trait OpsTrait
         return $this->clearDblSlash("{$this->baseUrl}/{$path}");
     }
 
+    protected function clearUrl($path)
+    {
+        return str_replace($this->baseUrl, '', $path);
+    }
+
     protected function clearDblSlash($str)
     {
         $str = preg_replace('/\/+/', '/', $str);
@@ -205,6 +210,18 @@ trait OpsTrait
     protected function storeFile($item, $upload_path, $file_name)
     {
         return $item->storeAs($upload_path, $file_name, $this->fileSystem);
+    }
+
+    /**
+     * allow/disallow user upload.
+     *
+     * @param [type] $file [description]
+     *
+     * @return [type] [description]
+     */
+    protected function allowUpload($file = null)
+    {
+        return true;
     }
 
     /**
@@ -236,20 +253,20 @@ trait OpsTrait
                 if ($type == 'folder') {
                     $file_name = pathinfo($file, PATHINFO_BASENAME);
                     $streamRead = $this->storageDisk->readStream($file);
+
+                    // check if file name was used b4
+                    $name_only = pathinfo($file, PATHINFO_FILENAME);
+                    $ext_only  = pathinfo($file, PATHINFO_EXTENSION);
+
+                    if (in_array($file_name, $names)) {
+                        ++$order;
+                        $file_name = "{$name_only}_{$order}.{$ext_only}";
+                    } else {
+                        $names[] = $file_name;
+                    }
                 } else {
                     $file_name = $file['name'];
-                    $streamRead = @fopen($file['path'], 'r');
-                }
-
-                // check if file name was used b4
-                $name_only = pathinfo($file, PATHINFO_FILENAME);
-                $ext_only  = pathinfo($file, PATHINFO_EXTENSION);
-
-                if (in_array($file_name, $names)) {
-                    ++$order;
-                    $file_name = "{$name_only}_{$order}.{$ext_only}";
-                } else {
-                    $names[] = $file_name;
+                    $streamRead = $this->storageDisk->readStream($this->clearUrl($file['path']));
                 }
 
                 // add to zip
@@ -280,7 +297,7 @@ trait OpsTrait
     protected function clearZipCache($store, $item)
     {
         $store->forget("$item.progress");
+        $store->forget("$item.warn");
         $store->forget("$item.done");
-        $store->forget("$item.abort");
     }
 }

@@ -118,15 +118,134 @@ class MediaController extends Controller
         $result      = [];
 
         foreach ($request->file as $one) {
-            $original    = $one->getClientOriginalName();
+            if ($this->allowUpload($one)) {
+                $original    = $one->getClientOriginalName();
+                $name_only   = pathinfo($original, PATHINFO_FILENAME);
+                $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
+                $file_name   = $random_name
+                    ? $this->sanitizedText . ".$ext_only"
+                    : $this->cleanName($name_only, null) . ".$ext_only";
+
+                $file_type   = $one->getMimeType();
+                $destination = !$upload_path ? $file_name : $this->clearDblSlash("$upload_path/$file_name");
+
+                try {
+                    // check for mime type
+                    if (str_contains($file_type, $this->unallowedMimes)) {
+                        throw new Exception(
+                            trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
+                        );
+                    }
+
+                    // check existence
+                    if ($this->storageDisk->exists($destination)) {
+                        throw new Exception(
+                            trans('MediaManager::messages.error_already_exists')
+                        );
+                    }
+
+                    // save file
+                    $saved_name = $this->storeFile($one, $upload_path, $file_name);
+
+                    // fire event
+                    event('MMFileUploaded', $this->getItemPath($saved_name));
+
+                    $result[] = [
+                        'success' => true,
+                        'message' => $file_name,
+                    ];
+                } catch (Exception $e) {
+                    $result[] = [
+                        'success' => false,
+                        'message' => "\"$file_name\" " . $e->getMessage(),
+                    ];
+                }
+            } else {
+                $result[] = [
+                    'success' => false,
+                    'message' => trans('MediaManager::messages.error_cant_upload'),
+                ];
+            }
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * save cropped image.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function uploadEditedImage(Request $request)
+    {
+        if ($this->allowUpload()) {
+            $path        = $request->path;
+            $data        = explode(',', $request->data)[1];
+            $original    = $request->name;
+            $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->sanitizedText;
+            $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
+            $file_name   = "$name_only.$ext_only";
+            $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
+
+            try {
+                // check existence
+                if ($this->storageDisk->exists($destination)) {
+                    throw new Exception(
+                        trans('MediaManager::messages.error_already_exists')
+                    );
+                }
+
+                // save file
+                $this->storageDisk->put($destination, base64_decode($data));
+
+                // fire event
+                event('MMFileSaved', $this->getItemPath($destination));
+
+                $result = [
+                    'success' => true,
+                    'message' => $file_name,
+                ];
+            } catch (Exception $e) {
+                $result = [
+                    'success' => false,
+                    'message' => "\"$file_name\" " . $e->getMessage(),
+                ];
+            }
+        } else {
+            $result = [
+                'success' => false,
+                'message' => trans('MediaManager::messages.error_cant_upload'),
+            ];
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * save image from link.
+     *
+     * @param Request $request [description]
+     *
+     * @return [type] [description]
+     */
+    public function uploadLink(Request $request)
+    {
+        if ($this->allowUpload()) {
+            $url         = $request->url;
+            $path        = $request->path;
+            $random_name = $request->random_names;
+
+            $original    = substr($url, strrpos($url, '/') + 1);
             $name_only   = pathinfo($original, PATHINFO_FILENAME);
             $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
             $file_name   = $random_name
                 ? $this->sanitizedText . ".$ext_only"
                 : $this->cleanName($name_only, null) . ".$ext_only";
 
-            $file_type   = $one->getMimeType();
-            $destination = !$upload_path ? $file_name : $this->clearDblSlash("$upload_path/$file_name");
+            $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
+            $file_type   = image_type_to_mime_type(exif_imagetype($url));
 
             try {
                 // check for mime type
@@ -144,123 +263,25 @@ class MediaController extends Controller
                 }
 
                 // save file
-                $saved_name = $this->storeFile($one, $upload_path, $file_name);
+                $this->storageDisk->put($destination, file_get_contents($url));
 
                 // fire event
-                event('MMFileUploaded', $this->getItemPath($saved_name));
+                event('MMFileSaved', $this->getItemPath($destination));
 
-                $result[] = [
+                $result = [
                     'success' => true,
                     'message' => $file_name,
                 ];
             } catch (Exception $e) {
-                $result[] = [
+                $result = [
                     'success' => false,
                     'message' => "\"$file_name\" " . $e->getMessage(),
                 ];
             }
-        }
-
-        return response()->json($result);
-    }
-
-    /**
-     * save cropped image.
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
-    public function uploadEditedImage(Request $request)
-    {
-        $path        = $request->path;
-        $data        = explode(',', $request->data)[1];
-        $original    = $request->name;
-        $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->sanitizedText;
-        $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
-        $file_name   = "$name_only.$ext_only";
-        $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
-
-        try {
-            // check existence
-            if ($this->storageDisk->exists($destination)) {
-                throw new Exception(
-                    trans('MediaManager::messages.error_already_exists')
-                );
-            }
-
-            // save file
-            $this->storageDisk->put($destination, base64_decode($data));
-
-            // fire event
-            event('MMFileSaved', $this->getItemPath($destination));
-
-            $result = [
-                'success' => true,
-                'message' => $file_name,
-            ];
-        } catch (Exception $e) {
+        } else {
             $result = [
                 'success' => false,
-                'message' => "\"$file_name\" " . $e->getMessage(),
-            ];
-        }
-
-        return response()->json($result);
-    }
-
-    /**
-     * save image from link.
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
-    public function uploadLink(Request $request)
-    {
-        $url         = $request->url;
-        $path        = $request->path;
-        $random_name = $request->random_names;
-
-        $original    = substr($url, strrpos($url, '/') + 1);
-        $name_only   = pathinfo($original, PATHINFO_FILENAME);
-        $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
-        $file_name   = $random_name
-            ? $this->sanitizedText . ".$ext_only"
-            : $this->cleanName($name_only, null) . ".$ext_only";
-
-        $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
-        $file_type   = image_type_to_mime_type(exif_imagetype($url));
-
-        try {
-            // check for mime type
-            if (str_contains($file_type, $this->unallowedMimes)) {
-                throw new Exception(
-                    trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
-                );
-            }
-
-            // check existence
-            if ($this->storageDisk->exists($destination)) {
-                throw new Exception(
-                    trans('MediaManager::messages.error_already_exists')
-                );
-            }
-
-            // save file
-            $this->storageDisk->put($destination, file_get_contents($url));
-
-            // fire event
-            event('MMFileSaved', $this->getItemPath($destination));
-
-            $result = [
-                'success' => true,
-                'message' => $file_name,
-            ];
-        } catch (Exception $e) {
-            $result = [
-                'success' => false,
-                'message' => "\"$file_name\" " . $e->getMessage(),
+                'message' => trans('MediaManager::messages.error_cant_upload'),
             ];
         }
 
@@ -467,13 +488,13 @@ class MediaController extends Controller
         $result = [];
 
         foreach ($request->deleted_files as $one) {
-            $name = $one['name'];
-            $type = $one['type'];
-            $path = !$path ? $name : $this->clearDblSlash("$path/$name");
+            $name      = $one['name'];
+            $type      = $one['type'];
+            $item_path = !$path ? $name : $this->clearDblSlash("$path/$name");
 
             // folder
             if ($type == 'folder') {
-                if ($this->storageDisk->deleteDirectory($path)) {
+                if ($this->storageDisk->deleteDirectory($item_path)) {
                     $result[]  = [
                         'success' => true,
                         'name'    => $name,
@@ -482,7 +503,7 @@ class MediaController extends Controller
 
                     // fire event
                     event('MMFileDeleted', [
-                        'file_path' => $this->getItemPath($path),
+                        'file_path' => $this->getItemPath($item_path),
                         'is_folder' => true,
                     ]);
                 } else {
@@ -497,23 +518,23 @@ class MediaController extends Controller
 
             // file
             else {
-                if ($this->storageDisk->delete($path)) {
+                if ($this->storageDisk->delete($item_path)) {
                     $result[]  = [
                         'success' => true,
                         'name'    => $name,
                         'type'    => $type,
-                        'path'    => $this->resolveUrl($path),
+                        'path'    => $this->resolveUrl($item_path),
                     ];
 
                     // fire event
                     event('MMFileDeleted', [
-                        'file_path' => $this->getItemPath($path),
+                        'file_path' => $this->getItemPath($item_path),
                         'is_folder' => false,
                     ]);
                 } else {
                     $result[] = [
                         'success' => false,
-                        'name'    => $path,
+                        'name'    => $item_path,
                         'type'    => $type,
                         'message' => trans('MediaManager::messages.error_deleting_file'),
                     ];
@@ -634,45 +655,46 @@ class MediaController extends Controller
      */
     public function zipProgress(Request $request)
     {
-        // stop execution
-        $start        = time();
-        $maxExecution = ini_get('max_execution_time');
-        $sleep        = array_get($this->storageDiskInfo, 'root') ? 0.5 : 1.5;
-        $close        = false;
+        return response()->stream(function () use ($request) {
+            // stop execution
+            $start        = time();
+            $maxExecution = ini_get('max_execution_time');
+            $sleep        = array_get($this->storageDiskInfo, 'root') ? 0.5 : 1.5;
+            $close        = false;
 
-        // params
-        $id    = $request->header('last-event-id');
-        $name  = "{$request->name}-{$request->id}";
+            // params
+            $id        = $request->header('last-event-id');
+            $track_id  = $request->id;
+            $cacheName = "{$request->name}-{$track_id}";
 
-        // get changes
-        $store = $this->zipCacheStore;
+            // get changes
+            $store = $this->zipCacheStore;
 
-        return response()->stream(function () use ($start, $maxExecution, $close, $sleep, $store, $name) {
             while (!$close) {
                 // progress
-                $this->SSE_msg($store->get("$name.progress"), 'progress');
+                $this->SSE_msg($store->get("$cacheName.progress"), 'progress');
 
                 // warn
-                if ($store->has("$name.warn")) {
+                if ($store->has("$cacheName.warn")) {
                     $this->SSE_msg(
-                        trans('MediaManager::messages.stream_error', ['attr' => $store->pull("$name.warn")]),
+                        trans('MediaManager::messages.stream_error', ['attr' => $store->pull($cacheName . '.warn')]),
                         'warn'
                     );
                 }
 
                 // done
-                if ($store->has("$name.done")) {
+                if ($store->has("$cacheName.done")) {
                     $close = true;
                     $this->SSE_msg(100, 'progress');
                     $this->SSE_msg('All Done', 'done');
-                    $this->clearZipCache($store, $name);
+                    $this->clearZipCache($store, $cacheName);
                 }
 
                 // exit
                 if (time() >= $start + $maxExecution) {
                     $close = true;
                     $this->SSE_msg(null, 'exit');
-                    $this->clearZipCache($store, $name);
+                    $this->clearZipCache($store, $cacheName);
                 }
 
                 ob_flush();

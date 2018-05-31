@@ -90,32 +90,40 @@ export default {
         },
         cacheName() {
             let folders = this.folders
-            return folders.length ? '/' + folders.join('/') : 'root_'
+            return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
         }
     },
     asyncComputed: {
-        selectedFilePreview() {
-            if (this.selectedFileIs('image')) {
-                let url = this.selectedFile.path
+        selectedFilePreview: {
+            lazy: true,
+            get() {
+                if (this.selectedFileIs('image')) {
+                    let url = this.selectedFile.path
 
-                if ( !this.config.lazyLoad || this.config.lazyLoad && !('caches' in window) ) {
-                    return url
-                }
+                    if (!this.config.lazyLoad || this.config.lazyLoad && !this.browserSupport('caches')) {
+                        return url
+                    }
 
-                // get cache or serve the url
-                // warning: url is now being downloaded twice
-                return caches.open(this.CDBN).then((cache) => {
-                    return cache.match(url).then((response) => {
-                        return response ? response.blob() : url
-                    }).then((blob) => {
-                        if (blob && blob.size) {
-                            return URL.createObjectURL(blob)
-                        } else {
-                            return blob
-                        }
+                    return caches.open(this.CDBN).then((cache) => {
+                        // wait until the item is cached then return it
+                        // this is to avoid extra calls to display something
+                        // instead of an empty img src
+                        return new Promise((resolve) => {
+                            let t = setInterval(() => {
+                                return cache.match(url).then((response) => {
+                                    return response ? response.blob() : null
+                                }).then((blob) => {
+                                    if (blob) {
+                                        clearInterval(t)
+                                        return resolve(URL.createObjectURL(blob))
+                                    }
+                                })
+                            }, 250)
+                        })
                     })
-                })
-            }
+                }
+            },
+            default: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
         }
     }
 }

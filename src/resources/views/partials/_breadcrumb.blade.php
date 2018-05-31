@@ -1,7 +1,7 @@
 <transition-group tag="ul"
     class="__stack-breadcrumb-mobile is-hidden-desktop"
     ref="bc"
-    v-show="folders.length > 0"
+    v-if="folders.length > 0 && !restrictModeIsOn()"
     name="list"
     mode="out-in">
     <li id="library-bc" key="library-bc">
@@ -14,7 +14,7 @@
         <p v-else>{{ trans('MediaManager::messages.library') }}</p>
     </li>
 
-    <li v-for="(folder, index) in folders" :id="folder + '-bc'" :key="folder + '-bc'">
+    <li v-for="(folder, index) in folders" :id="folder + '-bc'" :key="index">
         <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
         <a v-else
             v-tippy

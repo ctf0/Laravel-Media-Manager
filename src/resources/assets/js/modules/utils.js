@@ -42,6 +42,12 @@ export default {
                 ? this.selectFirst()
                 : this.lazySelectFirst()
         },
+        clearAll() {
+            this.clearUrlQuery()
+            this.clearLs()
+            this.clearCache()
+            this.clearImageCache()
+        },
 
         /*                Resolve                */
         getFileName(name) {
@@ -87,12 +93,10 @@ export default {
                     this.refresh()
                 }
 
-                this.noScroll('remove')
                 this.resetInput('activeModal')
                 return EventHub.fire('modal-hide')
             }
 
-            this.noScroll('add')
             this.activeModal = selector
             EventHub.fire('modal-show')
         },
@@ -103,10 +107,10 @@ export default {
             return this.toggleInfo = !this.toggleInfo
         },
         toggleUploadPanel() {
-            this.toggleUploadArea = !this.toggleUploadArea
+            return this.toggleUploadArea = !this.toggleUploadArea
         },
         toggleLoader(key, state) {
-            this[key] = state
+            return this[key] = state
         },
 
         /*                Loading                */
@@ -156,10 +160,12 @@ export default {
         },
 
         /*                Helpers                */
-        // copy to clipboard
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
+        },
+        browserSupport(api) {
+            return api in window
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {
@@ -176,14 +182,13 @@ export default {
 
             return str
         },
-        showNotif(msg, s = 'success') {
+        showNotif(msg, s = 'success', duration = 3) {
             if (msg) {
                 if (s == 'danger') {
                     this.$refs['alert-audio'].play()
                 }
 
                 let title
-                let duration = 3
 
                 switch (s) {
                     case 'black':

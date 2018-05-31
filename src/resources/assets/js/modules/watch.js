@@ -49,34 +49,35 @@ export default {
                 this.bulkSelectAll = true
             }
         },
+        bulkSelect(val) {
+            this.toggleUploadArea = false
+        },
         activeModal(val) {
-            if (val == 'new_folder_modal') {
-                this.$nextTick(() => {
-                    return this.$refs.new_folder_modal_input.focus()
-                })
+            let ref
+
+            switch (val) {
+                case 'new_folder_modal':
+                    ref = 'new_folder_modal_input'
+                    break
+                case 'rename_file_modal':
+                    ref = 'rename_file_modal_input'
+                    break
+                case 'move_file_modal':
+                    ref = 'move_folder_dropdown'
+                    break
+                case 'confirm_delete_modal':
+                    ref = 'confirm_delete_modal_submit'
+                    break
+                case 'save_link_modal':
+                    ref = 'save_link_modal_input'
+                    break
+                default:
+                    ref = null
             }
 
-            if (val == 'rename_file_modal') {
+            if (ref) {
                 this.$nextTick(() => {
-                    return this.$refs.rename_file_modal_input.focus()
-                })
-            }
-
-            if (val == 'move_file_modal') {
-                this.$nextTick(() => {
-                    return this.$refs.move_folder_dropdown.focus()
-                })
-            }
-
-            if (val == 'confirm_delete_modal') {
-                this.$nextTick(() => {
-                    return this.$refs.confirm_delete_modal_submit.focus()
-                })
-            }
-
-            if (val == 'save_link_modal') {
-                this.$nextTick(() => {
-                    return this.$refs.save_link_modal_input.focus()
+                    return this.$refs[ref].focus()
                 })
             }
         },

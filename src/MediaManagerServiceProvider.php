@@ -14,6 +14,11 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->file = app('files');
 
         $this->packagePublish();
+        $this->extraConfigs();
+
+        if (app('files')->exists(public_path('assets/vendor/MediaManager/patterns'))) {
+            $this->viewComp();
+        }
 
         // append extra data
         if (!app('cache')->store('file')->has('ct-mm')) {
@@ -38,8 +43,6 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/database' => storage_path('logs'),
         ], 'db');
 
-        $this->extraConfigs();
-
         // public
         $this->publishes([
             __DIR__ . '/dist' => public_path('assets/vendor/MediaManager'),
@@ -61,10 +64,6 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/resources/views' => resource_path('views/vendor/MediaManager'),
         ], 'view');
-
-        if (app('files')->exists(public_path('assets/vendor/MediaManager/patterns'))) {
-            $this->viewComp();
-        }
     }
 
     protected function extraConfigs()
@@ -94,8 +93,10 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function viewComp()
     {
-        $url = app('filesystem')
-            ->disk(config('mediaManager.storage_disk'))
+        $config = config('mediaManager');
+
+        $url    = app('filesystem')
+            ->disk(array_get($config, 'storage_disk'))
             ->url('/');
 
         $patterns = collect(
@@ -104,11 +105,12 @@ class MediaManagerServiceProvider extends ServiceProvider
                     return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $item->getPathName());
                 });
 
-        view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns) {
+        view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns, $config) {
             $view->with([
-               'base_url' => preg_replace('/\/+$/', '/', $url),
-               'patterns' => json_encode($patterns),
-               'randId'   => uniqid(),
+               'base_url'              => preg_replace('/\/+$/', '/', $url),
+               'patterns'              => json_encode($patterns),
+               'randId'                => uniqid(),
+               'mobile_alt_navigation' => array_get($config, 'mobile_alt_navigation'),
            ]);
         });
     }

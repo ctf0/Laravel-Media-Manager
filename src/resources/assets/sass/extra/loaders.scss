@@ -36,7 +36,7 @@
         height: 100%;
 
         svg {
-            transform: scale(1.5);
+            transform: scale(1.5) !important;
         }
     }
 
@@ -53,7 +53,7 @@
     width: 200px;
 
     svg {
-        transform: scale(3);
+        transform: scale(3) !important;
     }
 }
 

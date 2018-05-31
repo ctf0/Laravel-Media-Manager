@@ -1,21 +1,16 @@
-{{-- mobile breadCrumb --}}
-@php
-    $alt_breadcrumb = true;
-    $randId = uniqid();
-@endphp
-
 {{-- component --}}
 <media-manager inline-template
     :config="{{ json_encode([
         'baseUrl' => $base_url, 
-        'hideFilesExt' => config('mediaManager.hide_files_ext') ? true : false, 
-        'lazyLoad' => config('mediaManager.lazy_load_image_on_click') ? true : false, 
+        'hideFilesExt' => config('mediaManager.hide_files_ext'), 
+        'lazyLoad' => config('mediaManager.lazy_load_image_on_click'), 
         'imageTypes' => config('mediaManager.image_extended_mimes'), 
         'cacheExp' => config('mediaManager.cacheExpiresAfter'), 
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
     :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
+    :restrict="{{ isset($restrict) ? json_encode($restrict) : '{}' }}"
     :translations="{{ json_encode([
         'no_val' => trans('MediaManager::messages.no_val'), 
         'single_char_folder' => trans('MediaManager::messages.single_char_folder'), 
@@ -28,8 +23,9 @@
         'delete_success' => trans('MediaManager::messages.delete_success'), 
         'copy_success' => trans('MediaManager::messages.copy_success'), 
         'save_success' => trans('MediaManager::messages.save_success'), 
-        'clear_cache' => trans('MediaManager::messages.clear_cache'), 
         'error_altered_fwli' => trans('MediaManager::messages.error_altered_fwli'), 
+        'stand_by' => trans('MediaManager::messages.stand_by'), 
+        'stream_exit_error' => trans('MediaManager::messages.stream_exit_error')
     ]) }}"
     :routes="{{ json_encode([
         'files' => route('media.files'), 
@@ -53,11 +49,12 @@
                 {{-- left toolbar --}}
                 <div class="level-left">
                     {{-- first --}}
-                    <div class="level-item" v-if="!isBulkSelecting()">
+                    <div class="level-item">
                         <div class="field has-addons">
                             {{-- upload --}}
                             <div class="control">
                                 <button class="button"
+                                    v-show="!isBulkSelecting()"
                                     ref="upload"
                                     :disabled="isLoading"
                                     @click="toggleUploadPanel()"
@@ -69,7 +66,7 @@
                             </div>
 
                             {{-- new folder --}}
-                            <div class="control">
+                            <div class="control" v-if="!restrictModeIsOn()">
                                 <button class="button"
                                     :disabled="isLoading"
                                     @click="toggleModal('new_folder_modal')">
@@ -84,7 +81,7 @@
                     <div class="level-item">
                         <div class="field has-addons">
                             {{-- move --}}
-                            <div class="control">
+                            <div class="control" v-if="!restrictModeIsOn()">
                                 <button class="button is-link"
                                     ref="move"
                                     :disabled="item_ops() || !checkForFolders || isLoading"
@@ -107,7 +104,7 @@
                             </div>
 
                             {{-- editor --}}
-                            <div class="control" v-if="!isBulkSelecting()">
+                            <div class="control" v-show="!isBulkSelecting()">
                                 <button class="button is-link"
                                     ref="editor"
                                     :disabled="item_ops() || !selectedFileIs('image') || isLoading"
@@ -138,14 +135,14 @@
                     <div class="level-item">
                         <div class="field has-addons">
                             {{-- refresh --}}
-                            <div class="control" v-if="!isBulkSelecting()">
+                            <div class="control" v-show="!isBulkSelecting()">
                                 <v-touch class="button is-primary"
                                     ref="refresh"
                                     tag="button"
                                     v-tippy
                                     title="(R) efresh"
                                     @tap="refresh()"
-                                    @hold="clearLs(), clearCache(), clearImageCache()">
+                                    @hold="clearAll()">
                                     <span class="icon">
                                         <icon name="refresh" :spin="isLoading"></icon>
                                     </span>
@@ -168,7 +165,8 @@
 
                             {{-- visibility --}}
                             <div class="control">
-                                <button class="button is-light"
+                                <button class="button"
+                                    :class="IsVisible(selectedFile) ? 'is-light' : 'is-danger'"
                                     ref="vis"
                                     :disabled="vis_btn()"
                                     v-tippy
@@ -398,16 +396,14 @@
         {{-- ====================================================================== --}}
 
         {{-- mobile breadCrumb --}}
-        @if($alt_breadcrumb)
+        @if($mobile_alt_navigation)
             @include('MediaManager::partials._breadcrumb')
         @endif
 
         {{-- ====================================================================== --}}
 
         <div class="media-manager__stack">
-            <section class="media-manager__stack-container"
-                @mouseenter="!inModal ? noScroll('add') : false"
-                @mouseleave="!inModal ? noScroll('remove') : false">
+            <section class="media-manager__stack-container">
 
                 {{-- loadings --}}
                 <section>
@@ -442,9 +438,8 @@
                     :class="{'__stack-sidebar-hidden': !toggleInfo}"
                     @swiperight="goToPrevFolder()">
 
-                    {{-- loadings --}}
+                    {{-- no search --}}
                     <section>
-                        {{-- no search --}}
                         <div id="no_search" v-show="no_search">
                             <div id="no_search_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/ice_cream.json') }}"></div>
                             <h3>{{ trans('MediaManager::messages.nothing_found') }}</h3>
@@ -452,7 +447,7 @@
                     </section>
 
                     {{-- files --}}
-                    <ul class="__files-boxs" ref="filesList">
+                    <ul class="__files-boxs" ref="filesList" v-if="!isLoading">
                         <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
                             :data-file-index="index"
@@ -486,13 +481,12 @@
 
                                 <div class="__box-data">
                                     <div class="__box-preview">
-
                                         <template v-if="fileTypeIs(file, 'image')">
-                                            <lazy-image v-if="config.lazyLoad" :file="file" :index="index" :db="CDBN"></lazy-image>
-                                            <div v-else :style="{'--imageSrc': `url('${file.path}')`}" class="__box-img"/>
+                                            <image-cache v-if="config.lazyLoad" :file="file" :index="index" :db="CDBN"></image-cache>
+                                            <image-intersect v-else :file="file"></image-intersect>
                                         </template>
 
-                                        <span class="icon is-large" v-else>
+                                        <span v-else class="icon is-large">
                                             <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
                                             <icon v-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
                                             <icon v-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
@@ -508,16 +502,14 @@
                                             <h4>@{{ file.name }}</h4>
                                             <small>
                                                 <span>@{{ file.items }} {{ trans('MediaManager::messages.items') }}</span>
-                                                <span v-if="file.size > 0" class="__info-file-size">, @{{ getFileSize(file.size) }}</span>
+                                                <span v-if="file.size > 0" class="__info-file-size">"@{{ getFileSize(file.size) }}"</span>
                                             </small>
                                         </template>
 
                                         {{-- any other --}}
                                         <template v-else>
                                             <h4>@{{ getFileName(file.name) }}</h4>
-                                            <small>
-                                                <span class="__info-file-size">@{{ getFileSize(file.size) }}</span>
-                                            </small>
+                                            <small class="__info-file-size">@{{ getFileSize(file.size) }}</small>
                                         </template>
                                     </div>
                                 </div>
@@ -541,7 +533,7 @@
                                 </div>
 
                                 {{-- img --}}
-                                <template v-if="selectedFileIs('image')">
+                                <template v-else-if="selectedFileIs('image')">
                                     <img :src="selectedFilePreview"
                                         :alt="selectedFile.name"
                                         :key="selectedFile.name"
@@ -552,7 +544,7 @@
                                 </template>
 
                                 {{-- video --}}
-                                <template v-if="selectedFileIs('video')">
+                                <template v-else-if="selectedFileIs('video')">
                                     <video controls
                                         preload="metadata"
                                         class="__sidebar-video"
@@ -566,7 +558,7 @@
                                 </template>
 
                                 {{-- audio --}}
-                                <template v-if="selectedFileIs('audio')">
+                                <template v-else-if="selectedFileIs('audio')">
                                     <audio controls
                                         preload="metadata"
                                         class="__sidebar-audio"
@@ -580,16 +572,16 @@
                                 </template>
 
                                 {{-- icons --}}
-                                <icon key="1" v-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
-                                <icon key="2" v-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
-                                <div key="3" v-if="selectedFileIs('pdf')"
+                                <icon key="1" v-else-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
+                                <icon key="2" v-else-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
+                                <div key="3" v-else-if="selectedFileIs('pdf')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
                                     @click="toggleModal('preview_modal')">
                                     <icon name="file-pdf-o" scale="4"></icon>
                                 </div>
-                                <div key="4" v-if="selectedFileIs('text')"
+                                <div key="4" v-else-if="selectedFileIs('text')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
@@ -600,72 +592,63 @@
                         </div>
 
                         {{-- info --}}
-                        <div class="__sidebar-info" v-if="allItemsCount" :style="selectedFile ? 'background-color: white' : ''">
+                        <div v-if="allItemsCount"
+                            class="__sidebar-info"
+                            :style="selectedFile ? 'background-color: white' : ''">
+
                             <transition name="list" mode="out-in" appear>
                                 <div :key="selectedFile.name" v-if="selectedFile">
-                                    <h4>{{ trans('MediaManager::messages.name') }}: <span>@{{ selectedFile.name }}</span></h4>
-                                    <h4>{{ trans('MediaManager::messages.type') }}: <span>@{{ selectedFile.type }}</span></h4>
-                                    <h4>{{ trans('MediaManager::messages.size') }}: <span>@{{ getFileSize(selectedFile.size) }}</span></h4>
+                                    <p>{{ trans('MediaManager::messages.name') }}: <span>@{{ selectedFile.name }}</span></p>
+                                    <p>{{ trans('MediaManager::messages.type') }}: <span>@{{ selectedFile.type }}</span></p>
+                                    <p>{{ trans('MediaManager::messages.size') }}: <span>@{{ getFileSize(selectedFile.size) }}</span></p>
 
                                     {{-- folder --}}
                                     <template v-if="selectedFileIs('folder')">
-                                        <h4>
-                                            {{ trans('MediaManager::messages.items') }}:
-                                            <span>@{{ selectedFile.items }} {{ trans('MediaManager::messages.items') }}</span>
-                                        </h4>
+                                        <p>{{ trans('MediaManager::messages.items') }}: <span>@{{ selectedFile.items }}</span></p>
 
-                                        <h4 v-if="!isBulkSelecting()">
-                                            {{ trans('MediaManager::messages.download_folder') }}:
-                                            <div class="__sidebar-zip">
-                                                <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder', '{{ $randId }}')">
-                                                    {{ csrf_field() }}
-                                                    <input type="hidden" name="id" value="{{ $randId }}">
-                                                    <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
-                                                    <input type="hidden" name="name" :value="selectedFile.name">
-                                                    <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
-                                                        <span class="icon"><icon name="archive" scale="1.2"></icon></span>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </h4>
+                                        <div class="__sidebar-zip" v-show="!isBulkSelecting()">
+                                            <span>{{ trans('MediaManager::messages.download_folder') }}:</span>
+                                            <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder', '{{ $randId }}')">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="id" value="{{ $randId }}">
+                                                <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
+                                                <input type="hidden" name="name" :value="selectedFile.name">
+                                                <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
+                                                    <span class="icon"><icon name="archive" scale="1.2"></icon></span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </template>
 
                                     {{-- file --}}
                                     <template v-else>
-                                        <h4>{{ trans('MediaManager::messages.visibility') }}: <span>@{{ selectedFile.visibility }}</span></h4>
-                                        <h4>
+                                        <p>{{ trans('MediaManager::messages.visibility') }}: <span>@{{ selectedFile.visibility }}</span></p>
+                                        <p>
                                             {{ trans('MediaManager::messages.preview') }}:
-                                            <a :href="selectedFile.path"
-                                                target="_blank"
-                                                rel="noreferrer noopener">
-                                                {{ trans('MediaManager::messages.public_url') }}
-                                            </a>
-                                        </h4>
-
-                                        <h4>
+                                            <a :href="selectedFile.path" target="_blank" rel="noreferrer noopener">{{ trans('MediaManager::messages.public_url') }}</a>
+                                        </p>
+                                        <p>
                                             {{ trans('MediaManager::messages.download_file') }}:
-                                            {{-- normal --}}
                                             <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
                                                 <span class="icon"><icon name="download" scale="1.2"></icon></span>
                                             </button>
+                                        </p>
 
-                                            {{-- zip --}}
-                                            <template v-if="isBulkSelecting()">
-                                                <div class="__sidebar-zip">
-                                                    <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')">
-                                                        {{ csrf_field() }}
-                                                        <input type="hidden" name="id" value="{{ $randId }}">
-                                                        <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
-                                                        <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
-                                                        <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
-                                                            <span class="icon"><icon name="archive" scale="1.2"></icon></span>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </template>
-                                        </h4>
+                                        {{-- zip --}}
+                                        <div class="__sidebar-zip" v-show="isBulkSelecting()">
+                                            <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="id" value="{{ $randId }}">
+                                                <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
+                                                <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
+                                                <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
+                                                    <span class="icon"><icon name="archive" scale="1.2"></icon></span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </template>
-                                    <h4>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></h4>
+
+                                    <p>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></p>
                                 </div>
 
                                 {{-- keep the counts at bottom --}}
@@ -676,32 +659,30 @@
                             <transition-group tag="div" name="counter" mode="out-in" class="__sidebar-count">
                                 {{-- all --}}
                                 <div key="1" v-if="allItemsCount">
-                                    <p class="title is-1"><bounty :value="allItemsCount"></bounty></p>
+                                    <p class="title is-1">@{{ allItemsCount }}</p>
                                     <p class="heading">{{ trans('MediaManager::messages.total') }}</p>
                                 </div>
 
                                 {{-- search --}}
                                 <div key="2" v-if="searchItemsCount !== null && searchItemsCount >= 0">
-                                    <p class="title is-1"><bounty :value="searchItemsCount"></bounty></p>
+                                    <p class="title is-1">@{{ searchItemsCount }}</p>
                                     <p class="heading">{{ trans('MediaManager::messages.found') }}</p>
                                 </div>
 
                                 {{-- bulk --}}
                                 <div key="3" v-if="bulkItemsCount" class="__sidebar-count-bulk">
                                     <p>
-                                        <bounty :value="bulkItemsCount" class-name="title is-1"></bounty>
+                                        <span class="title is-1">@{{ bulkItemsCount }}</span>
 
                                         {{-- nested --}}
-                                        <template v-if="bulkItemsChild">
+                                        <template v-show="bulkItemsChild">
                                             <span class="icon is-medium"><icon name="plus"></icon></span>
-                                            <bounty :value="bulkItemsChild" class-name="title is-5"></bounty>
+                                            <span class="title is-5">@{{ bulkItemsChild }}</span>
                                         </template>
                                     </p>
 
                                     {{-- size --}}
-                                    <p v-if="bulkItemsSize" class="title is-6 has-text-weight-semibold">
-                                        <bounty :value="bulkItemsSize"></bounty>
-                                    </p>
+                                    <p v-show="bulkItemsSize" class="title is-6 has-text-weight-semibold">@{{ bulkItemsSize }}</p>
                                     <p class="heading">{{ trans('MediaManager::messages.selected') }}</p>
                                 </div>
                             </transition-group>
@@ -716,7 +697,7 @@
             <section class="media-manager__stack-breadcrumb level is-mobile">
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
-                    <nav class="breadcrumb {{ !$alt_breadcrumb ? '' : 'is-hidden-touch' }}">
+                    <nav class="breadcrumb {{ $mobile_alt_navigation ? 'is-hidden-touch' : '' }}" v-if="!restrictModeIsOn()">
                         <transition-group tag="ul" name="list" mode="out-in">
                             <li key="library-bc">
                                 <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
@@ -729,7 +710,7 @@
                                 <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
                             </li>
 
-                            <li v-for="(folder, index) in folders" :key="folder + '-bc'">
+                            <li v-for="(folder, index) in folders" :key="index">
                                 <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
                                 <a v-else
                                     v-tippy
@@ -1021,7 +1002,7 @@
                             @include('MediaManager::partials._modal-files-info')
 
                             {{-- deleting folder warning --}}
-                            <h5 v-if="folderWarning" class="__modal-folder-warning" >
+                            <h5 v-show="folderWarning" class="__modal-folder-warning">
                                 <span class="icon"><icon name="warning"></icon></span>
                                 <span>{{ trans('MediaManager::messages.delete_folder') }}</span>
                             </h5>
@@ -1054,7 +1035,6 @@
 
 {{-- scripts --}}
 @push('scripts')
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
     <script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>
 @endpush

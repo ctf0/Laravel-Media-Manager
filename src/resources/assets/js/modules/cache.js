@@ -18,13 +18,16 @@ export default {
             this.$ls.set(this.CDBN, storage)
         },
         clearLs() {
-            this.folders = []
+            if (!this.restrictModeIsOn()) {
+                this.folders = []
+            }
+
             this.$ls.remove(this.CDBN)
         },
         preSaved() {
             let ls = this.getLs()
 
-            if (ls) {
+            if (Object.keys(ls).length) {
                 this.randomNames = ls.randomNames || false
                 this.folders = ls.folders || []
                 this.lockedList = ls.lockedList || []
@@ -67,7 +70,7 @@ export default {
         },
         deleteCachedResponse(item) {
             return del(item, cacheStore).then(() => {
-                console.log(`${item} ${this.trans('clear_cache')}`)
+                console.log(`${item} Cache Cleared !`)
             }).catch((err) => {
                 console.error('cacheStore.removeItem', err)
             })
@@ -75,7 +78,7 @@ export default {
         clearCache(notif = true) {
             clear(cacheStore).then(() => {
                 this.refresh().then(() => {
-                    if (notif) this.showNotif(this.trans('clear_cache'))
+                    if (notif) this.showNotif('Cache Cleared !')
                 })
 
             }).catch((err) => {

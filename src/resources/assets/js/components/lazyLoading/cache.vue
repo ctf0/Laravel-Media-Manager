@@ -1,7 +1,7 @@
 <template>
-    <div ref="el" class="__box-img-lazy">
-        <img v-if="cached" :src="imgData" :alt="alt">
-        <img v-if="!cached || normal" ref="img" :alt="alt" data-src="url">
+    <div ref="wrapper" class="__box-img-lazy">
+        <div v-if="cached" :style="{'--imageSrc': `url('${imgData}')`}" class="__box-img"/>
+        <div v-if="normal" :style="{'--imageSrc': `url('${url}')`}" class="__box-img"/>
     </div>
 </template>
 
@@ -12,8 +12,7 @@ export default {
         return {
             imgData: null,
             normal: false,
-            url: this.file.path,
-            alt: this.file.name
+            url: this.file.path
         }
     },
     created() {
@@ -39,7 +38,7 @@ export default {
     },
     methods: {
         removePhBorder() {
-            return this.$el.style.border = 'none'
+            return this.$refs.wrapper ? this.$refs.wrapper.style.border = 'none' : false
         },
 
         // api
@@ -75,7 +74,6 @@ export default {
         },
         normal(val) {
             if (val) {
-                this.$ref.img.src = this.$ref.img.dataset.src
                 this.removePhBorder()
             }
         }
