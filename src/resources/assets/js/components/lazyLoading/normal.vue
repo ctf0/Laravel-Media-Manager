@@ -1,11 +1,12 @@
 <template>
-    <div ref="wrapper" class="__box-img-lazy">
-        <img :src="file.path" style="display:none;">
-        <div ref="item" :style="{'--imageSrc': `url('${srcImage}')`}" class="__box-img"/>
+    <div ref="item" class="__box-img">
+        <img v-if="intersected" :src="srcImage" async>
     </div>
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
+
 export default {
     props: ['file'],
     data() {
@@ -15,44 +16,45 @@ export default {
         }
     },
     mounted() {
-        // wait for the animation to stop = 50ms
-        // wait for the sidebar to showup = 250ms
-        setTimeout(() => {
+        this.$nextTick(debounce(() => {
             if ('IntersectionObserver' in window) {
                 this.observe()
             } else {
                 this.intersected = true
             }
-        }, 300)
+        }, 250))
     },
     beforeDestroy() {
         if ('IntersectionObserver' in window && this.observer) {
-            this.observer.disconnect()
+            this.observer.unobserve(this.$refs.item)
+            this.observer = null
         }
     },
     computed: {
         srcImage() {
-            return this.intersected ? this.file.path : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+            return this.intersected
+                ? this.file.path
+                : ''
         }
     },
     methods: {
         observe() {
-            this.observer = new IntersectionObserver((entries) => {
-                entries.forEach((img) => {
+            this.observer = new IntersectionObserver((item, observer) => {
+                item.forEach((img) => {
                     if (img.isIntersecting) {
                         this.intersected = true
-                        this.observer.disconnect()
+                        observer.unobserve(img.target)
                     }
                 })
             })
 
-            this.$refs.item ? this.observer.observe(this.$refs.item) : false
+            this.observer.observe(this.$refs.item)
         }
     },
     watch: {
         intersected(val) {
             if (val) {
-                return this.$refs.wrapper ? this.$refs.wrapper.style.border = 'none' : false
+                this.$refs.item.style.border = 'none'
             }
         }
     }

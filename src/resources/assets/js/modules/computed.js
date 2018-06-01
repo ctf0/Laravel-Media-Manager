@@ -34,7 +34,7 @@ export default {
                 count += parseInt(item.size)
             })
 
-            return count !== 0 ? this.getFileSize(count) : false
+            return count !== 0 ? this.getFileSize(count) : null
         },
         bulkItemsChild() {
             let bulk = this.bulkItemsCount
@@ -65,7 +65,8 @@ export default {
         bulkItemsFilterSize() {
             let count = 0
             this.bulkItemsFilter.map((item) => {count += item.size})
-            return count !== 0 ? this.getFileSize(count) : false
+
+            return count !== 0 ? this.getFileSize(count) : null
         },
 
         // upload panel
@@ -95,12 +96,11 @@ export default {
     },
     asyncComputed: {
         selectedFilePreview: {
-            lazy: true,
             get() {
                 if (this.selectedFileIs('image')) {
                     let url = this.selectedFile.path
 
-                    if (!this.config.lazyLoad || this.config.lazyLoad && !this.browserSupport('caches')) {
+                    if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
                         return url
                     }
 
@@ -123,7 +123,8 @@ export default {
                     })
                 }
             },
-            default: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+            default: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            lazy: true
         }
     }
 }

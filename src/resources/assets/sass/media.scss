@@ -312,16 +312,15 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: 20%;
     overflow: scroll;
-    margin-left: 20%;
     padding: 0.75rem;
     transition: all 0.25s;
     will-change: auto;
 }
 
 .__stack-sidebar-hidden {
-    margin-left: 0;
+    left: 0;
 }
 
 .__files-boxs {
@@ -411,34 +410,19 @@
             transform: translateY(3px);
         }
 
-        .__box-img,
-        .__box-img-lazy {
+        .__box-img {
             overflow: hidden;
             width: 53px;
-            height: 52px;
-            border-radius: 3px;
-        }
+            height: 51px;
+            border: 1px dashed darken($active_theme, 25%);
+            border-radius: 3px 3px 5px 5px;
 
-        .__box-img {
-            position: relative;
-
-            &::before {
-                position: absolute;
-                top: 0;
-                left: 0;
+            img {
                 width: 100%;
                 height: 100%;
-                content: '';
-                background-image: var(--imageSrc);
-                background-repeat: no-repeat;
-                background-position: top;
-                background-size: cover;
-                will-change: auto;
+                object-fit: fill;
+                object-position: center;
             }
-        }
-
-        .__box-img-lazy {
-            border: 1px dashed darken($active_theme, 25%);
         }
     }
 
@@ -507,8 +491,7 @@
                 transform: scale(1.5);
             }
 
-            .__box-img,
-            .__box-img-lazy {
+            .__box-img {
                 width: 100%;
                 height: 100%;
                 border: none;
@@ -607,12 +590,17 @@
 
     .__sidebar-zip {
         display: flex;
+        align-items: center;
         margin-bottom: 0.1em;
 
         span:not(.icon) {
             font-size: 1rem;
             margin-right: 3px;
             color: darken($active_theme, 25%);
+        }
+
+        form {
+            margin-bottom: 2px;
         }
     }
 
@@ -866,12 +854,12 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     }
 
     .media-manager__stack-files {
-        margin-right: 20%;
-        margin-left: unset;
+        right: 20%;
+        left: unset;
     }
 
     .__stack-sidebar-hidden {
-        margin-right: 0;
+        right: 0;
     }
 
     .media-manager__stack-sidebar {

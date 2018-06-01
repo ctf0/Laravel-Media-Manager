@@ -435,7 +435,6 @@
                 {{-- files box --}}
                 <v-touch class="media-manager__stack-files"
                     ref="__stack-files"
-                    :class="{'__stack-sidebar-hidden': !toggleInfo}"
                     @swiperight="goToPrevFolder()">
 
                     {{-- no search --}}
@@ -447,7 +446,7 @@
                     </section>
 
                     {{-- files --}}
-                    <ul class="__files-boxs" ref="filesList" v-if="!isLoading">
+                    <ul class="__files-boxs" ref="filesList">
                         <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
                             :key="index"
                             :data-file-index="index"
@@ -627,16 +626,14 @@
                                             {{ trans('MediaManager::messages.preview') }}:
                                             <a :href="selectedFile.path" target="_blank" rel="noreferrer noopener">{{ trans('MediaManager::messages.public_url') }}</a>
                                         </p>
-                                        <p>
-                                            {{ trans('MediaManager::messages.download_file') }}:
+                                        <div class="__sidebar-zip">
+                                            <span>{{ trans('MediaManager::messages.download_file') }}:</span>
+                                            {{-- normal --}}
                                             <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
                                                 <span class="icon"><icon name="download" scale="1.2"></icon></span>
                                             </button>
-                                        </p>
-
-                                        {{-- zip --}}
-                                        <div class="__sidebar-zip" v-show="isBulkSelecting()">
-                                            <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')">
+                                            {{-- zip --}}
+                                            <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')" v-show="isBulkSelecting()">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="id" value="{{ $randId }}">
                                                 <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
@@ -675,7 +672,7 @@
                                         <span class="title is-1">@{{ bulkItemsCount }}</span>
 
                                         {{-- nested --}}
-                                        <template v-show="bulkItemsChild">
+                                        <template v-if="bulkItemsChild">
                                             <span class="icon is-medium"><icon name="plus"></icon></span>
                                             <span class="title is-5">@{{ bulkItemsChild }}</span>
                                         </template>

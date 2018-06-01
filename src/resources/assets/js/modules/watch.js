@@ -113,7 +113,7 @@ export default {
                 }
 
                 if (!this.isBulkSelecting()) {
-                    !this.config.lazyLoad
+                    !this.lazyModeIsOn()
                         ? this.selectFirst()
                         : this.lazySelectFirst()
                 }
@@ -128,7 +128,7 @@ export default {
         // search
         searchFor(val) {
             if (!this.isBulkSelecting()) {
-                !this.config.lazyLoad
+                !this.lazyModeIsOn()
                     ? this.selectFirst()
                     : this.lazySelectFirst()
             }
@@ -154,6 +154,19 @@ export default {
             if (this.allItemsCount == undefined || val == this.allItemsCount) {
                 this.resetInput('searchItemsCount')
             }
+        },
+        toggleInfo(val) {
+            const el = this.$refs['__stack-files'].$el
+
+            el.style.opacity = 0
+
+            requestAnimationFrame(() => {
+                val
+                    ? el.classList.remove('__stack-sidebar-hidden')
+                    : el.classList.add('__stack-sidebar-hidden')
+
+                el.style.opacity = 1
+            })
         }
     }
 }

@@ -205,7 +205,7 @@ trait OpsTrait
      * @param [type] $upload_path [description]
      * @param [type] $file_name   [description]
      *
-     * @return [type] [description]
+     * @return file path
      */
     protected function storeFile($item, $upload_path, $file_name)
     {
@@ -215,9 +215,9 @@ trait OpsTrait
     /**
      * allow/disallow user upload.
      *
-     * @param [type] $file [description]
+     * @param [type] $file [raw uploaded file]
      *
-     * @return [type] [description]
+     * @return [boolean] [description]
      */
     protected function allowUpload($file = null)
     {

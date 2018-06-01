@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce'
+
 export default {
     methods: {
         /*                Item                */
@@ -46,8 +48,8 @@ export default {
             this.selectedFile = file
             this.currentFileIndex = index
 
-            if (this.config.lazyLoad) {
-                this.lazyImageActivate(index)
+            if (this.lazyModeIsOn()) {
+                this.lazyImageActivate(file.path)
             }
 
             // bulk selection
@@ -179,20 +181,16 @@ export default {
             if (file) {
                 file.click()
 
-                // to make sure the DOM has finished updating
-                // especially for long lists
-                this.$nextTick(() => {
-                    this.$nextTick(() => {
-                        let container = this.$refs['__stack-files'].$el
-                        let count = file.offsetTop - container.scrollTop - 20
-                        container.scrollBy({top: count, left: 0, behavior: 'smooth'})
+                this.$nextTick(debounce(() => {
+                    let container = this.$refs['__stack-files'].$el
+                    let count = file.offsetTop - container.scrollTop - 20
+                    container.scrollBy({top: count, left: 0, behavior: 'smooth'})
 
-                        // when scrollBy() doesnt work
-                        if (!(container.scrollHeight > container.clientHeight)) {
-                            file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
-                        }
-                    })
-                })
+                    // when scrollBy() doesnt work
+                    if (!(container.scrollHeight > container.clientHeight)) {
+                        file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
+                    }
+                }, 250))
             }
         }
     }

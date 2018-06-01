@@ -59,7 +59,7 @@ export default {
             }
 
             if (!this.isBulkSelecting()) {
-                !this.config.lazyLoad
+                !this.lazyModeIsOn()
                     ? this.selectFirst()
                     : this.lazySelectFirst()
             }

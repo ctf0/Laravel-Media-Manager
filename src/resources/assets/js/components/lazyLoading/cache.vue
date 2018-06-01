@@ -1,7 +1,7 @@
 <template>
-    <div ref="wrapper" class="__box-img-lazy">
-        <div v-if="cached" :style="{'--imageSrc': `url('${imgData}')`}" class="__box-img"/>
-        <div v-if="normal" :style="{'--imageSrc': `url('${url}')`}" class="__box-img"/>
+    <div ref="item" class="__box-img">
+        <img v-if="cached" :src="imgData" async>
+        <img v-else-if="normal" :src="url" async>
     </div>
 </template>
 
@@ -23,8 +23,8 @@ export default {
         }
     },
     mounted() {
-        EventHub.listen('lazy-image-activate', (i) => {
-            if (i == this.index && !this.cached && !this.normal) {
+        EventHub.listen('lazy-image-activate', (url) => {
+            if (url == this.url && !this.cached && !this.normal) {
                 if ('caches' in window) {
                     return this.cacheImageUrl(this.url)
                 }
@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         removePhBorder() {
-            return this.$refs.wrapper ? this.$refs.wrapper.style.border = 'none' : false
+            return this.$refs.item.style.border = 'none'
         },
 
         // api

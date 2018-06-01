@@ -16,9 +16,12 @@ export default {
         },
 
         // lazy
-        lazyImageActivate(index) {
+        lazyModeIsOn() {
+            return this.config.lazyLoad
+        },
+        lazyImageActivate(url) {
             this.$nextTick(() => {
-                EventHub.fire('lazy-image-activate', index)
+                EventHub.fire('lazy-image-activate', url)
             })
         },
         lazySelectFirst() {

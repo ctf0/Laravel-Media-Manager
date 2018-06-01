@@ -196,10 +196,6 @@ export default {
 
             // we have files
             if (this.allItemsCount) {
-                this.loadingFiles('hide')
-                this.toggleLoading()
-                this.toggleInfo = true
-
                 // check for prev opened folder
                 if (prev_folder) {
                     this.files.items.some((e, i) => {
@@ -210,7 +206,7 @@ export default {
                 }
 
                 // lazy loading is not active
-                if (!this.config.lazyLoad) {
+                if (!this.lazyModeIsOn()) {
                     // check for prev selected file
                     if (prev_file) {
                         this.files.items.some((e, i) => {
@@ -246,13 +242,16 @@ export default {
                     this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
                 }
 
-                if (this.searchFor) {this.updateSearchCount()}
-                return this.dirsListCheck(dirs)
+                if (this.searchFor) {
+                    this.updateSearchCount()
+                }
+
+                this.dirsListCheck(dirs)
             }
 
-            // we dont have files
-            this.toggleLoading()
             this.loadingFiles('hide')
+            this.toggleLoading()
+            this.toggleInfo = true
         },
         dirsListCheck(data) {
             const baseUrl = this.config.baseUrl
@@ -308,10 +307,7 @@ export default {
                 }
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path || '/'}"`)
-                this.isBulkSelecting()
-                    ? this.blkSlct()
-                    : false
-
+                this.isBulkSelecting() ? this.blkSlct() : false
                 this.deleteCachedResponse(this.cacheName).then(() => {
                     this.getFiles(this.folders, data.new_folder_name)
                 })
@@ -447,7 +443,7 @@ export default {
                                 ? this.blkSlct()
                                 : hasErrors
                                     ? false
-                                    : !this.config.lazyLoad
+                                    : !this.lazyModeIsOn()
                                         ? this.selectFirst()
                                         : this.lazySelectFirst()
                         }
@@ -508,7 +504,7 @@ export default {
                         this.isBulkSelecting()
                             ? this.blkSlct()
                             : this.allItemsCount
-                                ? !this.config.lazyLoad
+                                ? !this.lazyModeIsOn()
                                     ? this.selectFirst()
                                     : this.lazySelectFirst()
                                 : false
