@@ -35,22 +35,13 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
   ```bash
-  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web
+  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web animateScrollTo laravel-echo
   # or
-  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web --save
+  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web animateScrollTo laravel-echo --save
   ```
 
-- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
+- run `npm run watch` to compile your `js/css` files.
     - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
-
-  ```js
-  require('../vendor/MediaManager/js/manager')
-
-  new Vue({
-      el: '#app'
-  })
-  ```
-
 <br>
 
 ## Features
@@ -223,12 +214,6 @@ return [
      * automatically invalidate cache after "in Minutes"
      */
     'cacheExpiresAfter'=> 60,
-
-    /*
-     * use a custom navigation for small screens
-     * "vendor/MediaManager/partials/_breadcrumb.blade.php"
-     */
-    'mobile_alt_navigation' => false,
 ];
 ```
 

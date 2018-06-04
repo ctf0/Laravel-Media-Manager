@@ -80,6 +80,25 @@ export default {
         getElementByIndex(i) {
             return document.querySelector(`[data-file-index='${i}']`)
         },
+        getAudioCover(url) {
+            return new Promise((resolve, reject) => {
+                jsmediatags.read(url, {
+                    onSuccess(tag) {
+                        const {data, format} = tag.tags.picture
+                        let base64String = ''
+
+                        for (var value of data) {
+                            base64String += String.fromCharCode(value)
+                        }
+
+                        return resolve(`data:${format};base64,${window.btoa(base64String)}`)
+                    },
+                    onError(error) {
+                        return reject(error)
+                    }
+                })
+            })
+        },
         trans(key) {
             return this.translations[key]
         },

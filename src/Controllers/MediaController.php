@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use League\Flysystem\Plugin\ListWith;
+use ctf0\MediaManager\Events\MediaFileOpsNotifications;
 
 class MediaController extends Controller
 {
@@ -25,7 +26,6 @@ class MediaController extends Controller
     protected $storageDisk;
     protected $storageDiskInfo;
     protected $unallowedMimes;
-    protected $zipCacheStore;
 
     public function __construct(Carbon $carbon)
     {
@@ -41,7 +41,6 @@ class MediaController extends Controller
         $this->unallowedMimes  = array_get($this->config, 'unallowed_mimes');
         $this->LMF             = array_get($this->config, 'last_modified_format');
         $this->db              = app('db')->connection('mediamanager')->table('locked');
-        $this->zipCacheStore   = app('cache')->store('mediamanager');
         $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
 
         $this->storageDisk->addPlugin(new ListWith());
@@ -119,6 +118,8 @@ class MediaController extends Controller
 
         foreach ($request->file as $one) {
             if ($this->allowUpload($one)) {
+                $one = $this->optimizeUpload($one);
+
                 $original    = $one->getClientOriginalName();
                 $name_only   = pathinfo($original, PATHINFO_FILENAME);
                 $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
@@ -168,6 +169,12 @@ class MediaController extends Controller
             }
         }
 
+        // broadcast
+        broadcast(new MediaFileOpsNotifications([
+            'op'   => 'upload',
+            'path' => $upload_path,
+        ]))->toOthers();
+
         return response()->json($result);
     }
 
@@ -202,6 +209,12 @@ class MediaController extends Controller
 
                 // fire event
                 event('MMFileSaved', $this->getItemPath($destination));
+
+                // broadcast
+                broadcast(new MediaFileOpsNotifications([
+                    'op'      => 'upload',
+                    'path'    => $path,
+                ]))->toOthers();
 
                 $result = [
                     'success' => true,
@@ -267,6 +280,12 @@ class MediaController extends Controller
 
                 // fire event
                 event('MMFileSaved', $this->getItemPath($destination));
+
+                // broadcast
+                broadcast(new MediaFileOpsNotifications([
+                    'op'      => 'upload',
+                    'path'    => $path,
+                ]))->toOthers();
 
                 $result = [
                     'success' => true,
@@ -372,10 +391,16 @@ class MediaController extends Controller
         $result = [];
 
         foreach ($request->moved_files as $one) {
-            $file_type    = $one['type'];
-            $file_name    = $one['name'];
-            $file_size    = $one['size'];
-            $file_items   = isset($one['items']) ? $one['items'] : 0;
+            $file_name  = $one['name'];
+            $file_type  = $one['type'];
+            $file_size  = $one['size'];
+            $file_items = isset($one['items']) ? $one['items'] : 0;
+            $default    = [
+                'name'  => $file_name,
+                'type'  => $file_type,
+                'size'  => $file_size,
+                'items' => $file_items,
+            ];
 
             $destination = "{$request->destination}/$file_name";
             $old_path    = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
@@ -399,13 +424,7 @@ class MediaController extends Controller
                             $new = $this->getItemPath($new_path);
 
                             if (app('files')->copyDirectory($old, $new)) {
-                                $result[] = [
-                                    'success' => true,
-                                    'name'    => $one['name'],
-                                    'items'   => $file_items,
-                                    'type'    => $file_type,
-                                    'size'    => $file_size,
-                                ];
+                                $result[] = array_merge($default, ['success' => true]);
                             } else {
                                 $exc = array_get($this->storageDiskInfo, 'root')
                                     ? trans('MediaManager::messages.error_moving')
@@ -418,13 +437,7 @@ class MediaController extends Controller
                         // files
                         else {
                             if ($this->storageDisk->copy($old_path, $new_path)) {
-                                $result[] = [
-                                    'success' => true,
-                                    'name'    => $one['name'],
-                                    'items'   => $file_items,
-                                    'type'    => $file_type,
-                                    'size'    => $file_size,
-                                ];
+                                $result[] = array_merge($default, ['success' => true]);
                             } else {
                                 throw new Exception(
                                     trans('MediaManager::messages.error_moving')
@@ -436,13 +449,7 @@ class MediaController extends Controller
                     // move
                     else {
                         if ($this->storageDisk->move($old_path, $new_path)) {
-                            $result[] = [
-                                'success' => true,
-                                'name'    => $one['name'],
-                                'items'   => $file_items,
-                                'type'    => $file_type,
-                                'size'    => $file_size,
-                            ];
+                            $result[] = array_merge($default, ['success' => true]);
 
                             // fire event
                             event('MMFileMoved', [
@@ -484,22 +491,28 @@ class MediaController extends Controller
      */
     public function deleteItem(Request $request)
     {
-        $path   = $request->path;
-        $result = [];
+        $path        = $request->path;
+        $result      = [];
+        $toBroadCast = [];
 
         foreach ($request->deleted_files as $one) {
             $name      = $one['name'];
             $type      = $one['type'];
             $item_path = !$path ? $name : $this->clearDblSlash("$path/$name");
+            $default   = [
+                'name' => $name,
+                'type' => $type,
+            ];
 
             // folder
             if ($type == 'folder') {
                 if ($this->storageDisk->deleteDirectory($item_path)) {
-                    $result[]  = [
-                        'success' => true,
-                        'name'    => $name,
-                        'type'    => $type,
-                    ];
+                    $result[] = array_merge($default, ['success' => true]);
+
+                    $toBroadCast[] = array_merge($default, [
+                        'path' => $path,
+                        'url'  => null,
+                    ]);
 
                     // fire event
                     event('MMFileDeleted', [
@@ -507,24 +520,25 @@ class MediaController extends Controller
                         'is_folder' => true,
                     ]);
                 } else {
-                    $result[] = [
+                    $result[] = array_merge($default, [
                         'success' => false,
-                        'name'    => $name,
-                        'type'    => $type,
                         'message' => trans('MediaManager::messages.error_deleting_file'),
-                    ];
+                    ]);
                 }
             }
 
             // file
             else {
                 if ($this->storageDisk->delete($item_path)) {
-                    $result[]  = [
+                    $result[] = array_merge($default, [
                         'success' => true,
-                        'name'    => $name,
-                        'type'    => $type,
-                        'path'    => $this->resolveUrl($item_path),
-                    ];
+                        'url'     => $this->resolveUrl($item_path),
+                    ]);
+
+                    $toBroadCast[] = array_merge($default, [
+                        'path' => $path,
+                        'url'  => $this->resolveUrl($item_path),
+                    ]);
 
                     // fire event
                     event('MMFileDeleted', [
@@ -542,6 +556,12 @@ class MediaController extends Controller
             }
         }
 
+        // broadcast
+        broadcast(new MediaFileOpsNotifications([
+            'op'      => 'delete',
+            'items'   => $toBroadCast,
+        ]))->toOthers();
+
         return response()->json($result);
     }
 
@@ -554,8 +574,9 @@ class MediaController extends Controller
      */
     public function changeItemVisibility(Request $request)
     {
-        $path   = $request->path;
-        $result = [];
+        $path        = $request->path;
+        $result      = [];
+        $toBroadCast = [];
 
         foreach ($request->list as $file) {
             $name      = $file['name'];
@@ -569,6 +590,11 @@ class MediaController extends Controller
                     'visibility' => $type,
                     'message'    => trans('MediaManager::messages.visibility_success', ['attr' => $name]),
                 ];
+
+                $toBroadCast[] = [
+                    'name'       => $name,
+                    'visibility' => $type,
+                ];
             } else {
                 $result[] = [
                     'success' => false,
@@ -576,6 +602,13 @@ class MediaController extends Controller
                 ];
             }
         }
+
+        // broadcast
+        broadcast(new MediaFileOpsNotifications([
+            'op'    => 'visibility',
+            'path'  => $path,
+            'items' => $toBroadCast,
+        ]))->toOthers();
 
         return response()->json($result);
     }
@@ -589,18 +622,21 @@ class MediaController extends Controller
      */
     public function lockItem(Request $request)
     {
+        $path       = $request->path;
         $lockedList = $this->db->pluck('path')->toArray();
+
         $result     = [];
-        $deletes    = [];
+        $removed    = [];
+        $added      = [];
 
         foreach ($request->list as $item) {
             $url = $item['path'];
 
             if (in_array($url, $lockedList)) {
-                // for some reason we cant delete the items one by one
-                // probably related to sqlite
-                $deletes[] = $url;
+                // for some reason we cant delete the items one by one, probably related to sqlite
+                $removed[] = $url;
             } else {
+                $added[] = $url;
                 $this->db->insert(['path' => $url]);
             }
 
@@ -609,11 +645,19 @@ class MediaController extends Controller
             ];
         }
 
-        if ($deletes) {
-            $this->db->whereIn('path', $deletes)->delete();
+        if ($removed) {
+            $this->db->whereIn('path', $removed)->delete();
         }
 
-        return response()->json($result);
+        // broadcast
+        broadcast(new MediaFileOpsNotifications([
+            'op'      => 'lock',
+            'path'    => $path,
+            'removed' => $removed,
+            'added'   => $added,
+        ]))->toOthers();
+
+        return response()->json(compact('result', 'removed', 'added'));
     }
 
     /**
@@ -625,11 +669,9 @@ class MediaController extends Controller
      */
     public function downloadFolder(Request $request)
     {
-        return $this->zipAndDownload(
+        return $this->zipAndDownloadDir(
             $request->name,
-            $request->id,
-            $this->storageDisk->allFiles("{$request->folders}/$request->name"),
-            'folder'
+            $this->storageDisk->allFiles("{$request->folders}/$request->name")
         );
     }
 
@@ -644,74 +686,7 @@ class MediaController extends Controller
     {
         return $this->zipAndDownload(
             $request->name . '-files',
-            $request->id,
-            json_decode($request->list, true),
-            'files'
+            json_decode($request->list, true)
         );
-    }
-
-    /**
-     * zip progress update.
-     */
-    public function zipProgress(Request $request)
-    {
-        return response()->stream(function () use ($request) {
-            // stop execution
-            $start        = time();
-            $maxExecution = ini_get('max_execution_time');
-            $sleep        = array_get($this->storageDiskInfo, 'root') ? 0.5 : 1.5;
-            $close        = false;
-
-            // params
-            $id        = $request->header('last-event-id');
-            $track_id  = $request->id;
-            $cacheName = "{$request->name}-{$track_id}";
-
-            // get changes
-            $store = $this->zipCacheStore;
-
-            while (!$close) {
-                // progress
-                $this->SSE_msg($store->get("$cacheName.progress"), 'progress');
-
-                // warn
-                if ($store->has("$cacheName.warn")) {
-                    $this->SSE_msg(
-                        trans('MediaManager::messages.stream_error', ['attr' => $store->pull($cacheName . '.warn')]),
-                        'warn'
-                    );
-                }
-
-                // done
-                if ($store->has("$cacheName.done")) {
-                    $close = true;
-                    $this->SSE_msg(100, 'progress');
-                    $this->SSE_msg('All Done', 'done');
-                    $this->clearZipCache($store, $cacheName);
-                }
-
-                // exit
-                if (time() >= $start + $maxExecution) {
-                    $close = true;
-                    $this->SSE_msg(null, 'exit');
-                    $this->clearZipCache($store, $cacheName);
-                }
-
-                ob_flush();
-                flush();
-
-                // don't wait unnecessary
-                if (!$close) {
-                    sleep($sleep);
-                }
-            }
-        }, 200, [
-            'Content-Type'                     => 'text/event-stream', // needed for SSE to work
-            'Cache-Control'                    => 'no-cache',          // dont cache this response
-            'X-Accel-Buffering'                => 'no',                // needed for while loop to work
-            'Access-Control-Allow-Origin'      => config('app.url'),   // for cors
-            'Access-Control-Expose-Headers'    => '*',                 // for cors
-            'Access-Control-Allow-Credentials' => true,                // for cors
-        ]);
     }
 }

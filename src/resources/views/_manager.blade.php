@@ -32,15 +32,15 @@
         'dirs' => route('media.directories'), 
         'lock' => route('media.lock_file'), 
         'visibility' => route('media.change_vis'), 
-        'zipProgress' => route('media.zip_progress'), 
     ]) }}"
+    :user-id="{{ auth()->user()->id ?? 0 }}"
     :upload-panel-img-list="{{ $patterns }}">
 
     <div class="">
 
         {{-- notif-audio --}}
-        <audio ref="alert-audio"><source src="{{ asset('assets/vendor/MediaManager/audio/alert.mp3') }}" type="audio/mpeg"></audio>
-        <audio ref="success-audio"><source src="{{ asset('assets/vendor/MediaManager/audio/success.mp3') }}" type="audio/mpeg"></audio>
+        <audio ref="alert-audio" src="{{ asset('assets/vendor/MediaManager/audio/alert.mp3') }}"></audio>
+        <audio ref="success-audio" src="{{ asset('assets/vendor/MediaManager/audio/success.mp3') }}"></audio>
 
         {{-- top toolbar --}}
         <transition name="list" mode="out-in">
@@ -373,7 +373,7 @@
                     </div>
 
                     {{-- urlToUpload --}}
-                    <div class="save_link" @click="toggleModal('save_link_modal')">
+                    <div class="save_link" @click="toggleModal('save_link_modal')" v-if="!restrictUpload()">
                         <span class="icon is-large"
                             title="{{ trans('MediaManager::messages.save_link') }}"
                             v-tippy="{arrow: true, position: 'left'}">
@@ -481,8 +481,8 @@
                                 <div class="__box-data">
                                     <div class="__box-preview">
                                         <template v-if="fileTypeIs(file, 'image')">
-                                            <image-cache v-if="config.lazyLoad" :file="file" :index="index" :db="CDBN"></image-cache>
-                                            <image-intersect v-else :file="file"></image-intersect>
+                                            <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN"></image-cache>
+                                            <image-intersect v-else :url="file.path"></image-intersect>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -545,29 +545,34 @@
                                 {{-- video --}}
                                 <template v-else-if="selectedFileIs('video')">
                                     <video controls
-                                        preload="metadata"
+                                        preload="none"
                                         class="__sidebar-video"
                                         ref="player"
                                         :key="selectedFile.name"
                                         v-tippy="{arrow: true, position: 'left'}"
-                                        title="space">
-                                        <source :src="selectedFile.path" type="video/mp4">
+                                        title="space"
+                                        :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.video_support') }}
                                     </video>
                                 </template>
 
                                 {{-- audio --}}
                                 <template v-else-if="selectedFileIs('audio')">
-                                    <audio controls
-                                        preload="metadata"
-                                        class="__sidebar-audio"
-                                        ref="player"
-                                        :key="selectedFile.name"
-                                        v-tippy="{arrow: true, position: 'left'}"
-                                        title="space">
-                                        <source :src="selectedFile.path" type="audio/mpeg">
-                                        {{ trans('MediaManager::messages.audio_support') }}
-                                    </audio>
+                                    <div :key="selectedFile.name">
+                                        <audio controls
+                                            preload="none"
+                                            class="__sidebar-audio"
+                                            ref="player"
+                                            v-tippy="{arrow: true, position: 'left'}"
+                                            title="space"
+                                            :src="selectedFile.path">
+                                            {{ trans('MediaManager::messages.audio_support') }}
+                                        </audio>
+                                        <img v-if="selectedFilePreview"
+                                            :src="selectedFilePreview"
+                                            :alt="selectedFile.name"
+                                            class="image"/>
+                                    </div>
                                 </template>
 
                                 {{-- icons --}}
@@ -607,9 +612,8 @@
 
                                         <div class="__sidebar-zip" v-show="!isBulkSelecting()">
                                             <span>{{ trans('MediaManager::messages.download_folder') }}:</span>
-                                            <form action="{{ route('media.folder_download') }}" method="post" @submit="ZipDownload('folder', '{{ $randId }}')">
+                                            <form action="{{ route('media.folder_download') }}" method="post" @submit.prevent="ZipDownload($event)">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="id" value="{{ $randId }}">
                                                 <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
                                                 <input type="hidden" name="name" :value="selectedFile.name">
                                                 <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
@@ -621,6 +625,9 @@
 
                                     {{-- file --}}
                                     <template v-else>
+                                        <p v-if="selectedFileIs('image') && dimensions.length">
+                                            {{ trans('MediaManager::messages.dimension') }}: <span>@{{ selectedFileDimensions }}</span>
+                                        </p>
                                         <p>{{ trans('MediaManager::messages.visibility') }}: <span>@{{ selectedFile.visibility }}</span></p>
                                         <p>
                                             {{ trans('MediaManager::messages.preview') }}:
@@ -633,9 +640,8 @@
                                                 <span class="icon"><icon name="download" scale="1.2"></icon></span>
                                             </button>
                                             {{-- zip --}}
-                                            <form action="{{ route('media.files_download') }}" method="post" @submit="ZipDownload('files', '{{ $randId }}')" v-show="isBulkSelecting()">
+                                            <form action="{{ route('media.files_download') }}" method="post" @submit.prevent="ZipDownload($event)" v-show="isBulkSelecting()">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="id" value="{{ $randId }}">
                                                 <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
                                                 <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
                                                 <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
@@ -1033,5 +1039,6 @@
 {{-- scripts --}}
 @push('scripts')
     <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.0/jsmediatags.min.js"></script>
     <script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>
 @endpush

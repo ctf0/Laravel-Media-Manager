@@ -3,6 +3,7 @@
 namespace ctf0\MediaManager;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Broadcast;
 use ctf0\PackageChangeLog\PackageChangeLogServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
@@ -11,17 +12,18 @@ class MediaManagerServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->file = app('files');
+        $this->file = $this->app['files'];
 
         $this->packagePublish();
         $this->extraConfigs();
+        $this->socketRoute();
 
-        if (app('files')->exists(public_path('assets/vendor/MediaManager/patterns'))) {
+        if ($this->file->exists(public_path('assets/vendor/MediaManager/patterns'))) {
             $this->viewComp();
         }
 
         // append extra data
-        if (!app('cache')->store('file')->has('ct-mm')) {
+        if (!$this->app['cache']->store('file')->has('ct-mm')) {
             $this->autoReg();
         }
     }
@@ -77,13 +79,13 @@ class MediaManagerServiceProvider extends ServiceProvider
                 'database' => $db,
             ]]);
         }
+    }
 
-        // caching for zip-stream
-        config(['cache.stores.mediamanager' => [
-            'driver'     => 'database',
-            'table'      => 'cache',
-            'connection' => 'mediamanager',
-        ]]);
+    protected function socketRoute()
+    {
+        Broadcast::channel('User.{id}.media', function ($user, $id) {
+            return $user->id == $id;
+        });
     }
 
     /**
@@ -93,14 +95,13 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function viewComp()
     {
-        $config = config('mediaManager');
-
-        $url    = app('filesystem')
+        $config = $this->app['config']->get('mediaManager');
+        $url    = $this->app['filesystem']
             ->disk(array_get($config, 'storage_disk'))
             ->url('/');
 
         $patterns = collect(
-                    app('files')->allFiles(public_path('assets/vendor/MediaManager/patterns'))
+                    $this->file->allFiles(public_path('assets/vendor/MediaManager/patterns'))
                 )->map(function ($item) {
                     return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $item->getPathName());
                 });
@@ -109,7 +110,6 @@ class MediaManagerServiceProvider extends ServiceProvider
             $view->with([
                'base_url'              => preg_replace('/\/+$/', '/', $url),
                'patterns'              => json_encode($patterns),
-               'randId'                => uniqid(),
                'mobile_alt_navigation' => array_get($config, 'mobile_alt_navigation'),
            ]);
         });
@@ -150,7 +150,7 @@ EOT;
         }
 
         // run check once
-        app('cache')->store('file')->rememberForever('ct-mm', function () {
+        $this->app['cache']->store('file')->rememberForever('ct-mm', function () {
             return 'added';
         });
     }

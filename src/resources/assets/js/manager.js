@@ -41,6 +41,13 @@ axios.interceptors.response.use(
     (error) => Promise.reject(error.response)
 )
 
+// Echo
+// import EchoLib from 'laravel-echo'
+// window.Echo = new EchoLib({
+//     broadcaster: 'pusher',
+//     key: 'your-pusher-key'
+// });
+
 // vue-awesome
 require('./modules/icons')
 Vue.component('icon', require('vue-awesome/components/Icon'))

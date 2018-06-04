@@ -21,6 +21,9 @@ export default {
         restrictModeIsOn() {
             return Boolean(this.restrict.path)
         },
+        restrictUpload() {
+            return Boolean(this.restrict.uploadTypes || this.restrict.uploadsize)
+        },
         resolveRestrictFolders() {
             return this.folders = this.restrict.path.split('/')
         }

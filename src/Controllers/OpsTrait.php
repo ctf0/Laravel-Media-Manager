@@ -3,6 +3,8 @@
 namespace ctf0\MediaManager\Controllers;
 
 use ZipStream\ZipStream;
+use ctf0\MediaManager\Events\MediaZipProgress;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait OpsTrait
 {
@@ -201,27 +203,39 @@ trait OpsTrait
     /**
      * save file to disk.
      *
-     * @param [type] $item        [description]
-     * @param [type] $upload_path [description]
-     * @param [type] $file_name   [description]
+     * @param (Symfony\Component\HttpFoundation\File\UploadedFile) $file
+     * @param (string)                                             $upload_path [description]
+     * @param (string)                                             $file_name   [description]
      *
      * @return file path
      */
-    protected function storeFile($item, $upload_path, $file_name)
+    protected function storeFile(UploadedFile $file, $upload_path, $file_name)
     {
-        return $item->storeAs($upload_path, $file_name, $this->fileSystem);
+        return $file->storeAs($upload_path, $file_name, $this->fileSystem);
     }
 
     /**
      * allow/disallow user upload.
      *
-     * @param [type] $file [raw uploaded file]
+     * @param (Symfony\Component\HttpFoundation\File\UploadedFile || null) $file
      *
-     * @return [boolean] [description]
+     * @return [boolean]
      */
     protected function allowUpload($file = null)
     {
         return true;
+    }
+
+    /**
+     * do something to file b4 its saved to the server.
+     *
+     * @param (Symfony\Component\HttpFoundation\File\UploadedFile) $file
+     *
+     * @return $file
+     */
+    protected function optimizeUpload(UploadedFile $file)
+    {
+        return $file;
     }
 
     /**
@@ -230,74 +244,74 @@ trait OpsTrait
      * @param mixed $name
      * @param mixed $list
      * @param mixed $type
-     * @param mixed $id
      */
-    protected function zipAndDownload($name, $id, $list, $type)
+    protected function zipAndDownload($name, $list)
     {
-        return response()->stream(function () use ($name, $list, $type, $id) {
+        return response()->stream(function () use ($name, $list) {
             // track changes
-            $cacheName  = "$name-$id";
-            $counter    = 100 / count($list);
-            $store      = $this->zipCacheStore;
-            $store->forever("$cacheName.progress", 0);
-
-            // name duplication
-            $names = [];
-            $order = 0;
+            $counter = 100 / count($list);
+            $progress = 0;
+            broadcast(new MediaZipProgress(['progress'=>$progress]));
 
             $zip = new ZipStream("$name.zip", [
                 'content_type' => 'application/octet-stream',
             ]);
 
             foreach ($list as $file) {
-                if ($type == 'folder') {
-                    $file_name = pathinfo($file, PATHINFO_BASENAME);
-                    $streamRead = $this->storageDisk->readStream($file);
-
-                    // check if file name was used b4
-                    $name_only = pathinfo($file, PATHINFO_FILENAME);
-                    $ext_only  = pathinfo($file, PATHINFO_EXTENSION);
-
-                    if (in_array($file_name, $names)) {
-                        ++$order;
-                        $file_name = "{$name_only}_{$order}.{$ext_only}";
-                    } else {
-                        $names[] = $file_name;
-                    }
-                } else {
-                    $file_name = $file['name'];
-                    $streamRead = $this->storageDisk->readStream($this->clearUrl($file['path']));
-                }
+                $file_name = $file['name'];
+                $streamRead = $this->storageDisk->readStream($this->clearUrl($file['path']));
 
                 // add to zip
                 if ($streamRead) {
-                    $store->increment("$cacheName.progress", round($counter, 2));
+                    $progress += $counter;
+                    broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
                     $zip->addFileFromStream($file_name, $streamRead);
                 } else {
-                    $store->forever("$cacheName.warn", $file_name);
+                    broadcast(new MediaZipProgress([
+                        'msg' => $file_name,
+                        'type'=> 'warn',
+                    ]));
                 }
             }
 
-            $store->forever("$cacheName.done", true);
+            broadcast(new MediaZipProgress(['progress'=>100]));
             $zip->finish();
         });
     }
 
-    protected function SSE_msg($data = null, $event = null)
+    protected function zipAndDownloadDir($name, $list)
     {
-        echo $event
-            ? "event: $event\n"
-            : ':';
+        return response()->stream(function () use ($name, $list) {
+            // track changes
+            $counter = 100 / count($list);
+            $progress = 0;
+            broadcast(new MediaZipProgress(['progress'=>$progress]));
 
-        echo $data
-            ? 'data: ' . json_encode(['response' => $data]) . "\n\n"
-            : ':';
-    }
+            $zip = new ZipStream("$name.zip", [
+                'content_type' => 'application/octet-stream',
+            ]);
 
-    protected function clearZipCache($store, $item)
-    {
-        $store->forget("$item.progress");
-        $store->forget("$item.warn");
-        $store->forget("$item.done");
+            foreach ($list as $file) {
+                $dir_name = pathinfo($file, PATHINFO_DIRNAME);
+                $file_name = pathinfo($file, PATHINFO_BASENAME);
+                $full_name = "$dir_name/$file_name";
+                $streamRead = $this->storageDisk->readStream($file);
+
+                // add to zip
+                if ($streamRead) {
+                    $progress += $counter;
+                    broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
+                    $zip->addFileFromStream($full_name, $streamRead);
+                } else {
+                    broadcast(new MediaZipProgress([
+                        'msg' => $full_name,
+                        'type'=> 'warn',
+                    ]));
+                }
+            }
+
+            broadcast(new MediaZipProgress(['progress'=>100]));
+            $zip->finish();
+        });
     }
 }

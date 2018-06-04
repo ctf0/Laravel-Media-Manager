@@ -1,44 +1,42 @@
 <template>
-    <div ref="item" class="__box-img">
-        <img v-if="cached" :src="imgData" async>
-        <img v-else-if="normal" :src="url" async>
+    <div ref="wrapper" class="__box-img">
+        <img v-if="src" :src="src" async>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['file', 'index', 'db'],
+    props: ['url', 'db'],
     data() {
         return {
-            imgData: null,
-            normal: false,
-            url: this.file.path
+            src: null
         }
     },
     created() {
         if ('caches' in window) {
             this.getCachedUrl(this.url)
         } else {
-            this.normal = true
+            this.src = this.url
         }
     },
     mounted() {
-        EventHub.listen('lazy-image-activate', (url) => {
-            if (url == this.url && !this.cached && !this.normal) {
-                if ('caches' in window) {
-                    return this.cacheImageUrl(this.url)
-                }
-            }
-        })
-    },
-    computed: {
-        cached() {
-            return Boolean(this.imgData)
-        }
+        this.init()
     },
     methods: {
+        init() {
+            EventHub.listen('lazy-image-activate', (url) => {
+                if (url == this.url && !this.src) {
+                    if ('caches' in window) {
+                        return this.cacheImageUrl(this.url)
+                    }
+                }
+            })
+        },
         removePhBorder() {
-            return this.$refs.item.style.border = 'none'
+            return this.$refs.wrapper.style.border = 'none'
+        },
+        showImg(url) {
+            return this.src = url
         },
 
         // api
@@ -47,10 +45,11 @@ export default {
                 return cache.add(url).then(() => {
                     return this.getCachedUrl(url)
                 }).catch((err) => {
-                    this.normal = true
+                    this.showImg(url)
                     console.error(err)
                 })
             }).catch((err) => {
+                this.showImg(url)
                 console.error(err)
             })
         },
@@ -60,19 +59,14 @@ export default {
                     return response ? response.blob() : null
                 }).then((blob) => {
                     if (blob) {
-                        return this.imgData = URL.createObjectURL(blob)
+                        return this.showImg(URL.createObjectURL(blob))
                     }
                 })
             })
         }
     },
     watch: {
-        cached(val) {
-            if (val) {
-                this.removePhBorder()
-            }
-        },
-        normal(val) {
+        src(val) {
             if (val) {
                 this.removePhBorder()
             }

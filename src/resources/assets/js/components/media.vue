@@ -45,7 +45,8 @@ export default {
         'uploadPanelImgList',
         'hideExt',
         'hidePath',
-        'restrict'
+        'restrict',
+        'userId'
     ],
     data() {
         return {
@@ -75,6 +76,7 @@ export default {
             filterdList: [],
             bulkList: [],
             lockedList: [],
+            dimensions: [],
 
             moveToPath: null,
             selectedFile: null,
@@ -112,6 +114,11 @@ export default {
             this.removeCachedResponse().then(() => {
                 this.showNotif(`${this.trans('save_success')} "${msg}"`)
             })
+        })
+
+        // get images dimensions
+        EventHub.listen('save-image-dimensions', (obj) => {
+            this.dimensions.push(obj)
         })
     },
     updated() {

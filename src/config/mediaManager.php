@@ -70,10 +70,4 @@ return [
      * in "Minutes"
      */
     'cacheExpiresAfter'=> 60,
-
-    /*
-     * use a custom navigation for small screens
-     * "vendor/MediaManager/partials/_breadcrumb.blade.php"
-     */
-    'mobile_alt_navigation' => false,
 ];
