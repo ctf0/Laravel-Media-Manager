@@ -92,35 +92,57 @@ export default {
         cacheName() {
             let folders = this.folders
             return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
+        },
+
+        selectedFileDimensions() {
+            let f = this.dimensions.find((e) => e.url == this.selectedFile.path)
+
+            return f ? f.val : '...'
         }
     },
     asyncComputed: {
         selectedFilePreview: {
             get() {
-                if (this.selectedFileIs('image')) {
+                if (this.selectedFile) {
                     let url = this.selectedFile.path
 
-                    if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
-                        return url
+                    if (this.selectedFileIs('image')) {
+                        if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
+                            return url
+                        }
+
+                        return caches.open(this.CDBN).then((cache) => {
+                            // wait until the item is cached & return it
+                            return new Promise((resolve) => {
+                                let t = setInterval(() => {
+                                    return cache.match(url).then((response) => {
+                                        return response ? response.blob() : null
+                                    }).then((blob) => {
+                                        if (blob) {
+                                            clearInterval(t)
+                                            return resolve(URL.createObjectURL(blob))
+                                        }
+                                    })
+                                }, 250)
+                            })
+                        })
                     }
 
-                    return caches.open(this.CDBN).then((cache) => {
-                        // wait until the item is cached then return it
-                        // this is to avoid extra calls to display something
-                        // instead of an empty img src
-                        return new Promise((resolve) => {
-                            let t = setInterval(() => {
-                                return cache.match(url).then((response) => {
-                                    return response ? response.blob() : null
-                                }).then((blob) => {
-                                    if (blob) {
-                                        clearInterval(t)
-                                        return resolve(URL.createObjectURL(blob))
-                                    }
+                    if (this.selectedFileIs('audio') && this.browserSupport('jsmediatags')) {
+                        return this.getCachedResponse(url).then((res) => {
+                            if (res) {
+                                return res
+                            }
+
+                            return this.getAudioCover(url)
+                                .then((val) => {
+                                    this.cacheResponse(val, url)
+                                    return val
+                                }).catch((err) => {
+                                    return
                                 })
-                            }, 250)
                         })
-                    })
+                    }
                 }
             },
             default: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',

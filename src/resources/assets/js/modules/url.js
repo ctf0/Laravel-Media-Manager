@@ -1,15 +1,15 @@
 export default {
     methods: {
-        checkForUrlQuery() {
-            return window.location.href.split('?')[0]
+        getUrlWithoutQuery() {
+            return location.href.replace(location.search, '')
         },
         clearUrlQuery() {
-            window.history.replaceState(null, null, window.location.href.replace(/\?path.*/, ''))
+            history.replaceState(null, null, this.getUrlWithoutQuery())
         },
         getPathFromUrl() {
             return new Promise((resolve) => {
                 if (!this.inModal) {
-                    let path = window.location.search
+                    let path = location.search
                     this.folders = path.includes('path') ? path.replace('?path=', '').split('/') : []
                 }
 
@@ -18,11 +18,12 @@ export default {
         },
         updatePageUrl() {
             if (!this.inModal) {
-                let url = this.checkForUrlQuery()
+                let url = this.getUrlWithoutQuery()
+                let folders = this.folders
 
                 history.pushState(null, null,
-                    this.folders.length
-                        ? `${url}?path=${this.folders.join('/')}`
+                    folders.length
+                        ? `${url}?path=${folders.join('/')}`
                         : url
                 )
             }

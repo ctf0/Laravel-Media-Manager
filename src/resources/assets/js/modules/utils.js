@@ -80,6 +80,29 @@ export default {
         getElementByIndex(i) {
             return document.querySelector(`[data-file-index='${i}']`)
         },
+        getAudioCover(url) {
+            return new Promise((resolve, reject) => {
+                jsmediatags.read(url, {
+                    onSuccess(tag) {
+                        if (tag.tags.picture) {
+                            const {data, format} = tag.tags.picture
+                            let base64String = ''
+
+                            for (var value of data) {
+                                base64String += String.fromCharCode(value)
+                            }
+
+                            return resolve(`data:${format};base64,${window.btoa(base64String)}`)
+                        }
+
+                        return reject('no cover found')
+                    },
+                    onError(error) {
+                        return reject(error)
+                    }
+                })
+            })
+        },
         trans(key) {
             return this.translations[key]
         },
@@ -182,6 +205,9 @@ export default {
 
             return str
         },
+        arrayFilter(arr) {
+            return arr.filter((e) => e)
+        },
         showNotif(msg, s = 'success', duration = 3) {
             if (msg) {
                 if (s == 'danger') {
@@ -201,6 +227,7 @@ export default {
                         break
                     case 'info':
                         title = 'Info'
+                        duration = 5
                         break
                     default:
                         title = 'Success'

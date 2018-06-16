@@ -19,7 +19,7 @@
     background: darken($active_theme, 2.5%);
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     .media-manager__toolbar {
         .level-left + .level-right {
             margin-top: 0.75rem;
@@ -117,7 +117,7 @@
     }
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     #new-upload::before {
         width: 40vw;
         height: 40vw;
@@ -298,9 +298,13 @@
     min-height: 50vh;
     transition: all 0.25s;
     background-color: $white;
+
+    * {
+        backface-visibility: hidden;
+    }
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     .media-manager__stack-container {
         max-height: 100vh;
     }
@@ -316,7 +320,6 @@
     overflow: scroll;
     padding: 0.75rem;
     transition: all 0.25s;
-    will-change: auto;
 }
 
 .__stack-sidebar-hidden {
@@ -347,7 +350,7 @@
     margin: 0.75rem;
     padding: 0.75rem;
     cursor: pointer;
-    transition: all 0.25s ease-out;
+    transition: all 0.25s;
     color: darken($active_theme, 60%);
     border: 1px solid darken($active_theme, 2.5%);
     border-radius: 4px;
@@ -449,9 +452,11 @@
     }
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     .media-manager__stack-files {
         position: relative;
+        right: 0;
+        left: 0;
         width: 100%;
     }
 
@@ -480,12 +485,12 @@
 
         .__box-preview {
             display: flex;
+            overflow: hidden;
             align-items: center;
             flex: 4;
             justify-content: center;
             width: 100%;
             margin: 0;
-            padding: 0.1rem;
 
             svg {
                 transform: scale(1.5);
@@ -773,7 +778,7 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     }
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     .__modal-editor {
         .image {
             max-width: 75vw !important;
@@ -785,8 +790,6 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
 /* manager in modal */
 .modal-manager__Inmodal {
-    padding-top: 5% !important;
-
     > div.modal-content {
         width: 85%;
     }
@@ -822,7 +825,7 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     }
 }
 
-@include media('max', 1023) {
+@include media('max', 1087) {
     .modal-manager__Inmodal {
         .modal-content {
             width: 95%;
@@ -964,14 +967,10 @@ a[target='_blank'] {
 
 /*                bulma                */
 .input {
-    border-color: darken($active_theme, 5%);
-    box-shadow: none;
-
-    &:hover {
-        border-color: darken($active_theme, 25%);
-    }
+    box-shadow: none !important;
 }
 
+.input,
 .control button,
 .select select {
     border-color: darken($active_theme, 5%);
@@ -985,12 +984,6 @@ a[target='_blank'] {
     overflow: hidden;
     min-width: 480px;
     border-radius: 0 0 6px 6px;
-}
-
-.modal-card-body {
-    .icon {
-        vertical-align: sub;
-    }
 }
 
 .modal-card-head,
@@ -1028,23 +1021,13 @@ a[target='_blank'] {
 
 .modal {
     overflow: scroll;
-    align-items: flex-start;
 
     .modal-background {
         position: fixed;
     }
 
-    .modal-card {
-        margin: 0;
-        padding-top: 3rem;
-    }
-
     .modal-card-title {
         max-width: calc(100% - 20px);
-    }
-
-    .modal-content {
-        box-shadow: $shadow_1;
     }
 
     .modal-card-foot {

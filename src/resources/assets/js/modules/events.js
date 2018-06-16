@@ -52,7 +52,9 @@ function bm(el, name) {
         autoplay: true,
         path: el.getAttribute('data-json'),
         rendererSettings: {
-            progressiveLoad: true
+            clearCanvas: true,
+            progressiveLoad: true,
+            hideOnTransparent: false
         }
     })
 }

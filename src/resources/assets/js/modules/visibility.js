@@ -14,23 +14,24 @@ export default {
                 ? this.bulkList
                 : [this.selectedFile]
 
-            list = list.filter((e) => {
-                return e.type != 'folder'
-            })
+            list = list.filter((e) => e.type != 'folder')
 
             axios.post(this.routes.visibility, {
                 path: this.files.path,
                 list: list
             }).then(({data}) => {
 
+                let files = this.files.items
+
                 data.map((item) => {
                     if (item.success) {
-                        this.showNotif(item.message)
-                        this.files.items.some((e) => {
+                        files.some((e) => {
                             if (e.name == item.name) {
                                 return e.visibility = item.visibility
                             }
                         })
+
+                        this.showNotif(item.message)
                     } else {
                         this.showNotif(item.message, 'danger')
                     }

@@ -1,5 +1,6 @@
 import addMinutes from 'date-fns/add_minutes'
 import getTime from 'date-fns/get_time'
+import uniq from 'lodash/uniq'
 
 import { Store, get, set, del, clear, keys } from 'idb-keyval'
 const cacheStore = new Store(
@@ -62,7 +63,22 @@ export default {
             }
 
             // clear dups and delete items
-            Array.from(new Set(items)).forEach((one) => {
+            uniq(items).sort().forEach((one) => {
+                promises.push(this.deleteCachedResponse(one))
+            })
+
+            return Promise.all(promises)
+        },
+        removeCachedResponseForOther(extra) {
+            let items = ['root_']
+            let promises = []
+
+            extra.forEach((e) => {
+                items.push(...this.getRecursivePathParent(e))
+            })
+
+            // clear dups and delete items
+            uniq(items).sort().forEach((one) => {
                 promises.push(this.deleteCachedResponse(one))
             })
 
@@ -70,17 +86,16 @@ export default {
         },
         deleteCachedResponse(item) {
             return del(item, cacheStore).then(() => {
-                console.log(`${item} Cache Cleared !`)
+                // console.log(`${item} Cache Cleared !`)
             }).catch((err) => {
                 console.error('cacheStore.removeItem', err)
             })
         },
         clearCache(notif = true) {
-            clear(cacheStore).then(() => {
+            return clear(cacheStore).then(() => {
                 this.refresh().then(() => {
                     if (notif) this.showNotif('Cache Cleared !')
                 })
-
             }).catch((err) => {
                 console.error(err)
             })
@@ -117,7 +132,7 @@ export default {
         },
         getRecursivePathParent(path) {
             let list = []
-            let arr = path.split('/').filter((e) => e)
+            let arr = this.arrayFilter(path.split('/'))
             let i = arr.length - 1
 
             for (i; i >= 0; i--) {
@@ -139,7 +154,7 @@ export default {
         },
         clearImageCache() {
             if ('caches' in window) {
-                caches.keys().then((keys) => {
+                return caches.keys().then((keys) => {
                     return Promise.all(
                         keys.map((item) => {
                             if (item == this.CDBN) {

@@ -9,6 +9,7 @@ export default {
                 return this.lockedList.includes(item)
             }
         },
+
         // for folders with nested items
         hasLockedItems(name, cacheName) {
             return this.lockedList.some((e) => {
@@ -38,18 +39,27 @@ export default {
                 : [this.selectedFile]
 
             axios.post(this.routes.lock, {
-                list: list
+                list: list,
+                path: this.files.path
             }).then(({data}) => {
 
-                data.map((item) => {
+                data.result.map((item) => {
                     this.showNotif(item.message)
                 })
 
-                this.$refs['success-audio'].play()
-                this.isBulkSelecting() ? this.blkSlct() : false
-                this.removeCachedResponse().then(() => {
-                    this.getFiles(this.folders)
+                data.removed.map((item) => {
+                    let index = this.lockedList.indexOf(item)
+                    this.lockedList.splice(index, 1)
                 })
+
+                data.added.map((item) => {
+                    this.lockedList.push(item)
+                })
+
+                this.$refs['success-audio'].play()
+                this.resetInput(['currentFilterName'])
+                this.isBulkSelecting() ? this.blkSlct() : false
+                this.removeCachedResponse()
 
             }).catch((err) => {
                 console.error(err)

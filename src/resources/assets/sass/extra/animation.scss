@@ -3,7 +3,7 @@ $list: (img-nxt, img-prv, info-in, info-out, slide, list);
 @each $class in $list {
     .#{$class}-enter-active,
     .#{$class}-leave-active {
-        transition: all 0.25s ease-out;
+        transition: all 0.2s ease-out;
     }
 }
 

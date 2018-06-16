@@ -13,6 +13,8 @@ import Image from '../modules/image'
 import Url from '../modules/url'
 import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
+import Broadcasting from '../modules/broadcast'
+import Scrolling from '../modules/scroll'
 
 import Cropper from './imageEditor/cropper.vue'
 import imageCache from './lazyLoading/cache.vue'
@@ -35,7 +37,9 @@ export default {
         Computed,
         Watchers,
         Image,
-        Url
+        Url,
+        Broadcasting,
+        Scrolling
     ],
     props: [
         'config',
@@ -45,7 +49,8 @@ export default {
         'uploadPanelImgList',
         'hideExt',
         'hidePath',
-        'restrict'
+        'restrict',
+        'userId'
     ],
     data() {
         return {
@@ -75,6 +80,7 @@ export default {
             filterdList: [],
             bulkList: [],
             lockedList: [],
+            dimensions: [],
 
             moveToPath: null,
             selectedFile: null,
@@ -96,7 +102,9 @@ export default {
                 'linear-gradient(141deg, #ffaf24 0%, #ffdd57 71%, #fffa70 100%)',
                 'linear-gradient(141deg, #ff0561 0%, #ff3860 71%, #ff5257 100%)',
                 'linear-gradient(141deg, #1f191a 0%, #363636 71%, #46403f 100%)'
-            ]
+            ],
+            firstRun: true,
+            firstMeta: false
         }
     },
     created() {
@@ -112,6 +120,11 @@ export default {
             this.removeCachedResponse().then(() => {
                 this.showNotif(`${this.trans('save_success')} "${msg}"`)
             })
+        })
+
+        // get images dimensions
+        EventHub.listen('save-image-dimensions', (obj) => {
+            this.dimensions.push(obj)
         })
     },
     updated() {
@@ -139,6 +152,7 @@ export default {
                 this.resolveRestrictFolders()
 
                 return this.getFiles(this.folders).then(() => {
+                    this.firstRun = false
                     this.fileUpload()
                 })
             }
@@ -148,6 +162,7 @@ export default {
                 return this.preSaved()
             }).then(() => {
                 return this.getFiles(this.folders, null, this.selectedFile).then(() => {
+                    this.firstRun = false
                     this.fileUpload()
                 })
             })

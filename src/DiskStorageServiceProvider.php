@@ -24,8 +24,8 @@ class DiskStorageServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $mm           = config('mediaManager.storage_disk');
-        $fs           = config('filesystems.disks.' . $mm);
+        $mm           = $this->app['config']->get('mediaManager.storage_disk');
+        $fs           = $this->app['config']->get('filesystems.disks.' . $mm);
         $fs['driver'] = 'ctf0';
         config(['filesystems.disks.ctf0-media' => $fs]);
 

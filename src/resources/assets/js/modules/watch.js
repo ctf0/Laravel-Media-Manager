@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce'
+
 export default {
     watch: {
         allFiles(val) {
@@ -85,7 +87,7 @@ export default {
             if (val) {
                 this.toggleUploadArea = false
                 this.toggleInfo = false
-                this.toggleLoading()
+                this.isLoading = true
                 this.noFiles('hide')
                 this.loadingFiles('show')
             }
@@ -155,18 +157,12 @@ export default {
                 this.resetInput('searchItemsCount')
             }
         },
-        toggleInfo(val) {
-            const el = this.$refs['__stack-files'].$el
-
-            el.style.opacity = 0
-
-            requestAnimationFrame(() => {
-                val
-                    ? el.classList.remove('__stack-sidebar-hidden')
-                    : el.classList.add('__stack-sidebar-hidden')
-
-                el.style.opacity = 1
-            })
+        toggleInfo() {
+            if (!this.firstRun && this.currentFileIndex) {
+                this.$nextTick(debounce(() => {
+                    this.scrollToSelected(this.getElementByIndex(this.currentFileIndex))
+                }, 500))
+            }
         }
     }
 }

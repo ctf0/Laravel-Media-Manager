@@ -37,10 +37,7 @@ export default {
             if (val == 'all') {
                 this.resetInput('currentFilterName')
             } else if (val == 'locked') {
-                this.filterdList = files.filter((item) => {
-                    return this.IsLocked(item)
-                })
-
+                this.filterdList = files.filter((item) => this.IsLocked(item))
                 this.currentFilterName = val
             } else {
                 this.filterdList = files.filter((item) => {

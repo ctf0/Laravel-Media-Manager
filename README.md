@@ -35,22 +35,13 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
   ```bash
-  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web
+  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web laravel-echo
   # or
-  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web --save
+  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web laravel-echo --save
   ```
 
-- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
+- run `npm run watch` to compile your `js/css` files.
     - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
-
-  ```js
-  require('../vendor/MediaManager/js/manager')
-
-  new Vue({
-      el: '#app'
-  })
-  ```
-
 <br>
 
 ## Features
@@ -60,22 +51,23 @@
   + upload
   + move/copy
   + delete
+- toggle between `random/original` names for uploaded files
 - upload an image from a url
 - [load image on demand](https://github.com/ctf0/Laravel-Media-Manager/wiki/Caching-Strategies#cache-api-image-offline-caching)
+- [cache requests](https://github.com/ctf0/Laravel-Media-Manager/wiki/Caching-Strategies)
+- [asynchronous Updates](https://github.com/ctf0/Laravel-Media-Manager/wiki/Async-Update-The-Manager)
 - bulk selection
 - change item/s visibility
-- [cache requests](https://github.com/ctf0/Laravel-Media-Manager/wiki/Caching-Strategies)
 - update the page url while navigation
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension) / [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - [restrict access to path](https://github.com/ctf0/Laravel-Media-Manager/wiki/Restrict-Access-To-Path)
-- toggle between `random/original` names for uploaded files
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
 - directly copy selected file link
 - use the manager
-  + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
-  + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
+    + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
+    + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left/up, right/down, home, end)
-- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) selected files/folders ***"sqLite must be installed"***
+- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s ***"sqLite must be installed"***
 - search
 - filter by
   + folder
@@ -93,43 +85,44 @@
   + selected
   + search found
 - protection against overwriting (files/folders)
-- autoplay media files ***"if selected filter is audio/video"***
 - file name sanitization for
-  + upload
-  + rename
-  + new folder
++ upload
++ rename
++ new folder
+- autoplay media files ***"if selected filter is audio/video"***
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts / gestures
 
-  |   navigation   |                  button                  |    keyboard   |          click / tap          |              touch              |
-  |----------------|------------------------------------------|---------------|-------------------------------|---------------------------------|
-  |                | toggle upload panel *(toolbar)*          | u             | *                             |                                 |
-  |                | refresh *(toolbar)*                      | r             | * / hold *(clear ls & cache)* |                                 |
-  |                | move *(toolbar)*                         | m             | *                             |                                 |
-  |                | image editor *(toolbar)*                 | e             | *                             |                                 |
-  |                | delete *(toolbar)*                       | d / del       | *                             |                                 |
-  |                | lock/unlock *(toolbar)*                  | l             | *                             |                                 |
-  |                | change visibility *(toolbar)*            | v             | *                             |                                 |
-  |                | toggle bulk selection *(toolbar)*        | b             | *                             |                                 |
-  |                | (reset) bulk select all *(toolbar)*      | a             | *                             |                                 |
-  |                | toggle sidebar *(path bar)*              | t             | *                             |                                 |
-  |                | confirm *(modal)*                        | enter         | *                             |                                 |
-  |                | toggle preview "image/pdf/text" *(item)* | space         | **                            |                                 |
-  |                | play/pause media *(item)*                | space         | **                            |                                 |
-  |                | hide (modal / upload panel)              | esc           |                               |                                 |
-  |                | reset (search / bulk selection)          | esc           |                               |                                 |
-  |                | &nbsp;                                   |               |                               |                                 |
-  |                | move *(item)*                            |               |                               | swipe up                        |
-  |                | delete *(item)*                          |               |                               | swipe down                      |
-  |                | image editor *(item)*                    |               |                               | hold                            |
-  |                | limit bulk select *(item)*               | shift + click |                               |                                 |
-  |                | &nbsp;                                   |               |                               |                                 |
-  | select next    |                                          | right / down  | *                             | swipe left  *(preview)*         |
-  | select prev    |                                          | left / up     | *                             | swipe right *(preview)*         |
-  | select first   |                                          | home          |                               |                                 |
-  | select last    |                                          | end           |                               |                                 |
-  | open folder    |                                          | enter         | **                            |                                 |
-  | go to prev dir | folderName *(path bar)*                  | backspace     | *                             | swipe right *(items container)* |
+  |   navigation   |                  button                  |     keyboard     |          click / tap          |              touch              |
+  |----------------|------------------------------------------|------------------|-------------------------------|---------------------------------|
+  |                | toggle upload panel *(toolbar)*          | u                | *                             |                                 |
+  |                | refresh *(toolbar)*                      | r                | * / hold *(clear ls & cache)* |                                 |
+  |                | move *(toolbar)*                         | m                | *                             |                                 |
+  |                | image editor *(toolbar)*                 | e                | *                             |                                 |
+  |                | delete *(toolbar)*                       | d / del          | *                             |                                 |
+  |                | lock/unlock *(toolbar)*                  | l                | *                             |                                 |
+  |                | change visibility *(toolbar)*            | v                | *                             |                                 |
+  |                | toggle bulk selection *(toolbar)*        | b                | *                             |                                 |
+  |                | (reset) bulk select all *(toolbar)*      | a                | *                             |                                 |
+  |                | toggle sidebar *(path bar)*              | t                | *                             |                                 |
+  |                | confirm *(modal)*                        | enter            | *                             |                                 |
+  |                | toggle preview "image/pdf/text" *(item)* | space            | **                            |                                 |
+  |                | play/pause media *(item)*                | space            | **                            |                                 |
+  |                | hide (modal / upload panel)              | esc              |                               |                                 |
+  |                | reset (search / bulk selection)          | esc              |                               |                                 |
+  |                | &nbsp;                                   |                  |                               |                                 |
+  |                | move *(item)*                            |                  |                               | swipe up                        |
+  |                | delete *(item)*                          |                  |                               | swipe down                      |
+  |                | image editor *(item)*                    |                  |                               | hold                            |
+  |                | limit bulk select *(item)*               | shift + click    |                               |                                 |
+  |                | current + next bulk select *(item)*      | alt/meta + click |                               |                                 |
+  |                | &nbsp;                                   |                  |                               |                                 |
+  | select next    |                                          | right / down     | *                             | swipe left  *(preview)*         |
+  | select prev    |                                          | left / up        | *                             | swipe right *(preview)*         |
+  | select first   |                                          | home             |                               |                                 |
+  | select last    |                                          | end              |                               |                                 |
+  | open folder    |                                          | enter            | **                            |                                 |
+  | go to prev dir | folderName *(path bar)*                  | backspace        | *                             | swipe right *(items container)* |
 
 - events
 
@@ -223,12 +216,6 @@ return [
      * automatically invalidate cache after "in Minutes"
      */
     'cacheExpiresAfter'=> 60,
-
-    /*
-     * use a custom navigation for small screens
-     * "vendor/MediaManager/partials/_breadcrumb.blade.php"
-     */
-    'mobile_alt_navigation' => false,
 ];
 ```
 

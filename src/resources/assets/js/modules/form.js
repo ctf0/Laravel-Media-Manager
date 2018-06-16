@@ -1,3 +1,6 @@
+import debounce from 'lodash/debounce'
+const Dropzone = require('dropzone')
+
 export default {
     methods: {
         /*                Upload                */
@@ -8,6 +11,7 @@ export default {
 
             let last = null
             let sending = false
+            let clearCache = false
 
             new Dropzone('#new-upload', {
                 createImageThumbnails: false,
@@ -18,6 +22,9 @@ export default {
                 ignoreHiddenFiles: true,
                 acceptedFiles: uploadTypes,
                 maxFilesize: uploadsize,
+                headers: {
+                    'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null
+                },
                 timeout: 3600000, // 60 mins
                 previewsContainer: '#uploadPreview',
                 processingmultiple() {
@@ -32,8 +39,9 @@ export default {
                 successmultiple(files, res) {
                     res.map((item) => {
                         if (item.success) {
-                            manager.showNotif(`${manager.trans('upload_success')} "${item.message}"`)
-                            last = item.message
+                            clearCache = true
+                            last = item.file_name
+                            manager.showNotif(`${manager.trans('upload_success')} "${item.file_name}"`)
                         } else {
                             manager.showNotif(item.message, 'danger')
                         }
@@ -47,15 +55,21 @@ export default {
                 },
                 queuecomplete() {
                     if (!sending) {
-                        manager.$refs['success-audio'].play()
                         manager.progressCounter = 0
                         manager.showProgress = false
 
-                        manager.removeCachedResponse().then(() => {
-                            last
-                                ? manager.getFiles(manager.folders, null, last)
-                                : manager.getFiles(manager.folders)
-                        })
+                        if (clearCache) {
+                            manager.$refs['success-audio'].play()
+                            manager.removeCachedResponse().then(() => {
+                                last
+                                    ? manager.getFiles(manager.folders, null, last)
+                                    : manager.getFiles(manager.folders)
+                            })
+                        } else {
+                            manager.toggleInfo = true
+                            manager.isLoading = false
+                            manager.loadingFiles('hide')
+                        }
                     }
                 }
             })
@@ -100,7 +114,6 @@ export default {
                 this.toggleLoading()
                 this.toggleModal()
                 this.loadingFiles('hide')
-                this.resetInput('urlToUpload')
 
                 this.ajaxError()
             })
@@ -112,8 +125,8 @@ export default {
             this.noFiles('hide')
 
             if (!this.loading_files) {
+                this.isLoading = true
                 this.toggleInfo = false
-                this.toggleLoading()
                 this.loadingFiles('show')
             }
 
@@ -137,22 +150,21 @@ export default {
                             folder: folders,
                             dirs: this.folders
                         }).then(({data}) => {
-
                             // folder doesnt exist
                             if (data.error) {
                                 return this.showNotif(data.error, 'danger')
                             }
-
-                            // normal
-                            this.files = data.files
-                            this.lockedList = data.locked
-                            this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
 
                             // cache response
                             this.cacheResponse({
                                 files: data.files,
                                 dirs: data.dirs
                             })
+
+                            // return data
+                            this.files = data.files
+                            this.lockedList = data.locked
+                            this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
 
                         }).catch((err) => {
                             console.error(err)
@@ -175,23 +187,17 @@ export default {
         filesListCheck(prev_folder, prev_file, folders, dirs) {
             // check for hidden extensions
             if (this.hideExt.length) {
-                this.files.items = this.files.items.filter((e) => {
-                    return !this.checkForHiddenExt(e)
-                })
+                this.files.items = this.files.items.filter((e) => !this.checkForHiddenExt(e))
             }
 
             // check for hidden folders
             if (this.hidePath.length) {
-                this.files.items = this.files.items.filter((e) => {
-                    return !this.checkForHiddenPath(e)
-                })
+                this.files.items = this.files.items.filter((e) => !this.checkForHiddenPath(e))
             }
 
             // hide folders for restrictionMode
             if (this.restrictModeIsOn()) {
-                this.files.items = this.files.items.filter((e) => {
-                    return e.type != 'folder'
-                })
+                this.files.items = this.files.items.filter((e) => e.type != 'folder')
             }
 
             // we have files
@@ -227,21 +233,6 @@ export default {
                     }
                 }
 
-                // scroll & click on prev selected item
-                this.$nextTick(() => {
-                    let curIndex = this.currentFileIndex
-                    if (curIndex) {
-                        this.scrollToFile(this.getElementByIndex(curIndex))
-                    }
-                })
-
-                // scroll to breadcrumb item
-                if (this.$refs.bc) {
-                    let name = folders.split('/').pop()
-                    let count = document.getElementById(`${name ? name : 'library'}-bc`).offsetLeft
-                    this.$refs.bc.$el.scrollBy({top: 0, left: count, behavior: 'smooth'})
-                }
-
                 if (this.searchFor) {
                     this.updateSearchCount()
                 }
@@ -249,9 +240,20 @@ export default {
                 this.dirsListCheck(dirs)
             }
 
-            this.loadingFiles('hide')
-            this.toggleLoading()
             this.toggleInfo = true
+            this.isLoading = false
+            this.loadingFiles('hide')
+
+            // avoid unnecessary delay
+            if (this.firstRun && this.allItemsCount > 20) {
+                this.$nextTick(debounce(() => {
+                    this.scrollOnLoad(folders)
+                }, 500))
+            } else {
+                this.$nextTick(() => {
+                    this.scrollOnLoad(folders)
+                })
+            }
         },
         dirsListCheck(data) {
             const baseUrl = this.config.baseUrl
@@ -259,23 +261,23 @@ export default {
 
             // check for hidden folders in directories
             if (this.hidePath.length) {
-                this.directories = this.directories.filter((e) => {
-                    return !this.checkForFolderName(e)
-                })
+                this.directories = this.directories.filter((e) => !this.checkForFolderName(e))
             }
 
             if (this.lockedList.length) {
                 // nested folders
                 if (this.files.path !== '') {
-                    return this.directories = this.directories.filter((e) => {
-                        return !this.IsLocked(this.clearDblSlash(`${baseUrl}/${this.folders.join('/')}/${e}`))
-                    })
+                    return this.directories = this.directories.filter(
+                        (e) => !this.IsLocked(
+                            this.clearDblSlash(`${baseUrl}/${this.folders.join('/')}/${e}`)
+                        )
+                    )
                 }
 
                 // root
-                this.directories = this.directories.filter((e) => {
-                    return !this.IsLocked(this.clearDblSlash(`${baseUrl}/${e}`))
-                })
+                this.directories = this.directories.filter(
+                    (e) => !this.IsLocked(this.clearDblSlash(`${baseUrl}/${e}`))
+                )
             }
         },
 
@@ -288,10 +290,6 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            if (folder_name.match(/^.\/.*|^.$/)) {
-                return this.showNotif(this.trans('single_char_folder'), 'danger')
-            }
-
             this.toggleLoading()
 
             axios.post(event.target.action, {
@@ -302,7 +300,7 @@ export default {
                 this.toggleModal()
                 this.resetInput('newFolderName')
 
-                if (!data.success) {
+                if (data.message) {
                     return this.showNotif(data.message, 'danger')
                 }
 
@@ -320,8 +318,9 @@ export default {
 
         // rename
         RenameFileForm(event) {
+            let selected = this.selectedFile
             let changed = this.newFilename
-            let filename = this.selectedFile.name
+            let filename = selected.name
             let cacheName = this.getCacheName(filename)
             let ext = this.getExtension(filename)
             let newFilename = ext == null ? changed : `${changed}.${ext}`
@@ -330,15 +329,9 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            if (this.selectedFileIs('folder')) {
-                if (changed.match(/^.\/.*|^.$/)) {
-                    return this.showNotif(this.trans('single_char_folder'), 'danger')
-                }
-
-                if (this.hasLockedItems(filename, cacheName)) {
-                    this.showNotif(`"${filename}" ${this.trans('error_altered_fwli')}`, 'danger')
-                    return this.toggleModal()
-                }
+            if (this.selectedFileIs('folder') && this.hasLockedItems(filename, cacheName)) {
+                this.showNotif(`"${filename}" ${this.trans('error_altered_fwli')}`, 'danger')
+                return this.toggleModal()
             }
 
             this.toggleLoading()
@@ -346,12 +339,13 @@ export default {
             axios.post(event.target.action, {
                 path: this.files.path,
                 filename: filename,
-                new_filename: newFilename
+                new_filename: newFilename,
+                type: selected.type
             }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
 
-                if (!data.success) {
+                if (data.message) {
                     return this.showNotif(data.message, 'danger')
                 }
 
@@ -360,8 +354,11 @@ export default {
                     this.removeImageCache(this.selectedFile.path)
                 }
 
-                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${data.new_filename}"`)
-                this.updateItemName(this.selectedFile, filename, data.new_filename)
+                let savedName = data.new_filename
+
+                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${savedName}"`)
+                selected.name = savedName
+                selected.path = selected.path.replace(filename, savedName)
 
                 // clear folders cache
                 if (this.selectedFileIs('folder')) {
@@ -380,9 +377,12 @@ export default {
         // move
         MoveFileForm(event) {
             if (this.checkForFolders) {
+                let hasErrors = false
+                let clearCache = false
+                let cacheNamesList = []
+
                 let destination = this.moveToPath
                 let copy = this.useCopy
-                let hasErrors = false
                 let files = this.checkNestedLockedItems(
                     this.bulkItemsCount
                         ? this.bulkItemsFilter
@@ -410,6 +410,8 @@ export default {
                             return this.showNotif(item.message, 'danger')
                         }
 
+                        clearCache = true
+
                         // copy
                         if (copy) {
                             this.showNotif(`${this.trans('copy_success')} "${item.name}" to "${destination}"`)
@@ -427,6 +429,10 @@ export default {
                             if (this.searchFor) {
                                 this.searchItemsCount = this.filesList.length
                             }
+
+                            if (this.fileTypeIs(item, 'folder')) {
+                                cacheNamesList.push(`${this.cacheName}/${item.name}`)
+                            }
                         }
 
                         // update folder count when folder is moved/copied into another
@@ -435,19 +441,21 @@ export default {
                             : this.updateFolderCount(destination, 1, item.size)
                     })
 
-                    this.clearImageCache()
-                    this.$refs['success-audio'].play()
-                    this.removeCachedResponse(destination == '../' ? null : destination).then(() => {
-                        if (this.allItemsCount) {
-                            this.isBulkSelecting()
-                                ? this.blkSlct()
-                                : hasErrors
-                                    ? false
-                                    : !this.lazyModeIsOn()
-                                        ? this.selectFirst()
-                                        : this.lazySelectFirst()
-                        }
-                    })
+                    if (clearCache) {
+                        this.clearImageCache()
+                        this.$refs['success-audio'].play()
+                        this.removeCachedResponse(destination == '../' ? null : destination, cacheNamesList).then(() => {
+                            if (this.allItemsCount) {
+                                this.isBulkSelecting()
+                                    ? this.blkSlct()
+                                    : hasErrors
+                                        ? false
+                                        : !this.lazyModeIsOn()
+                                            ? this.selectFirst()
+                                            : this.lazySelectFirst()
+                            }
+                        })
+                    }
 
                 }).catch((err) => {
                     console.error(err)
@@ -484,13 +492,13 @@ export default {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    // clear indexdb cache
+                    // clear indexdb cache for dirs
                     if (item.type == 'folder') {
                         cacheNamesList.push(this.getCacheName(item.name))
                     }
-                    // clear cache storage cache
-                    if (item.type != 'folder') {
-                        this.removeImageCache(this.clearDblSlash(item.path))
+                    // clear cache storage for images
+                    else {
+                        this.removeImageCache(item.url)
                     }
 
                     clearCache = true
@@ -524,36 +532,25 @@ export default {
         },
 
         /*                Ops                */
-        removeFromLists(name, type) {
-            if (this.filteredItemsCount) {
-                let list = this.filterdList
-
-                list.map((e) => {
-                    if (e.name.includes(name) && e.type.includes(type)) {
-                        list.splice(list.indexOf(e), 1)
-                    }
-                })
-            }
-
+        removeFromLists(name, type, reset = true) {
             if (type == 'folder' && this.directories.length) {
-                let list = this.directories
-
-                list.map((e) => {
-                    if (e.includes(name)) {
-                        list.splice(list.indexOf(e), 1)
-                    }
-                })
+                this.updateListsRemove(this.directories, name, type)
             }
 
-            let list = this.files.items
+            if (this.filteredItemsCount) {
+                this.updateListsRemove(this.filterdList, name, type)
+            }
 
-            this.files.items.map((e) => {
+            this.updateListsRemove(this.files.items, name, type)
+
+            if (reset) this.resetInput(['selectedFile', 'currentFileIndex'])
+        },
+        updateListsRemove(list, name, type) {
+            return list.some((e) => {
                 if (e.name == name && e.type == type) {
                     list.splice(list.indexOf(e), 1)
                 }
             })
-
-            this.resetInput(['selectedFile', 'currentFileIndex'])
         },
         updateFolderCount(destination, count, weight = 0) {
             if (destination !== '../') {
@@ -561,8 +558,8 @@ export default {
                 if (destination.includes('/')) {
                     // get the first dir in the path
                     // because this is what the user is currently viewing
-                    destination = destination.split('/')
-                    destination = destination[0] == '' ? destination[1] : destination[0]
+                    destination = this.arrayFilter(destination.split('/'))
+                    destination = destination[0]
                 }
 
                 if (this.filteredItemsCount) {
@@ -580,19 +577,6 @@ export default {
                         e.size += parseInt(weight)
                     }
                 })
-            }
-        },
-        updateItemName(item, oldName, newName) {
-            // update the main files list
-            let filesIndex = this.files.items[this.files.items.indexOf(item)]
-            filesIndex.name = newName
-            filesIndex.path = filesIndex.path.replace(oldName, newName)
-
-            // if found in the filterd list, then update it aswell
-            if (this.filterdList.includes(item)) {
-                let filterIndex = this.filterdList[this.filterdList.indexOf(item)]
-                filterIndex.name = newName
-                filesIndex.path = filterIndex.path.replace(oldName, newName)
             }
         }
     }

@@ -1,6 +1,6 @@
 <template>
-    <div ref="item" class="__box-img">
-        <img v-if="intersected" :src="srcImage" async>
+    <div ref="wrapper" class="__box-img">
+        <img v-if="src" ref="img" :src="src" async>
     </div>
 </template>
 
@@ -8,36 +8,34 @@
 import debounce from 'lodash/debounce'
 
 export default {
-    props: ['file'],
+    props: ['url'],
     data() {
         return {
             observer: null,
+            src: null,
             intersected: false
         }
     },
     mounted() {
-        this.$nextTick(debounce(() => {
-            if ('IntersectionObserver' in window) {
-                this.observe()
-            } else {
-                this.intersected = true
-            }
-        }, 250))
+        this.init()
     },
     beforeDestroy() {
         if ('IntersectionObserver' in window && this.observer) {
-            this.observer.unobserve(this.$refs.item)
+            this.observer.unobserve(this.$refs.wrapper)
             this.observer = null
         }
     },
-    computed: {
-        srcImage() {
-            return this.intersected
-                ? this.file.path
-                : ''
-        }
-    },
     methods: {
+        init() {
+            // wait for any DOM stuff to finish
+            this.$nextTick(debounce(() => {
+                if ('IntersectionObserver' in window) {
+                    this.observe()
+                } else {
+                    this.intersected = true
+                }
+            }, 500))
+        },
         observe() {
             this.observer = new IntersectionObserver((item, observer) => {
                 item.forEach((img) => {
@@ -46,15 +44,34 @@ export default {
                         observer.unobserve(img.target)
                     }
                 })
+            }, {
+                root: document.querySelector('.media-manager__stack-files'),
+                rootMargin: '0px',
+                threshold: 1.0
             })
 
-            this.observer.observe(this.$refs.item)
+            this.observer.observe(this.$refs.wrapper)
+        },
+        sendDimensionsToParent() {
+            const manager = this
+
+            this.$refs.img.addEventListener('load', function() {
+                EventHub.fire('save-image-dimensions', {
+                    url: manager.url,
+                    val: `${this.naturalWidth} x ${this.naturalHeight}`
+                })
+            })
         }
     },
     watch: {
         intersected(val) {
             if (val) {
-                this.$refs.item.style.border = 'none'
+                this.src = this.url
+                this.$refs.wrapper.style.border = 'none'
+
+                this.$nextTick(() => {
+                    this.sendDimensionsToParent()
+                })
             }
         }
     }

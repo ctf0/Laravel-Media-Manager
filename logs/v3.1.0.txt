@@ -1,0 +1,29 @@
+## New
+
+- show audio files cover
+- show image dimensions
+- disable url upload when restrict mode is on
+- replace SSE with websockets instead check
+  + https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile
+  + https://github.com/ctf0/Laravel-Media-Manager/wiki/Async-Update-The-Manager
+
+- download zip with folder hierarchy
+- lock/unlock no longer force refresh the manager
+- auto-scroll to item after sidebar toggle
+- dont cleanup cache unnecessarily 
+- “alt/meta + click” (add current selected item + next selection to bulk select)
+
+
+## Fix
+
+- sluggish selection
+- hiding sidebar on small screen without reseting files container position
+- navigation selection delay
+- not disabling refresh btn in some cases
+- removing items from manager list because names are similar
+- creating single char folder name
+
+
+## Removed
+
+- `mobile_alt_navigation` config, now alt nav on mobile is default

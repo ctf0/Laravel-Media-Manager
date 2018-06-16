@@ -1,5 +1,3 @@
-import debounce from 'lodash/debounce'
-
 export default {
     methods: {
         /*                Item                */
@@ -9,6 +7,12 @@ export default {
             })
         },
         setSelected(file, index, e = null) {
+            if (e && e.metaKey && !this.firstMeta) {
+                this.firstMeta = true
+                this.bulkSelect = true
+                this.pushtoBulkList(this.selectedFile)
+            }
+
             // select with shift
             if (e && e.shiftKey) {
                 this.bulkSelect = true
@@ -175,22 +179,6 @@ export default {
             if (curSelectedIndex < this.allItemsCount - 1) {
                 this.imageSlideDirection = 'next'
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
-            }
-        },
-        scrollToFile(file) {
-            if (file) {
-                file.click()
-
-                this.$nextTick(debounce(() => {
-                    let container = this.$refs['__stack-files'].$el
-                    let count = file.offsetTop - container.scrollTop - 20
-                    container.scrollBy({top: count, left: 0, behavior: 'smooth'})
-
-                    // when scrollBy() doesnt work
-                    if (!(container.scrollHeight > container.clientHeight)) {
-                        file.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'end'})
-                    }
-                }, 250))
             }
         }
     }

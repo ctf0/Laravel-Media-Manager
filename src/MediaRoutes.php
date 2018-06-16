@@ -26,7 +26,8 @@ class MediaRoutes
             app('router')->post('change-vis', ['uses' => "$controller@changeItemVisibility", 'as' => 'change_vis']);
             app('router')->post('lock-file', ['uses' => "$controller@lockItem", 'as' => 'lock_file']);
 
-            app('router')->get('zip-progress/{name?}/{id?}', ['uses' => "$controller@zipProgress", 'as' => 'zip_progress']);
+            app('router')->post('global-search', ['uses' => "$controller@globalSearch", 'as' => 'global_search']);
+
             app('router')->post('folder-download', ['uses' => "$controller@downloadFolder", 'as' => 'folder_download']);
             app('router')->post('files-download', ['uses' => "$controller@downloadFiles", 'as' => 'files_download']);
         });
