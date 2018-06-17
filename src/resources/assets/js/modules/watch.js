@@ -53,6 +53,10 @@ export default {
         },
         bulkSelect(val) {
             this.toggleUploadArea = false
+
+            if (!val) {
+                this.firstMeta = false
+            }
         },
         activeModal(val) {
             let ref

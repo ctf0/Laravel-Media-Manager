@@ -72,11 +72,11 @@ class MediaController extends Controller
 
     /**
      * globalSearch all the manager files
-     * TODO "better use caching"
+     * TODO "better use caching".
+     *
      * @return [type] [description]
      */
     public function globalSearch(Request $request)
     {
-        return
     }
 }
