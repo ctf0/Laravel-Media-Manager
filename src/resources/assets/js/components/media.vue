@@ -1,4 +1,6 @@
 <script>
+import debounce from 'lodash/debounce'
+// main
 import Utilities from '../modules/utils'
 import Download from '../modules/download'
 import Cache from '../modules/cache'
@@ -13,15 +15,24 @@ import Image from '../modules/image'
 import Url from '../modules/url'
 import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
-import Broadcasting from '../modules/broadcast'
-import Scrolling from '../modules/scroll'
-
+import Broadcast from '../modules/broadcast'
+import Scroll from '../modules/scroll'
+// image
 import Cropper from './imageEditor/cropper.vue'
 import imageCache from './lazyLoading/cache.vue'
 import imageIntersect from './lazyLoading/normal.vue'
+// search
+import globalSearchBtn from './globalSearch/button.vue'
+import globalSearchPanel from './globalSearch/panel.vue'
 
 export default {
-    components: {Cropper, imageCache, imageIntersect},
+    components: {
+        Cropper,
+        imageCache,
+        imageIntersect,
+        globalSearchBtn,
+        globalSearchPanel
+    },
     name: 'media-manager',
     mixins: [
         Utilities,
@@ -38,8 +49,8 @@ export default {
         Watchers,
         Image,
         Url,
-        Broadcasting,
-        Scrolling
+        Broadcast,
+        Scroll
     ],
     props: [
         'config',
@@ -63,6 +74,7 @@ export default {
             toggleUploadArea: false,
             showProgress: false,
             progressCounter: 0,
+            scrollByRows: 0,
 
             linkCopied: false,
             bulkSelectAll: false,
@@ -73,6 +85,7 @@ export default {
             useCopy: false,
             toolBar: true,
             imageWasEdited: false,
+            disableShortCuts: false,
 
             files: [],
             folders: [],
@@ -103,31 +116,24 @@ export default {
                 'linear-gradient(141deg, #ff0561 0%, #ff3860 71%, #ff5257 100%)',
                 'linear-gradient(141deg, #1f191a 0%, #363636 71%, #46403f 100%)'
             ],
-            firstRun: true,
-            firstMeta: false
+            firstRun: true,   // for delayed scroll on manager init
+            firstMeta: false  // for alt + click selection
         }
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
+        window.addEventListener('resize', this.scrollByRow)
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
     mounted() {
-        // check if image was edited
-        EventHub.listen('image-edited', (msg) => {
-            this.imageWasEdited = true
-            this.$refs['success-audio'].play()
-            this.removeCachedResponse().then(() => {
-                this.showNotif(`${this.trans('save_success')} "${msg}"`)
-            })
-        })
+        this.eventsListener()
 
-        // get images dimensions
-        EventHub.listen('save-image-dimensions', (obj) => {
-            this.dimensions.push(obj)
-        })
+        this.$nextTick(debounce(() => {
+            this.scrollByRow()
+        }, 1000))
     },
-    updated() {
+    updated: debounce(function() {
         this.autoPlay()
         this.$nextTick(() => {
             this.activeModal || this.inModal
@@ -138,7 +144,7 @@ export default {
                 ? true
                 : false
         })
-    },
+    }, 250),
     beforeDestroy() {
         window.removeEventListener('popstate', this.urlNavigation)
         document.removeEventListener('keydown', this.shortCuts)
@@ -167,10 +173,40 @@ export default {
                 })
             })
         },
+
+        eventsListener() {
+            // check if image was edited
+            EventHub.listen('image-edited', (msg) => {
+                this.imageWasEdited = true
+                this.$refs['success-audio'].play()
+                this.removeCachedResponse().then(() => {
+                    this.showNotif(`${this.trans('save_success')} "${msg}"`)
+                })
+            })
+
+            // get images dimensions
+            EventHub.listen('save-image-dimensions', (obj) => {
+                this.dimensions.push(obj)
+            })
+
+            EventHub.listen('disable-global-keys', (val) => {
+                this.disableShortCuts = val
+            })
+
+            EventHub.listen('search-go-to-folder', (dir) => {
+                EventHub.fire('hide-global-search')
+                this.folders = this.arrayFilter(dir.split('/'))
+
+                return this.getFiles(this.folders).then(() => {
+                    this.updatePageUrl()
+                })
+            })
+        },
+
         shortCuts(e) {
             let key = keycode(e)
 
-            if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey)) {
+            if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey || this.disableShortCuts)) {
                 // when modal isnt visible
                 if (!this.activeModal) {
                     // when search is not focused
@@ -319,6 +355,7 @@ export default {
         /* end of short cuts */
 
         refresh() {
+            EventHub.fire('clear-global-search')
             this.resetInput('searchFor')
             return this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
         },

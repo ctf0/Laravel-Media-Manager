@@ -1,6 +1,6 @@
 <template>
     <div ref="wrapper" class="__box-img">
-        <img v-if="src" ref="img" :src="src" async>
+        <img v-if="src" ref="img" :src="src" :alt="file.name" async>
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 import debounce from 'lodash/debounce'
 
 export default {
-    props: ['url'],
+    props: ['file'],
     data() {
         return {
             observer: null,
@@ -29,11 +29,9 @@ export default {
         init() {
             // wait for any DOM stuff to finish
             this.$nextTick(debounce(() => {
-                if ('IntersectionObserver' in window) {
-                    this.observe()
-                } else {
-                    this.intersected = true
-                }
+                'IntersectionObserver' in window
+                    ? this.observe()
+                    : this.intersected = true
             }, 500))
         },
         observe() {
@@ -50,14 +48,14 @@ export default {
                 threshold: 1.0
             })
 
-            this.observer.observe(this.$refs.wrapper)
+            if (this.$refs.wrapper) this.observer.observe(this.$refs.wrapper)
         },
         sendDimensionsToParent() {
             const manager = this
 
             this.$refs.img.addEventListener('load', function() {
                 EventHub.fire('save-image-dimensions', {
-                    url: manager.url,
+                    url: manager.file.path,
                     val: `${this.naturalWidth} x ${this.naturalHeight}`
                 })
             })
@@ -66,7 +64,7 @@ export default {
     watch: {
         intersected(val) {
             if (val) {
-                this.src = this.url
+                this.src = this.file.path
                 this.$refs.wrapper.style.border = 'none'
 
                 this.$nextTick(() => {

@@ -19,19 +19,23 @@ trait Lock
         $path       = $request->path;
         $lockedList = $this->db->pluck('path')->toArray();
 
-        $result     = [];
-        $removed    = [];
-        $added      = [];
+        $toRemove = [];
+        $toAdd    = [];
+        $result   = [];
+        $removed  = [];
+        $added    = [];
 
         foreach ($request->list as $item) {
-            $url = $item['path'];
+            $url  = $item['path'];
+            $type = $item['type'];
+            $name = $item['name'];
 
             if (in_array($url, $lockedList)) {
-                // for some reason we cant delete the items one by one, probably related to sqlite
-                $removed[] = $url;
+                $toRemove[] = $url;
+                $removed[]  = compact('url', 'type', 'name');
             } else {
-                $added[] = $url;
-                $this->db->insert(['path' => $url]);
+                $toAdd[] = ['path'=>$url];
+                $added[] = compact('url', 'type', 'name');
             }
 
             $result[] = [
@@ -39,8 +43,11 @@ trait Lock
             ];
         }
 
-        if ($removed) {
-            $this->db->whereIn('path', $removed)->delete();
+        if ($toRemove) {
+            $this->db->whereIn('path', $toRemove)->delete();
+        }
+        if ($toAdd) {
+            $this->db->insert($toAdd);
         }
 
         // broadcast

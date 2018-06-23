@@ -126,15 +126,27 @@ export default {
             let key = keycode(e)
 
             // go to prev item
-            if (key == 'left' || key == 'up') {
+            if (key == 'left') {
                 e.preventDefault()
                 this.goToPrev()
             }
 
+            // go to prev row
+            if (key == 'up') {
+                e.preventDefault()
+                this.goToPrevRow()
+            }
+
             // go to next item
-            if (key == 'right' || key == 'down') {
+            if (key == 'right') {
                 e.preventDefault()
                 this.goToNext()
+            }
+
+            // go to next row
+            if (key == 'down') {
+                e.preventDefault()
+                this.goToNextRow()
             }
 
             // go to last item
@@ -179,6 +191,23 @@ export default {
             if (curSelectedIndex < this.allItemsCount - 1) {
                 this.imageSlideDirection = 'next'
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
+            }
+        },
+
+        goToPrevRow() {
+            let curSelectedIndex = this.currentFileIndex
+            let moveBy = this.scrollByRows
+
+            if (curSelectedIndex >= moveBy) {
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex - moveBy))
+            }
+        },
+        goToNextRow() {
+            let curSelectedIndex = this.currentFileIndex
+            let moveBy = this.scrollByRows
+
+            if (curSelectedIndex < this.allItemsCount - moveBy) {
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex + moveBy))
             }
         }
     }

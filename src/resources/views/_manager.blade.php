@@ -1,17 +1,20 @@
 {{-- component --}}
-<media-manager inline-template
-    v-cloak
+<media-manager inline-template v-cloak
     :config="{{ json_encode([
         'baseUrl' => $base_url, 
         'hideFilesExt' => config('mediaManager.hide_files_ext'), 
         'lazyLoad' => config('mediaManager.lazy_load_image_on_click'), 
         'imageTypes' => config('mediaManager.image_extended_mimes'), 
         'cacheExp' => config('mediaManager.cacheExpiresAfter'), 
+        'broadcasting' => config('mediaManager.enable_broadcasting'), 
+        'gfi' => config('mediaManager.get_folder_info'), 
     ]) }}"
-    :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
-    :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
-    :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
-    :restrict="{{ isset($restrict) ? json_encode($restrict) : '{}' }}"
+    :routes="{{ json_encode([
+        'files' => route('media.files'), 
+        'dirs' => route('media.directories'), 
+        'lock' => route('media.lock_file'), 
+        'visibility' => route('media.change_vis'), 
+    ]) }}"
     :translations="{{ json_encode([
         'no_val' => trans('MediaManager::messages.no_val'), 
         'downloaded' => trans('MediaManager::messages.downloaded'), 
@@ -25,23 +28,26 @@
         'save_success' => trans('MediaManager::messages.save_success'), 
         'error_altered_fwli' => trans('MediaManager::messages.error_altered_fwli'), 
         'stand_by' => trans('MediaManager::messages.stand_by'), 
-        'new_uploads_notif' => trans('MediaManager::messages.new_uploads_notif')
+        'new_uploads_notif' => trans('MediaManager::messages.new_uploads_notif'), 
+        'glbl_search' => trans('MediaManager::messages.glbl_search'), 
+        'go_to_folder' => trans('MediaManager::messages.go_to_folder'), 
+        'find' => trans('MediaManager::messages.find')
     ]) }}"
-    :routes="{{ json_encode([
-        'files' => route('media.files'), 
-        'dirs' => route('media.directories'), 
-        'lock' => route('media.lock_file'), 
-        'visibility' => route('media.change_vis'), 
-        'globalSearch' => route('media.global_search'), 
-    ]) }}"
-    :user-id="{{ auth()->user()->id ?? 0 }}"
+    :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
+    :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
+    :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
+    :restrict="{{ isset($restrict) ? json_encode($restrict) : '{}' }}"
+    :user-id="{{ config('mediaManager.enable_broadcasting') ? auth()->user()->id : 0 }}"
     :upload-panel-img-list="{{ $patterns }}">
 
-    <div class="">
+    <div class="" id="manager-container">
 
         {{-- notif-audio --}}
         <audio ref="alert-audio" src="{{ asset('assets/vendor/MediaManager/audio/alert.mp3') }}"></audio>
         <audio ref="success-audio" src="{{ asset('assets/vendor/MediaManager/audio/success.mp3') }}"></audio>
+
+        {{-- global search --}}
+        <global-search-panel></global-search-panel>
 
         {{-- top toolbar --}}
         <transition name="list" mode="out-in">
@@ -327,17 +333,22 @@
                         <div class="level-item">
                             <div class="control">
                                 <div class="field has-addons">
+                                    <p class="control" v-if="!restrictModeIsOn()">
+                                        <global-search-btn route="{{ route('media.global_search') }}"></global-search-btn>
+                                    </p>
+
                                     <p class="control has-icons-left">
                                         <input class="input"
                                             :disabled="isLoading"
                                             type="text"
                                             v-model="searchFor"
                                             data-search
-                                            placeholder="{{ trans('MediaManager::messages.find') }}">
+                                            :placeholder="trans('find')">
                                         <span class="icon is-left">
                                             <icon name="search"></icon>
                                         </span>
                                     </p>
+
                                     <p class="control">
                                         <button class="button is-black" :disabled="!searchFor"
                                             v-tippy
@@ -483,7 +494,7 @@
                                     <div class="__box-preview">
                                         <template v-if="fileTypeIs(file, 'image')">
                                             <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN"></image-cache>
-                                            <image-intersect v-else :url="file.path"></image-intersect>
+                                            <image-intersect v-else :file="file"></image-intersect>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -501,7 +512,7 @@
                                         <template v-if="fileTypeIs(file, 'folder')">
                                             <h4>@{{ file.name }}</h4>
                                             <small>
-                                                <span>@{{ file.items }} {{ trans('MediaManager::messages.items') }}</span>
+                                                <span>@{{ file.count }} {{ trans('MediaManager::messages.items') }}</span>
                                                 <span v-if="file.size > 0" class="__info-file-size">"@{{ getFileSize(file.size) }}"</span>
                                             </small>
                                         </template>
@@ -609,7 +620,7 @@
 
                                     {{-- folder --}}
                                     <template v-if="selectedFileIs('folder')">
-                                        <p>{{ trans('MediaManager::messages.items') }}: <span>@{{ selectedFile.items }}</span></p>
+                                        <p>{{ trans('MediaManager::messages.items') }}: <span>@{{ selectedFile.count }}</span></p>
 
                                         <div class="__sidebar-zip" v-show="!isBulkSelecting()">
                                             <span>{{ trans('MediaManager::messages.download_folder') }}:</span>
@@ -617,7 +628,7 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
                                                 <input type="hidden" name="name" :value="selectedFile.name">
-                                                <button type="submit" class="btn-plain zip" :disabled="selectedFile.items == 0">
+                                                <button type="submit" class="btn-plain zip" :disabled="config.gfi && selectedFile.count == 0">
                                                     <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                 </button>
                                             </form>

@@ -2,7 +2,6 @@
 
 namespace ctf0\MediaManager\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use League\Flysystem\Plugin\ListWith;
 use ctf0\MediaManager\Controllers\Moduels\Lock;
@@ -29,7 +28,6 @@ class MediaController extends Controller
         NewFolder,
         Visibility;
 
-    protected $config;
     protected $baseUrl;
     protected $db;
     protected $fileChars;
@@ -37,6 +35,7 @@ class MediaController extends Controller
     protected $folderChars;
     protected $ignoreFiles;
     protected $LMF;
+    protected $GFI;
     protected $sanitizedText;
     protected $storageDisk;
     protected $storageDiskInfo;
@@ -44,18 +43,20 @@ class MediaController extends Controller
 
     public function __construct()
     {
-        $this->config          = config('mediaManager');
-        $this->fileSystem      = array_get($this->config, 'storage_disk');
-        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
+        $config                = app('config')->get('mediaManager');
+        $this->fileSystem      = array_get($config, 'storage_disk');
+        $this->ignoreFiles     = array_get($config, 'ignore_files');
+        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
+        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
+        $this->sanitizedText   = array_get($config, 'sanitized_text');
+        $this->unallowedMimes  = array_get($config, 'unallowed_mimes');
+        $this->LMF             = array_get($config, 'last_modified_format');
+        $this->GFI             = array_get($config, 'get_folder_info', true);
+
+        $this->storageDisk     =  app('filesystem')->disk($this->fileSystem);
+        $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
         $this->baseUrl         = $this->storageDisk->url('/');
-        $this->ignoreFiles     = array_get($this->config, 'ignore_files');
-        $this->fileChars       = array_get($this->config, 'allowed_fileNames_chars');
-        $this->folderChars     = array_get($this->config, 'allowed_folderNames_chars');
-        $this->sanitizedText   = array_get($this->config, 'sanitized_text');
-        $this->unallowedMimes  = array_get($this->config, 'unallowed_mimes');
-        $this->LMF             = array_get($this->config, 'last_modified_format');
         $this->db              = app('db')->connection('mediamanager')->table('locked');
-        $this->storageDiskInfo = config("filesystems.disks.{$this->fileSystem}");
 
         $this->storageDisk->addPlugin(new ListWith());
     }
@@ -70,13 +71,18 @@ class MediaController extends Controller
         return view('MediaManager::media');
     }
 
-    /**
-     * globalSearch all the manager files
-     * TODO "better use caching".
-     *
-     * @return [type] [description]
-     */
-    public function globalSearch(Request $request)
+    public function globalSearch()
     {
+        return collect($this->getFolderContent('/', true))->reject(function ($item) { // remove unwanted
+            return preg_grep($this->ignoreFiles, [$item['path']]) || $item['type'] == 'dir';
+        })->map(function ($file) {
+            return $file = [
+                'name'                   => $file['basename'],
+                'type'                   => $file['mimetype'],
+                'path'                   => $this->resolveUrl($file['path']),
+                'dir'                    => $file['dirname'] != '' ? $file['dirname'] : '/',
+                'last_modified_formated' => $this->getItemTime($file['timestamp']),
+            ];
+        })->values()->all();
     }
 }

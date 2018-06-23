@@ -31,10 +31,9 @@ export default {
                 e.blur()
             })
 
-            if (this.browserSupport('Echo')) {
-                // show progress
-                this.showProgress = true
-            }
+            this.browserSupport('Echo') && this.config.broadcasting
+                ? this.showProgress = true
+                : this.showNotif(this.trans('stand_by'), 'info')
 
             // submit form
             target.submit()

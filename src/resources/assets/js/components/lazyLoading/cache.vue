@@ -13,11 +13,9 @@ export default {
         }
     },
     created() {
-        if ('caches' in window) {
-            this.getCachedUrl(this.url)
-        } else {
-            this.src = this.url
-        }
+        'caches' in window
+            ? this.getCachedUrl(this.url)
+            : this.src = this.url
     },
     mounted() {
         this.init()

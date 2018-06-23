@@ -14,12 +14,9 @@ export default {
 
             this.bulkList.splice(this.bulkList.indexOf(file), 1)
 
-            if (this.bulkItemsCount && !this.lazyModeIsOn()) {
-                // select prev item
-                this.selectedFile = this.bulkList[this.bulkItemsCount - 1]
-            } else {
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-            }
+            this.bulkItemsCount && !this.lazyModeIsOn()
+                ? this.selectedFile = this.bulkList[this.bulkItemsCount - 1] // select prev item
+                : this.resetInput(['selectedFile', 'currentFileIndex'])
         },
         selectFirstInBulkList() {
             let list = this.bulkList

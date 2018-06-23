@@ -31,6 +31,38 @@ export default {
 
             return list
         },
+        updateLockOps(data) {
+            let path = this.files.path
+            let dirs = this.directories
+            let locked = this.lockedList
+
+            data.removed.map((item) => {
+                // dirslist
+                if (item.type == 'folder') {
+                    let name = path
+                        ? `${path}/${item.name}`
+                        : this.cacheName == 'root_'
+                            ? item.name
+                            : `/${item.name}`
+
+                    dirs.push(name)
+                }
+
+                // locklist
+                locked.splice(locked.indexOf(item.url), 1)
+            })
+
+            data.added.map((item) => {
+                // dirslist
+                if (item.type == 'folder') {
+                    let name = path ? `${path}/${item.name}` : item.name
+                    dirs.splice(dirs.indexOf(name), 1)
+                }
+
+                // locklist
+                locked.push(item.url)
+            })
+        },
 
         // form
         lockFileForm() {
@@ -47,14 +79,7 @@ export default {
                     this.showNotif(item.message)
                 })
 
-                data.removed.map((item) => {
-                    let index = this.lockedList.indexOf(item)
-                    this.lockedList.splice(index, 1)
-                })
-
-                data.added.map((item) => {
-                    this.lockedList.push(item)
-                })
+                this.updateLockOps(data)
 
                 this.$refs['success-audio'].play()
                 this.resetInput(['currentFilterName'])

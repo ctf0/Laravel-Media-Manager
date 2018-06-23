@@ -24,6 +24,10 @@ export default {
                     return true
                 }
 
+                if (item.type.includes('pdf') && val != 'pdf') {
+                    return false
+                }
+
                 return item.type.includes(val)
             }
         },
@@ -74,18 +78,16 @@ export default {
             return this.selectedFile && !dir.includes(this.selectedFile.name)
         },
 
-        /*                Search                */
+        // search
         updateSearchCount() {
             let oldCount = this.searchItemsCount
 
             this.$nextTick(() => {
                 this.searchItemsCount = this.filesList.length
 
-                if (this.searchItemsCount == 0) {
-                    return oldCount == 0 ? false : this.noSearch('show')
-                }
-
-                this.noSearch('hide')
+                return this.searchItemsCount == 0
+                    ? oldCount == 0 ? false : this.noSearch('show')
+                    : this.noSearch('hide')
             })
         }
     }

@@ -2,7 +2,7 @@ import uniq from 'lodash/uniq'
 
 export default {
     mounted() {
-        if (this.browserSupport('Echo')) {
+        if (this.browserSupport('Echo') && this.config.broadcasting) {
             // async ops
             Echo.channel('User.media')
                 .listen('.user.media.ops', ({data}) => {
@@ -12,6 +12,7 @@ export default {
                         let path = data.path || 'root_'
 
                         this.removeCachedResponseForOther([path]).then(() => {
+                            // if user is viewing the same dir
                             if (path == this.cacheName) {
                                 this.showNotif(this.trans('new_uploads_notif'), 'info')
                             }
@@ -30,6 +31,7 @@ export default {
                         let cacheNamesList = [path.old || 'root_', path.new || 'root_']
                         let reselect = false
 
+                        // if user is viewing the same dir
                         if (path.current || 'root_' == this.cacheName) {
                             data.items.map((item) => {
                                 this.removeFromLists(item.name, item.type, false)
@@ -77,10 +79,11 @@ export default {
                         let selected = this.selectedFile
                         let cacheNamesList = []
                         let reselect = false
+                        let current = data.path || 'root_' == this.cacheName
 
                         data.items.map((item) => {
                             // if user is viewing the same dir
-                            if (item.path == this.cacheName) {
+                            if (current) {
                                 this.removeFromLists(item.name, item.type, false)
                                 this.removeImageCache(item.url)
                                 this.showNotif(`${this.trans('delete_success')} "${item.name}"`)
@@ -101,15 +104,8 @@ export default {
                     // lock
                     if (data.op == 'lock') {
                         // if user is viewing the same dir
-                        if (data.path == this.cacheName) {
-                            data.removed.map((item) => {
-                                let index = this.lockedList.indexOf(item)
-                                this.lockedList.splice(index, 1)
-                            })
-
-                            data.added.map((item) => {
-                                this.lockedList.push(item)
-                            })
+                        if (data.path || 'root_' == this.cacheName) {
+                            this.updateLockOps(data)
                         }
 
                         this.removeCachedResponseForOther([data.path])
@@ -118,7 +114,7 @@ export default {
                     // visibility
                     if (data.op == 'visibility') {
                         // if user is viewing the same dir
-                        if (data.path == this.cacheName) {
+                        if (data.path || 'root_' == this.cacheName) {
                             let files = this.files.items
                             let filterd = this.filteredItemsCount ? this.filterdList : null
 

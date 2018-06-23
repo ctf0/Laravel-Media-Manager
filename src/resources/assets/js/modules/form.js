@@ -120,7 +120,7 @@ export default {
         },
 
         /*                Main                */
-        getFiles(folders = '/', prev_folder = null, prev_file = null) {
+        getFiles(folders = null, prev_folder = null, prev_file = null) {
             this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
 
@@ -130,7 +130,7 @@ export default {
                 this.loadingFiles('show')
             }
 
-            if (folders != '/') {
+            if (folders) {
                 folders = this.clearDblSlash(`/${folders.join('/')}`)
             }
 
@@ -142,7 +142,8 @@ export default {
                         // return cache
                         if (res) {
                             this.files = res.files
-                            return this.filesListCheck(prev_folder, prev_file, folders, res.dirs)
+                            this.directories = res.dirs
+                            return this.filesListCheck(folders, prev_folder, prev_file)
                         }
 
                         // or make new call
@@ -164,7 +165,8 @@ export default {
                             // return data
                             this.files = data.files
                             this.lockedList = data.locked
-                            this.filesListCheck(prev_folder, prev_file, folders, data.dirs)
+                            this.directories = data.dirs
+                            this.filesListCheck(folders, prev_folder, prev_file)
 
                         }).catch((err) => {
                             console.error(err)
@@ -184,7 +186,7 @@ export default {
             })
         },
 
-        filesListCheck(prev_folder, prev_file, folders, dirs) {
+        filesListCheck(folders, prev_folder, prev_file) {
             // check for hidden extensions
             if (this.hideExt.length) {
                 this.files.items = this.files.items.filter((e) => !this.checkForHiddenExt(e))
@@ -237,7 +239,7 @@ export default {
                     this.updateSearchCount()
                 }
 
-                this.dirsListCheck(dirs)
+                this.dirsListCheck()
             }
 
             this.toggleInfo = true
@@ -255,9 +257,8 @@ export default {
                 })
             }
         },
-        dirsListCheck(data) {
+        dirsListCheck() {
             const baseUrl = this.config.baseUrl
-            this.directories = data
 
             // check for hidden folders in directories
             if (this.hidePath.length) {
@@ -565,7 +566,7 @@ export default {
                 if (this.filteredItemsCount) {
                     this.filterdList.some((e) => {
                         if (e.type == 'folder' && e.name == destination) {
-                            e.items += parseInt(count)
+                            e.count += parseInt(count)
                             e.size += parseInt(weight)
                         }
                     })
@@ -573,7 +574,7 @@ export default {
 
                 this.files.items.some((e) => {
                     if (e.type == 'folder' && e.name == destination) {
-                        e.items += parseInt(count)
+                        e.count += parseInt(count)
                         e.size += parseInt(weight)
                     }
                 })

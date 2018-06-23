@@ -370,9 +370,9 @@
         }
     }
 
-    &:hover {
-        box-shadow: $shadow_1;
-    }
+    // &:hover {
+    //     box-shadow: $shadow_1;
+    // }
 }
 
 .__box-lock-icon {
@@ -983,7 +983,6 @@ a[target='_blank'] {
 .card {
     overflow: hidden;
     min-width: 480px;
-    border-radius: 0 0 6px 6px;
 }
 
 .modal-card-head,

@@ -372,13 +372,9 @@ export default {
             }).then(({data}) => {
 
                 parent.toggleLoading()
-
-                if (data.success) {
-                    // notify parent to refresh on finish
-                    EventHub.fire('image-edited', data.message)
-                } else {
-                    parent.showNotif(data.message, 'danger')
-                }
+                data.success
+                    ? EventHub.fire('image-edited', data.message) // notify parent to refresh on finish
+                    : parent.showNotif(data.message, 'danger')
 
             }).catch((err) => {
                 console.error(err)

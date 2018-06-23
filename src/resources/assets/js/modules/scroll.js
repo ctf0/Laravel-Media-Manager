@@ -35,6 +35,16 @@ export default {
                 horizontal: true,
                 element: bc.$el
             })
+        },
+        scrollByRow() {
+            const cont = this.$refs['__stack-files'].$el
+
+            let width = cont.clientWidth
+            let pad = parseInt(window.getComputedStyle(cont).paddingLeft) + parseInt(window.getComputedStyle(cont).paddingRight)
+            let contWidth = width - pad
+            let itemWidth = this.$refs.filesList.firstChild.clientWidth
+
+            this.scrollByRows = Math.floor(contWidth / itemWidth)
         }
     }
 }

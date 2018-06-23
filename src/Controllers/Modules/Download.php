@@ -64,6 +64,7 @@ trait Download
                 if ($streamRead) {
                     $progress += $counter;
                     broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
+
                     $zip->addFileFromStream($file_name, $streamRead);
                 } else {
                     broadcast(new MediaZipProgress([
@@ -98,6 +99,7 @@ trait Download
                 if ($streamRead) {
                     $progress += $counter;
                     broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
+
                     $zip->addFileFromStream($full_name, $streamRead);
                 } else {
                     broadcast(new MediaZipProgress([

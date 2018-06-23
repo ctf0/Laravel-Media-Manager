@@ -15,7 +15,7 @@ trait GetContent
      */
     public function getFiles(Request $request)
     {
-        $folder = $request->folder !== '/' ? $request->folder : '';
+        $folder = $request->folder != '/' ? $request->folder : '';
 
         if ($folder && !$this->storageDisk->exists($folder)) {
             return response()->json([
@@ -42,13 +42,7 @@ trait GetContent
      */
     public function getFolders(Request $request)
     {
-        $folderLocation = $request->folder_location;
-
-        if (is_array($folderLocation)) {
-            $folderLocation = rtrim(implode('/', $folderLocation), '/');
-        }
-
-        return response()->json($this->getDirectoriesList($folderLocation));
+        return response()->json($this->getDirectoriesList($request->folder_location));
     }
 
     /**
@@ -67,17 +61,18 @@ trait GetContent
         foreach ($storageFolders as $folder) {
             $path = $folder['path'];
             $time = $folder['timestamp'];
-            $name = $folder['basename'];
 
             if (!preg_grep($pattern, [$path])) {
-                $info = $this->getFolderInfo($path);
+                if ($this->GFI) {
+                    $info = $this->getFolderInfo($path);
+                }
 
                 $list[] = [
-                    'name'                   => $name,
+                    'name'                   => $folder['basename'],
                     'type'                   => 'folder',
                     'path'                   => $this->resolveUrl($path),
-                    'size'                   => $info['files_size'],
-                    'items'                  => $info['files_count'],
+                    'size'                   => isset($info) ? $info['size'] : 0,
+                    'count'                  => isset($info) ? $info['count'] : 0,
                     'last_modified'          => $time,
                     'last_modified_formated' => $this->getItemTime($time),
                 ];
@@ -85,21 +80,16 @@ trait GetContent
         }
 
         foreach ($storageFiles as $file) {
-            $path       = $file['path'];
-            $size       = $file['size'];
-            $time       = $file['timestamp'];
-            $name       = $file['basename'];
-            $visibility = $file['visibility'];
+            $path = $file['path'];
+            $time = $file['timestamp'];
 
             if (!preg_grep($pattern, [$path])) {
-                $mime = $file['mimetype'];
-
                 $list[] = [
-                    'name'                   => $name,
-                    'type'                   => $mime,
+                    'name'                   => $file['basename'],
+                    'type'                   => $file['mimetype'],
                     'path'                   => $this->resolveUrl($path),
-                    'size'                   => $size,
-                    'visibility'             => $visibility,
+                    'size'                   => $file['size'],
+                    'visibility'             => $file['visibility'],
                     'last_modified'          => $time,
                     'last_modified_formated' => $this->getItemTime($time),
                 ];
@@ -133,27 +123,23 @@ trait GetContent
 
     protected function getFolderInfoFromList($list)
     {
-        $count = 0;
-        $size  = 0;
-
-        foreach ($list as $file) {
-            if ($file['type'] == 'file') {
-                ++$count;
-                $size += $file['size'];
-            }
-        }
+        $list = collect($list)->where('type', 'file');
 
         return [
-            'files_count'=> $count, // count($files) == files + folders
-            'files_size' => $size,
+            'count' => $list->count(),
+            'size'  => $list->pluck('size')->sum(),
         ];
     }
 
     protected function getFolderListByType($list, $type)
     {
-        return array_filter($list, function ($item) use ($type) {
-            return $item['type'] == $type;
-        });
+        $list   = collect($list)->where('type', $type);
+        $sortBy = $list->pluck('basename')->values()->all();
+        $items  = $list->values()->all();
+
+        array_multisort($sortBy, SORT_NATURAL, $items);
+
+        return $items;
     }
 
     protected function getDirectoriesList($location)

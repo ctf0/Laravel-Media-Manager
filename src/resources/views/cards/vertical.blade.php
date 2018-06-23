@@ -1,8 +1,9 @@
-<div class="card" :class="{'pdf': selectedFileIs('pdf') || selectedFileIs('text')}">
-    <v-touch class="card-image"
-        @swiperight="goToPrev()"
-        @swipeleft="goToNext()">
+<v-touch class="card"
+    :class="{'pdf': selectedFileIs('pdf') || selectedFileIs('text')}"
+    @swiperight="goToPrev()"
+    @swipeleft="goToNext()">
 
+    <div class="card-image">
         <template v-if="selectedFileIs('pdf') || selectedFileIs('text')">
             <object :data="selectedFile.path" :type="selectedFile.type" width="100%" height="100%">
                  <p v-if="selectedFileIs('pdf')">{{ trans('MediaManager::messages.pdf') }}</p>
@@ -17,7 +18,7 @@
                 <img :src="selectedFilePreview" :alt="selectedFile.name">
             </a>
         </template>
-    </v-touch>
+    </div>
 
     <div class="card-content">
         <div class="media">
@@ -126,4 +127,4 @@
             </button>
         </div>
     </footer>
-</div>
+</v-touch>

@@ -30,11 +30,9 @@ export default {
             this.updateLs({'selectedFileName': null})
         },
         checkForFolders(val) {
-            if (!val) {
-                this.resetInput('moveToPath')
-            } else {
-                this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
-            }
+            !val
+                ? this.resetInput('moveToPath')
+                : this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
         },
         allItemsCount(val) {
             if (val && val.length == 0) {
@@ -139,23 +137,18 @@ export default {
                     : this.lazySelectFirst()
             }
 
-            if (!val) {
-                this.resetInput('searchItemsCount')
-                this.noSearch('hide')
-
-                this.selectFirstInBulkList()
-            }
-
             if (val) {
-                this.updateSearchCount()
+                return this.updateSearchCount()
             }
+
+            this.resetInput('searchItemsCount')
+            this.noSearch('hide')
+            this.selectFirstInBulkList()
         },
         searchItemsCount(val) {
-            if (val == 0) {
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-            } else {
-                this.selectFirstInBulkList()
-            }
+            val == 0
+                ? this.resetInput(['selectedFile', 'currentFileIndex'])
+                : this.selectFirstInBulkList()
 
             if (this.allItemsCount == undefined || val == this.allItemsCount) {
                 this.resetInput('searchItemsCount')

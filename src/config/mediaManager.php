@@ -69,5 +69,18 @@ return [
      * automatically invalidate cache after ?
      * in "Minutes"
      */
-    'cacheExpiresAfter'=> 60,
+    'cacheExpiresAfter' => 60,
+
+    /*
+     * in-order to get the folder items count & size
+     * we need to recursively get all the files inside the folders
+     * which could make the request take longer
+     */
+    'get_folder_info' => true,
+
+    /*
+     * do you want to enable broadcasting the changes
+     * made by one user to others ?
+     */
+    'enable_broadcasting' => false,
 ];

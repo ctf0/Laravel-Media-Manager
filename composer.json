@@ -23,6 +23,9 @@
        "maennchen/zipstream-php": "~1.0",
        "ctf0/package-changelog": "^1.0"
     },
+    "suggest": {
+        "league/flysystem-cached-adapter": "Required to use the Flysystem cache (~1.0)."
+    },
     "autoload": {
         "psr-4": {
             "ctf0\\MediaManager\\": "src"

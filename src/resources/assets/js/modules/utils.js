@@ -43,10 +43,12 @@ export default {
                 : this.lazySelectFirst()
         },
         clearAll() {
-            this.clearUrlQuery()
-            this.clearLs()
-            this.clearCache()
-            this.clearImageCache()
+            if (!this.isLoading) {
+                this.clearUrlQuery()
+                this.clearLs()
+                this.clearCache()
+                this.clearImageCache()
+            }
         },
 
         /*                Resolve                */

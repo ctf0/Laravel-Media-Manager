@@ -36,7 +36,7 @@ trait Move
             $destination = "{$request->destination}/$file_name";
             $old_path    = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
             $new_path    = $destination == '../'
-                                ? '/' . dirname($path) . '/' . str_replace('../', '', $destination)
+                                ? '/' . pathinfo($path, PATHINFO_DIRNAME) . '/' . str_replace('../', '', $destination)
                                 : "$path/$destination";
 
             $pattern = [
@@ -120,8 +120,8 @@ trait Move
                 'items' => $toBroadCast,
                 'path'  => [
                     'current' => $path,
-                    'old'     => dirname($old_path) == '.' ? null : dirname($old_path),
-                    'new'     => dirname($new_path) == '.' ? null : dirname($new_path),
+                    'old'     => pathinfo($old_path, PATHINFO_DIRNAME),
+                    'new'     => pathinfo($new_path, PATHINFO_DIRNAME),
                 ],
             ]))->toOthers();
         }
