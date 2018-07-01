@@ -157,6 +157,7 @@ export default {
         toggleInfo() {
             if (!this.firstRun && this.currentFileIndex) {
                 this.$nextTick(debounce(() => {
+                    this.scrollByRow()
                     this.scrollToSelected(this.getElementByIndex(this.currentFileIndex))
                 }, 500))
             }

@@ -178,7 +178,6 @@ export default {
             // check if image was edited
             EventHub.listen('image-edited', (msg) => {
                 this.imageWasEdited = true
-                this.$refs['success-audio'].play()
                 this.removeCachedResponse().then(() => {
                     this.showNotif(`${this.trans('save_success')} "${msg}"`)
                 })

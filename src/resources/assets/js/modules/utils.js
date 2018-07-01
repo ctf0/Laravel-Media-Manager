@@ -180,7 +180,6 @@ export default {
         ajaxError() {
             this.toggleInfo = false
             this.toggleLoader('ajax_error', true)
-            this.$refs['alert-audio'].play()
             EventHub.fire('ajax-error-show')
         },
 
@@ -211,37 +210,31 @@ export default {
             return arr.filter((e) => e)
         },
         showNotif(msg, s = 'success', duration = 3) {
-            if (msg) {
-                if (s == 'danger') {
-                    this.$refs['alert-audio'].play()
-                }
+            let title
 
-                let title
-
-                switch (s) {
-                    case 'black':
-                    case 'danger':
-                        title = 'Error'
-                        duration = null
-                        break
-                    case 'warning':
-                        title = 'Warning'
-                        break
-                    case 'info':
-                        title = 'Info'
-                        duration = 5
-                        break
-                    default:
-                        title = 'Success'
-                }
-
-                EventHub.fire('showNotif', {
-                    title: title,
-                    body: msg,
-                    type: s,
-                    duration: duration
-                })
+            switch (s) {
+                case 'black':
+                case 'danger':
+                    title = 'Error'
+                    duration = null
+                    break
+                case 'warning':
+                    title = 'Warning'
+                    break
+                case 'info':
+                    title = 'Info'
+                    duration = 5
+                    break
+                default:
+                    title = 'Success'
             }
+
+            EventHub.fire('showNotif', {
+                title: title,
+                body: msg,
+                type: s,
+                duration: duration
+            })
         }
     }
 }

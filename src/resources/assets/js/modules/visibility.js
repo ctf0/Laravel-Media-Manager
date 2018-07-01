@@ -37,7 +37,6 @@ export default {
                     }
                 })
 
-                this.$refs['success-audio'].play()
                 this.isBulkSelecting() ? this.blkSlct() : false
                 this.removeCachedResponse()
 

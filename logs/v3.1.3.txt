@@ -1,0 +1,3 @@
+- remove audio notifs
+- cleanup
+- fix scrollbyrow after toggle info sidebar

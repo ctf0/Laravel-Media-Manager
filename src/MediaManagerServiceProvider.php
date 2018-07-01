@@ -74,10 +74,10 @@ class MediaManagerServiceProvider extends ServiceProvider
         $db = storage_path('logs/MediaManager.sqlite');
 
         if ($this->file->exists($db)) {
-            config(['database.connections.mediamanager' => [
+            $this->app['config']->set('database.connections.mediamanager', [
                 'driver'   => 'sqlite',
                 'database' => $db,
-            ]]);
+            ]);
         }
     }
 
@@ -108,9 +108,8 @@ class MediaManagerServiceProvider extends ServiceProvider
 
         view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns, $config) {
             $view->with([
-               'base_url'              => preg_replace('/\/+$/', '/', $url),
-               'patterns'              => json_encode($patterns),
-               'mobile_alt_navigation' => array_get($config, 'mobile_alt_navigation'),
+               'base_url' => preg_replace('/\/+$/', '/', $url),
+               'patterns' => json_encode($patterns),
            ]);
         });
     }

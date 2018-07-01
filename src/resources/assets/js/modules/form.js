@@ -59,7 +59,6 @@ export default {
                         manager.showProgress = false
 
                         if (clearCache) {
-                            manager.$refs['success-audio'].play()
                             manager.removeCachedResponse().then(() => {
                                 last
                                     ? manager.getFiles(manager.folders, null, last)
@@ -444,7 +443,6 @@ export default {
 
                     if (clearCache) {
                         this.clearImageCache()
-                        this.$refs['success-audio'].play()
                         this.removeCachedResponse(destination == '../' ? null : destination, cacheNamesList).then(() => {
                             if (this.allItemsCount) {
                                 this.isBulkSelecting()
@@ -508,7 +506,6 @@ export default {
                 })
 
                 if (clearCache) {
-                    this.$refs['success-audio'].play()
                     this.removeCachedResponse(null, cacheNamesList).then(() => {
                         this.isBulkSelecting()
                             ? this.blkSlct()

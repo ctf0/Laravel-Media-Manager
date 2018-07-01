@@ -42,10 +42,6 @@
 
     <div class="" id="manager-container">
 
-        {{-- notif-audio --}}
-        <audio ref="alert-audio" src="{{ asset('assets/vendor/MediaManager/audio/alert.mp3') }}"></audio>
-        <audio ref="success-audio" src="{{ asset('assets/vendor/MediaManager/audio/success.mp3') }}"></audio>
-
         {{-- global search --}}
         <global-search-panel></global-search-panel>
 

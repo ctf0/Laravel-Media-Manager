@@ -122,7 +122,6 @@
 
 <script>
 import debounce from 'lodash/debounce'
-import Fuse from 'fuse.js'
 
 export default {
     data() {

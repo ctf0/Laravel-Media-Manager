@@ -80,8 +80,6 @@ export default {
                 })
 
                 this.updateLockOps(data)
-
-                this.$refs['success-audio'].play()
                 this.resetInput(['currentFilterName'])
                 this.isBulkSelecting() ? this.blkSlct() : false
                 this.removeCachedResponse()

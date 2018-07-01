@@ -81,6 +81,8 @@ return [
     /*
      * do you want to enable broadcasting the changes
      * made by one user to others ?
+     *
+     * "laravel-echo" must be installed
      */
     'enable_broadcasting' => false,
 ];

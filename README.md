@@ -35,9 +35,9 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
   ```bash
-  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web laravel-echo fuse.js
+  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web fuse.js
   # or
-  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web laravel-echo fuse.js --save
+  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web fuse.js --save
   ```
 
 - run `npm run watch` to compile your `js/css` files.
@@ -229,6 +229,8 @@ return [
     /**
      * do you want to enable broadcasting the changes
      * made by one user to others ?
+     *
+     * "laravel-echo" must be installed
      */
     'enable_broadcasting' => false
 ];
@@ -238,5 +240,22 @@ return [
 
 ## Usage
 
-- visit `localhost:8000/media`
-- [Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)
+**1-** make sure you have pre-initiated vue
+```js
+// app.js
+
+window.Vue = require('vue');
+
+new Vue({
+  el: '#app'
+})
+```
+
+**2-** under `resources/views/vendor/MediaManager/media.blade.php` update the path to that js file
+```html
+<script src="{{ asset("path/to/app.js") }}"></script>
+```
+
+**3-** visit `localhost:8000/media`
+
+### [Check The Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)

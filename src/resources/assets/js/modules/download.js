@@ -12,7 +12,6 @@ export default {
                     downloadFile(e.path)
                 })
 
-                this.$refs['success-audio'].play()
                 return this.showNotif('All Done')
             }
 

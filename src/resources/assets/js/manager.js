@@ -1,8 +1,7 @@
 /*                Libs                */
-window.Vue = require('vue')
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
-window.Dropzone = require('dropzone')
+window.Fuse = require('fuse.js')
 
 Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
