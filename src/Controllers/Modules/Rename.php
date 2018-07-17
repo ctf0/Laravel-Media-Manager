@@ -17,10 +17,10 @@ trait Rename
      */
     public function renameItem(Request $request)
     {
-        $path           = $request->path;
-        $filename       = $request->filename;
-        $new_filename   = $this->cleanName($request->new_filename);
-        $message        = '';
+        $path         = $request->path;
+        $filename     = $request->filename;
+        $new_filename = $this->cleanName($request->new_filename);
+        $message      = '';
 
         $old_path = !$path ? $filename : $this->clearDblSlash("$path/$filename");
         $new_path = !$path ? $new_filename : $this->clearDblSlash("$path/$new_filename");
@@ -30,9 +30,9 @@ trait Rename
                 if ($this->storageDisk->move($old_path, $new_path)) {
                     // broadcast
                     broadcast(new MediaFileOpsNotifications([
-                        'op'      => 'rename',
-                        'path'    => $path,
-                        'item'    => [
+                        'op'   => 'rename',
+                        'path' => $path,
+                        'item' => [
                             'type'    => $request->type,
                             'oldName' => $filename,
                             'newName' => $new_filename,

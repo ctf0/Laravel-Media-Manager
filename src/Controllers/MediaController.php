@@ -53,7 +53,7 @@ class MediaController extends Controller
         $this->LMF             = array_get($config, 'last_modified_format');
         $this->GFI             = array_get($config, 'get_folder_info', true);
 
-        $this->storageDisk     =  app('filesystem')->disk($this->fileSystem);
+        $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
         $this->baseUrl         = $this->storageDisk->url('/');
         $this->db              = app('db')->connection('mediamanager')->table('locked');

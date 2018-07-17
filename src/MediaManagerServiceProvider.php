@@ -45,11 +45,6 @@ class MediaManagerServiceProvider extends ServiceProvider
             __DIR__ . '/database' => storage_path('logs'),
         ], 'db');
 
-        // public
-        $this->publishes([
-            __DIR__ . '/dist' => public_path('assets/vendor/MediaManager'),
-        ], 'dist');
-
         // resources
         $this->publishes([
             __DIR__ . '/resources/assets' => resource_path('assets/vendor/MediaManager'),
@@ -140,9 +135,8 @@ class MediaManagerServiceProvider extends ServiceProvider
 <<<EOT
 
 // MediaManager
-mix.js('resources/assets/vendor/MediaManager/js/manager.js', 'public/assets/vendor/MediaManager')
-    .sass('resources/assets/vendor/MediaManager/sass/media.scss', 'public/assets/vendor/MediaManager/style.css')
-    .version();
+mix.sass('resources/assets/vendor/MediaManager/sass/media.scss', 'public/assets/vendor/MediaManager/style.css')
+    .copyDirectory('resources/assets/vendor/MediaManager/dist', 'public/assets/vendor/MediaManager')
 EOT;
 
             $this->file->append($mix_file, $data);

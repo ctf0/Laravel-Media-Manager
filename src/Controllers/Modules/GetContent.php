@@ -108,7 +108,7 @@ trait GetContent
     protected function getFolderContent($folder, $rec = false)
     {
         return $this->storageDisk->listWith(
-            ['mimetype', 'visibility'],
+            ['mimetype', 'visibility', 'timestamp', 'size'],
             $folder,
             $rec
         );

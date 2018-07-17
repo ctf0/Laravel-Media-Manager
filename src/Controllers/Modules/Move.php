@@ -24,9 +24,9 @@ trait Move
         $toBroadCast = [];
 
         foreach ($request->moved_files as $one) {
-            $file_name   = $one['name'];
-            $file_type   = $one['type'];
-            $defaults    = [
+            $file_name = $one['name'];
+            $file_type = $one['type'];
+            $defaults  = [
                 'name'  => $file_name,
                 'type'  => $file_type,
                 'size'  => $one['size'],

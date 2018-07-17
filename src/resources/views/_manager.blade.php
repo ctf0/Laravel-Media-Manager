@@ -1048,5 +1048,4 @@
 @push('scripts')
     <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.0/jsmediatags.min.js"></script>
-    <script src="{{ asset('assets/vendor/MediaManager/manager.js') }}"></script>
 @endpush

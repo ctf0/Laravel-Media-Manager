@@ -42,7 +42,7 @@ export default {
             let width = cont.clientWidth
             let pad = parseInt(window.getComputedStyle(cont).paddingLeft) + parseInt(window.getComputedStyle(cont).paddingRight)
             let contWidth = width - pad
-            let itemWidth = this.$refs.filesList.firstChild.clientWidth
+            let itemWidth = this.$refs.filesList.firstChild ? this.$refs.filesList.firstChild.clientWidth : 0
 
             this.scrollByRows = Math.floor(contWidth / itemWidth)
         }

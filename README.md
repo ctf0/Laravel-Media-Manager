@@ -40,8 +40,15 @@
   npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web fuse.js --save
   ```
 
-- run `npm run watch` to compile your `js/css` files.
-    - if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/)
+- add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
+  + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/).
+  ```js
+  require('../vendor/MediaManager/js/manager')
+
+  new Vue({
+      el: '#app'
+  })
+  ```
 <br>
 
 ## Features
@@ -68,7 +75,7 @@
     + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item when using (left, up, righ, down, home, end)
 - [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s ***"sqLite must be installed"***
-- search "current / global"
+- search `current/global`
 - filter by
   + folder
   + image
@@ -239,23 +246,7 @@ return [
 <br>
 
 ## Usage
+> [Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)<br>
+> [Demo](https://github.com/ctf0/demos/tree/media-manager)
 
-**1-** make sure you have pre-initiated vue
-```js
-// app.js
-
-window.Vue = require('vue');
-
-new Vue({
-  el: '#app'
-})
-```
-
-**2-** under `resources/views/vendor/MediaManager/media.blade.php` update the path to that js file
-```html
-<script src="{{ asset("path/to/app.js") }}"></script>
-```
-
-**3-** visit `localhost:8000/media`
-
-### [Check The Wiki](https://github.com/ctf0/Laravel-Media-Manager/wiki)
+- visit `localhost:8000/media`

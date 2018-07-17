@@ -50,14 +50,14 @@ trait Download
     {
         return response()->stream(function () use ($name, $list) {
             // track changes
-            $counter = 100 / count($list);
+            $counter  = 100 / count($list);
             $progress = 0;
             broadcast(new MediaZipProgress(['progress'=>$progress]));
 
             $zip = new ZipStream("$name.zip", $this->getZipOptions());
 
             foreach ($list as $file) {
-                $file_name = $file['name'];
+                $file_name  = $file['name'];
                 $streamRead = $this->storageDisk->readStream($this->clearUrl($file['path']));
 
                 // add to zip
@@ -83,16 +83,16 @@ trait Download
     {
         return response()->stream(function () use ($name, $list) {
             // track changes
-            $counter = 100 / count($list);
+            $counter  = 100 / count($list);
             $progress = 0;
             broadcast(new MediaZipProgress(['progress'=>$progress]));
 
             $zip = new ZipStream("$name.zip", $this->getZipOptions());
 
             foreach ($list as $file) {
-                $dir_name = pathinfo($file, PATHINFO_DIRNAME);
-                $file_name = pathinfo($file, PATHINFO_BASENAME);
-                $full_name = "$dir_name/$file_name";
+                $dir_name   = pathinfo($file, PATHINFO_DIRNAME);
+                $file_name  = pathinfo($file, PATHINFO_BASENAME);
+                $full_name  = "$dir_name/$file_name";
                 $streamRead = $this->storageDisk->readStream($file);
 
                 // add to zip

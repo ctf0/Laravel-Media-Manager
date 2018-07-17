@@ -21,10 +21,10 @@ trait Delete
         $toBroadCast = [];
 
         foreach ($request->deleted_files as $one) {
-            $name       = $one['name'];
-            $type       = $one['type'];
-            $item_path  = !$path ? $name : $this->clearDblSlash("$path/$name");
-            $defaults   = [
+            $name      = $one['name'];
+            $type      = $one['type'];
+            $item_path = !$path ? $name : $this->clearDblSlash("$path/$name");
+            $defaults  = [
                 'name' => $name,
                 'type' => $type,
             ];
@@ -83,8 +83,8 @@ trait Delete
 
         // broadcast
         broadcast(new MediaFileOpsNotifications([
-            'op'      => 'delete',
-            'items'   => $toBroadCast,
+            'op'    => 'delete',
+            'items' => $toBroadCast,
         ]))->toOthers();
 
         return response()->json($result);

@@ -27,10 +27,10 @@ trait Upload
             if ($this->allowUpload($one)) {
                 $one = $this->optimizeUpload($one);
 
-                $original    = $one->getClientOriginalName();
-                $name_only   = pathinfo($original, PATHINFO_FILENAME);
-                $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
-                $file_name   = $random_name
+                $original  = $one->getClientOriginalName();
+                $name_only = pathinfo($original, PATHINFO_FILENAME);
+                $ext_only  = pathinfo($original, PATHINFO_EXTENSION);
+                $file_name = $random_name
                                     ? $this->sanitizedText . ".$ext_only"
                                     : $this->cleanName($name_only, null) . ".$ext_only";
 
@@ -161,10 +161,10 @@ trait Upload
             $path        = $request->path;
             $random_name = $request->random_names;
 
-            $original    = substr($url, strrpos($url, '/') + 1);
-            $name_only   = pathinfo($original, PATHINFO_FILENAME);
-            $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
-            $file_name   = $random_name
+            $original  = substr($url, strrpos($url, '/') + 1);
+            $name_only = pathinfo($original, PATHINFO_FILENAME);
+            $ext_only  = pathinfo($original, PATHINFO_EXTENSION);
+            $file_name = $random_name
                                 ? $this->sanitizedText . ".$ext_only"
                                 : $this->cleanName($name_only, null) . ".$ext_only";
 
@@ -194,8 +194,8 @@ trait Upload
 
                 // broadcast
                 broadcast(new MediaFileOpsNotifications([
-                    'op'      => 'upload',
-                    'path'    => $path,
+                    'op'   => 'upload',
+                    'path' => $path,
                 ]))->toOthers();
 
                 $result = [

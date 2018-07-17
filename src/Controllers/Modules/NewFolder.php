@@ -29,8 +29,8 @@ trait NewFolder
 
         // broadcast
         broadcast(new MediaFileOpsNotifications([
-            'op'    => 'new_folder',
-            'path'  => $path,
+            'op'   => 'new_folder',
+            'path' => $path,
         ]))->toOthers();
 
         return compact('message', 'new_folder_name', 'full_path');
