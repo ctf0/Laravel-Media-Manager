@@ -1,6 +1,6 @@
 <script>
 import debounce from 'lodash/debounce'
-// main
+
 import Utilities from '../modules/utils'
 import Download from '../modules/download'
 import Cache from '../modules/cache'
@@ -17,21 +17,14 @@ import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
 import Broadcast from '../modules/broadcast'
 import Scroll from '../modules/scroll'
-// image
-import Cropper from './imageEditor/cropper.vue'
-import imageCache from './lazyLoading/cache.vue'
-import imageIntersect from './lazyLoading/normal.vue'
-// search
-import globalSearchBtn from './globalSearch/button.vue'
-import globalSearchPanel from './globalSearch/panel.vue'
 
 export default {
     components: {
-        Cropper,
-        imageCache,
-        imageIntersect,
-        globalSearchBtn,
-        globalSearchPanel
+        Cropper: require('./imageEditor/cropper.vue'),
+        imageCache: require('./lazyLoading/cache.vue'),
+        imageIntersect: require('./lazyLoading/normal.vue'),
+        globalSearchBtn: require('./globalSearch/button.vue'),
+        globalSearchPanel: require('./globalSearch/panel.vue')
     },
     name: 'media-manager',
     mixins: [
@@ -122,7 +115,7 @@ export default {
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
-        window.addEventListener('resize', this.scrollByRow)
+        window.addEventListener('resize', debounce(this.scrollByRow, 500))
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },

@@ -169,6 +169,9 @@ export default {
 
                         }).catch((err) => {
                             console.error(err)
+                            
+                            this.isLoading = false
+                            this.loadingFiles('hide')
                             this.ajaxError()
                         })
                     })

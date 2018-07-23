@@ -1,5 +1,4 @@
 /*                Libs                */
-window.Vue = require('vue')
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
 window.Fuse = require('fuse.js')

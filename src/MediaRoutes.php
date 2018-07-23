@@ -6,7 +6,7 @@ class MediaRoutes
 {
     public static function routes()
     {
-        $controller = array_get(config('mediaManager'), 'controller', '\ctf0\MediaManager\Controllers\MediaController');
+        $controller = config('mediaManager.controller', '\ctf0\MediaManager\Controllers\MediaController');
 
         app('router')->group([
             'prefix'    => 'media',

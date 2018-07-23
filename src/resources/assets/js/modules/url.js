@@ -9,8 +9,8 @@ export default {
         getPathFromUrl() {
             return new Promise((resolve) => {
                 if (!this.inModal) {
-                    let path = location.search
-                    this.folders = path.includes('path') ? path.replace('?path=', '').split('/') : []
+                    let path = new URLSearchParams(location.search)
+                    this.folders = path.has('path') ? path.get('path').split('/') : []
                 }
 
                 return resolve()

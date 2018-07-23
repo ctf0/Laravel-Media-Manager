@@ -43,6 +43,8 @@
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
   + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/).
   ```js
+  window.Vue = require('vue')
+
   require('../vendor/MediaManager/js/manager')
 
   new Vue({
@@ -135,25 +137,26 @@
 
 - events
 
-  |       type      |                 event-name                |                   description                    |
-  |-----------------|-------------------------------------------|--------------------------------------------------|
-  | [JS][js]        |                                           |                                                  |
-  |                 | modal-show                                | when modal is showen                             |
-  |                 | modal-hide                                | when modal is hidden                             |
-  |                 | file_selected *(when inside modal)*       | get selected file url                            |
-  |                 | multi_file_selected *(when inside modal)* | get bulk selected files urls                     |
-  |                 | folder_selected *(when inside modal)*     | get selected folder path                         |
-  | [Laravel][lara] |                                           |                                                  |
-  |                 | MMFileUploaded($file_path)                | get uploaded file full [path][path]              |
-  |                 | [MMFileSaved][event]($file_path)          | get saved(edited/link) image full [path][path]   |
-  |                 | MMFileDeleted($file_path, $is_folder)     | get deleted file/folder full [path][path]        |
-  |                 | MMFileRenamed($old_path, $new_path)       | get renamed file/folder old & new [path][path] |
-  |                 | MMFileMoved($old_path, $new_path)         | get moved file/folder "old & new" [path][path]   |
+  |       type      |                     event-name                     |                  description                   |
+  |-----------------|----------------------------------------------------|------------------------------------------------|
+  | [JS][js]        |                                                    |                                                |
+  |                 | modal-show                                         | when modal is showen                           |
+  |                 | modal-hide                                         | when modal is hidden                           |
+  |                 | file_selected *([when inside modal][modal])*       | get selected file url                          |
+  |                 | multi_file_selected *([when inside modal][modal])* | get bulk selected files urls                   |
+  |                 | folder_selected *([when inside modal][modal])*     | get selected folder path                       |
+  | [Laravel][lara] |                                                    |                                                |
+  |                 | MMFileUploaded($file_path)                         | get uploaded file full [path][path]            |
+  |                 | [MMFileSaved][event]($file_path)                   | get saved(edited/link) image full [path][path] |
+  |                 | MMFileDeleted($file_path, $is_folder)              | get deleted file/folder full [path][path]      |
+  |                 | MMFileRenamed($old_path, $new_path)                | get renamed file/folder old & new [path][path] |
+  |                 | MMFileMoved($old_path, $new_path)                  | get moved file/folder "old & new" [path][path] |
 
 [js]: https://github.com/gocanto/vuemit
 [lara]: https://laravel.com/docs/5.5/events#manually-registering-events
 [event]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Image-Editor#optimize-edited-images-on-save
 [path]: https://gist.github.com/ctf0/9fa6013954654384052d2e2e809b9bf6
+[modal]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal
 
 <br>
 
