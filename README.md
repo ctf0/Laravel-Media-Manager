@@ -43,6 +43,8 @@
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
   + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/).
   ```js
+  // app.js
+
   window.Vue = require('vue')
 
   require('../vendor/MediaManager/js/manager')

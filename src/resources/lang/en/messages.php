@@ -52,6 +52,8 @@ return array (
   'find' => 'Find...',
   'folder' => 'Folder',
   'found' => 'Found',
+  'glbl_search_avail' => 'Global Search Is Now Available.',
+  'go_to_folder' => 'Go To Folder !',
   'image' => 'Image',
   'items' => 'Item(s)',
   'last_modified' => 'Last Modified',
@@ -107,6 +109,5 @@ return array (
   'visibility_error' => '":attr" Visibility Couldn\'t Be Changed',
   'visibility_set' => 'Change Visibility',
   'visibility_success' => '":attr" Visibility Was Updated',
-  'go_to_folder' => 'Go To Folder !',
-  'glbl_search' => 'Global Search Is Now Available',
+  'glbl_search' => 'Global Search',
 );

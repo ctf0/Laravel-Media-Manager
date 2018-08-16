@@ -1,5 +1,9 @@
 <template>
-    <button :disabled="loading" :class="{'is-static' : loading}" class="button" @click="done ? showSearchPanel() : init()">
+    <button v-tippy :disabled="loading"
+            :class="{'is-static' : loading}"
+            :title="trans('glbl_search')"
+            class="button"
+            @click="done ? showSearchPanel() : init()">
         <span class="icon"><icon :spin="loading" name="globe"/></span>
     </button>
 </template>
@@ -28,11 +32,14 @@ export default {
                     this.loading = false
                     this.done = true
                     EventHub.fire('global-search-index', data)
-                    parent.showNotif(parent.trans('glbl_search'))
+                    parent.showNotif(this.trans('glbl_search_avail'))
 
                 }).catch((err) => {
                     console.error(err)
                 })
+        },
+        trans(key) {
+            return this.$parent.trans(key)
         },
         showSearchPanel() {
             EventHub.fire('show-global-search')

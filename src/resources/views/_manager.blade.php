@@ -30,6 +30,7 @@
         'stand_by' => trans('MediaManager::messages.stand_by'), 
         'new_uploads_notif' => trans('MediaManager::messages.new_uploads_notif'), 
         'glbl_search' => trans('MediaManager::messages.glbl_search'), 
+        'glbl_search_avail' => trans('MediaManager::messages.glbl_search_avail'), 
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'), 
         'find' => trans('MediaManager::messages.find')
     ]) }}"
