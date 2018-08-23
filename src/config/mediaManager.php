@@ -46,7 +46,7 @@ return [
     /*
      * when file names gets cleand up
      */
-    'sanitized_text' => uniqid(),
+    'sanitized_text' => 'uniqid',
 
     /*
      * display file last modification time as
@@ -69,7 +69,7 @@ return [
      * automatically invalidate cache after ?
      * in "Minutes"
      */
-    'cacheExpiresAfter' => 60,
+    'cache_expires_after' => 60,
 
     /*
      * in-order to get the folder items count & size
@@ -85,4 +85,10 @@ return [
      * "laravel-echo" must be installed
      */
     'enable_broadcasting' => false,
+
+    /*
+     * show "an itunes like" content ratio bar
+     * above the manager
+     */
+    'show_ratio_bar' => true,
 ];

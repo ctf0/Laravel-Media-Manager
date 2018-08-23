@@ -35,9 +35,9 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
   ```bash
-  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web fuse.js
+  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js
   # or
-  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web fuse.js --save
+  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js --save
   ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -95,6 +95,7 @@
   + all
   + selected
   + search found
+- a content ratio bar "similar to itunes"
 - protection against overwriting (files/folders)
 - file name sanitization for
   + upload
@@ -208,7 +209,7 @@ return [
     /*
      * when file names gets cleand up
      */
-    'sanitized_text' => uniqid(),
+    'sanitized_text' => 'uniqid',
 
     /*
      * display file last modification time as
@@ -229,7 +230,7 @@ return [
     /*
      * automatically invalidate cache after "in Minutes"
      */
-    'cacheExpiresAfter' => 60,
+    'cache_expires_after' => 60,
 
     /*
      * in-order to get the folder items count & size
@@ -244,7 +245,12 @@ return [
      *
      * "laravel-echo" must be installed
      */
-    'enable_broadcasting' => false
+    'enable_broadcasting' => false,
+
+    /**
+     * show "an itunes like" content ratio bar
+     */
+    'show_ratio_bar' => true
 ];
 ```
 

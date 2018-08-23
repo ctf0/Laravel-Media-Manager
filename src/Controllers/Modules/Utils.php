@@ -9,20 +9,19 @@ trait Utils
     /**
      * sanitize input.
      *
-     * @param [type]     $text   [description]
-     * @param null|mixed $folder
-     *
      * @return [type] [description]
      */
-    protected function cleanName($text, $folder = null)
+    protected function getRandomString()
     {
-        $pattern = $folder
-            ? $this->filePattern($this->folderChars)
-            : $this->filePattern($this->fileChars);
+        return call_user_func($this->sanitizedText);
+    }
 
-        $text = preg_replace($pattern, '', $text);
+    protected function cleanName($text, $folder = false)
+    {
+        $pattern = $this->filePattern($folder ? $this->folderChars : $this->fileChars);
+        $text    = preg_replace($pattern, '', $text);
 
-        return $text == '' ? $this->sanitizedText : $text;
+        return $text == '' ? $this->getRandomString() : $text;
     }
 
     protected function filePattern($item)

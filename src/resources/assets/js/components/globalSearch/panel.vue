@@ -194,7 +194,7 @@ export default {
                 // cont.style.position = 'relative'
             } else {
                 EventHub.fire('disable-global-keys', false)
-                // cont.style.position = 'unset'
+                // cont.style.position = ''
             }
         },
         search() {

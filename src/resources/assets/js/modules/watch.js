@@ -2,11 +2,7 @@ import debounce from 'lodash/debounce'
 
 export default {
     watch: {
-        allFiles(val) {
-            if (val.length < 1) {
-                this.noFiles('show')
-            }
-        },
+        // files
         selectedFile(val) {
             if (val) {
                 if (this.inModal && !this.isBulkSelecting()) {
@@ -29,16 +25,19 @@ export default {
 
             this.updateLs({'selectedFileName': null})
         },
-        checkForFolders(val) {
-            !val
-                ? this.resetInput('moveToPath')
-                : this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
-        },
         allItemsCount(val) {
-            if (val && val.length == 0) {
+            if (val && val.length < 1) {
+                this.noFiles('show')
                 this.resetInput(['selectedFile', 'currentFileIndex'])
             }
         },
+        filteredItemsCount(val) {
+            if (!val) {
+                this.resetInput('currentFilterName')
+            }
+        },
+
+        // bulk
         bulkItemsCount(val) {
             if (val > 0 && this.inModal && !this.selectedFileIs('folder')) {
                 let links = this.bulkList.map((e) => e.path)
@@ -54,44 +53,6 @@ export default {
 
             if (!val) {
                 this.firstMeta = false
-            }
-        },
-        activeModal(val) {
-            let ref
-
-            switch (val) {
-                case 'new_folder_modal':
-                    ref = 'new_folder_modal_input'
-                    break
-                case 'rename_file_modal':
-                    ref = 'rename_file_modal_input'
-                    break
-                case 'move_file_modal':
-                    ref = 'move_folder_dropdown'
-                    break
-                case 'confirm_delete_modal':
-                    ref = 'confirm_delete_modal_submit'
-                    break
-                case 'save_link_modal':
-                    ref = 'save_link_modal_input'
-                    break
-                default:
-                    ref = null
-            }
-
-            if (ref) {
-                this.$nextTick(() => {
-                    return this.$refs[ref].focus()
-                })
-            }
-        },
-        showProgress(val) {
-            if (val) {
-                this.toggleUploadArea = false
-                this.toggleInfo = false
-                this.isLoading = true
-                this.noFiles('hide')
-                this.loadingFiles('show')
             }
         },
 
@@ -161,6 +122,52 @@ export default {
                     this.scrollToSelected(this.getElementByIndex(this.currentFileIndex))
                 }, 500))
             }
-        }
+        },
+
+        // misc
+        checkForFolders(val) {
+            !val
+                ? this.resetInput('moveToPath')
+                : this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
+        },
+        activeModal(val) {
+            let ref
+
+            switch (val) {
+                case 'new_folder_modal':
+                    ref = 'new_folder_modal_input'
+                    break
+                case 'rename_file_modal':
+                    ref = 'rename_file_modal_input'
+                    break
+                case 'move_file_modal':
+                    ref = 'move_folder_dropdown'
+                    break
+                case 'confirm_delete_modal':
+                    ref = 'confirm_delete_modal_submit'
+                    break
+                case 'save_link_modal':
+                    ref = 'save_link_modal_input'
+                    break
+                default:
+                    ref = null
+            }
+
+            if (ref) {
+                this.$nextTick(() => {
+                    return this.$refs[ref].focus()
+                })
+            }
+        },
+        showProgress(val) {
+            if (val) {
+                this.toggleUploadArea = false
+                this.toggleInfo = false
+                this.isLoading = true
+                this.noFiles('hide')
+                this.loadingFiles('show')
+            }
+        },
+        plyr: 'autoPlay'
     }
 }

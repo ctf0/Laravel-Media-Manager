@@ -69,7 +69,7 @@ export default {
             let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
             let i = Math.floor(Math.log(bytes) / Math.log(k))
 
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ` ${sizes[i]}`
         },
         getExtension(name) {
             let index = name.lastIndexOf('.')
@@ -179,6 +179,7 @@ export default {
         },
         ajaxError() {
             this.toggleInfo = false
+
             this.toggleLoader('ajax_error', true)
             EventHub.fire('ajax-error-show')
         },

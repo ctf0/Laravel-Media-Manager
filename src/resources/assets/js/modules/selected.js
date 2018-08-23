@@ -72,20 +72,11 @@ export default {
                     return this.toggleModal('preview_modal')
                 }
 
-                if (this.selectedFileIs('audio') || this.selectedFileIs('video')) {
+                if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
                     return this.playMedia()
                 }
 
                 this.openFolder(this.selectedFile)
-            }
-        },
-        playMedia() {
-            let player = this.$refs.player
-
-            if (player) {
-                return player.paused
-                    ? player.play()
-                    : player.pause()
             }
         },
 

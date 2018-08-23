@@ -31,8 +31,8 @@ trait Upload
                 $name_only = pathinfo($original, PATHINFO_FILENAME);
                 $ext_only  = pathinfo($original, PATHINFO_EXTENSION);
                 $file_name = $random_name
-                                    ? $this->sanitizedText . ".$ext_only"
-                                    : $this->cleanName($name_only, null) . ".$ext_only";
+                                ? $this->getRandomString() . ".$ext_only"
+                                : $this->cleanName($name_only) . ".$ext_only";
 
                 $file_type   = $one->getMimeType();
                 $destination = !$upload_path ? $file_name : $this->clearDblSlash("$upload_path/$file_name");
@@ -102,7 +102,7 @@ trait Upload
             $path        = $request->path;
             $data        = explode(',', $request->data)[1];
             $original    = $request->name;
-            $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->sanitizedText;
+            $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->getRandomString();
             $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
             $file_name   = "$name_only.$ext_only";
             $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
@@ -165,8 +165,8 @@ trait Upload
             $name_only = pathinfo($original, PATHINFO_FILENAME);
             $ext_only  = pathinfo($original, PATHINFO_EXTENSION);
             $file_name = $random_name
-                                ? $this->sanitizedText . ".$ext_only"
-                                : $this->cleanName($name_only, null) . ".$ext_only";
+                            ? $this->getRandomString() . ".$ext_only"
+                            : $this->cleanName($name_only) . ".$ext_only";
 
             $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
             $file_type   = image_type_to_mime_type(exif_imagetype($url));

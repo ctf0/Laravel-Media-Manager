@@ -5,9 +5,10 @@
         'hideFilesExt' => config('mediaManager.hide_files_ext'), 
         'lazyLoad' => config('mediaManager.lazy_load_image_on_click'), 
         'imageTypes' => config('mediaManager.image_extended_mimes'), 
-        'cacheExp' => config('mediaManager.cacheExpiresAfter'), 
+        'cacheExp' => config('mediaManager.cache_expires_after'), 
         'broadcasting' => config('mediaManager.enable_broadcasting'), 
         'gfi' => config('mediaManager.get_folder_info'), 
+        'ratioBar' => config('mediaManager.show_ratio_bar')
     ]) }}"
     :routes="{{ json_encode([
         'files' => route('media.files'), 
@@ -42,6 +43,11 @@
     :upload-panel-img-list="{{ $patterns }}">
 
     <div class="" id="manager-container">
+
+        {{-- content ratio bar --}}
+        <transition name="list" mode="out-in">
+            <content-ratio v-if="config.ratioBar && allItemsCount" :list="allFiles" :total="allItemsCount"></content-ratio>
+        </transition>
 
         {{-- global search --}}
         <global-search-panel></global-search-panel>
@@ -411,7 +417,7 @@
         {{-- ====================================================================== --}}
 
         <div class="media-manager__stack">
-            <section class="media-manager__stack-container">
+            <section class="__stack-container">
 
                 {{-- loadings --}}
                 <section>
@@ -441,7 +447,7 @@
                 {{-- ====================================================================== --}}
 
                 {{-- files box --}}
-                <v-touch class="media-manager__stack-files"
+                <v-touch class="__stack-files"
                     :class="{'__stack-sidebar-hidden' : !toggleInfo}"
                     ref="__stack-files"
                     @swiperight="goToPrevFolder()">
@@ -530,7 +536,7 @@
 
                 {{-- info sidebar --}}
                 <transition name="slide" mode="out-in" appear>
-                    <div class="media-manager__stack-sidebar is-hidden-touch" v-if="toggleInfo">
+                    <div class="__stack-sidebar is-hidden-touch" v-if="toggleInfo">
                         {{-- preview --}}
                         <div class="__sidebar-preview">
                             <transition name="slide" mode="out-in" appear>
@@ -553,28 +559,23 @@
 
                                 {{-- video --}}
                                 <template v-else-if="selectedFileIs('video')">
-                                    <video controls
-                                        preload="none"
-                                        class="__sidebar-video"
-                                        ref="player"
-                                        :key="selectedFile.name"
-                                        :src="selectedFile.path"
-                                        v-tippy="{arrow: true, position: 'left'}"
-                                        title="space">
-                                        {{ trans('MediaManager::messages.video_support') }}
-                                    </video>
+                                    <div :key="selectedFile.name">
+                                        <video controls
+                                            preload="auto"
+                                            ref="player"
+                                            :src="selectedFile.path">
+                                            {{ trans('MediaManager::messages.video_support') }}
+                                        </video>
+                                    </div>
                                 </template>
 
                                 {{-- audio --}}
                                 <template v-else-if="selectedFileIs('audio')">
                                     <div :key="selectedFile.name">
                                         <audio controls
-                                            preload="none"
-                                            class="__sidebar-audio"
+                                            preload="auto"
                                             ref="player"
-                                            :src="selectedFile.path"
-                                            v-tippy="{arrow: true, position: 'left'}"
-                                            title="space">
+                                            :src="selectedFile.path">
                                             {{ trans('MediaManager::messages.audio_support') }}
                                         </audio>
                                         <img v-if="selectedFilePreview"
@@ -585,21 +586,21 @@
                                 </template>
 
                                 {{-- icons --}}
-                                <icon key="1" v-else-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
-                                <icon key="2" v-else-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
+                                <icon class="svg-prev-icon" key="1" v-else-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
+                                <icon class="svg-prev-icon" key="2" v-else-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
                                 <div key="3" v-else-if="selectedFileIs('pdf')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
                                     @click="toggleModal('preview_modal')">
-                                    <icon name="file-pdf-o" scale="4"></icon>
+                                    <icon class="svg-prev-icon" name="file-pdf-o" scale="4"></icon>
                                 </div>
                                 <div key="4" v-else-if="selectedFileIs('text')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
                                     @click="toggleModal('preview_modal')">
-                                    <icon name="file-text-o" scale="4"></icon>
+                                    <icon class="svg-prev-icon" name="file-text-o" scale="4"></icon>
                                 </div>
                             </transition>
                         </div>
@@ -706,7 +707,7 @@
             {{-- ====================================================================== --}}
 
             {{-- path toolbar --}}
-            <section class="media-manager__stack-breadcrumb level is-mobile">
+            <section class="__stack-breadcrumb level is-mobile">
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
                     <nav class="breadcrumb is-hidden-touch" v-if="!restrictModeIsOn()">

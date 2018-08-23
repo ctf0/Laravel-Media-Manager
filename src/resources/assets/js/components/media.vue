@@ -17,6 +17,7 @@ import Watchers from '../modules/watch'
 import Computed from '../modules/computed'
 import Broadcast from '../modules/broadcast'
 import Scroll from '../modules/scroll'
+import Media from '../modules/media'
 
 export default {
     components: {
@@ -24,7 +25,8 @@ export default {
         imageCache: require('./lazyLoading/cache.vue'),
         imageIntersect: require('./lazyLoading/normal.vue'),
         globalSearchBtn: require('./globalSearch/button.vue'),
-        globalSearchPanel: require('./globalSearch/panel.vue')
+        globalSearchPanel: require('./globalSearch/panel.vue'),
+        contentRatio: require('./ratio.vue')
     },
     name: 'media-manager',
     mixins: [
@@ -43,7 +45,8 @@ export default {
         Image,
         Url,
         Broadcast,
-        Scroll
+        Scroll,
+        Media
     ],
     props: [
         'config',
@@ -99,8 +102,11 @@ export default {
             newFolderName: null,
             newFilename: null,
             activeModal: null,
-
+            plyr: null,
             imageSlideDirection: null,
+            firstRun: true,   // for delayed scroll on manager init
+            firstMeta: false,  // for alt + click selection
+
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0%, #209cee 71%, #3287f5 100%)',
@@ -108,14 +114,12 @@ export default {
                 'linear-gradient(141deg, #ffaf24 0%, #ffdd57 71%, #fffa70 100%)',
                 'linear-gradient(141deg, #ff0561 0%, #ff3860 71%, #ff5257 100%)',
                 'linear-gradient(141deg, #1f191a 0%, #363636 71%, #46403f 100%)'
-            ],
-            firstRun: true,   // for delayed scroll on manager init
-            firstMeta: false  // for alt + click selection
+            ]
         }
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
-        window.addEventListener('resize', debounce(this.scrollByRow, 250))
+        window.addEventListener('resize', debounce(this.scrollByRow, 500))
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
@@ -127,7 +131,6 @@ export default {
         }, 1000))
     },
     updated: debounce(function() {
-        this.autoPlay()
         this.$nextTick(() => {
             this.activeModal || this.inModal
                 ? this.noScroll('add')
@@ -382,27 +385,6 @@ export default {
             }
 
             this.toggleModal('confirm_delete_modal')
-        },
-
-        /**
-         * autoplay media
-         */
-        autoPlay() {
-            if (this.filterNameIs('audio') || this.filterNameIs('video')) {
-                let player = this.$refs.player
-                player.onended = () => {
-                    // stop at the end of list
-                    if (this.currentFileIndex < this.allItemsCount - 1) {
-                        // nav to next
-                        this.goToNext()
-
-                        // play navigated to
-                        this.$nextTick(() => {
-                            this.$refs.player.play()
-                        })
-                    }
-                }
-            }
         }
     },
     render() {}

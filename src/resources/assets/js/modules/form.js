@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce'
-const Dropzone = require('dropzone')
+import Dropzone from 'dropzone'
 
 export default {
     methods: {
@@ -122,6 +122,7 @@ export default {
         getFiles(folders = null, prev_folder = null, prev_file = null) {
             this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
+            this.destroyPlyr()
 
             if (!this.loading_files) {
                 this.isLoading = true
@@ -135,46 +136,48 @@ export default {
 
             // clear expired cache
             return this.invalidateCache().then(() => {
+                // fix db-click to open folder not reseting the file selection
+                this.resetInput(['selectedFile', 'currentFileIndex'])
+
                 // get data
-                return this.getCachedResponse()
-                    .then((res) => {
-                        // return cache
-                        if (res) {
-                            this.files = res.files
-                            this.directories = res.dirs
-                            return this.filesListCheck(folders, prev_folder, prev_file)
+                return this.getCachedResponse().then((res) => {
+                    // return cache
+                    if (res) {
+                        this.files = res.files
+                        this.directories = res.dirs
+                        return this.filesListCheck(folders, prev_folder, prev_file)
+                    }
+
+                    // or make new call
+                    return axios.post(this.routes.files, {
+                        folder: folders,
+                        dirs: this.folders
+                    }).then(({data}) => {
+                        // folder doesnt exist
+                        if (data.error) {
+                            return this.showNotif(data.error, 'danger')
                         }
 
-                        // or make new call
-                        return axios.post(this.routes.files, {
-                            folder: folders,
-                            dirs: this.folders
-                        }).then(({data}) => {
-                            // folder doesnt exist
-                            if (data.error) {
-                                return this.showNotif(data.error, 'danger')
-                            }
-
-                            // cache response
-                            this.cacheResponse({
-                                files: data.files,
-                                dirs: data.dirs
-                            })
-
-                            // return data
-                            this.files = data.files
-                            this.lockedList = data.locked
-                            this.directories = data.dirs
-                            this.filesListCheck(folders, prev_folder, prev_file)
-
-                        }).catch((err) => {
-                            console.error(err)
-                            
-                            this.isLoading = false
-                            this.loadingFiles('hide')
-                            this.ajaxError()
+                        // cache response
+                        this.cacheResponse({
+                            files: data.files,
+                            dirs: data.dirs
                         })
+
+                        // return data
+                        this.files = data.files
+                        this.lockedList = data.locked
+                        this.directories = data.dirs
+                        this.filesListCheck(folders, prev_folder, prev_file)
+
+                    }).catch((err) => {
+                        console.error(err)
+
+                        this.isLoading = false
+                        this.loadingFiles('hide')
+                        this.ajaxError()
                     })
+                })
             })
         },
         updateDirsList() {
@@ -221,12 +224,12 @@ export default {
                     if (prev_file) {
                         this.files.items.some((e, i) => {
                             if (e.name == prev_file) {
+                                // add the selection class
                                 return this.currentFileIndex = i
                             }
                         })
                     }
 
-                    // if no prevs found
                     if (!this.currentFileIndex) {
                         this.selectFirst()
                     }

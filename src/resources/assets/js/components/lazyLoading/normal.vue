@@ -43,7 +43,7 @@ export default {
                     }
                 })
             }, {
-                root: document.querySelector('.media-manager__stack-files'),
+                root: document.querySelector('.__stack-files'),
                 rootMargin: '0px',
                 threshold: 1.0
             })
