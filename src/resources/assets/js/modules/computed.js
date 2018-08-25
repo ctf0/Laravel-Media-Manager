@@ -134,7 +134,7 @@ export default {
                                 return res
                             }
 
-                            return this.getAudioCover(url)
+                            return this.getAudioData(url)
                                 .then((val) => {
                                     this.cacheResponse(val, url)
                                     return val

@@ -1,3 +1,6 @@
+import isObject from 'lodash/isObject'
+import omitBy from 'lodash/omitBy'
+
 export default {
     methods: {
         /*                Check                */
@@ -82,22 +85,26 @@ export default {
         getElementByIndex(i) {
             return document.querySelector(`[data-file-index='${i}']`)
         },
-        getAudioCover(url) {
+        getAudioData(url) {
             return new Promise((resolve, reject) => {
                 jsmediatags.read(url, {
                     onSuccess(tag) {
-                        if (tag.tags.picture) {
-                            const {data, format} = tag.tags.picture
+                        let val = tag.tags
+
+                        if (val.picture) {
+                            const {data, format} = val.picture
                             let base64String = ''
 
                             for (var value of data) {
                                 base64String += String.fromCharCode(value)
                             }
 
-                            return resolve(`data:${format};base64,${window.btoa(base64String)}`)
+                            val.picture = `data:${format};base64,${window.btoa(base64String)}`
+
+                            return resolve(omitBy(val, isObject))
                         }
 
-                        return reject('no cover found')
+                        return reject('no data found')
                     },
                     onError(error) {
                         return reject(error)
@@ -191,6 +198,13 @@ export default {
         },
         browserSupport(api) {
             return api in window
+        },
+        onResize({target}) {
+            this.scrollByRow()
+
+            // is-hidden-touch
+            // make sure the sidebar is removed from the dom
+            this.toggleInfo = target.outerWidth < 1087 ? false : true
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {

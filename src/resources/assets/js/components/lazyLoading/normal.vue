@@ -1,5 +1,5 @@
 <template>
-    <div ref="wrapper" class="__box-img">
+    <div class="__box-img">
         <img v-if="src" ref="img" :src="src" :alt="file.name" async>
     </div>
 </template>
@@ -8,7 +8,7 @@
 import debounce from 'lodash/debounce'
 
 export default {
-    props: ['file'],
+    props: ['file', 'browserSupport'],
     data() {
         return {
             observer: null,
@@ -20,8 +20,8 @@ export default {
         this.init()
     },
     beforeDestroy() {
-        if ('IntersectionObserver' in window && this.observer) {
-            this.observer.unobserve(this.$refs.wrapper)
+        if (this.browserSupport('IntersectionObserver') && this.observer) {
+            this.observer.unobserve(this.$el)
             this.observer = null
         }
     },
@@ -29,7 +29,7 @@ export default {
         init() {
             // wait for any DOM stuff to finish
             this.$nextTick(debounce(() => {
-                'IntersectionObserver' in window
+                this.browserSupport('IntersectionObserver')
                     ? this.observe()
                     : this.intersected = true
             }, 500))
@@ -48,7 +48,7 @@ export default {
                 threshold: 1.0
             })
 
-            if (this.$refs.wrapper) this.observer.observe(this.$refs.wrapper)
+            if (this.$el) this.observer.observe(this.$el)
         },
         sendDimensionsToParent() {
             const manager = this
@@ -65,7 +65,7 @@ export default {
         intersected(val) {
             if (val) {
                 this.src = this.file.path
-                this.$refs.wrapper.style.border = 'none'
+                this.$el.style.border = 'none'
 
                 this.$nextTick(() => {
                     this.sendDimensionsToParent()

@@ -27,18 +27,20 @@
                 <p class="title is-marginless">
                     <span class="link"
                         @click="copyLink(selectedFile.path)"
-                        :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
+                        :title="linkCopied ? '{{ trans('MediaManager::messages.copy.copied') }}' : '{{ trans('MediaManager::messages.copy.to_cp') }}'"
                         v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
                         @hidden="linkCopied = false">
                         @{{ selectedFile.name }}
                     </span>
 
-                    {{-- pdf open --}}
-                    <a v-if="selectedFileIs('pdf')"
-                        :href="selectedFile.path"
+                    {{-- open url --}}
+                    <a :href="selectedFile.path"
+                        v-if="selectedFileIs('pdf') || selectedFileIs('text')"
                         target="_blank"
-                        rel="noreferrer noopener">
-                        <icon name="search"></icon>
+                        rel="noreferrer noopener"
+                        title="{{ trans('MediaManager::messages.public_url') }}"
+                        v-tippy>
+                        <icon name="search" scale="1.1"></icon>
                     </a>
                 </p>
 
@@ -61,7 +63,7 @@
                     <span v-if="$refs.vis"
                         class="icon is-large link"
                         :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
-                        title="{{ trans('MediaManager::messages.visibility_set') }}"
+                        title="{{ trans('MediaManager::messages.visibility.set') }}"
                         v-tippy
                         @click="$refs.vis.click()">
                         <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.2"></icon>
@@ -75,7 +77,7 @@
                     <button class="button btn-plain"
                         @click.prevent="saveFile(selectedFile)"
                         v-tippy
-                        title="{{ trans('MediaManager::messages.download_file') }}">
+                        title="{{ trans('MediaManager::messages.download.file') }}">
                         <span class="icon"><icon name="download" scale="4"></icon></span>
                     </button>
 
@@ -93,7 +95,7 @@
                 :disabled="item_ops() || !checkForFolders || isLoading"
                 @click="moveItem()">
                 <span class="icon is-small"><icon name="share"></icon></span>
-                <span>{{ trans('MediaManager::messages.move') }}</span>
+                <span>{{ trans('MediaManager::messages.move.main') }}</span>
             </button>
         </div>
 
@@ -103,7 +105,7 @@
                 :disabled="item_ops() || isLoading"
                 @click="renameItem()">
                 <span class="icon is-small"><icon name="terminal"></icon></span>
-                <span>{{ trans('MediaManager::messages.rename') }}</span>
+                <span>{{ trans('MediaManager::messages.rename.main') }}</span>
             </button>
         </div>
 
@@ -123,7 +125,7 @@
                 :disabled="item_ops() || isLoading"
                 @click="deleteItem()">
                 <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
-                <span>{{ trans('MediaManager::messages.delete') }}</span>
+                <span>{{ trans('MediaManager::messages.delete.main') }}</span>
             </button>
         </div>
     </footer>

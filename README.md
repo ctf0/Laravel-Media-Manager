@@ -3,12 +3,10 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager)
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/41806986-f9835870-76c7-11e8-95a9-534e45ccf7dd.png">
+    <img src="https://user-images.githubusercontent.com/7388088/44598716-34783a80-a7d4-11e8-916a-2eb1e8f941a4.png">
 </p>
 
 - to optimize uploaded files on the fly try [spatie](https://github.com/spatie/laravel-image-optimizer)
-
-- package requires Laravel v5.4+
 
 <br>
 
@@ -70,6 +68,7 @@
 - bulk selection
 - change item/s visibility
 - update the page url while navigation
+- show audio files info **"artist, album, year, etc.."**
 - dynamically hide [files](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Files-With-Extension) / [folders](https://github.com/ctf0/Laravel-Media-Manager/wiki/Hide-Folders)
 - [restrict access to path](https://github.com/ctf0/Laravel-Media-Manager/wiki/Restrict-Access-To-Path)
 - download selected ["including bulk selection"](https://github.com/ctf0/Laravel-Media-Manager/wiki/Download-Files-as-a-ZipFile)
@@ -95,7 +94,7 @@
   + all
   + selected
   + search found
-- a content ratio bar "similar to itunes"
+- contents ratio bar
 - protection against overwriting (files/folders)
 - file name sanitization for
   + upload

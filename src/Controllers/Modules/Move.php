@@ -58,8 +58,8 @@ trait Move
                                 $result[] = array_merge($defaults, ['success' => true]);
                             } else {
                                 $exc = array_get($this->storageDiskInfo, 'root')
-                                            ? trans('MediaManager::messages.error_moving')
-                                            : trans('MediaManager::messages.error_moving_cloud');
+                                            ? trans('MediaManager::messages.error.moving')
+                                            : trans('MediaManager::messages.error.moving_cloud');
 
                                 throw new Exception($exc);
                             }
@@ -71,7 +71,7 @@ trait Move
                                 $result[] = array_merge($defaults, ['success' => true]);
                             } else {
                                 throw new Exception(
-                                    trans('MediaManager::messages.error_moving')
+                                    trans('MediaManager::messages.error.moving')
                                 );
                             }
                         }
@@ -90,10 +90,10 @@ trait Move
                                 'new_path' => $this->getItemPath($new_path),
                             ]);
                         } else {
-                            $exc = trans('MediaManager::messages.error_moving');
+                            $exc = trans('MediaManager::messages.error.moving');
 
                             if ($file_type == 'folder' && !array_get($this->storageDiskInfo, 'root')) {
-                                $exc = trans('MediaManager::messages.error_moving_cloud');
+                                $exc = trans('MediaManager::messages.error.moving_cloud');
                             }
 
                             throw new Exception($exc);
@@ -101,7 +101,7 @@ trait Move
                     }
                 } else {
                     throw new Exception(
-                        trans('MediaManager::messages.error_already_exists')
+                        trans('MediaManager::messages.error.already_exists')
                     );
                 }
             } catch (Exception $e) {

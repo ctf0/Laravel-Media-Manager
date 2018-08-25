@@ -22,9 +22,9 @@ trait NewFolder
         $message         = '';
 
         if ($this->storageDisk->exists($full_path)) {
-            $message = trans('MediaManager::messages.error_already_exists');
+            $message = trans('MediaManager::messages.error.already_exists');
         } elseif (!$this->storageDisk->makeDirectory($full_path)) {
-            $message = trans('MediaManager::messages.error_creating_dir');
+            $message = trans('MediaManager::messages.error.creating_dir');
         }
 
         // broadcast

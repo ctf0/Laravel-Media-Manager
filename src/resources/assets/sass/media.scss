@@ -181,26 +181,24 @@
         }
 
         &:last-of-type {
-            margin-right: 0;
+            margin-right: 2rem;
             margin-left: 1px;
-            padding-right: 2rem;
+            border: none;
 
             &::after {
                 display: none;
             }
 
-            // get around vue not animating items
-            // because of changeing border style
             &::before {
                 position: absolute;
                 top: -1px;
-                right: -1px;
+                right: 75%;
                 bottom: -1px;
-                left: 15%;
+                left: -1px;
                 content: '';
-                border: 1px solid $white;
-                border-left: none;
-                border-radius: 0 5px 5px 0;
+                border: 1px dashed darken($active_theme, 2.5%);
+                border-right: none;
+                border-radius: 5px 0 0 5px;
             }
         }
 
@@ -209,8 +207,8 @@
             font-size: 1.8rem;
             position: absolute;
             z-index: 1;
-            top: 0.65rem;
-            right: -1.57rem;
+            top: 0.6rem;
+            right: -1.45rem;
             content: '•';
             color: darken($active_theme, 2.5%);
         }
@@ -401,16 +399,15 @@
     display: flex;
     overflow: hidden;
     align-items: center;
-    align-self: flex-end;
     justify-content: start;
     width: 100%;
 
     .__box-preview {
-        margin: 0 0.75rem 0 1px;
+        margin-right: 0.75rem;
         color: darken($active_theme, 50%);
 
         .icon {
-            transform: translateY(3px);
+            display: flex;
         }
 
         .__box-img {
@@ -427,8 +424,8 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                // object-fit: fill;
-                // object-position: center;
+                object-fit: cover;
+                object-position: center;
             }
         }
     }
@@ -572,21 +569,28 @@
 
             &:not(.__sidebar-count) {
                 flex: 1;
+            }
+        }
 
-                p {
-                    font-size: 1rem;
-                    margin-bottom: 0.1em;
-                    color: darken($active_theme, 25%);
+        table {
+            td {
+                font-size: 1rem;
+                vertical-align: top;
+            }
 
-                    span {
-                        word-break: break-word;
-                        color: darken($active_theme, 75%);
-                    }
+            .t-key {
+                white-space: nowrap;
+                color: darken($active_theme, 25%);
+            }
 
-                    a {
-                        color: $blue;
-                    }
-                }
+            .t-val {
+                padding-left: 5px;
+                word-break: break-word;
+                color: darken($active_theme, 75%);
+            }
+
+            a {
+                color: $blue;
             }
         }
     }
@@ -927,6 +931,10 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     background-color: #3d6cb9;
 }
 
+.progress-bar strong {
+    display: none;
+}
+
 @include media('max', 768) {
     .progress-bar strong {
         display: none;
@@ -949,6 +957,11 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 .m-v-15 {
     margin-top: 15px !important;
     margin-bottom: 15px !important;
+}
+
+.m-v-10 {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
 }
 
 .m-t-5 {

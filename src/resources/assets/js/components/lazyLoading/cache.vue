@@ -6,14 +6,14 @@
 
 <script>
 export default {
-    props: ['url', 'db'],
+    props: ['url', 'db', 'browserSupport'],
     data() {
         return {
             src: null
         }
     },
     created() {
-        'caches' in window
+        this.browserSupport('caches')
             ? this.getCachedUrl(this.url)
             : this.src = this.url
     },

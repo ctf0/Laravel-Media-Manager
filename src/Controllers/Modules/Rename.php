@@ -46,12 +46,12 @@ trait Rename
                     ]);
                 } else {
                     throw new Exception(
-                        trans('MediaManager::messages.error_moving')
+                        trans('MediaManager::messages.error.moving')
                     );
                 }
             } else {
                 throw new Exception(
-                    trans('MediaManager::messages.error_already_exists')
+                    trans('MediaManager::messages.error.already_exists')
                 );
             }
         } catch (Exception $e) {

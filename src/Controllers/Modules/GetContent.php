@@ -19,7 +19,7 @@ trait GetContent
 
         if ($folder && !$this->storageDisk->exists($folder)) {
             return response()->json([
-                'error' => trans('MediaManager::messages.error_doesnt_exist', ['attr' => $folder]),
+                'error' => trans('MediaManager::messages.error.doesnt_exist', ['attr' => $folder]),
             ]);
         }
 

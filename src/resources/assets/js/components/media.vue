@@ -119,7 +119,7 @@ export default {
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
-        window.addEventListener('resize', debounce(this.scrollByRow, 500))
+        window.addEventListener('resize', debounce(this.onResize, 500))
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
@@ -143,7 +143,7 @@ export default {
     }, 250),
     beforeDestroy() {
         window.removeEventListener('popstate', this.urlNavigation)
-        window.removeEventListener('resize', this.scrollByRow)
+        window.removeEventListener('resize', this.onResize)
         document.removeEventListener('keydown', this.shortCuts)
         this.noScroll('remove')
     },

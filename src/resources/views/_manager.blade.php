@@ -18,20 +18,20 @@
     ]) }}"
     :translations="{{ json_encode([
         'no_val' => trans('MediaManager::messages.no_val'), 
-        'downloaded' => trans('MediaManager::messages.downloaded'), 
-        'sep_download' => trans('MediaManager::messages.sep_download'), 
-        'upload_success' => trans('MediaManager::messages.upload_success'), 
+        'downloaded' => trans('MediaManager::messages.download.downloaded'), 
+        'sep_download' => trans('MediaManager::messages.download.sep'), 
+        'upload_success' => trans('MediaManager::messages.upload.success'), 
         'create_success' => trans('MediaManager::messages.create_success'), 
-        'rename_success' => trans('MediaManager::messages.rename_success'), 
-        'move_success' => trans('MediaManager::messages.move_success'), 
-        'delete_success' => trans('MediaManager::messages.delete_success'), 
-        'copy_success' => trans('MediaManager::messages.copy_success'), 
-        'save_success' => trans('MediaManager::messages.save_success'), 
-        'error_altered_fwli' => trans('MediaManager::messages.error_altered_fwli'), 
+        'rename_success' => trans('MediaManager::messages.rename.success'), 
+        'move_success' => trans('MediaManager::messages.move.success'), 
+        'delete_success' => trans('MediaManager::messages.delete.success'), 
+        'copy_success' => trans('MediaManager::messages.copy.success'), 
+        'save_success' => trans('MediaManager::messages.save.success'), 
+        'error_altered_fwli' => trans('MediaManager::messages.error.altered_fwli'), 
         'stand_by' => trans('MediaManager::messages.stand_by'), 
-        'new_uploads_notif' => trans('MediaManager::messages.new_uploads_notif'), 
-        'glbl_search' => trans('MediaManager::messages.glbl_search'), 
-        'glbl_search_avail' => trans('MediaManager::messages.glbl_search_avail'), 
+        'new_uploads_notif' => trans('MediaManager::messages.upload.new_uploads_notif'), 
+        'glbl_search' => trans('MediaManager::messages.search.glbl'), 
+        'glbl_search_avail' => trans('MediaManager::messages.search.glbl_avail'), 
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'), 
         'find' => trans('MediaManager::messages.find')
     ]) }}"
@@ -46,7 +46,11 @@
 
         {{-- content ratio bar --}}
         <transition name="list" mode="out-in">
-            <content-ratio v-if="config.ratioBar && allItemsCount" :list="allFiles" :total="allItemsCount"></content-ratio>
+            <content-ratio v-if="config.ratioBar && allItemsCount"
+                :list="allFiles"
+                :total="allItemsCount"
+                :file-type-is="fileTypeIs">
+            </content-ratio>
         </transition>
 
         {{-- global search --}}
@@ -71,7 +75,7 @@
                                     v-tippy
                                     title="u">
                                     <span class="icon"><icon name="shopping-basket"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.upload') }}</span>
+                                    <span>{{ trans('MediaManager::messages.upload.main') }}</span>
                                 </button>
                             </div>
 
@@ -81,7 +85,7 @@
                                     :disabled="isLoading"
                                     @click="toggleModal('new_folder_modal')">
                                     <span class="icon"><icon name="folder"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.add_folder') }}</span>
+                                    <span>{{ trans('MediaManager::messages.add.folder') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -99,7 +103,7 @@
                                     title="m"
                                     @click="moveItem()">
                                     <span class="icon"><icon name="share" scale="0.8"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.move') }}</span>
+                                    <span>{{ trans('MediaManager::messages.move.main') }}</span>
                                 </button>
                             </div>
 
@@ -109,7 +113,7 @@
                                     :disabled="item_ops() || isLoading"
                                     @click="renameItem()">
                                     <span class="icon"><icon name="terminal"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.rename') }}</span>
+                                    <span>{{ trans('MediaManager::messages.rename.main') }}</span>
                                 </button>
                             </div>
 
@@ -135,7 +139,7 @@
                                     title="d / del"
                                     @click="deleteItem()">
                                     <span class="icon"><icon name="trash"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.delete') }}</span>
+                                    <span>{{ trans('MediaManager::messages.delete.main') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -211,11 +215,11 @@
                                     title="a">
                                     <template v-if="bulkSelectAll">
                                         <span class="icon"><icon name="minus" scale="0.8"></icon></span>
-                                        <span>{{ trans('MediaManager::messages.select_non') }}</span>
+                                        <span>{{ trans('MediaManager::messages.select.non') }}</span>
                                     </template>
                                     <template v-else>
                                         <span class="icon"><icon name="plus" scale="0.8"></icon></span>
-                                        <span>{{ trans('MediaManager::messages.select_all') }}</span>
+                                        <span>{{ trans('MediaManager::messages.select.all') }}</span>
                                     </template>
                                 </button>
                             </div>
@@ -230,7 +234,7 @@
                                     v-tippy
                                     title="b">
                                     <span class="icon"><icon name="puzzle-piece"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.bulk_select') }}</span>
+                                    <span>{{ trans('MediaManager::messages.select.bulk') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -264,7 +268,7 @@
                                     <div class="control">
                                         <button @click="showFilesOfType('audio')"
                                             v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.audio')]) }}"
+                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.audio.main')]) }}"
                                             class="button"
                                             :class="{'is-link': filterNameIs('audio')}"
                                             :disabled="!btnFilter('audio') || isLoading">
@@ -355,7 +359,7 @@
                                     <p class="control">
                                         <button class="button is-black" :disabled="!searchFor"
                                             v-tippy
-                                            title="{{ trans('MediaManager::messages.clear', ['attr' => trans('MediaManager::messages.search')]) }}"
+                                            title="{{ trans('MediaManager::messages.clear', ['attr' => trans('MediaManager::messages.search.main')]) }}"
                                             @click="resetInput('searchFor')" >
                                             <span class="icon"><icon name="times"></icon></span>
                                         </button>
@@ -378,11 +382,11 @@
                     <input type="hidden" name="upload_path" :value="files.path">
 
                     {{-- text --}}
-                    <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload_text') !!}</div>
+                    <div class="dz-message title is-4">{!! trans('MediaManager::messages.upload.text') !!}</div>
 
                     {{-- randomNames --}}
                     <div class="form-switcher"
-                        title="{{ trans('MediaManager::messages.use_random_names') }}"
+                        title="{{ trans('MediaManager::messages.upload.use_random_names') }}"
                         v-tippy="{arrow: true, position: 'right'}">
                         <input type="checkbox" name="random_names" id="random_names" v-model="randomNames">
                         <label class="switcher" for="random_names"></label>
@@ -391,7 +395,7 @@
                     {{-- urlToUpload --}}
                     <div class="save_link" @click="toggleModal('save_link_modal')" v-if="!restrictUpload()">
                         <span class="icon is-large"
-                            title="{{ trans('MediaManager::messages.save_link') }}"
+                            title="{{ trans('MediaManager::messages.save.link') }}"
                             v-tippy="{arrow: true, position: 'left'}">
                             <icon>
                                 <icon class="circle" name="circle" scale="2.5"></icon>
@@ -487,7 +491,7 @@
                                 <div v-if="!fileTypeIs(file, 'folder')"
                                     class="__box-copy-link icon"
                                     @click.stop="copyLink(file.path)"
-                                    :title="linkCopied ? '{{ trans('MediaManager::messages.copied') }}' : '{{ trans('MediaManager::messages.copy_to_cp') }}'"
+                                    :title="linkCopied ? '{{ trans('MediaManager::messages.copy.copied') }}' : '{{ trans('MediaManager::messages.copy.to_cp') }}'"
                                     v-tippy="{arrow: true, hideOnClick: false}"
                                     @hidden="linkCopied = false">
                                     <icon name="clone" scale="0.9"></icon>
@@ -496,8 +500,8 @@
                                 <div class="__box-data">
                                     <div class="__box-preview">
                                         <template v-if="fileTypeIs(file, 'image')">
-                                            <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN"></image-cache>
-                                            <image-intersect v-else :file="file"></image-intersect>
+                                            <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN" :browser-support="browserSupport"></image-cache>
+                                            <image-intersect v-else :file="file" :browser-support="browserSupport"></image-intersect>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -543,51 +547,62 @@
                                 {{-- no selection --}}
                                 <div key="none-selected" class="__sidebar-none-selected" v-if="!selectedFile">
                                     <span @click="reset()" class="link"><icon name="power-off" scale="3.2"></icon></span>
-                                    <p>{{ trans('MediaManager::messages.nothing_selected') }}</p>
+                                    <p>{{ trans('MediaManager::messages.select.nothing') }}</p>
                                 </div>
 
                                 {{-- img --}}
-                                <template v-else-if="selectedFileIs('image')">
-                                    <img :src="selectedFilePreview"
-                                        :alt="selectedFile.name"
-                                        :key="selectedFile.name"
-                                        v-tippy="{arrow: true, position: 'left'}"
-                                        title="space"
-                                        class="link image"
-                                        @click="isBulkSelecting() ? false : toggleModal('preview_modal')"/>
-                                </template>
+                                <img v-else-if="selectedFileIs('image')"
+                                    :src="selectedFilePreview"
+                                    :alt="selectedFile.name"
+                                    :key="selectedFile.name"
+                                    v-tippy="{arrow: true, position: 'left'}"
+                                    title="space"
+                                    class="link image"
+                                    @click="isBulkSelecting() ? false : toggleModal('preview_modal')"/>
 
                                 {{-- video --}}
-                                <template v-else-if="selectedFileIs('video')">
-                                    <div :key="selectedFile.name">
-                                        <video controls
-                                            preload="auto"
-                                            ref="player"
-                                            :src="selectedFile.path">
-                                            {{ trans('MediaManager::messages.video_support') }}
-                                        </video>
-                                    </div>
-                                </template>
+                                <div v-else-if="selectedFileIs('video')"
+                                    v-tippy="{arrow: true, position: 'left'}"
+                                    title="space"
+                                    :key="selectedFile.name">
+                                    <video controls
+                                        preload="auto"
+                                        ref="player"
+                                        :src="selectedFile.path">
+                                        {{ trans('MediaManager::messages.video_support') }}
+                                    </video>
+                                </div>
 
                                 {{-- audio --}}
-                                <template v-else-if="selectedFileIs('audio')">
-                                    <div :key="selectedFile.name">
-                                        <audio controls
-                                            preload="auto"
-                                            ref="player"
-                                            :src="selectedFile.path">
-                                            {{ trans('MediaManager::messages.audio_support') }}
-                                        </audio>
-                                        <img v-if="selectedFilePreview"
-                                            :src="selectedFilePreview"
-                                            :alt="selectedFile.name"
-                                            class="image"/>
-                                    </div>
-                                </template>
+                                <div v-else-if="selectedFileIs('audio')"
+                                    v-tippy="{arrow: true, position: 'left'}"
+                                    title="space"
+                                    :key="selectedFile.name">
+                                    <audio controls
+                                        preload="auto"
+                                        ref="player"
+                                        :src="selectedFile.path">
+                                        {{ trans('MediaManager::messages.audio.support') }}
+                                    </audio>
+                                    <img v-if="selectedFilePreview"
+                                        :src="selectedFilePreview.picture"
+                                        :alt="selectedFile.name"
+                                        class="image"/>
+                                </div>
 
                                 {{-- icons --}}
-                                <icon class="svg-prev-icon" key="1" v-else-if="selectedFileIs('folder')" name="folder" scale="4"></icon>
-                                <icon class="svg-prev-icon" key="2" v-else-if="selectedFileIs('application')" name="cogs" scale="4"></icon>
+                                <icon key="1"
+                                    class="svg-prev-icon"
+                                    v-else-if="selectedFileIs('folder')"
+                                    name="folder" scale="4">
+                                </icon>
+
+                                <icon key="2"
+                                    class="svg-prev-icon"
+                                    v-else-if="selectedFileIs('application')"
+                                    name="cogs" scale="4">
+                                </icon>
+
                                 <div key="3" v-else-if="selectedFileIs('pdf')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
@@ -595,6 +610,7 @@
                                     @click="toggleModal('preview_modal')">
                                     <icon class="svg-prev-icon" name="file-pdf-o" scale="4"></icon>
                                 </div>
+
                                 <div key="4" v-else-if="selectedFileIs('text')"
                                     class="link"
                                     v-tippy="{arrow: true, position: 'left'}"
@@ -612,16 +628,63 @@
 
                             <transition name="list" mode="out-in" appear>
                                 <div :key="selectedFile.name" v-if="selectedFile">
-                                    <p>{{ trans('MediaManager::messages.name') }}: <span>@{{ selectedFile.name }}</span></p>
-                                    <p>{{ trans('MediaManager::messages.type') }}: <span>@{{ selectedFile.type }}</span></p>
-                                    <p>{{ trans('MediaManager::messages.size') }}: <span>@{{ getFileSize(selectedFile.size) }}</span></p>
+                                    {{-- audio extra info --}}
+                                    <template v-if="selectedFileIs('audio') && selectedFilePreview">
+                                        <table>
+                                            <tr v-if="selectedFilePreview.artist">
+                                                <td class="t-key">{{ trans('MediaManager::messages.audio.artist') }}:</td>
+                                                <td class="t-val">@{{ selectedFilePreview.artist }}</td>
+                                            </tr>
+                                            <tr v-if="selectedFilePreview.title">
+                                                <td class="t-key">{{ trans('MediaManager::messages.audio.title') }}:</td>
+                                                <td class="t-val">@{{ selectedFilePreview.title }}</td>
+                                            </tr>
+                                            <tr v-if="selectedFilePreview.album">
+                                                <td class="t-key">{{ trans('MediaManager::messages.audio.album') }}:</td>
+                                                <td class="t-val">@{{ selectedFilePreview.album }}</td>
+                                            </tr>
+                                            <tr v-if="selectedFilePreview.track">
+                                                <td class="t-key">{{ trans('MediaManager::messages.audio.track') }}:</td>
+                                                <td class="t-val">@{{ selectedFilePreview.track }}</td>
+                                            </tr>
+                                            <tr v-if="selectedFilePreview.year">
+                                                <td class="t-key">{{ trans('MediaManager::messages.audio.year') }}:</td>
+                                                <td class="t-val">@{{ selectedFilePreview.year }}</td>
+                                            </tr>
+                                        </table>
+                                        <hr class="m-v-10">
+                                    </template>
+
+                                    <table>
+                                        <tr>
+                                            <td class="t-key">{{ trans('MediaManager::messages.name') }}:</td>
+                                            <td class="t-val">@{{ selectedFile.name }}</td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td class="t-key">{{ trans('MediaManager::messages.type') }}:</td>
+                                            <td class="t-val">@{{ selectedFile.type }}</td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td class="t-key">{{ trans('MediaManager::messages.size') }}:</td>
+                                            <td class="t-val">@{{ getFileSize(selectedFile.size) }}</td>
+                                        </tr>
+                                    </table>
 
                                     {{-- folder --}}
                                     <template v-if="selectedFileIs('folder')">
-                                        <p>{{ trans('MediaManager::messages.items') }}: <span>@{{ selectedFile.count }}</span></p>
+                                        <table>
+                                            <tr>
+                                                <td class="t-key">{{ trans('MediaManager::messages.items') }}:</td>
+                                                <td class="t-val">@{{ selectedFile.count }}</td>
+                                            </tr>
+                                        </table>
 
                                         <div class="__sidebar-zip" v-show="!isBulkSelecting()">
-                                            <span>{{ trans('MediaManager::messages.download_folder') }}:</span>
+                                            <span>{{ trans('MediaManager::messages.download.folder') }}:</span>
                                             <form action="{{ route('media.folder_download') }}" method="post" @submit.prevent="ZipDownload($event)">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
@@ -635,16 +698,27 @@
 
                                     {{-- file --}}
                                     <template v-else>
-                                        <p v-if="selectedFileIs('image') && dimensions.length">
-                                            {{ trans('MediaManager::messages.dimension') }}: <span>@{{ selectedFileDimensions }}</span>
-                                        </p>
-                                        <p>{{ trans('MediaManager::messages.visibility') }}: <span>@{{ selectedFile.visibility }}</span></p>
-                                        <p>
-                                            {{ trans('MediaManager::messages.preview') }}:
-                                            <a :href="selectedFile.path" target="_blank">{{ trans('MediaManager::messages.public_url') }}</a>
-                                        </p>
+                                        <table v-if="selectedFileIs('image') && dimensions.length">
+                                            <tr>
+                                                <td class="t-key">{{ trans('MediaManager::messages.dimension') }}:</td>
+                                                <td class="t-val">@{{ selectedFileDimensions }}</td>
+                                            </tr>
+                                        </table>
+                                        <table>
+                                            <tr>
+                                                <td class="t-key">{{ trans('MediaManager::messages.visibility.main') }}:</td>
+                                                <td class="t-val">@{{ selectedFile.visibility }}</td>
+                                            </tr>
+                                        </table>
+                                        <table>
+                                            <tr>
+                                                <td class="t-key">{{ trans('MediaManager::messages.preview') }}:</td>
+                                                <td class="t-val"><a :href="selectedFile.path" target="_blank">{{ trans('MediaManager::messages.public_url') }}</a></td>
+                                            </tr>
+                                        </table>
+
                                         <div class="__sidebar-zip">
-                                            <span>{{ trans('MediaManager::messages.download_file') }}:</span>
+                                            <span>{{ trans('MediaManager::messages.download.file') }}:</span>
                                             {{-- normal --}}
                                             <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
                                                 <span class="icon"><icon name="download" scale="1.2"></icon></span>
@@ -661,7 +735,12 @@
                                         </div>
                                     </template>
 
-                                    <p>{{ trans('MediaManager::messages.last_modified') }}: <span>@{{ selectedFile.last_modified_formated }}</span></p>
+                                    <table>
+                                        <tr>
+                                            <td class="t-key">{{ trans('MediaManager::messages.last_modified') }}:</td>
+                                            <td class="t-val">@{{ selectedFile.last_modified_formated }}</td>
+                                        </tr>
+                                    </table>
                                 </div>
 
                                 {{-- keep the counts at bottom --}}
@@ -696,7 +775,7 @@
 
                                     {{-- size --}}
                                     <p v-show="bulkItemsSize" class="title is-6 has-text-weight-semibold">@{{ bulkItemsSize }}</p>
-                                    <p class="heading">{{ trans('MediaManager::messages.selected') }}</p>
+                                    <p class="heading">{{ trans('MediaManager::messages.select.selected') }}</p>
                                 </div>
                             </transition-group>
                         </div>
@@ -794,18 +873,18 @@
                     <cropper route="{{ route('media.uploadCropped') }}"
                         :url="selectedFilePreview"
                         :translations="{{ json_encode([
-                            'crop_reset' => trans('MediaManager::messages.crop_reset'), 
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
-                            'crop_apply' => trans('MediaManager::messages.crop_apply'), 
-                            'move' => trans('MediaManager::messages.move'), 
-                            'crop' => trans('MediaManager::messages.crop'), 
-                            'crop_zoom_in' => trans('MediaManager::messages.crop_zoom_in'), 
-                            'crop_zoom_out' => trans('MediaManager::messages.crop_zoom_out'), 
-                            'crop_rotate_left' => trans('MediaManager::messages.crop_rotate_left'), 
-                            'crop_rotate_right' => trans('MediaManager::messages.crop_rotate_right'), 
-                            'crop_flip_horizontal' => trans('MediaManager::messages.crop_flip_horizontal'), 
-                            'crop_flip_vertical' => trans('MediaManager::messages.crop_flip_vertical'), 
-                            'save_success' => trans('MediaManager::messages.save_success'), 
+                            'move' => trans('MediaManager::messages.move.main'), 
+                            'save_success' => trans('MediaManager::messages.save.success'), 
+                            'crop' => trans('MediaManager::messages.crop.main'), 
+                            'crop_reset' => trans('MediaManager::messages.crop.reset'), 
+                            'crop_apply' => trans('MediaManager::messages.crop.apply'), 
+                            'crop_zoom_in' => trans('MediaManager::messages.crop.zoom_in'), 
+                            'crop_zoom_out' => trans('MediaManager::messages.crop.zoom_out'), 
+                            'crop_rotate_left' => trans('MediaManager::messages.crop.rotate_left'), 
+                            'crop_rotate_right' => trans('MediaManager::messages.crop.rotate_right'), 
+                            'crop_flip_horizontal' => trans('MediaManager::messages.crop.flip_horizontal'), 
+                            'crop_flip_vertical' => trans('MediaManager::messages.crop.flip_vertical'), 
                         ]) }}">
                     </cropper>
                 </div>
@@ -819,7 +898,7 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-black">
                         <p class="modal-card-title">
-                            <span>{{ trans('MediaManager::messages.save_link') }}</span>
+                            <span>{{ trans('MediaManager::messages.save.link') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
@@ -828,7 +907,7 @@
                         <section class="modal-card-body">
                             <input class="input" type="text"
                                 v-model="urlToUpload"
-                                placeholder="{{ trans('MediaManager::messages.add_url') }}"
+                                placeholder="{{ trans('MediaManager::messages.add.url') }}"
                                 ref="save_link_modal_input">
                         </section>
                         <footer class="modal-card-foot">
@@ -839,7 +918,7 @@
                                 class="button is-link"
                                 :disabled="isLoading"
                                 :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.upload') }}
+                                {{ trans('MediaManager::messages.upload.main') }}
                             </button>
                         </footer>
                     </form>
@@ -853,7 +932,7 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-link">
                         <p class="modal-card-title">
-                            <span>{{ trans('MediaManager::messages.add_new_folder') }}</span>
+                            <span>{{ trans('MediaManager::messages.add.new_folder') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
@@ -862,7 +941,7 @@
                         <section class="modal-card-body">
                             <input class="input" type="text"
                                 v-model="newFolderName"
-                                placeholder="{{ trans('MediaManager::messages.new_folder_name') }}"
+                                placeholder="{{ trans('MediaManager::messages.new.folder_name') }}"
                                 ref="new_folder_modal_input">
                         </section>
                         <footer class="modal-card-foot">
@@ -873,7 +952,7 @@
                                 class="button is-link"
                                 :disabled="isLoading"
                                 :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.create_new_folder') }}
+                                {{ trans('MediaManager::messages.new.create_folder') }}
                             </button>
                         </footer>
                     </form>
@@ -887,14 +966,14 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
-                            <span>{{ trans('MediaManager::messages.rename_file_folder') }}</span>
+                            <span>{{ trans('MediaManager::messages.rename.file_folder') }}</span>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
 
                     <form action="{{ route('media.rename_file') }}" @submit.prevent="RenameFileForm($event)">
                         <section class="modal-card-body">
-                            <h3 class="title">{{ trans('MediaManager::messages.new_file_folder') }}</h3>
+                            <h3 class="title">{{ trans('MediaManager::messages.new.file_folder') }}</h3>
                             <input class="input" type="text"
                                 v-if="selectedFile"
                                 v-model="newFilename"
@@ -909,7 +988,7 @@
                                 class="button is-warning"
                                 :disabled="isLoading"
                                 :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.rename') }}
+                                {{ trans('MediaManager::messages.rename.main') }}
                             </button>
                         </footer>
                     </form>
@@ -930,8 +1009,8 @@
                             </transition>
 
                             <transition name="list" mode="out-in">
-                                <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy_file_folder') }}</span>
-                                <span key="2" v-else>{{ trans('MediaManager::messages.move_file_folder') }}</span>
+                                <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy.file_folder') }}</span>
+                                <span key="2" v-else>{{ trans('MediaManager::messages.move.file_folder') }}</span>
                             </transition>
                         </p>
                         <button type="button" class="delete" @click="toggleModal()"></button>
@@ -959,40 +1038,44 @@
                                 </div>
                             </div>
 
-                            {{-- btns --}}
-                            <div class="field p-t-10">
-                                <div class="control">
-                                    <div class="level">
-                                        <div class="level-right">
-                                            <div class="level-item">
-                                                <div class="form-switcher">
-                                                    <input type="checkbox" name="use_copy" id="use_copy" v-model="useCopy">
-                                                    <label class="switcher" for="use_copy"></label>
-                                                </div>
-                                            </div>
-                                            <div class="level-item">
-                                                <label class="label" for="use_copy">{{ trans('MediaManager::messages.copy_files') }}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <br>
                             @include('MediaManager::partials._modal-files-info')
                         </section>
+
                         <footer class="modal-card-foot">
-                            <button type="reset" class="button" @click="toggleModal()">
-                                {{ trans('MediaManager::messages.cancel') }}
-                            </button>
-                            <button type="submit"
-                                class="button is-warning"
-                                :disabled="isLoading || !moveToPath"
-                                :class="{'is-loading': isLoading}"
-                                v-html="useCopy
-                                    ? '{{ trans('MediaManager::messages.copy') }}'
-                                    : '{{ trans('MediaManager::messages.move') }}'">
-                            </button>
+                            {{-- switcher --}}
+                            <div class="level is-mobile" style="width: 100%">
+                                <div class="level-left">
+                                    <div class="level-item">
+                                        <div class="form-switcher">
+                                            <input type="checkbox" name="use_copy" id="use_copy" v-model="useCopy">
+                                            <label class="switcher" for="use_copy"></label>
+                                        </div>
+                                    </div>
+                                    <div class="level-item">
+                                        <label class="label" for="use_copy">{{ trans('MediaManager::messages.copy.files') }}</label>
+                                    </div>
+                                </div>
+
+                                <div class="level-right">
+                                    <div class="level-item">
+                                        <button type="reset" class="button" @click="toggleModal()">
+                                            {{ trans('MediaManager::messages.cancel') }}
+                                        </button>
+                                    </div>
+                                    <div class="level-item">
+                                        <button type="submit"
+                                            class="button is-warning"
+                                            :disabled="isLoading || !moveToPath"
+                                            :class="{'is-loading': isLoading}">
+                                            <transition :name="useCopy ? 'img-prv' : 'img-nxt'" mode="out-in">
+                                                <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy.main') }}</span>
+                                                <span key="2" v-else>{{ trans('MediaManager::messages.move.main') }}</span>
+                                            </transition>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </footer>
                     </form>
                 </div>
@@ -1017,7 +1100,7 @@
                             {{-- deleting folder warning --}}
                             <h5 v-show="folderWarning" class="__modal-folder-warning">
                                 <span class="icon"><icon name="warning"></icon></span>
-                                <span>{{ trans('MediaManager::messages.delete_folder') }}</span>
+                                <span>{{ trans('MediaManager::messages.delete.folder') }}</span>
                             </h5>
                         </section>
 
@@ -1030,7 +1113,7 @@
                                 class="button is-danger"
                                 :disabled="isLoading"
                                 :class="{'is-loading': isLoading}">
-                                {{ trans('MediaManager::messages.delete_confirm') }}
+                                {{ trans('MediaManager::messages.delete.confirm') }}
                             </button>
                         </footer>
                     </form>

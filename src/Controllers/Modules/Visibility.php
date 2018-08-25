@@ -30,7 +30,7 @@ trait Visibility
                     'success'    => true,
                     'name'       => $name,
                     'visibility' => $type,
-                    'message'    => trans('MediaManager::messages.visibility_success', ['attr' => $name]),
+                    'message'    => trans('MediaManager::messages.visibility.success', ['attr' => $name]),
                 ];
 
                 $toBroadCast[] = [
@@ -40,7 +40,7 @@ trait Visibility
             } else {
                 $result[] = [
                     'success' => false,
-                    'message' => trans('MediaManager::messages.visibility_error', ['attr' => $name]),
+                    'message' => trans('MediaManager::messages.visibility.error', ['attr' => $name]),
                 ];
             }
         }

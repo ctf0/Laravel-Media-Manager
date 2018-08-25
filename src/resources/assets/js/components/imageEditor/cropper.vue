@@ -202,11 +202,9 @@ export default {
             reset: false
         }
     },
-
     mounted() {
         this.camanStart()
     },
-
     // make cropperjs rotation follow the new value
     computed: {
         rotation() {

@@ -48,7 +48,7 @@ trait Upload
                     // check existence
                     if ($this->storageDisk->exists($destination)) {
                         throw new Exception(
-                            trans('MediaManager::messages.error_already_exists')
+                            trans('MediaManager::messages.error.already_exists')
                         );
                     }
 
@@ -73,7 +73,7 @@ trait Upload
             } else {
                 $result[] = [
                     'success' => false,
-                    'message' => trans('MediaManager::messages.error_cant_upload'),
+                    'message' => trans('MediaManager::messages.error.cant_upload'),
                 ];
             }
         }
@@ -111,7 +111,7 @@ trait Upload
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
                     throw new Exception(
-                        trans('MediaManager::messages.error_already_exists')
+                        trans('MediaManager::messages.error.already_exists')
                     );
                 }
 
@@ -140,7 +140,7 @@ trait Upload
         } else {
             $result = [
                 'success' => false,
-                'message' => trans('MediaManager::messages.error_cant_upload'),
+                'message' => trans('MediaManager::messages.error.cant_upload'),
             ];
         }
 
@@ -182,7 +182,7 @@ trait Upload
                 // check existence
                 if ($this->storageDisk->exists($destination)) {
                     throw new Exception(
-                        trans('MediaManager::messages.error_already_exists')
+                        trans('MediaManager::messages.error.already_exists')
                     );
                 }
 
@@ -211,7 +211,7 @@ trait Upload
         } else {
             $result = [
                 'success' => false,
-                'message' => trans('MediaManager::messages.error_cant_upload'),
+                'message' => trans('MediaManager::messages.error.cant_upload'),
             ];
         }
 

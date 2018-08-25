@@ -47,7 +47,7 @@ trait Delete
                 } else {
                     $result[] = array_merge($defaults, [
                         'success' => false,
-                        'message' => trans('MediaManager::messages.error_deleting_file'),
+                        'message' => trans('MediaManager::messages.error.deleting_file'),
                     ]);
                 }
             }
@@ -75,7 +75,7 @@ trait Delete
                         'success' => false,
                         'name'    => $item_path,
                         'type'    => $type,
-                        'message' => trans('MediaManager::messages.error_deleting_file'),
+                        'message' => trans('MediaManager::messages.error.deleting_file'),
                     ];
                 }
             }

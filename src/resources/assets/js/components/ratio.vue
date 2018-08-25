@@ -1,10 +1,11 @@
 <template>
     <div class="progress">
-        <p v-tippy="{theme: 'light', arrow: true}"
+        <p v-tippy="{theme: 'light', arrow: true, followCursor: true}"
            v-for="(val, key) in contentRatio"
            :class="`is-${key}`"
            :style="getRatio(val)"
            :title="getToolTipContent(key, val)"
+           :key="key"
            class="progress-bar progress-bar-striped active">
             <strong v-show="val > 0">{{ key }}</strong>
         </p>
@@ -24,20 +25,8 @@
 
 <script>
 export default {
-    props: {
-        list: {
-            type: Array,
-            required: true
-        },
-        total: {
-            type: Number,
-            required: true
-        }
-    },
+    props: ['list', 'total', 'fileTypeIs'],
     computed: {
-        parent() {
-            return this.$parent
-        },
         contentRatio() {
             let ratio = {
                 audio: 0,
@@ -50,13 +39,13 @@ export default {
             }
 
             this.list.forEach((e) => {
-                if (this.parent.fileTypeIs(e, 'audio')) ratio.audio++
-                if (this.parent.fileTypeIs(e, 'video')) ratio.video++
-                if (this.parent.fileTypeIs(e, 'image')) ratio.image++
-                if (this.parent.fileTypeIs(e, 'text')) ratio.text++
-                if (this.parent.fileTypeIs(e, 'pdf')) ratio.pdf++
-                if (this.parent.fileTypeIs(e, 'folder')) ratio.folder++
-                if (this.parent.fileTypeIs(e, 'application')) ratio.application++
+                if (this.fileTypeIs(e, 'audio')) ratio.audio++
+                if (this.fileTypeIs(e, 'video')) ratio.video++
+                if (this.fileTypeIs(e, 'image')) ratio.image++
+                if (this.fileTypeIs(e, 'text')) ratio.text++
+                if (this.fileTypeIs(e, 'pdf')) ratio.pdf++
+                if (this.fileTypeIs(e, 'folder')) ratio.folder++
+                if (this.fileTypeIs(e, 'application')) ratio.application++
             })
 
             return ratio
@@ -65,8 +54,11 @@ export default {
     methods: {
         getRatio(val) {
             return {
-                width: `${val / this.total * 100}%`
+                width: this.calcRatio(val)
             }
+        },
+        calcRatio(val) {
+            return (val / this.total * 100).toFixed(2) + '%'
         },
         getToolTipContent(k, v) {
             return `<p class="title is-marginless">${v}</p><p class="heading">${k}</p>`
