@@ -1,0 +1,5 @@
+- more audio info
+- make sure the sidebar is completely removed on small screens
+- some css cleanup
+- update lang structure
+- use tables for sidebar info

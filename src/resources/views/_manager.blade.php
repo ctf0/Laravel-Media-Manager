@@ -348,8 +348,8 @@
                                         <input class="input"
                                             :disabled="isLoading"
                                             type="text"
+                                            ref="search"
                                             v-model="searchFor"
-                                            data-search
                                             :placeholder="trans('find')">
                                         <span class="icon is-left">
                                             <icon name="search"></icon>
@@ -579,6 +579,7 @@
                                     title="space"
                                     :key="selectedFile.name">
                                     <audio controls
+                                        class="is-hidden"
                                         preload="auto"
                                         ref="player"
                                         :src="selectedFile.path">

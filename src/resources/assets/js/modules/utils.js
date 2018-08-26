@@ -196,6 +196,9 @@ export default {
             this.linkCopied = true
             this.$copyText(path)
         },
+        isFocused(item, e) {
+            return this.$refs[item].contains(e.target)
+        },
         browserSupport(api) {
             return api in window
         },

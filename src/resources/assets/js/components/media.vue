@@ -206,7 +206,7 @@ export default {
                 // when modal isnt visible
                 if (!this.activeModal) {
                     // when search is not focused
-                    if (document.activeElement.dataset.search == undefined) {
+                    if (!this.isFocused('search', e)) {
                         // when no bulk selecting
                         if (!this.isBulkSelecting()) {
 

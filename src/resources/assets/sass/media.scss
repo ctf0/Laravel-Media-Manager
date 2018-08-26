@@ -931,10 +931,6 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     background-color: #3d6cb9;
 }
 
-.progress-bar strong {
-    display: none;
-}
-
 @include media('max', 768) {
     .progress-bar strong {
         display: none;
