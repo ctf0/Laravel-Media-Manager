@@ -1,6 +1,5 @@
 <template>
-    <button v-tippy :disabled="loading"
-            :class="{'is-static' : loading}"
+    <button v-tippy :disabled="loading || isLoading"
             :title="trans('glbl_search')"
             class="button"
             @click="done ? showSearchPanel() : init()">
@@ -10,7 +9,7 @@
 
 <script>
 export default {
-    props: ['route'],
+    props: ['route', 'isLoading', 'trans'],
     data() {
         return {
             loading: false,
@@ -24,7 +23,6 @@ export default {
     },
     methods: {
         init() {
-            const parent = this.$parent
             this.loading = true
 
             axios.get(this.route)
@@ -32,14 +30,11 @@ export default {
                     this.loading = false
                     this.done = true
                     EventHub.fire('global-search-index', data)
-                    parent.showNotif(this.trans('glbl_search_avail'))
+                    this.$parent.showNotif(this.trans('glbl_search_avail'))
 
                 }).catch((err) => {
                     console.error(err)
                 })
-        },
-        trans(key) {
-            return this.$parent.trans(key)
         },
         showSearchPanel() {
             EventHub.fire('show-global-search')

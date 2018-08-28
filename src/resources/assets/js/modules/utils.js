@@ -51,6 +51,7 @@ export default {
                 this.clearLs()
                 this.clearCache()
                 this.clearImageCache()
+                this.ajaxError(false)
             }
         },
 
@@ -162,7 +163,7 @@ export default {
                 return EventHub.fire('no-files-show')
             }
 
-            this.toggleInfo = true
+            this.playerCardHelper()
             this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
@@ -184,30 +185,47 @@ export default {
             this.toggleLoader('loading_files', false)
             EventHub.fire('loading-files-hide')
         },
-        ajaxError() {
-            this.toggleInfo = false
+        ajaxError(s = true) {
+            if (s) {
+                this.toggleInfo = false
+                this.toggleLoader('ajax_error', true)
+                return EventHub.fire('ajax-error-show')
+            }
 
-            this.toggleLoader('ajax_error', true)
-            EventHub.fire('ajax-error-show')
+            this.toggleLoader('ajax_error', false)
+            EventHub.fire('ajax-error-hide')
         },
 
         /*                Helpers                */
-        copyLink(path) {
-            this.linkCopied = true
-            this.$copyText(path)
-        },
         isFocused(item, e) {
-            return this.$refs[item].contains(e.target)
+            return this.$refs[item] && this.$refs[item].contains(e.target)
         },
         browserSupport(api) {
             return api in window
         },
-        onResize({target}) {
+        copyLink(path) {
+            this.linkCopied = true
+            this.$copyText(path)
+        },
+        onResize(val) {
             this.scrollByRow()
 
-            // is-hidden-touch
-            // make sure the sidebar is removed from the dom
-            this.toggleInfo = target.outerWidth < 1087 ? false : true
+            // 1087 = bulma is-hidden-touch
+            if (val < 1087) {
+                this.toggleInfo = false
+                this.togglePlayerCard = true
+            } else {
+                // hide active player modal
+                if (
+                    this.isActiveModal('preview_modal') &&
+                    (this.selectedFileIs('video') || this.selectedFileIs('audio'))
+                ) {
+                    this.toggleModal()
+                }
+
+                this.toggleInfo = true
+                this.togglePlayerCard = false
+            }
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {

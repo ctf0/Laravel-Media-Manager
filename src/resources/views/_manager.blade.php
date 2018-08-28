@@ -54,7 +54,7 @@
         </transition>
 
         {{-- global search --}}
-        <global-search-panel></global-search-panel>
+        <global-search-panel :trans="trans" :file-type-is="fileTypeIs"></global-search-panel>
 
         {{-- top toolbar --}}
         <transition name="list" mode="out-in">
@@ -341,7 +341,7 @@
                             <div class="control">
                                 <div class="field has-addons">
                                     <p class="control" v-if="!restrictModeIsOn()">
-                                        <global-search-btn route="{{ route('media.global_search') }}"></global-search-btn>
+                                        <global-search-btn route="{{ route('media.global_search') }}" :is-loading="isLoading" :trans="trans"></global-search-btn>
                                     </p>
 
                                     <p class="control has-icons-left">
@@ -430,7 +430,7 @@
                         <div id="loading_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/world.json') }}"></div>
 
                         <transition name="list" mode="out-in">
-                            <h3 key="1" v-if="showProgress">{{ trans('MediaManager::messages.stand_by') }}</h3>
+                            <h3 key="1" v-if="showProgress">{{ trans('MediaManager::messages.stand_by') }} <strong>@{{ progressCounter }}</strong></h3>
                             <h3 key="2" v-else>{{ trans('MediaManager::messages.loading') }}</h3>
                         </transition>
                     </div>
@@ -506,11 +506,11 @@
 
                                         <span v-else class="icon is-large">
                                             <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
-                                            <icon v-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
-                                            <icon v-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
-                                            <icon v-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
-                                            <icon v-if="fileTypeIs(file, 'pdf')" name="file-pdf-o" scale="2.6"></icon>
-                                            <icon v-if="fileTypeIs(file, 'text')" name="file-text-o" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'pdf')" name="file-pdf-o" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'text')" name="file-text-o" scale="2.6"></icon>
                                         </span>
                                     </div>
 
@@ -566,8 +566,9 @@
                                     title="space"
                                     :key="selectedFile.name">
                                     <video controls
+                                        playsinline
                                         preload="auto"
-                                        ref="player"
+                                        data-player
                                         :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.video_support') }}
                                     </video>
@@ -581,12 +582,12 @@
                                     <audio controls
                                         class="is-hidden"
                                         preload="auto"
-                                        ref="player"
+                                        data-player
                                         :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.audio.support') }}
                                     </audio>
                                     <img v-if="selectedFilePreview"
-                                        :src="selectedFilePreview.picture"
+                                        :src="selectedFilePreview.picture ? selectedFilePreview.picture : selectedFilePreview"
                                         :alt="selectedFile.name"
                                         class="image"/>
                                 </div>

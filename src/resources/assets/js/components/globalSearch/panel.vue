@@ -4,25 +4,34 @@
         <div class="modal-content">
             <div class="search-input">
                 <section>
-                    <input ref="search" v-model="search" :placeholder="$parent.trans('find')" autofocus>
+                    <input ref="search" v-model="search" :placeholder="trans('find')" autofocus>
                     <span class="icon is-medium"><icon name="search"/></span>
                 </section>
             </div>
 
             <transition-group tag="ul" mode="out-in" name="list" class="columns is-multiline">
-                <li v-for="item in filterdList" :key="item.name" class="column is-2">
+                <li v-for="(item, i) in filterdList" :key="i" class="column is-2">
                     <div class="card">
-                        <div v-if="$parent.fileTypeIs(item, 'image')" class="card-image">
-                            <a :href="item.path" target="_blank" class="image">
+                        <div class="card-image">
+                            <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
                                 <img :src="item.path" :alt="item.name">
                             </a>
+
+                            <div v-else class="glbl_search_panel">
+                                <icon v-if="fileTypeIs(item, 'folder')" class="svg-prev-icon" name="folder" scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'application')" class="svg-prev-icon" name="cogs" scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'video')" class="svg-prev-icon" name="film" scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'audio')" class="svg-prev-icon" name="music" scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'pdf')" class="svg-prev-icon" name="file-pdf-o" scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'text')" class="svg-prev-icon" name="file-text-o" scale="5.0"/>
+                            </div>
                         </div>
                         <div class="card-content">
                             <p class="title is-marginless">{{ item.name }}</p>
                             <br>
-                            <p class="subtitle is-marginless link" @click="goToFolder(item.dir)">
+                            <p class="subtitle is-marginless link" @click="goToFolder(item.dir, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
-                                <span v-tippy :title="$parent.trans('go_to_folder')">{{ item.dir }}</span>
+                                <span v-tippy :title="trans('go_to_folder')">{{ item.dir }}</span>
                             </p>
                             <time>
                                 <span class="icon"><icon name="clock-o"/></span>
@@ -124,6 +133,7 @@
 import debounce from 'lodash/debounce'
 
 export default {
+    props: ['trans', 'fileTypeIs'],
     data() {
         return {
             showSearchPanel: false,
@@ -168,8 +178,11 @@ export default {
             this.showSearchPanel = false
             this.search = ''
         },
-        goToFolder(dir) {
-            EventHub.fire('search-go-to-folder', dir)
+        goToFolder(dir, name) {
+            EventHub.fire('search-go-to-folder', {
+                dir: dir,
+                name: name
+            })
         },
         getList: debounce(function () {
             let search = this.search

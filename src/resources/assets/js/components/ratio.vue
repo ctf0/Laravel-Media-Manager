@@ -17,6 +17,8 @@
         box-shadow: none;
 
         strong {
+            overflow: hidden;
+            text-overflow: ellipsis;
             text-transform: uppercase;
             mix-blend-mode: difference;
         }

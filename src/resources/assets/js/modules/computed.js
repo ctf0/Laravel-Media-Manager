@@ -11,12 +11,12 @@ export default {
             return this.files.items
         },
         allItemsCount() {
-            if (typeof this.allFiles !== 'undefined' && this.allFiles.length > 0) {
+            if (typeof this.allFiles !== 'undefined') {
                 return this.allFiles.length
             }
         },
         filteredItemsCount() {
-            if (typeof this.filterdList !== 'undefined' && this.filterdList.length > 0) {
+            if (typeof this.filterdList !== 'undefined') {
                 return this.filterdList.length
             }
         },

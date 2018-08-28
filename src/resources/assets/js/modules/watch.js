@@ -26,7 +26,7 @@ export default {
             this.updateLs({'selectedFileName': null})
         },
         allItemsCount(val) {
-            if (val && val.length < 1) {
+            if (!val) {
                 this.noFiles('show')
                 this.resetInput(['selectedFile', 'currentFileIndex'])
             }
@@ -168,6 +168,10 @@ export default {
                 this.loadingFiles('show')
             }
         },
-        plyr: 'autoPlay'
+        plyr: 'autoPlay',
+        windowWidth: {
+            immediate: true,
+            handler: 'onResize'
+        }
     }
 }

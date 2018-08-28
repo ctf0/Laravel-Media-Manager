@@ -1,52 +1,52 @@
 <script>
 import debounce from 'lodash/debounce'
 
-import Utilities from '../modules/utils'
-import Download from '../modules/download'
-import Cache from '../modules/cache'
-import Form from '../modules/form'
-import ItemFiltration from '../modules/filtration'
-import BulkSelect from '../modules/bulk'
-import LockItem from '../modules/lock'
-import ItemVisibility from '../modules/visibility'
-import Selected from '../modules/selected'
-import Restriction from '../modules/restriction'
-import Image from '../modules/image'
-import Url from '../modules/url'
-import Watchers from '../modules/watch'
-import Computed from '../modules/computed'
 import Broadcast from '../modules/broadcast'
+import BulkSelect from '../modules/bulk'
+import Cache from '../modules/cache'
+import Computed from '../modules/computed'
+import Download from '../modules/download'
+import Form from '../modules/form'
+import Image from '../modules/image'
+import ItemFiltration from '../modules/filtration'
+import ItemVisibility from '../modules/visibility'
+import LockItem from '../modules/lock'
+import MediaPlayer from '../modules/media-player'
+import Restriction from '../modules/restriction'
 import Scroll from '../modules/scroll'
-import Media from '../modules/media'
+import Selection from '../modules/selection'
+import Url from '../modules/url'
+import Utilities from '../modules/utils'
+import Watchers from '../modules/watch'
 
 export default {
     components: {
-        Cropper: require('./imageEditor/cropper.vue'),
-        imageCache: require('./lazyLoading/cache.vue'),
-        imageIntersect: require('./lazyLoading/normal.vue'),
+        contentRatio: require('./ratio.vue'),
+        cropper: require('./imageEditor/cropper.vue'),
         globalSearchBtn: require('./globalSearch/button.vue'),
         globalSearchPanel: require('./globalSearch/panel.vue'),
-        contentRatio: require('./ratio.vue')
+        imageCache: require('./lazyLoading/cache.vue'),
+        imageIntersect: require('./lazyLoading/normal.vue')
     },
     name: 'media-manager',
     mixins: [
-        Utilities,
-        Download,
-        Cache,
-        Form,
-        ItemFiltration,
-        BulkSelect,
-        LockItem,
-        ItemVisibility,
-        Selected,
-        Restriction,
-        Computed,
-        Watchers,
-        Image,
-        Url,
         Broadcast,
+        BulkSelect,
+        Cache,
+        Computed,
+        Download,
+        Form,
+        Image,
+        ItemFiltration,
+        ItemVisibility,
+        LockItem,
+        MediaPlayer,
+        Restriction,
         Scroll,
-        Media
+        Selection,
+        Url,
+        Utilities,
+        Watchers
     ],
     props: [
         'config',
@@ -61,27 +61,45 @@ export default {
     ],
     data() {
         return {
-            no_files: false,
-            loading_files: false,
-            no_search: false,
             ajax_error: false,
+            bulkSelect: false,
+            bulkSelectAll: false,
+            checkForFolders: false,
+            disableShortCuts: false,
+            folderWarning: false,
+            imageWasEdited: false,
             isLoading: false,
-            toggleInfo: true,
-            toggleUploadArea: false,
+            linkCopied: false,
+            loading_files: false,
+            no_files: false,
+            no_search: false,
+            randomNames: false,
             showProgress: false,
+            toggleInfo: false,
+            togglePlayerCard: false,
+            toggleUploadArea: false,
+            toolBar: true,
+            useCopy: false,
+            firstMeta: false,  // for alt + click selection
+            firstRun: true,    // for delayed scroll on manager init
+
             progressCounter: 0,
             scrollByRows: 0,
+            windowWidth: window.outerWidth,
 
-            linkCopied: false,
-            bulkSelectAll: false,
-            bulkSelect: false,
-            folderWarning: false,
-            checkForFolders: false,
-            randomNames: false,
-            useCopy: false,
-            toolBar: true,
-            imageWasEdited: false,
-            disableShortCuts: false,
+            searchFor: null,
+            searchItemsCount: null,
+            selectedFile: null,
+            sortBy: null,
+            urlToUpload: null,
+            activeModal: null,
+            currentFileIndex: null,
+            currentFilterName: null,
+            imageSlideDirection: null,
+            moveToPath: null,
+            newFilename: null,
+            newFolderName: null,
+            plyr: null,
 
             files: [],
             folders: [],
@@ -90,22 +108,6 @@ export default {
             bulkList: [],
             lockedList: [],
             dimensions: [],
-
-            moveToPath: null,
-            selectedFile: null,
-            currentFileIndex: null,
-            sortBy: null,
-            currentFilterName: null,
-            searchItemsCount: null,
-            searchFor: null,
-            urlToUpload: null,
-            newFolderName: null,
-            newFilename: null,
-            activeModal: null,
-            plyr: null,
-            imageSlideDirection: null,
-            firstRun: true,   // for delayed scroll on manager init
-            firstMeta: false,  // for alt + click selection
 
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
@@ -119,7 +121,7 @@ export default {
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
-        window.addEventListener('resize', debounce(this.onResize, 500))
+        window.addEventListener('resize', () => this.windowWidth = document.body.clientWidth)
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
@@ -131,20 +133,20 @@ export default {
         }, 1000))
     },
     updated: debounce(function() {
-        this.$nextTick(() => {
-            this.activeModal || this.inModal
-                ? this.noScroll('add')
-                : this.noScroll('remove')
+        this.initPlyr()
 
-            return this.checkForFolders = this.$refs.move_folder_dropdown.options[0]
-                ? true
-                : false
-        })
+        this.activeModal || this.inModal
+            ? this.noScroll('add')
+            : this.noScroll('remove')
+
+        return this.checkForFolders = this.$refs.move_folder_dropdown.options[0]
+            ? true
+            : false
     }, 250),
     beforeDestroy() {
         window.removeEventListener('popstate', this.urlNavigation)
-        window.removeEventListener('resize', this.onResize)
         document.removeEventListener('keydown', this.shortCuts)
+        this.destroyPlyr()
         this.noScroll('remove')
     },
     methods: {
@@ -189,11 +191,11 @@ export default {
                 this.disableShortCuts = val
             })
 
-            EventHub.listen('search-go-to-folder', (dir) => {
+            EventHub.listen('search-go-to-folder', (data) => {
                 EventHub.fire('hide-global-search')
-                this.folders = this.arrayFilter(dir.split('/'))
+                this.folders = this.arrayFilter(data.dir.split('/'))
 
-                return this.getFiles(this.folders).then(() => {
+                return this.getFiles(this.folders, null, data.name).then(() => {
                     this.updatePageUrl()
                 })
             })
@@ -235,7 +237,10 @@ export default {
                                     e.preventDefault()
 
                                     // play-pause media
-                                    if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                                    if (
+                                        !this.togglePlayerCard &&
+                                        (this.selectedFileIs('video') || this.selectedFileIs('audio'))
+                                    ) {
                                         this.playMedia()
                                     }
 
@@ -264,9 +269,16 @@ export default {
                                 this.$refs.upload.click()
                             }
 
-                            // hide upload panel
-                            if (this.toggleUploadArea && key == 'esc') {
-                                this.toggleUploadPanel()
+                            if (key == 'esc') {
+                                // hide upload panel
+                                if (this.toggleUploadArea) {
+                                    this.toggleUploadPanel()
+                                }
+
+                                // clear filter
+                                if (this.currentFilterName) {
+                                    this.showFilesOfType('all')
+                                }
                             }
                         }
                         /* end of no bulk selection */

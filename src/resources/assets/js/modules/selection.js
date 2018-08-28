@@ -1,3 +1,5 @@
+require('../packages/PreventGhostClick')
+
 export default {
     methods: {
         /*                Item                */
@@ -66,14 +68,18 @@ export default {
                 return this.fileTypeIs(this.selectedFile, val)
             }
         },
-        dbltap() {
+        dbltap(e) {
+            PreventGhostClick(e.target)
+
             if (!this.isBulkSelecting()) {
                 if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
                     return this.toggleModal('preview_modal')
                 }
 
                 if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                    return this.playMedia()
+                    return this.togglePlayerCard
+                        ? this.toggleModal('preview_modal')
+                        : this.playMedia()
                 }
 
                 this.openFolder(this.selectedFile)
@@ -100,7 +106,7 @@ export default {
                 })
             }
         },
-        goToPrevFolder() {
+        goToPrevFolder(e = null) {
             if (this.restrictModeIsOn()) {
                 return false
             }
@@ -143,27 +149,20 @@ export default {
             // go to last item
             if (key == 'end') {
                 e.preventDefault()
-                this.imageSlideDirection = 'next'
-
-                let last = this.filesList.length - 1
-                this.scrollToFile(this.getElementByIndex(last))
+                this.goToEnd()
             }
 
             // go to first item
             if (key == 'home') {
                 e.preventDefault()
-                this.imageSlideDirection = 'prev'
-                this.scrollToFile(this.getElementByIndex(0))
+                this.goToHome()
             }
 
             // toggle modal off
             if (
                 this.isActiveModal('preview_modal') &&
-                !(
-                    this.selectedFileIs('image') ||
-                    this.selectedFileIs('pdf') ||
-                    this.selectedFileIs('text')
-                )
+                (this.selectedFileIs('folder') || this.selectedFileIs('application')) ||
+                (this.selectedFileIs('video') || this.selectedFileIs('audio')) && !this.togglePlayerCard
             ) {
                 this.toggleModal()
             }
@@ -184,21 +183,35 @@ export default {
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
             }
         },
+        goToEnd() {
+            this.imageSlideDirection = 'next'
+
+            let last = this.filesList.length - 1
+            this.scrollToFile(this.getElementByIndex(last))
+        },
+        goToHome() {
+            this.imageSlideDirection = 'prev'
+            this.scrollToFile(this.getElementByIndex(0))
+        },
 
         goToPrevRow() {
             let curSelectedIndex = this.currentFileIndex
             let moveBy = this.scrollByRows
 
             if (curSelectedIndex >= moveBy) {
+                this.imageSlideDirection = 'prev'
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex - moveBy))
             }
         },
         goToNextRow() {
             let curSelectedIndex = this.currentFileIndex
             let moveBy = this.scrollByRows
+            this.imageSlideDirection = 'next'
 
             if (curSelectedIndex < this.allItemsCount - moveBy) {
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex + moveBy))
+            } else {
+                this.goToEnd()
             }
         }
     }

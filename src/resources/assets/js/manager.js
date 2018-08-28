@@ -27,7 +27,7 @@ Vue.use(require('vue-tippy'), {
 let VueTouch = require('vue-touch')
 VueTouch.registerCustomEvent('dbltap', {type: 'tap', taps: 2})
 VueTouch.registerCustomEvent('hold', {type: 'press', time: 500})
-Vue.use(VueTouch, {name: 'v-touch'})
+Vue.use(VueTouch)
 
 // axios
 window.axios = require('axios')

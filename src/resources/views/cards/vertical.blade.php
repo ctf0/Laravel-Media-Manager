@@ -1,5 +1,5 @@
 <v-touch class="card"
-    :class="{'pdf': selectedFileIs('pdf') || selectedFileIs('text')}"
+    :class="{'pdf-prev': selectedFileIs('pdf') || selectedFileIs('text')}"
     @swiperight="goToPrev()"
     @swipeleft="goToNext()">
 
@@ -9,6 +9,32 @@
                  <p v-if="selectedFileIs('pdf')">{{ trans('MediaManager::messages.pdf') }}</p>
             </object>
         </template>
+
+        {{-- video --}}
+        <div v-else-if="selectedFileIs('video')">
+            <video controls
+                playsinline
+                preload="auto"
+                data-player
+                :src="selectedFile.path">
+                {{ trans('MediaManager::messages.video_support') }}
+            </video>
+        </div>
+
+        {{-- audio --}}
+        <div v-else-if="selectedFileIs('audio')" class="audio-prev">
+            <img v-if="selectedFilePreview"
+                :src="selectedFilePreview.picture ? selectedFilePreview.picture : selectedFilePreview"
+                :alt="selectedFile.name"
+                class="image"/>
+            <audio controls
+                class="is-hidden"
+                preload="auto"
+                data-player
+                :src="selectedFile.path">
+                {{ trans('MediaManager::messages.audio.support') }}
+            </audio>
+        </div>
 
         <template v-else>
             <a :href="selectedFile.path"
@@ -110,9 +136,9 @@
         </div>
 
         {{-- editor --}}
-        <div class="card-footer-item">
+        <div class="card-footer-item" v-if="selectedFileIs('image')">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || !selectedFileIs('image') || isLoading"
+                :disabled="item_ops() || isLoading"
                 @click="imageEditorCard()">
                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.editor') }}</span>

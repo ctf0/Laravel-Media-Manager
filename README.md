@@ -76,7 +76,7 @@
 - use the manager
     + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
     + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
-- auto scroll to selected item when using (left, up, righ, down, home, end)
+- auto scroll to selected item using (left, up, right, down, home, end)
 - [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s ***"sqLite must be installed"***
 - search `current/global`
 - filter by
@@ -100,9 +100,14 @@
   + upload
   + rename
   + new folder
-- autoplay media files ***"if selected filter is audio/video"***
+- auto-play media files ***"if selected filter is audio/video"***
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts / gestures
+  >- if no more **rows** available, pressing `down` will go to the last item in the list ***"same as native finder"***
+  >- dbl click/tap any `audio or video` file on small screen, will open the preview modal ***"because sidebar will be hidden"***
+  >- to stop interfering with other `keydown` events you can toggle the manager listener through ` EventHub.fire('disable-global-keys', true/false)`
+
+  <br>
 
   |       navigation      |                    button                   |     keyboard     |          click / tap          |              touch              |
   |-----------------------|---------------------------------------------|------------------|-------------------------------|---------------------------------|
@@ -120,7 +125,7 @@
   |                       | toggle preview image/pdf/text *(item)*      | space            | **                            |                                 |
   |                       | play/pause media *(item)*                   | space            | **                            |                                 |
   |                       | hide (modal / upload-panel / global-search) | esc              |                               |                                 |
-  |                       | reset (search / bulk selection)             | esc              |                               |                                 |
+  |                       | reset (search / bulk selection / filter)    | esc              |                               |                                 |
   |                       | &nbsp;                                      |                  |                               |                                 |
   |                       | move *(item)*                               |                  |                               | swipe up                        |
   |                       | delete *(item)*                             |                  |                               | swipe down                      |
@@ -131,7 +136,7 @@
   | select next *(item)*  |                                             | right            | *                             | swipe left  *(preview)*         |
   | select prev *(item)*  |                                             | left             | *                             | swipe right *(preview)*         |
   | select first *(item)* |                                             | home             |                               |                                 |
-  | select last  *(item)* |                                             | end              |                               |                                 |
+  | select last *(item)*  |                                             | end              |                               |                                 |
   | select next *(row)*   |                                             | down             |                               |                                 |
   | select prev *(row)*   |                                             | up               |                               |                                 |
   | open folder           |                                             | enter            | **                            |                                 |

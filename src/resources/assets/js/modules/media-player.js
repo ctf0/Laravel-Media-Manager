@@ -2,12 +2,6 @@ import debounce from 'lodash/debounce'
 import Plyr from 'plyr'
 
 export default {
-    updated: debounce(function() {
-        this.initPlyr()
-    }, 250),
-    beforeDestroy() {
-        this.destroyPlyr()
-    },
     methods: {
         initPlyr() {
             let options = {
@@ -15,7 +9,7 @@ export default {
                 controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
             }
 
-            this.plyr = new Plyr(this.$refs.player, options)
+            this.plyr = new Plyr(document.querySelector('[data-player]'), options)
         },
         destroyPlyr() {
             if (this.plyr) this.plyr.destroy()
@@ -40,6 +34,11 @@ export default {
                         }, 500))
                     }
                 })
+            }
+        },
+        playerCardHelper() {
+            if (!this.togglePlayerCard) {
+                this.toggleInfo = true
             }
         }
     }

@@ -34,7 +34,7 @@ export default {
                     sending = true
                 },
                 totaluploadprogress(uploadProgress) {
-                    manager.progressCounter = `${uploadProgress}%`
+                    manager.progressCounter = `${Math.round(uploadProgress)}%`
                 },
                 successmultiple(files, res) {
                     res.map((item) => {
@@ -113,7 +113,6 @@ export default {
                 this.toggleLoading()
                 this.toggleModal()
                 this.loadingFiles('hide')
-
                 this.ajaxError()
             })
         },
@@ -233,11 +232,10 @@ export default {
                     if (!this.currentFileIndex) {
                         this.selectFirst()
                     }
-                } else {
-                    // lazy loading is active & first file is a folder
-                    if (this.fileTypeIs(this.allFiles[0], 'folder')) {
-                        this.selectFirst()
-                    }
+                }
+                // lazy loading is active & first file is a folder
+                else if (this.fileTypeIs(this.allFiles[0], 'folder')) {
+                    this.selectFirst()
                 }
 
                 if (this.searchFor) {
@@ -247,8 +245,8 @@ export default {
                 this.dirsListCheck()
             }
 
-            this.toggleInfo = true
             this.isLoading = false
+            this.playerCardHelper()
             this.loadingFiles('hide')
 
             // avoid unnecessary delay

@@ -37,7 +37,11 @@ EventHub.listen('no-search-hide', () => {
 
 // A J A X  - E R R O R
 EventHub.listen('ajax-error-show', () => {
-    bm(document.getElementById('ajax_error_anim'))
+    bm(document.getElementById('ajax_error_anim'), 'ajax_error_anim')
+})
+
+EventHub.listen('ajax-error-hide', () => {
+    lottie.destroy('ajax_error_anim')
 })
 
 /**
