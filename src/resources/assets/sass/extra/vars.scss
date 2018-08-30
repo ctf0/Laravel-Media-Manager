@@ -13,10 +13,29 @@ $active_theme: $light_theme;
 // colors
 $white: lighten($active_theme, 100%);
 $black: darken($active_theme, 80%);
-$green: hsl(141, 71%, 48%);
-$yellow: hsl(48, 100%, 67%);
-$red: hsl(348, 100%, 61%);
-$blue: hsl(217, 71%, 53%);
+$dark: #0a0a0a;
+$green: #23d160;
+$yellow: #ffdd57;
+$red: #ff3860;
+$blue: #3273dc;
+$primary: #00d1b2;
 $shadow_1: 0 10px 45px 0 rgba($black, 0.2);
 $shadow_2: 0 6px 25px 0 rgba($black, 0.3);
 $shadow_3: 0 6px 10px rgba($black, 0.08);
+
+// plyr
+$plyr-1: #3bea91;
+$plyr-2: #7f4cf1;
+$plyr-3: #f5164d;
+
+// ratio
+$audio: #f8d5f0;
+$video: #9951ff;
+$image: #ffd700;
+$text: #cdd5e0;
+$folder: #45eba5;
+$application: #00d1ff;
+$pdf: #3d6cb9;
+
+// other
+$breadcrumb: #dde3e6;

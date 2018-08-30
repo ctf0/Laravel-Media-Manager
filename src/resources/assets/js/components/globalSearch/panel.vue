@@ -2,15 +2,20 @@
     <div v-if="showSearchPanel" class="modal mm-animated fadeIn is-active">
         <div class="modal-background"/>
         <div class="modal-content">
-            <div class="search-input">
+            <div :class="{'move': moveInput}" class="search-input">
                 <section>
                     <input ref="search" v-model="search" :placeholder="trans('find')" autofocus>
-                    <span class="icon is-medium"><icon name="search"/></span>
+                    <transition name="mm-info-in">
+                        <div v-show="listCount" class="count">
+                            <p class="title is-marginless is-2">{{ listCount }}</p>
+                            <p class="heading is-marginless">{{ trans('found') }}</p>
+                        </div>
+                    </transition>
                 </section>
             </div>
 
-            <transition-group tag="ul" mode="out-in" name="list" class="columns is-multiline">
-                <li v-for="(item, i) in filterdList" :key="i" class="column is-2">
+            <transition-group name="mm-gs" tag="ul" class="columns is-multiline" mode="out-in">
+                <li v-for="(item, i) in filterdList" :key="`${i}-${item.name}`" class="column is-2">
                     <div class="card">
                         <div class="card-image">
                             <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
@@ -27,7 +32,13 @@
                             </div>
                         </div>
                         <div class="card-content">
-                            <p class="title is-marginless">{{ item.name }}</p>
+                            <p v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
+                               :title="linkCopied ? trans('copied') : trans('to_cp')"
+                               class="title is-marginless link"
+                               @click="copyLink(item.path)"
+                               @hidden="linkCopied = false">
+                                {{ item.name }}
+                            </p>
                             <br>
                             <p class="subtitle is-marginless link" @click="goToFolder(item.dir, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
@@ -40,6 +51,11 @@
                         </div>
                     </div>
                 </li>
+
+                <!-- nothing found -->
+                <li v-if="noData" key="noData" class="column no-data">
+                    <p class="title">{{ trans('nothing_found') }} !!</p>
+                </li>
             </transition-group>
         </div>
         <button class="modal-close is-large" @click="closePanel()"/>
@@ -47,6 +63,8 @@
 </template>
 
 <style scoped lang="scss">
+    @import '../../../sass/extra/vars';
+
     .modal {
         position: absolute;
         width: 100%;
@@ -62,43 +80,93 @@
         right: 0;
         left: 0;
         bottom: 0;
-        background-color: rgba(10, 10, 10, 0.98);
+        background-color: rgba($dark, 0.98);
     }
 
     .modal-content {
         margin: 0;
         height: 100%;
         width: 100%;
-        max-height: 100vh;
+        max-height: unset;
+    }
+
+    .column {
+        backface-visibility: hidden;
     }
 
     .search-input {
+        transform: translate(25%, 35vh);
         width: 100%;
         position: sticky;
         top: 0;
-        color: rgba(255, 255, 255, 0.8);
+        padding: 0 0.75rem;
+        color: $white;
         z-index: 1;
-        padding: 1rem 0;
-        background: rgba(15, 15, 15, 0.85);
-        backdrop-filter: blur(10px);
+        transition: all 1s ease 0.5s;
+
+        // animate linear-gradient
+        &::before {
+            content: '';
+            position: absolute;
+            background: linear-gradient(to bottom, $dark 0, rgba($dark, 0.5) 65%, transparent 100%);
+            opacity: 0;
+            top: 0;
+            transition: all 1s ease 1s;
+            height: 100%;
+            width: 100%;
+        }
 
         section {
-            margin-right: auto;
-            margin-left: 5%;
             display: flex;
-            padding: 0.2rem 1rem;
-            width: 25%;
+            margin: 0 auto;
+            width: 75%;
             position: relative;
-            border-radius: 100vw;
-            background-color: rgba(white, 0.1);
+            align-items: center;
+        }
+
+        input {
+            transition: all 1s ease 0.5s;
+            color: $white;
+            line-height: 2.5;
+            border: none;
+            background-color: transparent;
+            caret-color: $primary;
+            font-size: 5rem;
+        }
+
+        .count {
+            text-align: center;
+
+            .title {
+                color: $white;
+                text-shadow: 4px 4px $red;
+            }
+
+            .heading {
+                color: $white;
+                font-weight: bold;
+            }
+        }
+
+        &.move {
+            transform: translate(0);
+
+            &::before {
+                opacity: 1;
+            }
 
             input {
-                color: white;
-                border: none;
+                font-size: 3rem;
                 width: 100%;
-                background-color: transparent;
-                font-size: 1.5rem;
             }
+        }
+    }
+
+    .no-data {
+        text-align: center;
+
+        * {
+            color: rgba($white, 0.5);
         }
     }
 
@@ -111,20 +179,21 @@
         vertical-align: middle;
     }
 
-    .modal-close {
-        position: absolute;
-        z-index: 2;
-        top: 1.2rem;
-    }
-
     @media screen and (max-width: 1083px) {
         .search-input {
-            padding-right: 3rem;
+            padding-right: 4rem;
 
             section {
                 width: 100%;
-                margin: auto;
             }
+
+            input {
+                line-height: 2;
+            }
+        }
+
+        .modal-close {
+            top: 1.5rem;
         }
     }
 </style>
@@ -133,13 +202,16 @@
 import debounce from 'lodash/debounce'
 
 export default {
-    props: ['trans', 'fileTypeIs'],
+    props: ['trans', 'fileTypeIs', 'noScroll'],
     data() {
         return {
             showSearchPanel: false,
-            index: [],
+            filesIndex: [],
             filterdList: [],
-            search: ''
+            search: '',
+            noData: false,
+            moveInput: false,
+            linkCopied: false
         }
     },
     mounted() {
@@ -147,13 +219,19 @@ export default {
     },
     computed: {
         fuseLib() {
-            return new Fuse(this.index, {keys: ['name']})
+            return new Fuse(this.filesIndex, {
+                keys: ['name'],
+                threshold: 0.4
+            })
+        },
+        listCount() {
+            return this.filterdList.length
         }
     },
     methods: {
         eventsListener() {
             EventHub.listen('global-search-index', (data) => {
-                this.index = data
+                this.filesIndex = data
             })
 
             EventHub.listen('show-global-search', (data) => {
@@ -173,6 +251,15 @@ export default {
                     this.closePanel()
                 }
             })
+
+            document.addEventListener('transitionend', (e) => {
+                this.noData = this.search && !this.listCount ? true : false
+            })
+        },
+
+        copyLink(path) {
+            this.linkCopied = true
+            this.$copyText(path)
         },
         closePanel() {
             this.showSearchPanel = false
@@ -192,26 +279,34 @@ export default {
             }
 
             this.filterdList = []
-        }, 250)
+        }, 500)
     },
     watch: {
         showSearchPanel(val) {
-            let cont = document.querySelector('#manager-container')
-
             if (val) {
-                EventHub.fire('disable-global-keys', true)
                 this.$nextTick(() => {
+                    this.noScroll('add')
                     this.$refs.search.focus()
                 })
 
-                // cont.style.position = 'relative'
+                EventHub.fire('disable-global-keys', true)
             } else {
+                this.$nextTick(() => {
+                    this.noScroll('remove')
+                    this.noData = false
+                    this.moveInput = false
+                })
+
                 EventHub.fire('disable-global-keys', false)
-                // cont.style.position = ''
             }
         },
-        search() {
+        search(val) {
+            this.moveInput = true
             this.getList()
+
+            document.addEventListener('transitionend', (e) => {
+                this.noData = val && !this.listCount ? true : false
+            })
         }
     }
 }

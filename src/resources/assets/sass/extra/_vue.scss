@@ -1,0 +1,71 @@
+$list: (mm-list, mm-img-prv, mm-img-nxt, mm-info-in, mm-info-out, mm-slide, mm-counter, mm-gs);
+
+@each $class in $list {
+    .#{$class}-enter-active,
+    .#{$class}-leave-active {
+        transition: all 0.2s ease-out;
+    }
+
+    .#{$class}-enter,
+    .#{$class}-leave-to {
+        opacity: 0;
+    }
+}
+
+/* files */
+.mm-list-enter,
+.mm-list-leave-to {
+    transform: translateY(30px);
+}
+
+/* image */
+.mm-img-prv-enter {
+    transform: translateX(-0.7rem);
+}
+
+.mm-img-prv-leave-to {
+    transform: translateX(90px);
+}
+
+.mm-img-nxt-enter {
+    transform: translateX(0.7rem);
+}
+
+.mm-img-nxt-leave-to {
+    transform: translateX(-90px);
+}
+
+/* info toggle btn */
+.mm-info-in-enter,
+.mm-info-in-leave-to {
+    transform: translateX(0.7rem);
+}
+
+.mm-info-out-enter,
+.mm-info-out-leave-to {
+    transform: translateX(-0.7rem);
+}
+
+/* global search panel */
+.mm-gs-enter,
+.mm-gs-leave-to {
+    transform: translateY(30px);
+}
+
+.mm-gs-leave-active {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+/* info panel */
+.mm-slide-enter,
+.mm-slide-leave-to {
+    transform: translateX(-0.7rem);
+}
+
+/* counters */
+.mm-counter-enter,
+.mm-counter-leave-to {
+    transform: translateX(0.7rem);
+}

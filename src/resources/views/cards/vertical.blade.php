@@ -53,7 +53,7 @@
                 <p class="title is-marginless">
                     <span class="link"
                         @click="copyLink(selectedFile.path)"
-                        :title="linkCopied ? '{{ trans('MediaManager::messages.copy.copied') }}' : '{{ trans('MediaManager::messages.copy.to_cp') }}'"
+                        :title="linkCopied ? trans('copied') : trans('to_cp')"
                         v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
                         @hidden="linkCopied = false">
                         @{{ selectedFile.name }}

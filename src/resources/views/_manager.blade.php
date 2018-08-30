@@ -33,7 +33,11 @@
         'glbl_search' => trans('MediaManager::messages.search.glbl'), 
         'glbl_search_avail' => trans('MediaManager::messages.search.glbl_avail'), 
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'), 
-        'find' => trans('MediaManager::messages.find')
+        'find' => trans('MediaManager::messages.find'), 
+        'found' => trans('MediaManager::messages.found'), 
+        'nothing_found' => trans('MediaManager::messages.nothing_found'), 
+        'copied' => trans('MediaManager::messages.copy.copied'), 
+        'to_cp' => trans('MediaManager::messages.copy.to_cp')
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -42,10 +46,10 @@
     :user-id="{{ config('mediaManager.enable_broadcasting') ? auth()->user()->id : 0 }}"
     :upload-panel-img-list="{{ $patterns }}">
 
-    <div class="" id="manager-container">
+    <div class="">
 
         {{-- content ratio bar --}}
-        <transition name="list" mode="out-in">
+        <transition name="mm-list" mode="out-in">
             <content-ratio v-if="config.ratioBar && allItemsCount"
                 :list="allFiles"
                 :total="allItemsCount"
@@ -54,10 +58,10 @@
         </transition>
 
         {{-- global search --}}
-        <global-search-panel :trans="trans" :file-type-is="fileTypeIs"></global-search-panel>
+        <global-search-panel :trans="trans" :file-type-is="fileTypeIs" :no-scroll="noScroll"></global-search-panel>
 
         {{-- top toolbar --}}
-        <transition name="list" mode="out-in">
+        <transition name="mm-list" mode="out-in">
             <nav class="media-manager__toolbar level" v-show="toolBar">
 
                 {{-- left toolbar --}}
@@ -375,7 +379,7 @@
         {{-- ====================================================================== --}}
 
         {{-- dropzone --}}
-        <transition-group name="list" mode="out-in" tag="section">
+        <transition-group name="mm-list" mode="out-in" tag="section">
             <div key="1" v-show="toggleUploadArea" class="media-manager__dz">
                 <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
                     {{ csrf_field() }}
@@ -429,7 +433,7 @@
                     <div id="loading_files" v-show="loading_files">
                         <div id="loading_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/world.json') }}"></div>
 
-                        <transition name="list" mode="out-in">
+                        <transition name="mm-list" mode="out-in">
                             <h3 key="1" v-if="showProgress">{{ trans('MediaManager::messages.stand_by') }} <strong>@{{ progressCounter }}</strong></h3>
                             <h3 key="2" v-else>{{ trans('MediaManager::messages.loading') }}</h3>
                         </transition>
@@ -454,13 +458,13 @@
                 <v-touch class="__stack-files"
                     :class="{'__stack-sidebar-hidden' : !toggleInfo}"
                     ref="__stack-files"
-                    @swiperight="goToPrevFolder()">
+                    @swiperight="goToPrevFolder">
 
                     {{-- no search --}}
                     <section>
                         <div id="no_search" v-show="no_search">
                             <div id="no_search_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/ice_cream.json') }}"></div>
-                            <h3>{{ trans('MediaManager::messages.nothing_found') }}</h3>
+                            <h3>@{{ trans('nothing_found') }}</h3>
                         </div>
                     </section>
 
@@ -474,7 +478,7 @@
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : selectedFile == file}"
                                 @swipeup="setSelected(file, index), moveItem()"
                                 @swipedown="setSelected(file, index), deleteItem()"
-                                @dbltap="dbltap()"
+                                @dbltap="dbltap"
                                 @hold="setSelected(file, index), imageEditor()">
 
                                 {{-- lock file --}}
@@ -491,7 +495,7 @@
                                 <div v-if="!fileTypeIs(file, 'folder')"
                                     class="__box-copy-link icon"
                                     @click.stop="copyLink(file.path)"
-                                    :title="linkCopied ? '{{ trans('MediaManager::messages.copy.copied') }}' : '{{ trans('MediaManager::messages.copy.to_cp') }}'"
+                                    :title="linkCopied ? trans('copied') : trans('to_cp')"
                                     v-tippy="{arrow: true, hideOnClick: false}"
                                     @hidden="linkCopied = false">
                                     <icon name="clone" scale="0.9"></icon>
@@ -539,11 +543,11 @@
                 {{-- ====================================================================== --}}
 
                 {{-- info sidebar --}}
-                <transition name="slide" mode="out-in" appear>
+                <transition name="mm-slide" mode="out-in" appear>
                     <div class="__stack-sidebar is-hidden-touch" v-if="toggleInfo">
                         {{-- preview --}}
                         <div class="__sidebar-preview">
-                            <transition name="slide" mode="out-in" appear>
+                            <transition name="mm-slide" mode="out-in" appear>
                                 {{-- no selection --}}
                                 <div key="none-selected" class="__sidebar-none-selected" v-if="!selectedFile">
                                     <span @click="reset()" class="link"><icon name="power-off" scale="3.2"></icon></span>
@@ -628,7 +632,7 @@
                             class="__sidebar-info"
                             :style="selectedFile ? 'background-color: white' : ''">
 
-                            <transition name="list" mode="out-in" appear>
+                            <transition name="mm-list" mode="out-in" appear>
                                 <div :key="selectedFile.name" v-if="selectedFile">
                                     {{-- audio extra info --}}
                                     <template v-if="selectedFileIs('audio') && selectedFilePreview">
@@ -750,7 +754,7 @@
                             </transition>
 
                             {{-- items count --}}
-                            <transition-group tag="div" name="counter" mode="out-in" class="__sidebar-count">
+                            <transition-group tag="div" name="mm-counter" mode="out-in" class="__sidebar-count">
                                 {{-- all --}}
                                 <div key="1" v-if="allItemsCount">
                                     <p class="title is-1">@{{ allItemsCount }}</p>
@@ -760,7 +764,7 @@
                                 {{-- search --}}
                                 <div key="2" v-if="searchItemsCount !== null && searchItemsCount >= 0">
                                     <p class="title is-1">@{{ searchItemsCount }}</p>
-                                    <p class="heading">{{ trans('MediaManager::messages.found') }}</p>
+                                    <p class="heading">@{{ trans('found') }}</p>
                                 </div>
 
                                 {{-- bulk --}}
@@ -792,7 +796,7 @@
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
                     <nav class="breadcrumb is-hidden-touch" v-if="!restrictModeIsOn()">
-                        <transition-group tag="ul" name="list" mode="out-in">
+                        <transition-group tag="ul" name="mm-list" mode="out-in">
                             <li key="library-bc">
                                 <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
                                     class="p-l-0"
@@ -824,7 +828,7 @@
                         v-tippy
                         title="t"
                         v-if="allItemsCount">
-                        <transition :name="toggleInfo ? 'info-out' : 'info-in'" mode="out-in">
+                        <transition :name="toggleInfo ? 'mm-info-out' : 'mm-info-in'" mode="out-in">
                             <div :key="toggleInfo ? 1 : 2" class="__stack-sidebar-toggle has-text-link">
                                 <template v-if="toggleInfo">
                                     <span>{{ trans('MediaManager::messages.close') }}</span>
@@ -857,7 +861,7 @@
                 class="modal mm-animated fadeIn is-active __modal-preview">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
-                    <transition :name="imageSlideDirection == 'next' ? 'img-nxt' : 'img-prv'" mode="out-in">
+                    <transition :name="imageSlideDirection == 'next' ? 'mm-img-nxt' : 'mm-img-prv'" mode="out-in">
                         <div class="modal-content" :key="selectedFile.path">
                             {{-- card v --}}
                             @include('MediaManager::cards.vertical')
@@ -1004,13 +1008,13 @@
                 <div class="modal-card mm-animated fadeInDown">
                     <header class="modal-card-head is-warning">
                         <p class="modal-card-title">
-                            <transition :name="useCopy ? 'info-in' : 'info-out'" mode="out-in">
+                            <transition :name="useCopy ? 'mm-info-in' : 'mm-info-out'" mode="out-in">
                                 <span class="icon" :key="useCopy ? 1 : 2">
                                     <icon :name="useCopy ? 'clone' : 'share'"></icon>
                                 </span>
                             </transition>
 
-                            <transition name="list" mode="out-in">
+                            <transition name="mm-list" mode="out-in">
                                 <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy.file_folder') }}</span>
                                 <span key="2" v-else>{{ trans('MediaManager::messages.move.file_folder') }}</span>
                             </transition>
@@ -1070,7 +1074,7 @@
                                             class="button is-warning"
                                             :disabled="isLoading || !moveToPath"
                                             :class="{'is-loading': isLoading}">
-                                            <transition :name="useCopy ? 'img-prv' : 'img-nxt'" mode="out-in">
+                                            <transition :name="useCopy ? 'mm-img-prv' : 'mm-img-nxt'" mode="out-in">
                                                 <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy.main') }}</span>
                                                 <span key="2" v-else>{{ trans('MediaManager::messages.move.main') }}</span>
                                             </transition>

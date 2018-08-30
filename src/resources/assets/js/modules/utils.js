@@ -224,6 +224,7 @@ export default {
                 }
 
                 this.toggleInfo = true
+                this.toolBar = true
                 this.togglePlayerCard = false
             }
         },
