@@ -9,6 +9,8 @@ export default {
             })
         },
         setSelected(file, index, e = null) {
+            EventHub.fire('stopHammerPropagate')
+
             if (e && e.metaKey && !this.firstMeta) {
                 this.firstMeta = true
                 this.bulkSelect = true
@@ -77,7 +79,7 @@ export default {
                 }
 
                 if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                    return this.togglePlayerCard
+                    return this.playerCard
                         ? this.toggleModal('preview_modal')
                         : this.playMedia()
                 }
@@ -107,6 +109,8 @@ export default {
             }
         },
         goToPrevFolder(e = null) {
+            EventHub.fire('stopHammerPropagate')
+
             if (this.restrictModeIsOn()) {
                 return false
             }
@@ -162,7 +166,7 @@ export default {
             if (
                 this.isActiveModal('preview_modal') &&
                 (this.selectedFileIs('folder') || this.selectedFileIs('application')) ||
-                (this.selectedFileIs('video') || this.selectedFileIs('audio')) && !this.togglePlayerCard
+                (this.selectedFileIs('video') || this.selectedFileIs('audio')) && !this.playerCard
             ) {
                 this.toggleModal()
             }

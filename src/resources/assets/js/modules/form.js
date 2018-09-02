@@ -65,8 +65,8 @@ export default {
                                     : manager.getFiles(manager.folders)
                             })
                         } else {
-                            manager.toggleInfo = true
                             manager.isLoading = false
+                            manager.playerCardHelper()
                             manager.loadingFiles('hide')
                         }
                     }
@@ -82,7 +82,7 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            this.toggleUploadArea = false
+            this.UploadArea = false
             this.toggleLoading()
             this.loadingFiles('show')
 
@@ -125,7 +125,7 @@ export default {
 
             if (!this.loading_files) {
                 this.isLoading = true
-                this.toggleInfo = false
+                this.infoSidebar = false
                 this.loadingFiles('show')
             }
 

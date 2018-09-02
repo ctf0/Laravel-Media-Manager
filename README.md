@@ -103,44 +103,47 @@
 - auto-play media files ***"if selected filter is audio/video"***
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts / gestures
-  >- if no more **rows** available, pressing `down` will go to the last item in the list ***"same as native finder"***
-  >- dbl click/tap any `audio or video` file on small screen, will open the preview modal ***"because sidebar will be hidden"***
-  >- to stop interfering with other `keydown` events you can toggle the manager listener through ` EventHub.fire('disable-global-keys', true/false)`
+
+  >- the info sidebar is only available on big screens **"> 1087px"**.
+  >- if no more **rows** available, pressing `down` will go to the last item in the list **"same as native finder"**.
+  >- dbl click/tap any `audio/video` file on small screen, will open in the preview modal same as images **"because sidebar will be disabled"**.
+  >- to stop interfering with other `keydown` events you can toggle the manager listener through ` EventHub.fire('disable-global-keys', true/false)`.
+  >- when using [`__stack-files-reverse`](https://github.com/ctf0/Laravel-Media-Manager/wiki/Customization-&--Optimization#customization), the **left/right** gestures are also reversed.
 
   <br>
 
-  |       navigation      |                    button                   |     keyboard     |          click / tap          |              touch              |
-  |-----------------------|---------------------------------------------|------------------|-------------------------------|---------------------------------|
-  |                       | toggle upload panel *(toolbar)*             | u                | *                             |                                 |
-  |                       | refresh *(toolbar)*                         | r                | * / hold *(clear ls & cache)* |                                 |
-  |                       | move *(toolbar)*                            | m                | *                             |                                 |
-  |                       | image editor *(toolbar)*                    | e                | *                             |                                 |
-  |                       | delete *(toolbar)*                          | d / del          | *                             |                                 |
-  |                       | lock/unlock *(toolbar)*                     | l                | *                             |                                 |
-  |                       | change visibility *(toolbar)*               | v                | *                             |                                 |
-  |                       | toggle bulk selection *(toolbar)*           | b                | *                             |                                 |
-  |                       | (reset) bulk select all *(toolbar)*         | a                | *                             |                                 |
-  |                       | toggle sidebar *(path bar)*                 | t                | *                             |                                 |
-  |                       | confirm *(modal)*                           | enter            | *                             |                                 |
-  |                       | toggle preview image/pdf/text *(item)*      | space            | **                            |                                 |
-  |                       | play/pause media *(item)*                   | space            | **                            |                                 |
-  |                       | hide (modal / upload-panel / global-search) | esc              |                               |                                 |
-  |                       | reset (search / bulk selection / filter)    | esc              |                               |                                 |
-  |                       | &nbsp;                                      |                  |                               |                                 |
-  |                       | move *(item)*                               |                  |                               | swipe up                        |
-  |                       | delete *(item)*                             |                  |                               | swipe down                      |
-  |                       | image editor *(item)*                       |                  |                               | hold                            |
-  |                       | limit bulk select *(item)*                  | shift + click    |                               |                                 |
-  |                       | current + next bulk select *(item)*         | alt/meta + click |                               |                                 |
-  |                       | &nbsp;                                      |                  |                               |                                 |
-  | select next *(item)*  |                                             | right            | *                             | swipe left  *(preview)*         |
-  | select prev *(item)*  |                                             | left             | *                             | swipe right *(preview)*         |
-  | select first *(item)* |                                             | home             |                               |                                 |
-  | select last *(item)*  |                                             | end              |                               |                                 |
-  | select next *(row)*   |                                             | down             |                               |                                 |
-  | select prev *(row)*   |                                             | up               |                               |                                 |
-  | open folder           |                                             | enter            | **                            |                                 |
-  | go to prev dir        | folderName *(path bar)*                     | backspace        | *                             | swipe right *(items container)* |
+  |       navigation      |                    button                   |     keyboard     |       click / tap        |                 touch                  |
+  |-----------------------|---------------------------------------------|------------------|--------------------------|----------------------------------------|
+  |                       | toggle upload panel *(toolbar)*             | u                | *                        |                                        |
+  |                       | refresh *(toolbar)*                         | r                | * / hold *(clear cache)* | pinch in *(files container)*           |
+  |                       | move *(toolbar)*                            | m                | *                        |                                        |
+  |                       | image editor *(toolbar)*                    | e                | *                        |                                        |
+  |                       | delete *(toolbar)*                          | d / del          | *                        |                                        |
+  |                       | lock/unlock *(toolbar)*                     | l                | *                        |                                        |
+  |                       | change visibility *(toolbar)*               | v                | *                        |                                        |
+  |                       | toggle bulk selection *(toolbar)*           | b                | *                        |                                        |
+  |                       | (reset) bulk select all *(toolbar)*         | a                | *                        |                                        |
+  |                       | toggle sidebar *(path bar)*                 | t                | *                        | swipe left/right *(sidebar container)* |
+  |                       | confirm *(modal)*                           | enter            | *                        |                                        |
+  |                       | toggle preview image/pdf/text *(item)*      | space            | **                       |                                        |
+  |                       | play/pause media *(item)*                   | space            | **                       |                                        |
+  |                       | hide (modal / upload-panel / global-search) | esc              |                          |                                        |
+  |                       | reset (search / bulk selection / filter)    | esc              |                          |                                        |
+  |                       | &nbsp;                                      |                  |                          |                                        |
+  |                       | move *(item)*                               |                  |                          | swipe up                               |
+  |                       | delete *(item)*                             |                  |                          | swipe down                             |
+  |                       | image editor *(item)*                       |                  |                          | hold                                   |
+  |                       | limit bulk select *(item)*                  | shift + click    |                          |                                        |
+  |                       | current + next bulk select *(item)*         | alt/meta + click |                          |                                        |
+  |                       | &nbsp;                                      |                  |                          |                                        |
+  | select next *(item)*  |                                             | right            | *                        | swipe left  *(preview)*                |
+  | select prev *(item)*  |                                             | left             | *                        | swipe right *(preview)*                |
+  | select first *(item)* |                                             | home             |                          |                                        |
+  | select last *(item)*  |                                             | end              |                          |                                        |
+  | select next *(row)*   |                                             | down             |                          |                                        |
+  | select prev *(row)*   |                                             | up               |                          |                                        |
+  | open folder           |                                             | enter            | **                       |                                        |
+  | go to prev dir        | folderName *(path bar)*                     | backspace        | *                        | swipe right *(files container)*        |
 
 - events
 

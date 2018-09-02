@@ -9,7 +9,7 @@
 
 <script>
 export default {
-    props: ['route', 'isLoading', 'trans'],
+    props: ['route', 'isLoading', 'trans', 'showNotif'],
     data() {
         return {
             loading: false,
@@ -30,7 +30,7 @@ export default {
                     this.loading = false
                     this.done = true
                     EventHub.fire('global-search-index', data)
-                    this.$parent.showNotif(this.trans('glbl_search_avail'))
+                    this.showNotif(this.trans('glbl_search_avail'))
 
                 }).catch((err) => {
                     console.error(err)

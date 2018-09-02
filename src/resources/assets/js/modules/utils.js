@@ -13,6 +13,11 @@ export default {
         moveUpCheck() {
             return this.allItemsCount && this.folders.length
         },
+        playerCardHelper() {
+            if (!this.playerCard) {
+                this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
+            }
+        },
 
         /*                Buttons                */
         item_ops() {
@@ -136,11 +141,13 @@ export default {
         toggleLoading() {
             return this.isLoading = !this.isLoading
         },
-        toggleInfoPanel() {
-            return this.toggleInfo = !this.toggleInfo
+        toggleInfoSidebar(e = null) {
+            EventHub.fire('stopHammerPropagate')
+
+            return this.infoSidebar = !this.infoSidebar
         },
         toggleUploadPanel() {
-            return this.toggleUploadArea = !this.toggleUploadArea
+            return this.UploadArea = !this.UploadArea
         },
         toggleLoader(key, state) {
             return this[key] = state
@@ -158,7 +165,7 @@ export default {
         },
         noFiles(s) {
             if (s == 'show') {
-                this.toggleInfo = false
+                this.infoSidebar = false
                 this.toggleLoader('no_files', true)
                 return EventHub.fire('no-files-show')
             }
@@ -187,7 +194,7 @@ export default {
         },
         ajaxError(s = true) {
             if (s) {
-                this.toggleInfo = false
+                this.infoSidebar = false
                 this.toggleLoader('ajax_error', true)
                 return EventHub.fire('ajax-error-show')
             }
@@ -207,13 +214,13 @@ export default {
             this.linkCopied = true
             this.$copyText(path)
         },
-        onResize(val) {
+        onResize() {
             this.scrollByRow()
 
             // 1087 = bulma is-hidden-touch
-            if (val < 1087) {
-                this.toggleInfo = false
-                this.togglePlayerCard = true
+            if (document.documentElement.clientWidth < 1087) {
+                this.infoSidebar = false
+                this.playerCard = true
             } else {
                 // hide active player modal
                 if (
@@ -223,9 +230,9 @@ export default {
                     this.toggleModal()
                 }
 
-                this.toggleInfo = true
                 this.toolBar = true
-                this.togglePlayerCard = false
+                this.playerCard = false
+                this.playerCardHelper()
             }
         },
         resetInput(input, val = null) {

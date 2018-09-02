@@ -8,7 +8,10 @@
 @import './packages/animate';
 @import './packages/progress';
 @import './packages/switcher';
+
+// packages
 @import '~plyr/dist/plyr.css';
+@import '~cropperjs/dist/cropper.css';
 
 /*                global search                */
 .glbl_search_panel {
@@ -325,7 +328,7 @@
 
 @include media('max', 1087) {
     .__stack-container {
-        max-height: unset;
+        max-height: 75vh;
     }
 }
 
@@ -538,6 +541,7 @@
     border-right: 1px solid darken($active_theme, 5%);
 
     .__sidebar-preview {
+        overflow: hidden;
         flex: 0 0 auto;
         text-align: center;
         color: darken($active_theme, 50%);
@@ -589,6 +593,8 @@
         }
 
         table {
+            margin-bottom: 0.25rem;
+
             td {
                 font-size: 1rem;
                 vertical-align: top;
@@ -614,16 +620,13 @@
     .__sidebar-zip {
         display: flex;
         align-items: center;
-        margin-bottom: 0.1em;
 
-        span:not(.icon) {
-            font-size: 1rem;
-            margin-right: 3px;
-            color: darken($active_theme, 25%);
+        .icon {
+            display: block;
         }
 
         form {
-            margin-bottom: 2px;
+            margin-top: -1px;
         }
     }
 
@@ -669,6 +672,11 @@
             }
         }
     }
+}
+
+.__sidebar-swipe-hidden {
+    z-index: 1;
+    width: 1.5rem;
 }
 
 /*                modal                */
@@ -774,8 +782,9 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
         .__caman-controls {
             position: absolute;
             z-index: 1;
-            top: -82px;
+            top: 0;
             left: 0;
+            transform: translateY(-100%);
             background-color: $editorBtns;
         }
     }
@@ -923,31 +932,45 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
 /*                Ratio bar                */
 .is-audio {
-    background-color: $audio;
+    &::after {
+        background: $audio;
+    }
 }
 
 .is-video {
-    background-color: $video;
+    &::after {
+        background: $video;
+    }
 }
 
 .is-image {
-    background-color: $image;
+    &::after {
+        background: $image;
+    }
 }
 
 .is-text {
-    background-color: $text;
+    &::after {
+        background: $text;
+    }
 }
 
 .is-folder {
-    background-color: $folder;
+    &::after {
+        background: $folder;
+    }
 }
 
 .is-application {
-    background-color: $application;
+    &::after {
+        background: $application;
+    }
 }
 
 .is-pdf {
-    background-color: $pdf;
+    &::after {
+        background: $pdf;
+    }
 }
 
 /*                Progress bar                */
@@ -981,6 +1004,10 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 }
 
 /*                utilities                */
+.full-width {
+    width: 100%;
+}
+
 .p-l-0 {
     padding-left: 0 !important;
 }
@@ -1048,114 +1075,4 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
 
 a[target='_blank'] {
     cursor: alias;
-}
-
-/*                bulma                */
-.input {
-    box-shadow: none !important;
-}
-
-.input,
-.control button,
-.select select {
-    border-color: darken($active_theme, 5%);
-
-    &:hover {
-        border-color: darken($active_theme, 25%);
-    }
-}
-
-.card {
-    // overflow: hidden;
-    min-width: 480px;
-}
-
-.modal-card-head,
-.progress-bar,
-.icon {
-    &.is-warning {
-        background-color: $yellow;
-    }
-
-    &.is-danger {
-        background-color: $red;
-    }
-
-    &.is-link {
-        background-color: $blue;
-    }
-
-    &.is-success {
-        background-color: $green;
-    }
-
-    &.is-black {
-        background-color: $black;
-    }
-
-    &.is-danger,
-    &.is-link,
-    &.is-black,
-    &.is-success {
-        * {
-            color: $white;
-        }
-    }
-}
-
-.modal {
-    overflow: scroll;
-
-    .modal-background {
-        position: fixed;
-    }
-
-    .modal-card-title {
-        max-width: calc(100% - 20px);
-    }
-
-    .modal-card-foot {
-        justify-content: flex-end;
-        background-color: $white;
-    }
-
-    .modal-close {
-        z-index: 2;
-        top: 2rem;
-        width: 3rem;
-        max-width: 3rem;
-        height: 3rem;
-        max-height: 3rem;
-    }
-
-    &.is-active {
-        padding: 0.75rem 0.75rem 0;
-    }
-}
-
-.image {
-    display: block;
-    width: 100%;
-    min-width: 100%;
-}
-
-@include media('max', 768) {
-    .card {
-        min-width: 100%;
-    }
-
-    .__modal-preview {
-        .modal-content,
-        .card-image {
-            max-width: 100%;
-        }
-
-        .pdf {
-            .card-image {
-                object {
-                    width: 800;
-                }
-            }
-        }
-    }
 }

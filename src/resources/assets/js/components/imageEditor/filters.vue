@@ -1,6 +1,6 @@
 <template>
     <div class="__caman">
-        <button v-tippy :class="{'is-active': controls}"
+        <button v-tippy="{arrow: true, theme: 'light'}" :class="{'is-active': controls}"
                 :disabled="processing"
                 :title="filterName"
                 class="btn-plain" @click="toggleControls()">
@@ -9,10 +9,18 @@
 
         <transition name="mm-list">
             <div v-show="controls" class="__caman-controls">
-                <button :disabled="incLimit() || processing" class="btn-plain" @click="inc()">
+                <button v-tippy="{arrow: true, hideOnClick: false, theme: 'light'}"
+                        :disabled="incLimit() || processing"
+                        :title="getTTc('inc')"
+                        class="btn-plain"
+                        @click="processing ? false : inc()">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'plus'" :pulse="processing"/></span>
                 </button>
-                <button :disabled="decLimit() || processing" class="btn-plain" @click="dec()">
+                <button v-tippy="{arrow: true, hideOnClick: false, theme: 'light'}"
+                        :disabled="decLimit() || processing"
+                        :title="getTTc('dec')"
+                        class="btn-plain"
+                        @click="processing ? false : dec()">
                     <span class="icon"><icon :name="processing ? 'spinner' : 'minus'" :pulse="processing"/></span>
                 </button>
             </div>
@@ -21,6 +29,8 @@
 </template>
 
 <script>
+import throttle from 'lodash/throttle'
+
 export default {
     props: [
         'filterName',
@@ -45,6 +55,7 @@ export default {
         this.$options.name = `${this.filterName}-filter`
     },
     methods: {
+        // helpers
         toggleControls() {
             if (this.noController.includes(this.filterName)) {
                 return this.update()
@@ -53,14 +64,42 @@ export default {
             this.controls = !this.controls
         },
 
-        inc() {
+        getTTc(s) {
+            let c
+            let range = this.getVal(this.range)
+            let step = this.step
+
+            if (s == 'dec') {
+                if (!this.decLimit()) {
+                    c = this.getVal(range - step)
+                    return `${range} > ${c}`
+                }
+
+                return range
+            }
+
+            if (!this.incLimit()) {
+                c = this.getVal(range + step)
+                return `${range} > ${c}`
+            }
+
+            return range
+        },
+        getVal(val) {
+            return val
+        },
+
+        // ops
+        inc: throttle(function() {
             this.range += this.step
             this.update(this.range)
-        },
-        dec() {
+        }, 500),
+        dec: throttle(function() {
             this.range -= this.step
             this.update(this.range)
-        },
+        }, 500),
+
+        // check
         incLimit() {
             return this.range == this.max
         },
@@ -68,8 +107,9 @@ export default {
             return this.range == this.min
         },
 
+        // send changes
         update(val = null) {
-            this.$parent.updateFilter(this.filterName, val)
+            this.$parent.updateFilter(this.filterName, this.getVal(val))
         }
     },
     watch: {

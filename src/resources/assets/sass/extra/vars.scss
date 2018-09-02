@@ -29,13 +29,13 @@ $plyr-2: #7f4cf1;
 $plyr-3: #f5164d;
 
 // ratio
-$audio: #f8d5f0;
-$video: #9951ff;
-$image: #ffd700;
-$text: #cdd5e0;
-$folder: #45eba5;
-$application: #00d1ff;
-$pdf: #3d6cb9;
+$image: linear-gradient(45deg, #ff9882 0, #ffbb0a 100%);
+$audio: linear-gradient(45deg, #6868f1 0, #204ee5 100%);
+$video: linear-gradient(45deg, #cdd5e0 0, #bcdbdf 100%);
+$text: linear-gradient(45deg, #ff5da2 0, #b643cd 100%);
+$folder: linear-gradient(45deg, #45eba5 0, #45eba5 100%);
+$application: linear-gradient(45deg, #53c7f0 0, #87e0ff 100%);
+$pdf: linear-gradient(45deg, #efb1ff 0, #9951ff 100%);
 
 // other
 $breadcrumb: #dde3e6;

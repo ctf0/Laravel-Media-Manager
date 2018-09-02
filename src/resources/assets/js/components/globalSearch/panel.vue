@@ -1,5 +1,5 @@
 <template>
-    <div v-if="showSearchPanel" class="modal mm-animated fadeIn is-active">
+    <div v-if="showSearchPanel" id="gsearch-panel" class="modal mm-animated fadeIn is-active">
         <div class="modal-background"/>
         <div class="modal-content">
             <div :class="{'move': moveInput}" class="search-input">
@@ -19,7 +19,7 @@
                     <div class="card">
                         <div class="card-image">
                             <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
-                                <img :src="item.path" :alt="item.name">
+                                <image-intersect :file="item" :browser-support="browserSupport" root-el="#gsearch-panel"/>
                             </a>
 
                             <div v-else class="glbl_search_panel">
@@ -88,6 +88,10 @@
         height: 100%;
         width: 100%;
         max-height: unset;
+    }
+
+    .modal-close {
+        z-index: 1;
     }
 
     .column {
@@ -202,7 +206,10 @@
 import debounce from 'lodash/debounce'
 
 export default {
-    props: ['trans', 'fileTypeIs', 'noScroll'],
+    components: {
+        imageIntersect: require('./lazyLoading.vue')
+    },
+    props: ['trans', 'fileTypeIs', 'noScroll', 'browserSupport'],
     data() {
         return {
             showSearchPanel: false,

@@ -5,51 +5,11 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
+import lazy from '../../mixins/lazy'
 
 export default {
-    props: ['file', 'browserSupport'],
-    data() {
-        return {
-            observer: null,
-            src: null,
-            intersected: false
-        }
-    },
-    mounted() {
-        this.init()
-    },
-    beforeDestroy() {
-        if (this.browserSupport('IntersectionObserver') && this.observer) {
-            this.observer.unobserve(this.$el)
-            this.observer = null
-        }
-    },
+    mixins: [lazy],
     methods: {
-        init() {
-            // wait for any DOM stuff to finish
-            this.$nextTick(debounce(() => {
-                this.browserSupport('IntersectionObserver')
-                    ? this.observe()
-                    : this.intersected = true
-            }, 500))
-        },
-        observe() {
-            this.observer = new IntersectionObserver((item, observer) => {
-                item.forEach((img) => {
-                    if (img.isIntersecting) {
-                        this.intersected = true
-                        observer.unobserve(img.target)
-                    }
-                })
-            }, {
-                root: document.querySelector('.__stack-files'),
-                rootMargin: '0px',
-                threshold: 1.0
-            })
-
-            if (this.$el) this.observer.observe(this.$el)
-        },
         sendDimensionsToParent() {
             const manager = this
 
@@ -62,14 +22,17 @@ export default {
         }
     },
     watch: {
-        intersected(val) {
-            if (val) {
-                this.src = this.file.path
-                this.$el.style.border = 'none'
+        intersected: {
+            immediate: true,
+            handler(val, oldVal) {
+                if (val) {
+                    this.src = this.file.path
+                    this.$el.style.border = 'none'
 
-                this.$nextTick(() => {
-                    this.sendDimensionsToParent()
-                })
+                    this.$nextTick(() => {
+                        this.sendDimensionsToParent()
+                    })
+                }
             }
         }
     }

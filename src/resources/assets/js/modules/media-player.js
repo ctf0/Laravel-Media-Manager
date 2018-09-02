@@ -35,11 +35,6 @@ export default {
                     }
                 })
             }
-        },
-        playerCardHelper() {
-            if (!this.togglePlayerCard) {
-                this.toggleInfo = true
-            }
         }
     }
 }

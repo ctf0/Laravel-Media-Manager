@@ -2,7 +2,7 @@ import addMinutes from 'date-fns/add_minutes'
 import getTime from 'date-fns/get_time'
 import uniq from 'lodash/uniq'
 
-import { Store, get, set, del, clear, keys } from 'idb-keyval'
+import {Store, get, set, del, clear, keys} from 'idb-keyval'
 const cacheStore = new Store(
     'ctf0-Media_Manager',   // db
     'laravel-media-manager' // store
@@ -35,6 +35,9 @@ export default {
                 this.toolBar = ls.toolBar || true
                 this.selectedFile = ls.selectedFileName || null
             }
+        },
+        saveUserPref() {
+            this.updateLs({'infoSidebar': this.infoSidebar})
         },
 
         /*                IndexedDb                */

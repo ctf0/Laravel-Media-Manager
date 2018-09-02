@@ -1,0 +1,109 @@
+@import '../extra/vars';
+
+.input {
+    box-shadow: none !important;
+}
+
+.input,
+.select select {
+    border-color: darken($active_theme, 5%) !important;
+    background-color: white;
+
+    &:hover {
+        border-color: darken($active_theme, 25%);
+    }
+}
+
+.card {
+    min-width: 480px;
+}
+
+.modal-card-head,
+.progress-bar,
+.icon {
+    &.is-warning {
+        background-color: $yellow;
+    }
+
+    &.is-danger {
+        background-color: $red;
+    }
+
+    &.is-link {
+        background-color: $blue;
+    }
+
+    &.is-success {
+        background-color: $green;
+    }
+
+    &.is-black {
+        background-color: $black;
+    }
+
+    &.is-danger,
+    &.is-link,
+    &.is-black,
+    &.is-success {
+        * {
+            color: $white;
+        }
+    }
+}
+
+.modal {
+    overflow: scroll;
+
+    .modal-background {
+        position: fixed;
+    }
+
+    .modal-card-title {
+        max-width: calc(100% - 20px);
+    }
+
+    .modal-card-foot {
+        justify-content: flex-end;
+        background-color: $white;
+    }
+
+    .modal-close {
+        z-index: 2;
+        top: 2rem;
+        width: 3rem;
+        max-width: 3rem;
+        height: 3rem;
+        max-height: 3rem;
+    }
+
+    &.is-active {
+        padding: 0.75rem 0.75rem 0;
+    }
+}
+
+.image {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+}
+
+@include media('max', 768) {
+    .card {
+        min-width: 100%;
+    }
+
+    .__modal-preview {
+        .modal-content,
+        .card-image {
+            max-width: 100%;
+        }
+
+        .pdf {
+            .card-image {
+                object {
+                    width: 800;
+                }
+            }
+        }
+    }
+}

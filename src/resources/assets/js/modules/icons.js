@@ -47,7 +47,7 @@ import 'vue-awesome/icons/rotate-left'
 import 'vue-awesome/icons/rotate-right'
 import 'vue-awesome/icons/arrows-h'
 import 'vue-awesome/icons/arrows-v'
-// camanjs
+// filters
 import 'vue-awesome/icons/sun-o'
 import 'vue-awesome/icons/adjust'
 import 'vue-awesome/icons/flash'

@@ -1,0 +1,25 @@
+## Fix
+- the ratio bar tool-tip not displaying correct count
+
+### Image Editor
+
+- empty visible image in editor when the sidebar is hidden
+- now you can save the image automatically after zooming in/out “without the need to create a cropping box”
+- updating the drag mode on dblclick
+- now the filters will work correctly as in the camanjs example, also both “greyscale & invert” filters are now switchable
+
+
+## New
+- add swipe gesture to the sidebar
+- add pinchIn gesture to refresh 
+- persist the sidebar status according to user actions.
+- add an helper event for hammerjs events bubbling check “https://github.com/ctf0/Laravel-Media-Manager/wiki/Customization-&--Optimization#customization”
+
+
+## Update
+
+- move all bulma styles to the component scope to avoid interfering with the main page css
+- reverse the gestures when using `__stack-files-reverse`
+- use `IntersectionObserver` inside the global search too
+- more cleanups
+- update rdme & wiki

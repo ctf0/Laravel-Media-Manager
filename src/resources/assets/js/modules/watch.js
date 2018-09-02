@@ -49,7 +49,7 @@ export default {
             }
         },
         bulkSelect(val) {
-            this.toggleUploadArea = false
+            this.UploadArea = false
 
             if (!val) {
                 this.firstMeta = false
@@ -115,7 +115,7 @@ export default {
                 this.resetInput('searchItemsCount')
             }
         },
-        toggleInfo() {
+        infoSidebar(val) {
             if (!this.firstRun && this.currentFileIndex) {
                 this.$nextTick(debounce(() => {
                     this.scrollByRow()
@@ -161,17 +161,13 @@ export default {
         },
         showProgress(val) {
             if (val) {
-                this.toggleUploadArea = false
-                this.toggleInfo = false
+                this.UploadArea = false
+                this.infoSidebar = false
                 this.isLoading = true
                 this.noFiles('hide')
                 this.loadingFiles('show')
             }
         },
-        plyr: 'autoPlay',
-        windowWidth: {
-            immediate: true,
-            handler: 'onResize'
-        }
+        plyr: 'autoPlay'
     }
 }

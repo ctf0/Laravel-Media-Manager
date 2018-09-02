@@ -58,7 +58,11 @@
         </transition>
 
         {{-- global search --}}
-        <global-search-panel :trans="trans" :file-type-is="fileTypeIs" :no-scroll="noScroll"></global-search-panel>
+        <global-search-panel
+            :trans="trans"
+            :file-type-is="fileTypeIs"
+            :no-scroll="noScroll"
+            :browser-support="browserSupport"></global-search-panel>
 
         {{-- top toolbar --}}
         <transition name="mm-list" mode="out-in">
@@ -345,7 +349,12 @@
                             <div class="control">
                                 <div class="field has-addons">
                                     <p class="control" v-if="!restrictModeIsOn()">
-                                        <global-search-btn route="{{ route('media.global_search') }}" :is-loading="isLoading" :trans="trans"></global-search-btn>
+                                        <global-search-btn
+                                            route="{{ route('media.global_search') }}"
+                                            :is-loading="isLoading"
+                                            :trans="trans"
+                                            :show-notif="showNotif">
+                                        </global-search-btn>
                                     </p>
 
                                     <p class="control has-icons-left">
@@ -380,7 +389,7 @@
 
         {{-- dropzone --}}
         <transition-group name="mm-list" mode="out-in" tag="section">
-            <div key="1" v-show="toggleUploadArea" class="media-manager__dz">
+            <div key="1" v-show="UploadArea" class="media-manager__dz">
                 <form id="new-upload" action="{{ route('media.upload') }}" :style="uploadPanelImg">
                     {{ csrf_field() }}
                     <input type="hidden" name="upload_path" :value="files.path">
@@ -456,9 +465,11 @@
 
                 {{-- files box --}}
                 <v-touch class="__stack-files"
-                    :class="{'__stack-sidebar-hidden' : !toggleInfo}"
+                    :class="{'__stack-sidebar-hidden' : !infoSidebar}"
                     ref="__stack-files"
-                    @swiperight="goToPrevFolder">
+                    @swiperight="goToPrevFolder"
+                    @swipeleft="goToPrevFolder"
+                    @pinchin="refresh">
 
                     {{-- no search --}}
                     <section>
@@ -505,7 +516,7 @@
                                     <div class="__box-preview">
                                         <template v-if="fileTypeIs(file, 'image')">
                                             <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN" :browser-support="browserSupport"></image-cache>
-                                            <image-intersect v-else :file="file" :browser-support="browserSupport"></image-intersect>
+                                            <image-intersect v-else :file="file" :browser-support="browserSupport" root-el=".__stack-files"></image-intersect>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -544,7 +555,11 @@
 
                 {{-- info sidebar --}}
                 <transition name="mm-slide" mode="out-in" appear>
-                    <div class="__stack-sidebar is-hidden-touch" v-if="toggleInfo">
+                    <v-touch v-if="infoSidebar" key="on"
+                        class="__stack-sidebar is-hidden-touch"
+                        @swiperight="toggleInfoSidebar(), saveUserPref()"
+                        @swipeleft="toggleInfoSidebar(), saveUserPref()">
+
                         {{-- preview --}}
                         <div class="__sidebar-preview">
                             <transition name="mm-slide" mode="out-in" appear>
@@ -690,15 +705,21 @@
                                         </table>
 
                                         <div class="__sidebar-zip" v-show="!isBulkSelecting()">
-                                            <span>{{ trans('MediaManager::messages.download.folder') }}:</span>
-                                            <form action="{{ route('media.folder_download') }}" method="post" @submit.prevent="ZipDownload($event)">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
-                                                <input type="hidden" name="name" :value="selectedFile.name">
-                                                <button type="submit" class="btn-plain zip" :disabled="config.gfi && selectedFile.count == 0">
-                                                    <span class="icon"><icon name="archive" scale="1.2"></icon></span>
-                                                </button>
-                                            </form>
+                                            <table>
+                                                <tr>
+                                                    <td class="t-key">{{ trans('MediaManager::messages.download.folder') }}:</td>
+                                                    <td class="t-val">
+                                                        <form action="{{ route('media.folder_download') }}" method="post" @submit.prevent="ZipDownload($event)">
+                                                            {{ csrf_field() }}
+                                                            <input type="hidden" name="folders" :value="folders.length ? '/' + folders.join('/') : null">
+                                                            <input type="hidden" name="name" :value="selectedFile.name">
+                                                            <button type="submit" class="btn-plain zip" :disabled="config.gfi && selectedFile.count == 0">
+                                                                <span class="icon"><icon name="archive" scale="1.2"></icon></span>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </template>
 
@@ -724,20 +745,28 @@
                                         </table>
 
                                         <div class="__sidebar-zip">
-                                            <span>{{ trans('MediaManager::messages.download.file') }}:</span>
-                                            {{-- normal --}}
-                                            <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
-                                                <span class="icon"><icon name="download" scale="1.2"></icon></span>
-                                            </button>
-                                            {{-- zip --}}
-                                            <form action="{{ route('media.files_download') }}" method="post" @submit.prevent="ZipDownload($event)" v-show="isBulkSelecting()">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
-                                                <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
-                                                <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
-                                                    <span class="icon"><icon name="archive" scale="1.2"></icon></span>
-                                                </button>
-                                            </form>
+                                            <table>
+                                                <tr>
+                                                    <td class="t-key">{{ trans('MediaManager::messages.download.file') }}:</td>
+                                                    <td class="t-val">
+                                                        {{-- normal --}}
+                                                        <button class="btn-plain" @click.prevent="saveFile(selectedFile)">
+                                                            <span class="icon"><icon name="download" scale="1.2"></icon></span>
+                                                        </button>
+                                                    </td>
+                                                    <td class="t-val">
+                                                        {{-- zip --}}
+                                                        <form action="{{ route('media.files_download') }}" method="post" @submit.prevent="ZipDownload($event)" v-show="isBulkSelecting()">
+                                                            {{ csrf_field() }}
+                                                            <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
+                                                            <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
+                                                            <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
+                                                                <span class="icon"><icon name="archive" scale="1.2"></icon></span>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </template>
 
@@ -785,8 +814,15 @@
                                 </div>
                             </transition-group>
                         </div>
-                    </div>
+                    </v-touch>
+
+                    <v-touch v-else-if="!infoSidebar && !playerCard"
+                        key="off" class="__sidebar-swipe-hidden"
+                        @swiperight="toggleInfoSidebar(), saveUserPref()"
+                        @swipeleft="toggleInfoSidebar(), saveUserPref()">
+                    </v-touch>
                 </transition>
+
             </section>
 
             {{-- ====================================================================== --}}
@@ -824,13 +860,13 @@
                 {{-- toggle sidebar --}}
                 <div class="level-right" v-show="!isLoading">
                     <div class="is-hidden-touch"
-                        @click="toggleInfoPanel()"
+                        @click="toggleInfoSidebar(), saveUserPref()"
                         v-tippy
                         title="t"
                         v-if="allItemsCount">
-                        <transition :name="toggleInfo ? 'mm-info-out' : 'mm-info-in'" mode="out-in">
-                            <div :key="toggleInfo ? 1 : 2" class="__stack-sidebar-toggle has-text-link">
-                                <template v-if="toggleInfo">
+                        <transition :name="infoSidebar ? 'mm-info-out' : 'mm-info-in'" mode="out-in">
+                            <div :key="infoSidebar ? 1 : 2" class="__stack-sidebar-toggle has-text-link">
+                                <template v-if="infoSidebar">
                                     <span>{{ trans('MediaManager::messages.close') }}</span>
                                     <span class="icon"><icon name="angle-double-right"></icon></span>
                                 </template>
@@ -877,7 +913,7 @@
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <cropper route="{{ route('media.uploadCropped') }}"
-                        :url="selectedFilePreview"
+                        :url="infoSidebar ? selectedFilePreview : selectedFile.path"
                         :translations="{{ json_encode([
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
                             'move' => trans('MediaManager::messages.move.main'), 
@@ -1050,7 +1086,7 @@
 
                         <footer class="modal-card-foot">
                             {{-- switcher --}}
-                            <div class="level is-mobile" style="width: 100%">
+                            <div class="level is-mobile full-width">
                                 <div class="level-left">
                                     <div class="level-item">
                                         <div class="form-switcher">
@@ -1129,7 +1165,6 @@
 
     </div>
 </media-manager>
-
 {{-- styles --}}
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>

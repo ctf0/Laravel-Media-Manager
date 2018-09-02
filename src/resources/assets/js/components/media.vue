@@ -1,3 +1,5 @@
+<style lang="scss" scoped src="../../sass/packages/bulma.scss"></style>
+
 <script>
 import debounce from 'lodash/debounce'
 
@@ -75,9 +77,9 @@ export default {
             no_search: false,
             randomNames: false,
             showProgress: false,
-            toggleInfo: false,
-            togglePlayerCard: false,
-            toggleUploadArea: false,
+            infoSidebar: false,
+            playerCard: false,
+            UploadArea: false,
             toolBar: true,
             useCopy: false,
             firstMeta: false,  // for alt + click selection
@@ -85,7 +87,6 @@ export default {
 
             progressCounter: 0,
             scrollByRows: 0,
-            windowWidth: window.outerWidth,
 
             searchFor: null,
             searchItemsCount: null,
@@ -110,22 +111,23 @@ export default {
             dimensions: [],
 
             uploadPanelGradients: [
-                'linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%)',
-                'linear-gradient(141deg, #04a6d7 0%, #209cee 71%, #3287f5 100%)',
-                'linear-gradient(141deg, #12af2f 0%, #23d160 71%, #2ce28a 100%)',
-                'linear-gradient(141deg, #ffaf24 0%, #ffdd57 71%, #fffa70 100%)',
-                'linear-gradient(141deg, #ff0561 0%, #ff3860 71%, #ff5257 100%)',
-                'linear-gradient(141deg, #1f191a 0%, #363636 71%, #46403f 100%)'
+                'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
+                'linear-gradient(141deg, #04a6d7 0, #209cee 71%, #3287f5 100%)',
+                'linear-gradient(141deg, #12af2f 0, #23d160 71%, #2ce28a 100%)',
+                'linear-gradient(141deg, #ffaf24 0, #ffdd57 71%, #fffa70 100%)',
+                'linear-gradient(141deg, #ff0561 0, #ff3860 71%, #ff5257 100%)',
+                'linear-gradient(141deg, #1f191a 0, #363636 71%, #46403f 100%)'
             ]
         }
     },
     created() {
         window.addEventListener('popstate', this.urlNavigation)
-        window.addEventListener('resize', () => this.windowWidth = document.body.clientWidth)
+        window.addEventListener('resize', this.onResize)
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
     mounted() {
+        this.onResize()
         this.eventsListener()
 
         this.$nextTick(debounce(() => {
@@ -238,7 +240,7 @@ export default {
 
                                     // play-pause media
                                     if (
-                                        !this.togglePlayerCard &&
+                                        !this.playerCard &&
                                         (this.selectedFileIs('video') || this.selectedFileIs('audio'))
                                     ) {
                                         this.playMedia()
@@ -271,7 +273,7 @@ export default {
 
                             if (key == 'esc') {
                                 // hide upload panel
-                                if (this.toggleUploadArea) {
+                                if (this.UploadArea) {
                                     this.toggleUploadPanel()
                                 }
 
@@ -329,8 +331,9 @@ export default {
                         /* end of we have files */
 
                         // toggle file details sidebar
-                        if (key == 't') {
-                            this.toggleInfoPanel()
+                        if (key == 't' && !this.playerCard) {
+                            this.toggleInfoSidebar()
+                            this.saveUserPref()
                         }
                     }
                     /* end of search is not focused */

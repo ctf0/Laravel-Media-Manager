@@ -71,7 +71,7 @@ export default {
 
         // upload panel
         uploadPanelImg() {
-            if (this.toggleUploadArea) {
+            if (this.UploadArea) {
                 let imgs = this.uploadPanelImgList
                 let grds = this.uploadPanelGradients
 
