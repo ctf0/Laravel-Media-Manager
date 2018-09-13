@@ -1,0 +1,209 @@
+@import '~cropperjs/dist/cropper.css';
+@import '../partials/vars';
+
+.__modal-editor {
+    .modal-background {
+        background-color: rgba($dark, 0.98);
+    }
+
+    .__cropper {
+        overflow: unset;
+        min-width: unset;
+        transform: translateX(-50px); // account for the presets width
+        background: transparent;
+        box-shadow: none;
+
+        .top,
+        .mid,
+        .bottom {
+            display: flex;
+        }
+
+        .__side-toolbar,
+        .__bottom-toolbar {
+            display: flex;
+            align-self: flex-start;
+            background-color: $editorBtns;
+        }
+
+        .top {
+            .__top-toolbar {
+                display: flex;
+                width: 100%;
+
+                .left,
+                .right {
+                    display: flex;
+                    background-color: $editorBtns;
+                }
+
+                .left {
+                    margin-right: auto;
+                }
+            }
+        }
+
+        .mid {
+            .__side-toolbar {
+                flex-flow: column nowrap;
+            }
+
+            .card-image {
+                position: relative;
+                margin: 1rem;
+                margin-right: 0;
+
+                .image {
+                    display: block;
+                    max-width: 50vw;
+                    max-height: 50vh;
+
+                    img {
+                        max-width: 100%;
+                    }
+                }
+
+                .__caman-presets {
+                    position: absolute;
+                    z-index: 1;
+                    top: 0;
+                    right: 0;
+                    padding-left: 1rem;
+                    transform: translateX(100%);
+
+                    h3 {
+                        font-weight: bold;
+                        margin: 0 0 0.5rem;
+                        padding: 0.75rem;
+                        text-align: center;
+                        color: white;
+                        border-radius: 3px;
+                        background: $text;
+                    }
+
+                    section {
+                        display: flex;
+                    }
+
+                    .col {
+                        display: flex;
+                        flex-flow: column nowrap;
+
+                        &:first-of-type {
+                            button {
+                                margin-left: 0;
+                            }
+                        }
+
+                        &:last-of-type {
+                            button {
+                                margin-right: 0;
+                            }
+                        }
+
+                        button {
+                            margin: 0.25rem;
+                            border-radius: 3px;
+                            background-color: $editorBtns;
+
+                            &:first-of-type {
+                                margin-top: 0;
+                            }
+
+                            &:last-of-type {
+                                margin-bottom: 0;
+                            }
+
+                            &:hover,
+                            &.is-active {
+                                background: $audio;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .bottom {
+            justify-content: flex-end;
+        }
+    }
+
+    .__caman {
+        position: relative;
+
+        .__caman-controls {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            transform: translateY(-100%);
+            background-color: $editorBtns;
+        }
+    }
+
+    .btn-plain {
+        padding: 0.75rem;
+        transition: all 0.25s ease-out;
+        color: white;
+
+        &:hover,
+        &.is-active {
+            background: $folder;
+        }
+
+        &:disabled {
+            background: rgba($black, 0.8);
+        }
+    }
+}
+
+@include media('max', 1087) {
+    .__modal-editor {
+        .image {
+            max-width: 75vw !important;
+        }
+    }
+}
+
+.cropper-line {
+    background-color: transparent !important;
+}
+
+.cropper-point {
+    z-index: 1;
+
+    &.point-e,
+    &.point-w,
+    &.point-s,
+    &.point-n {
+        background-color: transparent !important;
+    }
+
+    &.point-ne,
+    &.point-se,
+    &.point-nw,
+    &.point-sw {
+        width: 20px;
+        height: 20px;
+        border-style: solid;
+        border-color: white;
+        background-color: transparent !important;
+    }
+
+    &.point-ne {
+        border-width: 3px 3px 0 0;
+    }
+
+    &.point-nw {
+        border-width: 3px 0 0 3px;
+    }
+
+    &.point-se {
+        border-width: 0 3px 3px 0;
+    }
+
+    &.point-sw {
+        border-width: 0 0 3px 3px;
+    }
+}

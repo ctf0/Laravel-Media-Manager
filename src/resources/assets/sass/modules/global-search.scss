@@ -1,0 +1,129 @@
+@import '../partials/vars';
+@import '../partials/panels';
+
+.glbl_search_panel {
+    text-align: center;
+    color: darken($active_theme, 50%);
+    background-color: $active_theme;
+
+    .svg-prev-icon {
+        margin: 4rem 0;
+    }
+}
+
+.modal {
+    align-items: start;
+}
+
+.column {
+    backface-visibility: hidden;
+}
+
+.search-input {
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    width: 100%;
+    padding: 0 0.75rem;
+    transition: all 1s ease 0.5s;
+    transform: translate(25%, 35vh);
+    color: $white;
+
+    // animate linear-gradient
+    &::before {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        content: '';
+        transition: all 1s ease 1s;
+        opacity: 0;
+        background: linear-gradient(
+            to bottom,
+            $dark 0,
+            rgba($dark, 0.5) 65%,
+            transparent 100%
+        );
+    }
+
+    section {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 75%;
+        margin: 0 auto;
+    }
+
+    input {
+        font-size: 5rem;
+        line-height: 2.5;
+        transition: all 1s ease 0.5s;
+        color: $white;
+        border: none;
+        background-color: transparent;
+        caret-color: $primary;
+    }
+
+    .count {
+        text-align: center;
+
+        .title {
+            color: $white;
+            text-shadow: 4px 4px $red;
+        }
+
+        .heading {
+            font-weight: bold;
+            color: $white;
+        }
+    }
+
+    &.move {
+        transform: translate(0);
+
+        &::before {
+            opacity: 1;
+        }
+
+        input {
+            font-size: 3rem;
+            width: 100%;
+        }
+    }
+}
+
+.no-data {
+    text-align: center;
+
+    * {
+        color: rgba($white, 0.5);
+    }
+}
+
+.card {
+    overflow: hidden;
+    min-width: unset;
+    border-radius: 4px;
+}
+
+.icon {
+    vertical-align: middle;
+}
+
+@media screen and (max-width: 1083px) {
+    .search-input {
+        padding-right: 4rem;
+
+        section {
+            width: 100%;
+        }
+
+        input {
+            line-height: 2;
+        }
+    }
+
+    .modal-close {
+        top: 1.5rem;
+    }
+}

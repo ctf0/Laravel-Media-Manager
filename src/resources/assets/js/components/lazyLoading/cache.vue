@@ -1,5 +1,5 @@
 <template>
-    <div ref="wrapper" class="__box-img">
+    <div class="__box-img">
         <img v-if="src" ref="img" :src="src" async>
     </div>
 </template>
@@ -31,7 +31,7 @@ export default {
             })
         },
         removePhBorder() {
-            return this.$refs.wrapper.style.border = 'none'
+            return this.$el.style.border = 'none'
         },
         showImg(url) {
             return this.src = url

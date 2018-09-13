@@ -3,7 +3,7 @@ $list: (mm-list, mm-img-prv, mm-img-nxt, mm-info-in, mm-info-out, mm-slide, mm-c
 @each $class in $list {
     .#{$class}-enter-active,
     .#{$class}-leave-active {
-        transition: all 0.2s ease-out;
+        transition: all 0.2s;
     }
 
     .#{$class}-enter,

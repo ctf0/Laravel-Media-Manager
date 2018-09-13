@@ -1,6 +1,6 @@
 <template>
     <div class="__caman">
-        <button v-tippy="{arrow: true, theme: 'light'}" :class="{'is-active': controls}"
+        <button v-tippy="{arrow: true, theme: 'light'}" :class="{'is-active': controls || isUsed(filterName)}"
                 :disabled="processing"
                 :title="filterName"
                 class="btn-plain" @click="toggleControls()">
@@ -72,7 +72,7 @@ export default {
             if (s == 'dec') {
                 if (!this.decLimit()) {
                     c = this.getVal(range - step)
-                    return `${range} > ${c}`
+                    return `${c} < ${range}`
                 }
 
                 return range
@@ -106,10 +106,13 @@ export default {
         decLimit() {
             return this.range == this.min
         },
+        isUsed(name) {
+            return this.$parent.camanFilters.hasOwnProperty(name)
+        },
 
         // send changes
         update(val = null) {
-            this.$parent.updateFilter(this.filterName, this.getVal(val))
+            this.$parent.applyFilter(this.filterName, this.getVal(val))
         }
     },
     watch: {

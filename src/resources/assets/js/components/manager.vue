@@ -23,12 +23,15 @@ import Watchers from '../modules/watch'
 
 export default {
     components: {
-        contentRatio: require('./ratio.vue'),
         cropper: require('./imageEditor/cropper.vue'),
+        contentRatio: require('./utils/ratio.vue'),
         globalSearchBtn: require('./globalSearch/button.vue'),
         globalSearchPanel: require('./globalSearch/panel.vue'),
         imageCache: require('./lazyLoading/cache.vue'),
-        imageIntersect: require('./lazyLoading/normal.vue')
+        imageIntersect: require('./lazyLoading/normal.vue'),
+        usageIntroBtn: require('./usageIntro/button.vue'),
+        usageIntroPanel: require('./usageIntro/panel.vue'),
+        overlay: require('./utils/overlay.vue')
     },
     name: 'media-manager',
     mixins: [
@@ -68,31 +71,24 @@ export default {
             bulkSelectAll: false,
             checkForFolders: false,
             disableShortCuts: false,
+            firstMeta: false, // for alt + click selection
+            firstRun: true, // for delayed scroll on manager start
             folderWarning: false,
             imageWasEdited: false,
+            infoSidebar: false,
             isLoading: false,
             linkCopied: false,
+            introIsOn: false,
             loading_files: false,
             no_files: false,
             no_search: false,
             randomNames: false,
             showProgress: false,
-            infoSidebar: false,
-            playerCard: false,
-            UploadArea: false,
+            smallScreen: false,
             toolBar: true,
+            UploadArea: false,
             useCopy: false,
-            firstMeta: false,  // for alt + click selection
-            firstRun: true,    // for delayed scroll on manager init
 
-            progressCounter: 0,
-            scrollByRows: 0,
-
-            searchFor: null,
-            searchItemsCount: null,
-            selectedFile: null,
-            sortBy: null,
-            urlToUpload: null,
             activeModal: null,
             currentFileIndex: null,
             currentFilterName: null,
@@ -101,15 +97,19 @@ export default {
             newFilename: null,
             newFolderName: null,
             plyr: null,
+            searchFor: null,
+            searchItemsCount: null,
+            selectedFile: null,
+            sortBy: null,
+            urlToUpload: null,
 
-            files: [],
-            folders: [],
-            directories: [],
-            filterdList: [],
             bulkList: [],
-            lockedList: [],
             dimensions: [],
-
+            directories: [],
+            files: [],
+            filterdList: [],
+            folders: [],
+            lockedList: [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0, #209cee 71%, #3287f5 100%)',
@@ -117,12 +117,14 @@ export default {
                 'linear-gradient(141deg, #ffaf24 0, #ffdd57 71%, #fffa70 100%)',
                 'linear-gradient(141deg, #ff0561 0, #ff3860 71%, #ff5257 100%)',
                 'linear-gradient(141deg, #1f191a 0, #363636 71%, #46403f 100%)'
-            ]
+            ],
+            progressCounter: 0,
+            scrollByRows: 0
         }
     },
     created() {
-        window.addEventListener('popstate', this.urlNavigation)
         window.addEventListener('resize', this.onResize)
+        window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
         this.init()
     },
@@ -130,22 +132,27 @@ export default {
         this.onResize()
         this.eventsListener()
 
-        this.$nextTick(debounce(() => {
-            this.scrollByRow()
-        }, 1000))
+        this.$nextTick(
+            debounce(() => {
+                this.scrollByRow()
+            }, 1000)
+        )
     },
     updated: debounce(function() {
         this.initPlyr()
 
-        this.activeModal || this.inModal
-            ? this.noScroll('add')
-            : this.noScroll('remove')
+        if (!this.introIsOn) {
+            this.activeModal || this.inModal
+                ? this.noScroll('add')
+                : this.noScroll('remove')
+        }
 
         return this.checkForFolders = this.$refs.move_folder_dropdown.options[0]
             ? true
             : false
     }, 250),
     beforeDestroy() {
+        window.removeEventListener('resize', this.onResize)
         window.removeEventListener('popstate', this.urlNavigation)
         document.removeEventListener('keydown', this.shortCuts)
         this.destroyPlyr()
@@ -165,14 +172,16 @@ export default {
             }
 
             // normal
-            this.getPathFromUrl().then(() => {
-                return this.preSaved()
-            }).then(() => {
-                return this.getFiles(this.folders, null, this.selectedFile).then(() => {
-                    this.firstRun = false
-                    this.fileUpload()
+            this.getPathFromUrl()
+                .then(() => {
+                    return this.preSaved()
                 })
-            })
+                .then(() => {
+                    return this.getFiles(this.folders, null, this.selectedFile).then(() => {
+                        this.firstRun = false
+                        this.fileUpload()
+                    })
+                })
         },
 
         eventsListener() {
@@ -189,12 +198,13 @@ export default {
                 this.dimensions.push(obj)
             })
 
+            // stop listening to shortcuts
             EventHub.listen('disable-global-keys', (val) => {
                 this.disableShortCuts = val
             })
 
+            // gls
             EventHub.listen('search-go-to-folder', (data) => {
-                EventHub.fire('hide-global-search')
                 this.folders = this.arrayFilter(data.dir.split('/'))
 
                 return this.getFiles(this.folders, null, data.name).then(() => {
@@ -213,7 +223,6 @@ export default {
                     if (!this.isFocused('search', e)) {
                         // when no bulk selecting
                         if (!this.isBulkSelecting()) {
-
                             // open folder
                             if (key == 'enter' && this.selectedFile) {
                                 this.openFolder(this.selectedFile)
@@ -239,10 +248,7 @@ export default {
                                     e.preventDefault()
 
                                     // play-pause media
-                                    if (
-                                        !this.playerCard &&
-                                        (this.selectedFileIs('video') || this.selectedFileIs('audio'))
-                                    ) {
+                                    if (!this.smallScreen && (this.selectedFileIs('video') || this.selectedFileIs('audio'))) {
                                         this.playMedia()
                                     }
 
@@ -331,7 +337,7 @@ export default {
                         /* end of we have files */
 
                         // toggle file details sidebar
-                        if (key == 't' && !this.playerCard) {
+                        if (key == 't' && !this.smallScreen) {
                             this.toggleInfoSidebar()
                             this.saveUserPref()
                         }
@@ -368,38 +374,56 @@ export default {
         refresh() {
             EventHub.fire('clear-global-search')
             this.resetInput('searchFor')
-            return this.getFiles(this.folders, null, this.selectedFile ? this.selectedFile.name : null)
+
+            return this.getFiles(
+                this.folders,
+                null,
+                this.selectedFile ? this.selectedFile.name : null
+            )
         },
         moveItem() {
-            if (this.$refs.move.disabled) {
-                return
-            }
+            this.$nextTick(() => {
+                if (this.$refs.move.disabled) {
+                    return
+                }
 
-            this.toggleModal('move_file_modal')
+                this.toggleModal('move_file_modal')
+            })
         },
         renameItem() {
-            this.toggleModal('rename_file_modal')
+            this.$nextTick(() => {
+                if (this.$refs.rename.disabled) {
+                    return
+                }
+
+                this.toggleModal('rename_file_modal')
+            })
         },
         deleteItem() {
-            if (this.$refs.delete.disabled) {
-                return
-            }
+            this.$nextTick(() => {
+                if (this.$refs.delete.disabled) {
+                    return
+                }
 
-            if (!this.isBulkSelecting() && this.selectedFile) {
-                this.selectedFileIs('folder')
-                    ? this.folderWarning = true
-                    : this.folderWarning = false
-            }
-
-            if (this.bulkItemsCount) {
-                this.bulkItemsFilter.some((item) => {
-                    return this.fileTypeIs(item, 'folder')
+                if (!this.isBulkSelecting() && this.selectedFile) {
+                    this.selectedFileIs('folder')
                         ? this.folderWarning = true
                         : this.folderWarning = false
-                })
-            }
+                }
 
-            this.toggleModal('confirm_delete_modal')
+                if (this.bulkItemsCount) {
+                    this.bulkItemsFilter.some((item) => {
+                        return this.fileTypeIs(item, 'folder')
+                            ? this.folderWarning = true
+                            : this.folderWarning = false
+                    })
+                }
+
+                this.toggleModal('confirm_delete_modal')
+            })
+        },
+        createNewFolder() {
+            this.toggleModal('new_folder_modal')
         }
     },
     render() {}

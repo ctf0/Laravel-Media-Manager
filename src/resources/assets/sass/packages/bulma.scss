@@ -1,4 +1,4 @@
-@import '../extra/vars';
+@import '../partials/vars';
 
 .input {
     box-shadow: none !important;
@@ -15,7 +15,9 @@
 }
 
 .card {
-    min-width: 480px;
+    overflow: hidden;
+    min-width: unset;
+    border-radius: 4px;
 }
 
 .modal-card-head,
@@ -90,20 +92,5 @@
 @include media('max', 768) {
     .card {
         min-width: 100%;
-    }
-
-    .__modal-preview {
-        .modal-content,
-        .card-image {
-            max-width: 100%;
-        }
-
-        .pdf {
-            .card-image {
-                object {
-                    width: 800;
-                }
-            }
-        }
     }
 }

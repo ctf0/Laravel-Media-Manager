@@ -2,7 +2,9 @@ require('../packages/download.min')
 
 export default {
     methods: {
-        saveFile(item) {
+        saveFile(item, e = null) {
+            this.clearFocus()
+
             if (this.isBulkSelecting()) {
                 this.bulkList.forEach((e) => {
                     if (e.type == 'folder') {
@@ -23,12 +25,12 @@ export default {
                 return e.type == 'folder'
             })
         },
+        clearFocus() {
+            return document.activeElement.blur()
+        },
 
         ZipDownload({target}) {
-            // de-select download btn
-            Array.from(document.querySelectorAll('.zip')).forEach((e) => {
-                e.blur()
-            })
+            this.clearFocus()
 
             this.browserSupport('Echo') && this.config.broadcasting
                 ? this.showProgress = true
@@ -41,7 +43,7 @@ export default {
             this.progressCounter = 0
             this.showProgress = false
             this.isLoading = false
-            this.playerCardHelper()
+            this.smallScreenHelper()
             this.loadingFiles('hide')
         }
     }

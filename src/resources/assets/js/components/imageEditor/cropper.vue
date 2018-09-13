@@ -3,53 +3,66 @@
 
         <!-- effects -->
         <div class="top">
-            <div v-if="imageCaman" class="__cropper-top-toolbar">
-                <filters :step="10" :min="-100" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="sun-o" filter-name="brightness"/>
-                <filters :step="10" :min="-100" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="adjust" filter-name="contrast"/>
-                <filters :step="10" :min="-100" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="eye-slash" filter-name="saturation"/>
-                <filters :step="10" :min="-100" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="flash" filter-name="vibrance"/>
-                <filters :step="10" :min="-100" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="thermometer-half" filter-name="exposure"/>
-                <filters :step="5" :min="0" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="eyedropper" filter-name="hue"/>
-                <filters :step="5" :min="0" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="lemon-o" filter-name="sepia"/>
-                <filters :step="0.1" :min="0" :max="10"
-                         :reset="reset" :processing="processing"
-                         icon="flask" filter-name="gamma"/>
-                <filters :step="5" :min="0" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="dot-circle-o" filter-name="noise"/>
-                <filters :step="5" :min="0" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="scissors" filter-name="clip"/>
-                <filters :step="5" :min="0" :max="100"
-                         :reset="reset" :processing="processing"
-                         icon="diamond" filter-name="sharpen"/>
-                <filters :step="1" :min="0" :max="20"
-                         :reset="reset" :processing="processing"
-                         icon="filter" filter-name="stackBlur"/>
-                <filters :reset="reset" :processing="processing"
-                         icon="shield" filter-name="greyscale"/>
-                <filters :reset="reset" :processing="processing"
-                         icon="cube" filter-name="invert"/>
+            <div v-if="imageCaman" class="__top-toolbar">
+                <div class="left">
+                    <filters :step="10" :min="-100" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="sun-o" filter-name="brightness"/>
+                    <filters :step="10" :min="-100" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="adjust" filter-name="contrast"/>
+                    <filters :step="10" :min="-100" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="eye-slash" filter-name="saturation"/>
+                    <filters :step="10" :min="-100" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="flash" filter-name="vibrance"/>
+                    <filters :step="10" :min="-100" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="thermometer-half" filter-name="exposure"/>
+                    <filters :step="5" :min="0" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="eyedropper" filter-name="hue"/>
+                    <filters :step="5" :min="0" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="lemon-o" filter-name="sepia"/>
+                    <filters :step="0.1" :min="0" :max="10"
+                             :reset="reset" :processing="processing"
+                             icon="flask" filter-name="gamma"/>
+                    <filters :step="5" :min="0" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="dot-circle-o" filter-name="noise"/>
+                    <filters :step="5" :min="0" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="scissors" filter-name="clip"/>
+                    <filters :step="5" :min="0" :max="100"
+                             :reset="reset" :processing="processing"
+                             icon="diamond" filter-name="sharpen"/>
+                    <filters :step="1" :min="0" :max="20"
+                             :reset="reset" :processing="processing"
+                             icon="filter" filter-name="stackBlur"/>
+                    <filters :reset="reset" :processing="processing"
+                             icon="shield" filter-name="greyscale"/>
+                    <filters :reset="reset" :processing="processing"
+                             icon="cube" filter-name="invert"/>
+                </div>
+
+                <div class="right">
+                    <!-- reset filters -->
+                    <button v-tippy="{arrow: true, theme: 'light'}"
+                            :disabled="processing || haveFilters()"
+                            :title="trans('crop_reset_filters')"
+                            class="btn-plain"
+                            @click="resetFilters()">
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <div class="mid">
             <!-- controls -->
-            <div v-if="imageCropper" class="__cropper-side-toolbar">
+            <div v-if="imageCropper" class="__side-toolbar">
                 <button v-tippy="{arrow: true, theme: 'light'}"
                         :class="{'is-active': dragModeIs('move')}"
                         :disabled="processing"
@@ -110,18 +123,21 @@
                 </button>
             </div>
 
-            <!-- img -->
             <div class="card-image">
+                <!-- img -->
                 <figure class="image">
                     <img id="cropper" :src="url" crossOrigin>
                 </figure>
+
+                <!-- presets -->
+                <presets :image-cropper="imageCropper" :processing="processing"/>
             </div>
         </div>
 
         <!-- operations -->
         <div class="bottom">
-            <div v-if="imageCropper" class="__cropper-bottom-toolbar">
-                <!-- reset -->
+            <div v-if="imageCropper" class="__bottom-toolbar">
+                <!-- reset everything -->
                 <button v-tippy="{arrow: true, theme: 'light'}"
                         :disabled="processing || !hasChanged"
                         :title="trans('crop_reset')"
@@ -151,66 +167,26 @@
     </div>
 </template>
 
-<style lang="scss">
-    .cropper-line {
-        background-color: transparent !important;
-    }
-
-    .cropper-point {
-        z-index: 1;
-
-        &.point-e,
-        &.point-w,
-        &.point-s,
-        &.point-n {
-            background-color: transparent !important;
-        }
-
-        &.point-ne,
-        &.point-se,
-        &.point-nw,
-        &.point-sw {
-            width: 20px;
-            height: 20px;
-            border-style: solid;
-            border-color: white;
-            background-color: transparent !important;
-        }
-
-        &.point-ne {
-            border-width: 3px 3px 0 0;
-        }
-
-        &.point-nw {
-            border-width: 3px 0 0 3px;
-        }
-
-        &.point-se {
-            border-width: 0 3px 3px 0;
-        }
-
-        &.point-sw {
-            border-width: 0 0 3px 3px;
-        }
-    }
-</style>
+<style lang="scss" src="../../../sass/modules/image-editor.scss"></style>
 
 <script>
-import Filters from './filters.vue'
-import Cropper from 'cropperjs'
+import isEmpty from 'lodash/isEmpty'
 import omit from 'lodash/omit'
 
+import Filters from './filters.vue'
+import Presets from './presets.vue'
+import Cropper from 'cropperjs'
+
 export default {
-    components: {Filters},
+    components: {Filters, Presets},
     props: ['url', 'translations', 'route'],
     data() {
         return {
             imageCaman: null,
             imageCropper: null,
-            dragMode: 'crop',
+            dragMode: 'move',
             hasChanged: false,
             croppedByUser: false,
-            hasChangedByFilter: false,
             processing: false,
             reset: false,
             camanFilters: {}
@@ -238,17 +214,23 @@ export default {
         }
     },
     created() {
-        window.addEventListener('dblclick', (e) => {
-            this.dragMode = e.target.dataset.cropperAction || this.dragMode
-        })
+        window.addEventListener('dblclick', this.ondblclick)
     },
     mounted() {
         this.camanStart()
     },
+    beforeDestroy() {
+        window.removeEventListener('dblclick', this.ondblclick)
+    },
     methods: {
+        // init
         camanStart() {
             this.imageCaman = Caman('#cropper', () => {
                 this.cropperStart()
+            })
+
+            Caman.Event.listen('processStart', () => {
+                this.processing = true
             })
 
             Caman.Event.listen('renderFinished', () => {
@@ -304,11 +286,9 @@ export default {
                 case 'zoom-in':
                     cropper.zoom(0.1)
                     return this.hasChanged = true
-                    break
                 case 'zoom-out':
                     cropper.zoom(-0.1)
                     return this.hasChanged = true
-                    break
                 case 'rotate-left':
                     cropper.rotate(-this.rotation)
                     break
@@ -345,36 +325,81 @@ export default {
                 getData.rotate != 0 ||
                 getData.scaleX != 1 ||
                 getData.scaleY != 1 ||
-                cropper.cropped ||
-                this.hasChangedByFilter
+                cropper.cropped
                     ? true
                     : false
         },
         resetAll() {
             this.$nextTick(() => {
-                let vm = this
-                let cropper = vm.imageCropper
-                let caman = vm.imageCaman
+                let cropper = this.imageCropper
 
-                vm.dragMode = cropper.options.dragMode
-                vm.hasChanged = false
-                vm.croppedByUser = false
-                vm.hasChangedByFilter = false
-                vm.reset = true
-                vm.camanFilters = {}
+                this.dragMode = cropper.options.dragMode
+                this.hasChanged = false
+                this.croppedByUser = false
+                this.reset = true
 
                 cropper.reset() // position
                 cropper.clear() // selection
-                cropper.setDragMode(vm.dragMode) // active btn
+                cropper.setDragMode(this.dragMode) // active btn
 
-                caman.reset()
-                caman.render(function() {
-                    cropper.replace(this.toBase64(), true) // image
+                if (this.haveFilters()) this.resetFilters()
+                this.reset = false
+            })
+        },
 
-                    vm.$nextTick(() => {
-                        vm.reset = false
-                    })
-                })
+        // filters
+        resetFilters() {
+            this.camanFilters = {}
+            this.imageCaman.reset()
+            this.renderImage()
+            this.checkForChanges()
+        },
+        haveFilters() {
+            return isEmpty(this.camanFilters)
+        },
+
+        // utils
+        dragModeIs(val) {
+            return this.dragMode == val
+        },
+        trans(val) {
+            return this.translations[val]
+        },
+        ondblclick(e) {
+            this.dragMode = e.target.dataset.cropperAction || this.dragMode
+        },
+
+        // filters
+        applyFilter(name, val) {
+            this.hasChanged = true
+
+            let filters = this.camanFilters
+            let caman = this.imageCaman
+
+            // make nullable filters switchable
+            if (!val && filters.hasOwnProperty(name)) {
+                filters = this.camanFilters = omit(filters, name)
+            } else {
+                filters[name] = val
+            }
+
+            // reset prev
+            caman.reset()
+
+            // re-apply all filters
+            for (let name in filters) {
+                caman[name](filters[name])
+            }
+
+            // render result
+            this.renderImage()
+        },
+        renderImage() {
+            let caman = this.imageCaman
+            let cropper = this.imageCropper
+
+            return caman.render(function() {
+                cropper.replace(this.toBase64(), true)
             })
         },
 
@@ -428,49 +453,6 @@ export default {
                 console.error(err)
                 parent.ajaxError()
             })
-        },
-
-        // utils
-        dragModeIs(val) {
-            return this.dragMode == val
-        },
-        trans(val) {
-            return this.translations[val]
-        },
-
-        // filters
-        updateFilter(name, val) {
-            this.processing = true
-            this.hasChangedByFilter = true
-            let cropper = this.imageCropper
-            let caman = this.imageCaman
-
-            // make "greyscale/invert" switchable
-            if (['greyscale', 'invert'].indexOf(name) >= 0 && this.camanFilters.hasOwnProperty(name)) {
-                this.camanFilters = omit(this.camanFilters, name)
-            } else {
-                this.camanFilters[name] = val
-            }
-
-            // reset prev
-            caman.revert(false)
-
-            // re-apply all filters
-            for (let name in this.camanFilters) {
-                caman[name](this.camanFilters[name])
-            }
-
-            // render result
-            caman.render(function() {
-                cropper.replace(this.toBase64(), true)
-            })
-        }
-    },
-    watch: {
-        hasChangedByFilter(val) {
-            if (val == true) {
-                this.hasChanged = true
-            }
         }
     }
 }

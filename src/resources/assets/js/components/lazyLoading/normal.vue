@@ -12,8 +12,16 @@ export default {
     methods: {
         sendDimensionsToParent() {
             const manager = this
+            let img = this.$refs.img
 
-            this.$refs.img.addEventListener('load', function() {
+            img.addEventListener('load', function() {
+                if (this.naturalWidth <= 1500) {
+                    img.style.objectFit = 'cover'
+                }
+
+                manager.$el.style.border = 'none'
+                img.style.opacity = ''
+
                 EventHub.fire('save-image-dimensions', {
                     url: manager.file.path,
                     val: `${this.naturalWidth} x ${this.naturalHeight}`
@@ -26,11 +34,13 @@ export default {
             immediate: true,
             handler(val, oldVal) {
                 if (val) {
-                    this.src = this.file.path
-                    this.$el.style.border = 'none'
+                    this.fetchImg(this.file.path).then((img) => {
+                        this.src = img
 
-                    this.$nextTick(() => {
-                        this.sendDimensionsToParent()
+                        this.$nextTick(() => {
+                            this.$refs.img.style.opacity = 0
+                            this.sendDimensionsToParent()
+                        })
                     })
                 }
             }

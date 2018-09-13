@@ -9,6 +9,8 @@ export default {
                 return files.some((item) => {
                     return this.IsLocked(item)
                 })
+            } else if (val == 'selected') {
+                return this.bulkItemsCount && this.bulkItemsCount > 1 ? true : false
             }
 
             return files.some((item) => {
@@ -42,6 +44,9 @@ export default {
                 this.resetInput('currentFilterName')
             } else if (val == 'locked') {
                 this.filterdList = files.filter((item) => this.IsLocked(item))
+                this.currentFilterName = val
+            } else if (val == 'selected') {
+                this.filterdList = this.bulkList
                 this.currentFilterName = val
             } else {
                 this.filterdList = files.filter((item) => {

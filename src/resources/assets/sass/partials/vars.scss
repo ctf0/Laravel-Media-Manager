@@ -23,11 +23,6 @@ $shadow_1: 0 10px 45px 0 rgba($black, 0.2);
 $shadow_2: 0 6px 25px 0 rgba($black, 0.3);
 $shadow_3: 0 6px 10px rgba($black, 0.08);
 
-// plyr
-$plyr-1: #3bea91;
-$plyr-2: #7f4cf1;
-$plyr-3: #f5164d;
-
 // ratio
 $image: linear-gradient(45deg, #ff9882 0, #ffbb0a 100%);
 $audio: linear-gradient(45deg, #6868f1 0, #204ee5 100%);
@@ -39,3 +34,4 @@ $pdf: linear-gradient(45deg, #efb1ff 0, #9951ff 100%);
 
 // other
 $breadcrumb: #dde3e6;
+$editorBtns: rgba(darken($active_theme, 70%), 0.8);

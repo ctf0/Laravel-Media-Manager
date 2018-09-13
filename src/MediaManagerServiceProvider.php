@@ -135,7 +135,7 @@ class MediaManagerServiceProvider extends ServiceProvider
 <<<EOT
 
 // MediaManager
-mix.sass('resources/assets/vendor/MediaManager/sass/media.scss', 'public/assets/vendor/MediaManager/style.css')
+mix.sass('resources/assets/vendor/MediaManager/sass/manager.scss', 'public/assets/vendor/MediaManager/style.css')
     .copyDirectory('resources/assets/vendor/MediaManager/dist', 'public/assets/vendor/MediaManager')
 EOT;
 

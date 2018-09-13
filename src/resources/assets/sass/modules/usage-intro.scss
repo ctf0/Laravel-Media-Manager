@@ -1,0 +1,15 @@
+.usage-intro {
+    position: absolute;
+    z-index: 1;
+    right: 1rem;
+    bottom: 1rem;
+    display: none;
+    transition: transform 0.3s, color 0.3s, box-shadow 0.3s;
+    border-radius: 100vw;
+
+    &:hover {
+        transform: translateY(-0.7rem);
+        color: $red;
+        box-shadow: 0 15px 30px 0 rgba($red, 0.11), 0 5px 15px 0 rgba($red, 0.08);
+    }
+}

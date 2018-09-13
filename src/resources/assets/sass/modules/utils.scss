@@ -1,0 +1,72 @@
+.full-width {
+    width: 100%;
+}
+
+.p-l-0 {
+    padding-left: 0 !important;
+}
+
+.p-r-0 {
+    padding-right: 0 !important;
+}
+
+.p-t-10 {
+    padding-top: 10px !important;
+}
+
+.m-v-15 {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+.m-v-10 {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.m-t-5 {
+    margin-top: 5px !important;
+}
+
+.m-b-10 {
+    margin-bottom: 10px !important;
+}
+
+.m-l-50 {
+    margin-left: 50px !important;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+.link {
+    cursor: pointer;
+}
+
+.btn-plain {
+    padding: 0;
+    cursor: pointer;
+    vertical-align: bottom;
+    color: $black;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+
+    &:focus {
+        border: none;
+        box-shadow: none !important;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+
+        * {
+            color: darken($active_theme, 25%);
+        }
+    }
+}
+
+a[target='_blank'] {
+    cursor: alias;
+}

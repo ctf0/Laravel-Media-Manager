@@ -6,35 +6,13 @@
            :style="getRatio(val)"
            :title="getToolTipContent(key, val)"
            :key="key"
-           class="progress-bar progress-bar-striped active">
+           class="progress-bar">
             <strong v-show="val > 0">{{ key }}</strong>
         </p>
     </div>
 </template>
 
-<style scoped lang="scss">
-    .progress-bar {
-        box-shadow: none;
-        background-color: black;
-        position: relative;
-
-        &::after {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            content: '';
-            mix-blend-mode: screen;
-        }
-
-        strong {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-transform: uppercase;
-            mix-blend-mode: difference;
-        }
-    }
-</style>
+<style scoped lang="scss" src="../../../sass/modules/ratio-bar.scss"></style>
 
 <script>
 export default {

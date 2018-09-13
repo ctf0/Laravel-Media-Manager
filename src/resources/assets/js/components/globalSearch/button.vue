@@ -1,5 +1,6 @@
 <template>
-    <button v-tippy :disabled="loading || isLoading"
+    <button v-tippy
+            :disabled="loading || isLoading"
             :title="trans('glbl_search')"
             class="button"
             @click="done ? showSearchPanel() : init()">

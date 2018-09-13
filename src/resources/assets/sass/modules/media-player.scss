@@ -1,0 +1,42 @@
+@charset 'UTF-8';
+$plyr-color-main: #f5164d !default;
+$plyr-color-gunmetal: #2f343d !default;
+$plyr-color-fiord: #4f5b5f !default;
+$plyr-color-lynch: #6b7d85 !default;
+$plyr-color-heather: #b7c5cd !default;
+
+@import '~plyr/src/sass/settings/breakpoints';
+@import '~plyr/src/sass/settings/cosmetics';
+@import '~plyr/src/sass/settings/type';
+@import '~plyr/src/sass/settings/captions';
+@import '~plyr/src/sass/settings/controls';
+@import '~plyr/src/sass/settings/helpers';
+@import '~plyr/src/sass/settings/progress';
+@import '~plyr/src/sass/settings/sliders';
+@import '~plyr/src/sass/lib/animation';
+@import '~plyr/src/sass/lib/functions';
+@import '~plyr/src/sass/lib/mixins';
+@import '~plyr/src/sass/base';
+@import '~plyr/src/sass/components/control';
+@import '~plyr/src/sass/components/controls';
+@import '~plyr/src/sass/components/sliders';
+@import '~plyr/src/sass/components/times';
+@import '~plyr/src/sass/components/video';
+@import '~plyr/src/sass/components/progress';
+@import '~plyr/src/sass/components/volume';
+@import '~plyr/src/sass/states/fullscreen';
+@import '~plyr/src/sass/utils/animation';
+@import '~plyr/src/sass/utils/hidden';
+
+.plyr--full-ui input[type=range] {
+    color: #3bea91;
+}
+
+.plyr__control--overlaid {
+    background: #7f4cf1;
+}
+
+.plyr__control.plyr__tab-focus,
+.plyr--full-ui input[type=range].plyr__tab-focus::-webkit-slider-runnable-track {
+    box-shadow: none;
+}

@@ -52,7 +52,7 @@ require('./modules/icons')
 Vue.component('icon', require('vue-awesome/components/Icon'))
 
 /*                Components                */
-Vue.component('MediaManager', require('./components/media.vue'))
+Vue.component('MediaManager', require('./components/manager.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */

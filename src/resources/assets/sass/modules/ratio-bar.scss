@@ -1,0 +1,41 @@
+@import '../partials/vars';
+
+.progress-bar {
+    box-shadow: none;
+
+    strong {
+        display: none;
+        overflow: hidden;
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        mix-blend-mode: difference;
+    }
+}
+
+.is-audio {
+    background: $audio;
+}
+
+.is-video {
+    background: $video;
+}
+
+.is-image {
+    background: $image;
+}
+
+.is-text {
+    background: $text;
+}
+
+.is-folder {
+    background: $folder;
+}
+
+.is-application {
+    background: $application;
+}
+
+.is-pdf {
+    background: $pdf;
+}

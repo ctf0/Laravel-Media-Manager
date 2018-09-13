@@ -6,7 +6,8 @@ export default {
         initPlyr() {
             let options = {
                 debug: false,
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                tooltips: {controls: false, seek: false}
             }
 
             this.plyr = new Plyr(document.querySelector('[data-player]'), options)
@@ -16,7 +17,7 @@ export default {
             this.plyr = null
         },
         playMedia() {
-            return this.plyr.togglePlay()
+            return this.plyr ? this.plyr.togglePlay() : false
         },
         autoPlay() {
             if (this.filterNameIs('audio') || this.filterNameIs('video')) {

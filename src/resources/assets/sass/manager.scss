@@ -1,28 +1,14 @@
-[v-cloak] {
-    display: none;
-}
-
-@import './extra/vars';
-@import './extra/loaders';
-@import './extra/vue';
+// self
+@import './partials/defaults';
+@import './partials/vars';
+@import './partials/vue';
+@import './partials/loaders';
 @import './packages/animate';
 @import './packages/progress';
 @import './packages/switcher';
-
-// packages
-@import '~plyr/dist/plyr.css';
-@import '~cropperjs/dist/cropper.css';
-
-/*                global search                */
-.glbl_search_panel {
-    text-align: center;
-    color: darken($active_theme, 50%);
-    background-color: $active_theme;
-
-    .svg-prev-icon {
-        margin: 4rem 0;
-    }
-}
+@import './modules/utils';
+@import './modules/media-player';
+@import './modules/usage-intro';
 
 /*                toolbar                */
 .media-manager__toolbar {
@@ -44,8 +30,21 @@
 
 /*                upload                */
 .media-manager__dz {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    transition: all 0.2s;
+    opacity: 0;
+    border-radius: 5px;
+}
+
+.__dz-active {
+    visibility: unset;
+    height: unset;
     margin: 15px 0;
     padding: 3px;
+    opacity: unset;
     border: 2px dashed darken($active_theme, 5%);
     border-radius: 5px;
 }
@@ -321,8 +320,14 @@
     transition: all 0.25s;
     background-color: $white;
 
-    * {
-        backface-visibility: hidden;
+    &.dz-drag-hover {
+        background-color: rgba($blue, 0.25);
+
+        .__stack-files,
+        .__stack-sidebar {
+            opacity: 0.25;
+            filter: blur(5px);
+        }
     }
 }
 
@@ -332,7 +337,7 @@
     }
 }
 
-// left "files list"
+// files list container
 .__stack-files {
     position: absolute;
     top: 0;
@@ -443,7 +448,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                // object-fit: cover;
                 object-position: center;
             }
         }
@@ -531,7 +536,7 @@
     }
 }
 
-// right "file info sidebar"
+// info sidebar
 .__stack-sidebar {
     position: relative;
     display: flex;
@@ -689,29 +694,46 @@
         color: darken($active_theme, 50%);
     }
 
-    .modal-content,
-    .card-image {
+    .icon {
+        border-radius: 4px;
+    }
+
+    .modal-content {
         width: auto;
-        max-width: 480px;
+        max-width: 25vw;
         margin: 0;
     }
 
     .pdf-prev {
-        .card-content {
-            border-top: 1px solid darken($active_theme, 5%);
-        }
-
         .card-image {
-            height: 480px;
+            height: 25vh;
 
             object {
-                width: 480px;
+                display: block;
+                width: 100%;
+                height: 100%;
             }
         }
     }
 
     .audio-prev {
         border-bottom: 1px dashed darken($active_theme, 5%);
+    }
+}
+
+@include media('max', 1087) {
+    .__modal-preview {
+        .modal-content {
+            max-width: 75vw;
+        }
+    }
+}
+
+@include media('max', 768) {
+    .__modal-preview {
+        .modal-content {
+            max-width: 100%;
+        }
     }
 }
 
@@ -729,95 +751,11 @@
     align-self: center;
 }
 
-/*                Editor                */
-$editorBtns: rgba(darken($active_theme, 70%), 0.8);
-
-.__modal-editor {
-    .__cropper {
-        min-width: unset;
-        background: transparent;
-        box-shadow: none;
-
-        .__cropper-top-toolbar,
-        .__cropper-side-toolbar,
-        .__cropper-bottom-toolbar {
-            display: flex;
-            align-self: flex-start;
-            background-color: $editorBtns;
-        }
-
-        .top,
-        .mid,
-        .bottom {
-            display: flex;
-        }
-
-        .mid {
-            .__cropper-side-toolbar {
-                flex-flow: column nowrap;
-            }
-
-            .card-image {
-                margin: 1rem 0 1rem 1rem;
-
-                .image {
-                    max-width: 50vw;
-                    max-height: 50vh;
-                }
-
-                img {
-                    max-width: 100%;
-                }
-            }
-        }
-
-        .bottom {
-            justify-content: flex-end;
-        }
-    }
-
-    .__caman {
-        position: relative;
-
-        .__caman-controls {
-            position: absolute;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            transform: translateY(-100%);
-            background-color: $editorBtns;
-        }
-    }
-
-    .btn-plain {
-        padding: 0.75rem;
-        transition: all 0.25s ease-out;
-        color: white;
-
-        &:hover,
-        &.is-active {
-            background-color: $blue;
-        }
-
-        &:disabled {
-            background-color: rgba($black, 0.8);
-        }
-    }
-}
-
-@include media('max', 1087) {
-    .__modal-editor {
-        .image {
-            max-width: 75vw !important;
-        }
-    }
-}
-
 /*                Options                */
 
 /* manager in modal */
 .modal-manager__Inmodal {
-    > div.modal-content {
+    > .modal-content {
         width: 85%;
     }
 
@@ -930,149 +868,9 @@ $editorBtns: rgba(darken($active_theme, 70%), 0.8);
     }
 }
 
-/*                Ratio bar                */
-.is-audio {
-    &::after {
-        background: $audio;
-    }
-}
-
-.is-video {
-    &::after {
-        background: $video;
-    }
-}
-
-.is-image {
-    &::after {
-        background: $image;
-    }
-}
-
-.is-text {
-    &::after {
-        background: $text;
-    }
-}
-
-.is-folder {
-    &::after {
-        background: $folder;
-    }
-}
-
-.is-application {
-    &::after {
-        background: $application;
-    }
-}
-
-.is-pdf {
-    &::after {
-        background: $pdf;
-    }
-}
-
 /*                Progress bar                */
 @include media('max', 768) {
     .progress-bar strong {
         display: none;
     }
-}
-
-/*                Plyr                */
-.plyr--full-ui input[type=range] {
-    color: $plyr-1;
-}
-
-.plyr__control--overlaid {
-    background: $plyr-2;
-}
-
-.plyr--video,
-.plyr--audio {
-    .plyr__control.plyr__tab-focus,
-    .plyr__control:hover,
-    .plyr__control[aria-expanded=true] {
-        background: $plyr-3;
-    }
-}
-
-.plyr__control.plyr__tab-focus,
-.plyr--full-ui input[type=range].plyr__tab-focus::-webkit-slider-runnable-track {
-    box-shadow: none;
-}
-
-/*                utilities                */
-.full-width {
-    width: 100%;
-}
-
-.p-l-0 {
-    padding-left: 0 !important;
-}
-
-.p-r-0 {
-    padding-right: 0 !important;
-}
-
-.p-t-10 {
-    padding-top: 10px !important;
-}
-
-.m-v-15 {
-    margin-top: 15px !important;
-    margin-bottom: 15px !important;
-}
-
-.m-v-10 {
-    margin-top: 10px !important;
-    margin-bottom: 10px !important;
-}
-
-.m-t-5 {
-    margin-top: 5px !important;
-}
-
-.m-b-10 {
-    margin-bottom: 10px !important;
-}
-
-.m-l-50 {
-    margin-left: 50px !important;
-}
-
-.no-scroll {
-    overflow: hidden;
-}
-
-.link {
-    cursor: pointer;
-}
-
-.btn-plain {
-    padding: 0;
-    cursor: pointer;
-    vertical-align: bottom;
-    color: $black;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-
-    &:focus {
-        border: none;
-        box-shadow: none !important;
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-
-        * {
-            color: darken($active_theme, 25%);
-        }
-    }
-}
-
-a[target='_blank'] {
-    cursor: alias;
 }

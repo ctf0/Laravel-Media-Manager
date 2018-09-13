@@ -1,4 +1,5 @@
 import debounce from 'lodash/debounce'
+import loader from '../wr'
 
 export default {
     props: ['file', 'browserSupport', 'rootEl'],
@@ -36,21 +37,14 @@ export default {
                     }
                 })
             }, {
-                // root: document.querySelector(this.rootEl),
-                threshold: 1.0
+                root: document.querySelector(this.rootEl),
+                threshold: 0.75
             })
 
-            if (this.$el) this.observer.observe(this.$el)
-        }
-    },
-    watch: {
-        intersected: {
-            immediate: true,
-            handler(val, oldVal) {
-                if (val) {
-                    this.src = this.file.path
-                }
-            }
+            this.observer.observe(this.$el)
+        },
+        fetchImg(url) {
+            return loader(this.file.path)
         }
     }
 }

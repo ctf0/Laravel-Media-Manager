@@ -1,3 +1,5 @@
+import loader from '../wr'
+
 export default {
     computed: {
         filesList() {
@@ -94,6 +96,7 @@ export default {
             return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
         },
 
+        // misc
         selectedFileDimensions() {
             let f = this.dimensions.find((e) => e.url == this.selectedFile.path)
 
@@ -108,7 +111,9 @@ export default {
 
                     if (this.selectedFileIs('image')) {
                         if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
-                            return url
+                            return loader(url).then((img) => {
+                                return img
+                            })
                         }
 
                         return caches.open(this.CDBN).then((cache) => {

@@ -1,4 +1,4 @@
-import MediaModal from './media-modal.vue'
+import MediaModal from '../components/utils/media-modal.vue'
 
 export default {
     components: {MediaModal},
@@ -8,20 +8,13 @@ export default {
         }
     },
     methods: {
-        toggleModalFor(e, name) {
-            if (e.altKey) {
-                return this.removeImg(name)
-            }
-
+        toggleModalFor(name) {
             this.inputName = name
             EventHub.fire('modal-show')
         },
         hideInputModal() {
             this.inputName = ''
             EventHub.fire('modal-hide')
-        },
-        removeImg(name) {
-            this[name] = ''
         }
     }
 }

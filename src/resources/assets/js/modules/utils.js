@@ -13,8 +13,8 @@ export default {
         moveUpCheck() {
             return this.allItemsCount && this.folders.length
         },
-        playerCardHelper() {
-            if (!this.playerCard) {
+        smallScreenHelper() {
+            if (!this.smallScreen) {
                 this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
             }
         },
@@ -123,6 +123,9 @@ export default {
         },
 
         /*                Toggle                */
+        toggleOverlay() {
+            EventHub.fire('toggle-overlay')
+        },
         toggleModal(selector = null) {
             if (!selector) {
                 // refresh if an image was edited
@@ -155,13 +158,13 @@ export default {
 
         /*                Loading                */
         noScroll(s) {
-            let el = document.getElementsByTagName('html')[0]
+            let html = document.documentElement
 
             if (s == 'add') {
-                return el.classList.add('no-scroll')
+                return html.classList.add('no-scroll')
             }
 
-            return el.classList.remove('no-scroll')
+            return html.classList.remove('no-scroll')
         },
         noFiles(s) {
             if (s == 'show') {
@@ -170,7 +173,7 @@ export default {
                 return EventHub.fire('no-files-show')
             }
 
-            this.playerCardHelper()
+            this.smallScreenHelper()
             this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
@@ -214,26 +217,8 @@ export default {
             this.linkCopied = true
             this.$copyText(path)
         },
-        onResize() {
-            this.scrollByRow()
-
-            // 1087 = bulma is-hidden-touch
-            if (document.documentElement.clientWidth < 1087) {
-                this.infoSidebar = false
-                this.playerCard = true
-            } else {
-                // hide active player modal
-                if (
-                    this.isActiveModal('preview_modal') &&
-                    (this.selectedFileIs('video') || this.selectedFileIs('audio'))
-                ) {
-                    this.toggleModal()
-                }
-
-                this.toolBar = true
-                this.playerCard = false
-                this.playerCardHelper()
-            }
+        arrayFilter(arr) {
+            return arr.filter((e) => e)
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {
@@ -250,8 +235,108 @@ export default {
 
             return str
         },
-        arrayFilter(arr) {
-            return arr.filter((e) => e)
+
+        onResize() {
+            this.scrollByRow()
+
+            // 1087 = bulma is-hidden-touch
+            if (document.documentElement.clientWidth < 1087) {
+                this.infoSidebar = false
+                this.smallScreen = true
+            } else {
+                // hide active player modal
+                if (
+                    this.isActiveModal('preview_modal') &&
+                    (this.selectedFileIs('video') || this.selectedFileIs('audio'))
+                ) {
+                    this.toggleModal()
+                }
+
+                this.toolBar = true
+                this.smallScreen = false
+                this.smallScreenHelper()
+            }
+        },
+        // files wrapper gestures
+        containerClick(e, cls = '__stack-files') {
+            let type = e.type
+
+            if (e.target.classList.contains(cls)) {
+                if (type == 'hold') {
+                    // this.toggleOverlay()
+                    // this.toggleUploadPanel()
+                    document.querySelector('.dz-clickable').click()
+                }
+
+                if (type == 'dbltap') {
+                    this.createNewFolder()
+                }
+
+                if (type == 'pinchin') {
+                    this.refresh()
+                }
+            }
+        },
+        // gesture animation
+        gesture(e) {
+            let type = e.type
+            let target = e.target
+            let style = {}
+            let cls
+
+            if (!target.classList.contains('__file-box')) {
+                target = target.closest('.__file-box')
+            }
+
+            switch (type) {
+                case 'swipedown':
+                    style = {transform: `translateY(${e.deltaY}px)`}
+                    cls = 'bounceInUp'
+                    break
+                case 'swipeup':
+                    style = {transform: `translateY(${e.deltaY}px)`}
+                    cls = 'bounceInDown'
+                    break
+                case 'swipeleft':
+                    style = {transform: `translateX(${e.deltaX}px)`}
+                    cls = 'bounceInRight'
+                    break
+                case 'swiperight':
+                    style = {transform: `translateX(${e.deltaX}px)`}
+                    cls = 'bounceInLeft'
+                    break
+                case 'hold':
+                    style = {transform: 'scale(0.8)'}
+                    cls = 'jackInTheBox'
+                    break
+                case 'dbltap':
+                    style = {transform: 'scale(0.8)'}
+                    cls = 'bounceIn'
+                    break
+            }
+
+            // apply styles
+            Object.assign(target.style, style, {
+                'z-index': 1
+            })
+
+            // apply animation
+            if (cls) {
+                setTimeout(() => { // transition
+                    target.classList.add(cls)
+                    Object.assign(target.style, {
+                        'transform': ''
+                    })
+
+                    setTimeout(() => { // animation
+                        target.classList.remove(cls)
+                        Object.assign(target.style, {
+                            'transform': '',
+                            'z-index': ''
+                        })
+                    }, 750)
+                }, 250)
+            }
         },
         showNotif(msg, s = 'success', duration = 3) {
             let title

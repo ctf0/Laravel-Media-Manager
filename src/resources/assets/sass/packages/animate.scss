@@ -1,7 +1,11 @@
 .mm-animated {
-    animation-duration: 600ms;
-    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    animation-duration: 750ms;
     animation-fill-mode: both;
+}
+
+.fadeInDown,
+.fadeIn {
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
 }
 
 @keyframes fadeInDown {
@@ -32,4 +36,189 @@
 
 .fadeIn {
     animation-name: fadeIn;
+}
+
+/**
+ * all the below animation are edited
+ * 'from/0%' is removed + some changes for the 'bounceIn' to make it more natural
+ * for the manager purposes
+ * this are not the same as the original animate.css examples
+ */
+
+@keyframes bounceInUp {
+    60%,
+    75%,
+    90%,
+    to {
+        transform: translate3d(0, 0, 0);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    40%,
+    43% {
+        transform: translate3d(0, -30px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+
+    70% {
+        transform: translate3d(0, -15px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounceInUp {
+    animation-name: bounceInUp;
+}
+
+@keyframes bounceInDown {
+    60%,
+    75%,
+    90%,
+    to {
+        transform: translate3d(0, 0, 0);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    40%,
+    43% {
+        transform: translate3d(0, 60px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+
+    70% {
+        transform: translate3d(0, -15px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+
+    85% {
+        transform: translate3d(0, -10px, 0);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounceInDown {
+    animation-name: bounceInDown;
+}
+
+@keyframes bounceInRight {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    60% {
+        transform: translate3d(-25px, 0, 0);
+    }
+
+    75% {
+        transform: translate3d(10px, 0, 0);
+    }
+
+    90% {
+        transform: translate3d(-5px, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.bounceInRight {
+    animation-name: bounceInRight;
+}
+
+@keyframes bounceInLeft {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    60% {
+        transform: translate3d(25px, 0, 0);
+    }
+
+    75% {
+        transform: translate3d(-10px, 0, 0);
+    }
+
+    90% {
+        transform: translate3d(5px, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.bounceInLeft {
+    animation-name: bounceInLeft;
+}
+
+@keyframes bounceIn {
+    20%,
+    40%,
+    60%,
+    80%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        transform: scale3d(0.9, 0.9, 0.9);
+    }
+
+    60% {
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        transform: scale3d(0.97, 0.97, 0.97);
+    }
+
+    to {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.bounceIn {
+    animation-name: bounceIn;
+}
+
+@keyframes jackInTheBox {
+    25% {
+        transform: scale(1) rotate(30deg);
+        transform-origin: center bottom;
+    }
+
+    50% {
+        transform: rotate(-10deg);
+    }
+
+    70% {
+        transform: rotate(3deg);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.jackInTheBox {
+    animation-name: jackInTheBox;
 }

@@ -12,26 +12,28 @@ export default {
             let last = null
             let sending = false
             let clearCache = false
-
-            new Dropzone('#new-upload', {
+            let options = {
+                url: manager.routes.upload,
                 createImageThumbnails: false,
                 parallelUploads: 10,
                 hiddenInputContainer: '#new-upload',
                 uploadMultiple: true,
                 forceFallback: false,
-                ignoreHiddenFiles: true,
                 acceptedFiles: uploadTypes,
                 maxFilesize: uploadsize,
                 headers: {
-                    'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null
+                    'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null,
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 timeout: 3600000, // 60 mins
                 previewsContainer: '#uploadPreview',
                 processingmultiple() {
                     manager.showProgress = true
                 },
-                sending() {
+                sending(file, xhr, formData) {
                     sending = true
+                    formData.append('upload_path', manager.files.path)
+                    formData.append('random_names', manager.randomNames)
                 },
                 totaluploadprogress(uploadProgress) {
                     manager.progressCounter = `${Math.round(uploadProgress)}%`
@@ -52,6 +54,7 @@ export default {
                 errormultiple(file, res) {
                     file = Array.isArray(file) ? file[0] : file
                     manager.showNotif(`"${file.name}" ${res}`, 'danger')
+                    // this.removeFile(file)
                 },
                 queuecomplete() {
                     if (!sending) {
@@ -66,12 +69,19 @@ export default {
                             })
                         } else {
                             manager.isLoading = false
-                            manager.playerCardHelper()
+                            manager.smallScreenHelper()
                             manager.loadingFiles('hide')
                         }
                     }
                 }
-            })
+            }
+
+            // upload panel
+            new Dropzone('#new-upload', options)
+            // drag  drop on empty area
+            new Dropzone('.__stack-container', Object.assign(options, {
+                clickable: false
+            }))
         },
 
         // upload image from link
@@ -246,7 +256,7 @@ export default {
             }
 
             this.isLoading = false
-            this.playerCardHelper()
+            this.smallScreenHelper()
             this.loadingFiles('hide')
 
             // avoid unnecessary delay
