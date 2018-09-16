@@ -212,15 +212,21 @@ return [
 
     /*
      * disallow uploading files with the following mimetypes
-     * https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
+     * https://www.iana.org/assignments/media-types/media-types.xhtml#text
      */
     'unallowed_mimes' => ['php', 'java'],
 
     /*
-     * other mime-types for images
+     * extra mime-types
      */
-    'image_extended_mimes' => [
-        'binary/octet-stream', // aws
+    'extended_mimes' => [
+        'image' => [
+            'binary/octet-stream',
+        ],
+        'archive' => [
+            'application/x-tar',
+            'application/zip',
+        ],
     ],
 
     /*

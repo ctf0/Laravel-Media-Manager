@@ -32,7 +32,7 @@ return [
 
     /*
      * disallow uploading files with the following mimetypes
-     * https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
+     * https://www.iana.org/assignments/media-types/media-types.xhtml#text
      */
     'unallowed_mimes' => ['php', 'java'],
 
