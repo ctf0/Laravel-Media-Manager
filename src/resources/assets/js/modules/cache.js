@@ -135,13 +135,16 @@ export default {
         },
         getRecursivePathParent(path) {
             let list = []
-            let arr = this.arrayFilter(path.split('/'))
-            let i = arr.length - 1
 
-            for (i; i >= 0; i--) {
-                list.push(path)            // add current
-                arr.pop()                  // remove last
-                path = `/${arr.join('/')}` // regroup remaining
+            if (path) {
+                let arr = this.arrayFilter(path.split('/'))
+                let i = arr.length - 1
+
+                for (i; i >= 0; i--) {
+                    list.push(path)            // add current
+                    arr.pop()                  // remove last
+                    path = `/${arr.join('/')}` // regroup remaining
+                }
             }
 
             return list

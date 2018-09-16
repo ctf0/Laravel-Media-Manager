@@ -4,7 +4,7 @@
         'baseUrl' => $base_url, 
         'hideFilesExt' => config('mediaManager.hide_files_ext'), 
         'lazyLoad' => config('mediaManager.lazy_load_image_on_click'), 
-        'imageTypes' => config('mediaManager.image_extended_mimes'), 
+        'mimeTypes' => config('mediaManager.extended_mimes'), 
         'cacheExp' => config('mediaManager.cache_expires_after'), 
         'broadcasting' => config('mediaManager.enable_broadcasting'), 
         'gfi' => config('mediaManager.get_folder_info'), 
@@ -18,27 +18,29 @@
         'upload' => route('media.upload')
     ]) }}"
     :translations="{{ json_encode([
-        'no_val' => trans('MediaManager::messages.no_val'), 
-        'downloaded' => trans('MediaManager::messages.download.downloaded'), 
-        'sep_download' => trans('MediaManager::messages.download.sep'), 
-        'upload_success' => trans('MediaManager::messages.upload.success'), 
-        'create_success' => trans('MediaManager::messages.create_success'), 
-        'rename_success' => trans('MediaManager::messages.rename.success'), 
-        'move_success' => trans('MediaManager::messages.move.success'), 
-        'delete_success' => trans('MediaManager::messages.delete.success'), 
+        'copied' => trans('MediaManager::messages.copy.copied'), 
         'copy_success' => trans('MediaManager::messages.copy.success'), 
-        'save_success' => trans('MediaManager::messages.save.success'), 
+        'create_folder_notif' => trans('MediaManager::messages.new.create_folder_notif'), 
+        'create_success' => trans('MediaManager::messages.create_success'), 
+        'delete_success' => trans('MediaManager::messages.delete.success'), 
+        'downloaded' => trans('MediaManager::messages.download.downloaded'), 
         'error_altered_fwli' => trans('MediaManager::messages.error.altered_fwli'), 
-        'stand_by' => trans('MediaManager::messages.stand_by'), 
-        'new_uploads_notif' => trans('MediaManager::messages.upload.new_uploads_notif'), 
+        'find' => trans('MediaManager::messages.find'), 
+        'found' => trans('MediaManager::messages.found'), 
         'glbl_search' => trans('MediaManager::messages.search.glbl'), 
         'glbl_search_avail' => trans('MediaManager::messages.search.glbl_avail'), 
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'), 
-        'find' => trans('MediaManager::messages.find'), 
-        'found' => trans('MediaManager::messages.found'), 
+        'move_success' => trans('MediaManager::messages.move.success'), 
+        'new_uploads_notif' => trans('MediaManager::messages.upload.new_uploads_notif'), 
+        'no_val' => trans('MediaManager::messages.no_val'), 
         'nothing_found' => trans('MediaManager::messages.nothing_found'), 
-        'copied' => trans('MediaManager::messages.copy.copied'), 
-        'to_cp' => trans('MediaManager::messages.copy.to_cp')
+        'refresh_notif' => trans('MediaManager::messages.refresh_notif'), 
+        'rename_success' => trans('MediaManager::messages.rename.success'), 
+        'save_success' => trans('MediaManager::messages.save.success'), 
+        'sep_download' => trans('MediaManager::messages.download.sep'), 
+        'stand_by' => trans('MediaManager::messages.stand_by'), 
+        'to_cp' => trans('MediaManager::messages.copy.to_cp'), 
+        'upload_success' => trans('MediaManager::messages.upload.success'), 
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -309,6 +311,16 @@
                                         </button>
                                     </div>
                                     <div class="control">
+                                        <button @click="showFilesOfType('application')"
+                                            v-tippy
+                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.application')]) }}"
+                                            class="button"
+                                            :class="{'is-link': filterNameIs('application')}"
+                                            :disabled="!btnFilter('application') || isLoading">
+                                            <span class="icon"><icon name="cogs"></icon></span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
                                         <button @click="showFilesOfType('locked')"
                                             v-tippy
                                             title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.locked')]) }}"
@@ -553,6 +565,7 @@
                                         <span v-else class="icon is-large">
                                             <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'compressed')" name="file-archive-o" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'pdf')" name="file-pdf-o" scale="2.6"></icon>
@@ -670,6 +683,12 @@
                                     @click="toggleModal('preview_modal')">
                                     <icon class="svg-prev-icon" name="file-text-o" scale="4"></icon>
                                 </div>
+
+                                <icon key="5"
+                                    class="svg-prev-icon"
+                                    v-else-if="selectedFileIs('compressed')"
+                                    name="file-archive-o" scale="4">
+                                </icon>
                             </transition>
                         </div>
 
@@ -943,7 +962,7 @@
                 class="modal mm-animated fadeIn is-active __modal-editor">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
-                    <cropper route="{{ route('media.uploadCropped') }}"
+                    <image-editor route="{{ route('media.uploadCropped') }}"
                         :url="infoSidebar ? selectedFilePreview : selectedFile.path"
                         :translations="{{ json_encode([
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
@@ -960,7 +979,7 @@
                             'crop_flip_horizontal' => trans('MediaManager::messages.crop.flip_horizontal'), 
                             'crop_flip_vertical' => trans('MediaManager::messages.crop.flip_vertical'), 
                         ]) }}">
-                    </cropper>
+                    </image-editor>
                 </div>
                 <button class="modal-close is-large" @click="toggleModal()"></button>
             </div>

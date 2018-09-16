@@ -5,12 +5,12 @@ export default {
 
             if (val == 'all') {
                 return this.filteredItemsCount
+            } else if (val == 'selected') {
+                return this.bulkItemsCount && this.bulkItemsCount > 1 ? true : false
             } else if (val == 'locked') {
                 return files.some((item) => {
                     return this.IsLocked(item)
                 })
-            } else if (val == 'selected') {
-                return this.bulkItemsCount && this.bulkItemsCount > 1 ? true : false
             }
 
             return files.some((item) => {
@@ -21,13 +21,21 @@ export default {
             return this.currentFilterName == val
         },
         fileTypeIs(item, val) {
+            let mimes = this.config.mimeTypes
+
             if (item.type) {
-                if (val == 'image' && this.config.imageTypes.includes(item.type)) {
+                if (val == 'image' && mimes.image.includes(item.type)) {
                     return true
                 }
 
+                // because "pdf" shows up as "application"
                 if (item.type.includes('pdf') && val != 'pdf') {
                     return false
+                }
+
+                // because "archive" shows up as "application"
+                if (item.type.includes('compressed') || mimes.archive.includes(item.type)) {
+                    return val == 'compressed' ? true : false
                 }
 
                 return item.type.includes(val)
@@ -52,6 +60,8 @@ export default {
                 this.filterdList = files.filter((item) => {
                     if (val == 'text') {
                         return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
+                    } else if ('application') {
+                        return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
                     }
 
                     return this.fileTypeIs(item, val)

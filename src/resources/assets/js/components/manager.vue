@@ -23,15 +23,15 @@ import Watchers from '../modules/watch'
 
 export default {
     components: {
-        cropper: require('./imageEditor/cropper.vue'),
         contentRatio: require('./utils/ratio.vue'),
         globalSearchBtn: require('./globalSearch/button.vue'),
         globalSearchPanel: require('./globalSearch/panel.vue'),
         imageCache: require('./lazyLoading/cache.vue'),
+        imageEditor: require('./imageEditor/main.vue'),
         imageIntersect: require('./lazyLoading/normal.vue'),
+        overlay: require('./utils/overlay.vue'),
         usageIntroBtn: require('./usageIntro/button.vue'),
-        usageIntroPanel: require('./usageIntro/panel.vue'),
-        overlay: require('./utils/overlay.vue')
+        usageIntroPanel: require('./usageIntro/panel.vue')
     },
     name: 'media-manager',
     mixins: [

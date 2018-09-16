@@ -14,13 +14,11 @@
         box-shadow: none;
 
         .top,
-        .mid,
-        .bottom {
+        .mid {
             display: flex;
         }
 
-        .__side-toolbar,
-        .__bottom-toolbar {
+        .__side-toolbar {
             display: flex;
             align-self: flex-start;
             background-color: $editorBtns;
@@ -62,6 +60,17 @@
                         max-width: 100%;
                     }
                 }
+
+                .__bottom-toolbar {
+                    position: absolute;
+                    z-index: 1;
+                    right: 0;
+                    bottom: 0;
+                    display: flex;
+                    transform: translateY(calc(100% + 1rem));
+                    background-color: $editorBtns;
+                }
+
 
                 .__caman-presets {
                     position: absolute;
@@ -122,10 +131,6 @@
                     }
                 }
             }
-        }
-
-        .bottom {
-            justify-content: flex-end;
         }
     }
 

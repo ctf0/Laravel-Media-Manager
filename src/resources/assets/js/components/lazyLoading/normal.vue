@@ -38,7 +38,7 @@ export default {
                         this.src = img
 
                         this.$nextTick(() => {
-                            this.$refs.img.style.opacity = 0
+                            if (this.$refs.img) this.$refs.img.style.opacity = 0
                             this.sendDimensionsToParent()
                         })
                     })

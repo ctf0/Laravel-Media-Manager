@@ -21,7 +21,7 @@ trait Utils
         $pattern = $this->filePattern($folder ? $this->folderChars : $this->fileChars);
         $text    = preg_replace($pattern, '', $text);
 
-        return $text == '' ? $this->getRandomString() : $text;
+        return $text ?: $this->getRandomString();
     }
 
     protected function filePattern($item)
@@ -39,17 +39,17 @@ trait Utils
     protected function getItemPath($path)
     {
         $info = $this->storageDiskInfo;
-        $url  = $this->resolveUrl($path);
+        $url  = $this->resolveUrl($path); // get the file url
         $root = array_get($info, 'root');
 
         // for other disks without root ex."cloud"
         if (!$root) {
-            return preg_replace('/(.*\/\/.*?)\//', '', $url);
+            return preg_replace('/(.*\/\/.*?)\//', '', $url); // get the full path
         }
 
-        $dir = str_replace(array_get($info, 'url'), '', $url);
+        $dir = str_replace(array_get($info, 'url'), '', $url); // remove the uri
 
-        return $root . $dir;
+        return $root . $dir; // get the full path
     }
 
     protected function getItemTime($time)

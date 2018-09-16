@@ -25,7 +25,7 @@
     top: 0;
     width: 100%;
     padding: 0 0.75rem;
-    transition: all 1s ease 0.5s;
+    transition: all 1s ease 0.5s; // delay = input bounce
     transform: translate(25%, 35vh);
     color: $white;
 
@@ -61,11 +61,24 @@
         color: $white;
         border: none;
         background-color: transparent;
-        caret-color: $primary;
+        background-image: $image;
+        background-repeat: no-repeat;
+        background-position: 0 60%;
+        background-size: 100% 10%;
+        caret-color: $black;
+
+        &::placeholder {
+            color: rgba(white, 0.5);
+        }
+
+        &::selection {
+            background: #efb1ff;
+        }
     }
 
     .count {
         text-align: center;
+        white-space: nowrap;
 
         .title {
             color: $white;
@@ -85,9 +98,12 @@
             opacity: 1;
         }
 
-        input {
-            font-size: 3rem;
+        .input-wrapper {
             width: 100%;
+
+            input {
+                font-size: 3rem;
+            }
         }
     }
 }

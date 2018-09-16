@@ -131,39 +131,36 @@
 
                 <!-- presets -->
                 <presets :image-cropper="imageCropper" :processing="processing"/>
+
+                <!-- operations -->
+                <div v-if="imageCropper" class="__bottom-toolbar">
+                    <!-- reset everything -->
+                    <button v-tippy="{arrow: true, theme: 'light'}"
+                            :disabled="processing || !hasChanged"
+                            :title="trans('crop_reset')"
+                            class="btn-plain"
+                            @click="Ops('reset')">
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
+                    </button>
+                    <!-- clear -->
+                    <button v-tippy="{arrow: true, theme: 'light'}"
+                            :disabled="processing || !croppedByUser"
+                            :title="trans('clear')"
+                            class="btn-plain"
+                            @click="Ops('clear')">
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
+                    </button>
+                    <!-- apply -->
+                    <button v-tippy="{arrow: true, theme: 'light'}"
+                            :disabled="processing || !hasChanged"
+                            :title="trans('crop_apply')"
+                            class="btn-plain"
+                            @click="applyChanges()">
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'check'" :pulse="processing"/></span>
+                    </button>
+                </div>
             </div>
         </div>
-
-        <!-- operations -->
-        <div class="bottom">
-            <div v-if="imageCropper" class="__bottom-toolbar">
-                <!-- reset everything -->
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing || !hasChanged"
-                        :title="trans('crop_reset')"
-                        class="btn-plain"
-                        @click="Ops('reset')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
-                </button>
-                <!-- clear -->
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing || !croppedByUser"
-                        :title="trans('clear')"
-                        class="btn-plain"
-                        @click="Ops('clear')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
-                </button>
-                <!-- apply -->
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing || !hasChanged"
-                        :title="trans('crop_apply')"
-                        class="btn-plain"
-                        @click="applyChanges()">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'check'" :pulse="processing"/></span>
-                </button>
-            </div>
-        </div>
-
     </div>
 </template>
 
@@ -325,7 +322,8 @@ export default {
                 getData.rotate != 0 ||
                 getData.scaleX != 1 ||
                 getData.scaleY != 1 ||
-                cropper.cropped
+                cropper.cropped ||
+                !this.haveFilters()
                     ? true
                     : false
         },
@@ -342,7 +340,7 @@ export default {
                 cropper.clear() // selection
                 cropper.setDragMode(this.dragMode) // active btn
 
-                if (this.haveFilters()) this.resetFilters()
+                if (!this.haveFilters()) this.resetFilters()
                 this.reset = false
             })
         },
@@ -426,9 +424,9 @@ export default {
             }).toDataURL(type)
 
             // cropper.replace(data)
-            this.saveToDisk(data, file.name)
+            this.saveToDisk(data, file.name, type)
         },
-        saveToDisk(data, name) {
+        saveToDisk(data, name, type) {
             const parent = this.$parent
             parent.toggleLoading()
             parent.showNotif(parent.trans('stand_by'), 'info')
@@ -436,7 +434,8 @@ export default {
             axios.post(this.route, {
                 path: parent.files.path,
                 data: data,
-                name: name
+                name: name,
+                mime_type: type
             }).then(({data}) => {
 
                 parent.toggleLoading()

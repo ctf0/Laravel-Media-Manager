@@ -37,10 +37,19 @@ return [
     'unallowed_mimes' => ['php', 'java'],
 
     /*
-     * other mime-types for images
+     * extra mime-types
      */
-    'image_extended_mimes' => [
-        'binary/octet-stream', // aws
+    'extended_mimes' => [
+        // any extra mime-types that doesnt have "image" in it
+        'image' => [
+            'binary/octet-stream', // aws
+        ],
+
+        // any extra mime-types that doesnt have "compressed" in it
+        'archive' => [
+            'application/x-tar',
+            'application/zip',
+        ],
     ],
 
     /*

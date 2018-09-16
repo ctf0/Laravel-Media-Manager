@@ -448,7 +448,6 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                // object-fit: cover;
                 object-position: center;
             }
         }
@@ -704,6 +703,10 @@
         margin: 0;
     }
 
+    .icon.is-outlined {
+        border: 1px solid $breadcrumb;
+    }
+
     .pdf-prev {
         .card-image {
             height: 25vh;
@@ -724,7 +727,7 @@
 @include media('max', 1087) {
     .__modal-preview {
         .modal-content {
-            max-width: 75vw;
+            max-width: 50vw;
         }
     }
 }

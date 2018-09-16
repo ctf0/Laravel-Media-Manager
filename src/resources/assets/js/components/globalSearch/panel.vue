@@ -2,9 +2,15 @@
     <div v-if="showPanel" id="gsearch-panel" class="modal mm-animated fadeIn is-active">
         <div class="modal-background"/>
         <div class="modal-content">
-            <div ref="search-input" :class="{'move': moveInput}" class="search-input">
+            <div ref="search-input" :class="{'move': firstRun}" class="search-input">
                 <section>
-                    <input ref="search" v-model="search" :placeholder="trans('find')" autofocus>
+                    <div class="input-wrapper">
+                        <input v-autowidth
+                               ref="search"
+                               v-model="search"
+                               :placeholder="trans('find')"
+                               autofocus>
+                    </div>
                     <transition name="mm-info-in">
                         <div v-show="listCount" class="count">
                             <p class="title is-marginless is-2">{{ listCount }}</p>
@@ -72,6 +78,9 @@ export default {
     components: {
         imageIntersect: require('./lazyLoading.vue')
     },
+    directives: {
+        VueInputAutowidth: require('vue-input-autowidth')
+    },
     mixins: [panels],
     props: ['trans', 'fileTypeIs', 'noScroll', 'browserSupport'],
     data() {
@@ -80,8 +89,8 @@ export default {
             filterdList: [],
             search: '',
             noData: false,
-            moveInput: false,
-            linkCopied: false
+            linkCopied: false,
+            firstRun: false
         }
     },
     computed: {
@@ -131,13 +140,15 @@ export default {
             let search = this.search
 
             if (search) {
-                return this.filterdList = this.fuseLib.search(search)
+                this.filterdList = this.fuseLib.search(search)
+                return this.noData = this.listCount ? false : true
             }
 
             this.filterdList = []
         }, 500),
         ontransitionend() {
             this.noData = this.search && !this.listCount ? true : false
+            this.firstRun = true
         }
     },
     watch: {
@@ -151,16 +162,21 @@ export default {
             } else {
                 this.$nextTick(() => {
                     this.noData = false
-                    this.moveInput = false
+                    this.firstRun = false
                 })
             }
         },
         search(val) {
-            this.moveInput = true
             this.getList()
+
+            if (!this.firstRun) {
+                this.$nextTick(() => {
+                    this.firstRun = true
+                })
+            }
         },
-        moveInput(val) {
-            if (val) {
+        firstRun(val) {
+            if (!val && this.$refs['search-input']) {
                 this.$refs['search-input'].addEventListener('transitionend', this.ontransitionend)
             }
         }

@@ -315,6 +315,11 @@ export default {
                     break
             }
 
+            // folders only, toggle lock
+            if (type == 'hold' && this.selectedFileIs('folder')) {
+                this.lockFileForm()
+            }
+
             // apply styles
             Object.assign(target.style, style, {
                 'z-index': 1

@@ -46,18 +46,16 @@ export default {
                         video: 0,
                         text: 0,
                         folder: 0,
-                        application: 0,
-                        pdf: 0
+                        application: 0
                     }
 
                     val.forEach((e) => {
                         if (this.fileTypeIs(e, 'audio')) ratio.audio++
                         if (this.fileTypeIs(e, 'video')) ratio.video++
                         if (this.fileTypeIs(e, 'image')) ratio.image++
-                        if (this.fileTypeIs(e, 'text')) ratio.text++
-                        if (this.fileTypeIs(e, 'pdf')) ratio.pdf++
                         if (this.fileTypeIs(e, 'folder')) ratio.folder++
-                        if (this.fileTypeIs(e, 'application')) ratio.application++
+                        if (this.fileTypeIs(e, 'text') || this.fileTypeIs(e, 'pdf')) ratio.text++
+                        if (this.fileTypeIs(e, 'application') || this.fileTypeIs(e, 'compressed')) ratio.application++
                     })
 
                     return this.contentRatio = ratio

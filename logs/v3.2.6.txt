@@ -1,0 +1,12 @@
+- fix random name taking over upload names despite being false
+- add support to showing archives with diff icon
+- `MMFileSaved` & `MMFileUploaded` now has support for mime-type “check rdme”
+- config is updated to support extra mime-types for both image & archive
+- ratio bar will now follow the same rules as the filter btns ex.“text/pdf, application/archive” are combined
+- add new filter “application”
+- fixes & cleanup for the broadcasting
+- long press on folders will now switch the lock/unlock status of the folder
+- fix a couple of console errors
+- fix gls not switching the no-data msg correctly
+- add new npm dep “vue-input-autowidth”
+- add some styling to the gls input to make it easier to click it

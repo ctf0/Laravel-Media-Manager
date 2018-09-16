@@ -19,7 +19,7 @@ trait Upload
     public function upload(Request $request)
     {
         $upload_path = $request->upload_path;
-        $random_name = $request->random_names;
+        $random_name = filter_var($request->random_names, FILTER_VALIDATE_BOOLEAN);
         $result      = [];
         $broadcast   = false;
 
@@ -56,7 +56,11 @@ trait Upload
                     $saved_name = $this->storeFile($one, $upload_path, $file_name);
 
                     // fire event
-                    event('MMFileUploaded', $this->getItemPath($saved_name));
+                    event('MMFileUploaded', [
+                        'file_path'  => $this->getItemPath($saved_name),
+                        'mime_type'  => $file_type,
+                        'cache_path' => $upload_path,
+                    ]);
 
                     $broadcast = true;
 
@@ -99,6 +103,7 @@ trait Upload
     public function uploadEditedImage(Request $request)
     {
         if ($this->allowUpload()) {
+            $type        = $request->mime_type;
             $path        = $request->path;
             $data        = explode(',', $request->data)[1];
             $original    = $request->name;
@@ -119,7 +124,10 @@ trait Upload
                 $this->storageDisk->put($destination, base64_decode($data));
 
                 // fire event
-                event('MMFileSaved', $this->getItemPath($destination));
+                event('MMFileSaved', [
+                    'file_path'  => $this->getItemPath($destination),
+                    'mime_type'  => $type,
+                ]);
 
                 // broadcast
                 broadcast(new MediaFileOpsNotifications([
@@ -190,7 +198,10 @@ trait Upload
                 $this->storageDisk->put($destination, file_get_contents($url));
 
                 // fire event
-                event('MMFileSaved', $this->getItemPath($destination));
+                event('MMFileSaved', [
+                    'file_path'  => $this->getItemPath($destination),
+                    'mime_type'  => $file_type,
+                ]);
 
                 // broadcast
                 broadcast(new MediaFileOpsNotifications([

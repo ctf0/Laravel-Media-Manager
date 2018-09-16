@@ -97,6 +97,7 @@ return array (
   'new' => 
   array (
     'create_folder' => 'Create New Folder',
+    'create_folder_notif' => 'New Folder Was created',
     'file_folder' => 'New File/Folder Name',
     'folder_name' => 'New Folder Name',
   ),
@@ -109,6 +110,7 @@ return array (
   'pdf' => 'Your Browser Does Not Support Pdfs. Please Download The Pdf To View It',
   'preview' => 'Preview',
   'public_url' => 'Public URL',
+  'refresh_notif' => 'Press The Refresh Button To View Them',
   'rename' => 
   array (
     'file_folder' => 'Rename File/Folder',
@@ -147,7 +149,7 @@ return array (
   'upload' => 
   array (
     'main' => 'Upload',
-    'new_uploads_notif' => 'New Items Were Uploaded, Press The Refresh Button To View Them',
+    'new_uploads_notif' => 'New Items Were Uploaded',
     'success' => 'Successfully Uploaded',
     'text' => 'Drag & Drop Files<br>Or<br>Click To Upload',
     'use_random_names' => 'Use Random Names ?',
@@ -161,4 +163,5 @@ return array (
     'set' => 'Change Visibility',
     'success' => '":attr" Visibility Was Updated',
   ),
+  'application' => 'Application',
 );

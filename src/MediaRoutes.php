@@ -9,8 +9,8 @@ class MediaRoutes
         $controller = config('mediaManager.controller', '\ctf0\MediaManager\Controllers\MediaController');
 
         app('router')->group([
-            'prefix'    => 'media',
-            'as'        => 'media.',
+            'prefix' => 'media',
+            'as'     => 'media.',
         ], function () use ($controller) {
             app('router')->get('/', ['uses' => "$controller@index", 'as' => 'index']);
             app('router')->post('upload', ['uses' => "$controller@upload", 'as' => 'upload']);
