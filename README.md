@@ -2,6 +2,8 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager) [![Total Downloads](https://img.shields.io/packagist/dt/ctf0/media-manager.svg)](https://packagist.org/packages/ctf0/media-manager)
 
+![Browser Status](https://badges.herokuapp.com/browsers?firefox=61&microsoftedge=17&googlechrome=51&safari=!?&iexplore=!?)
+
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7388088/45594529-90318000-b99c-11e8-9fce-07e3576ae0df.png">
     <img src="https://user-images.githubusercontent.com/7388088/45594564-6dec3200-b99d-11e8-8827-d9ba5337d46a.png">
