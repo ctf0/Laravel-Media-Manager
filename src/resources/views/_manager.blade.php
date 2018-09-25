@@ -141,7 +141,7 @@
                                     title="e"
                                     @click="imageEditor()">
                                     <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
-                                    <span>{{ trans('MediaManager::messages.editor') }}</span>
+                                    <span>{{ trans('MediaManager::messages.editor.main') }}</span>
                                 </button>
                             </div>
 
@@ -337,7 +337,7 @@
                                             class="button"
                                             :class="{'is-link': filterNameIs('selected')}"
                                             :disabled="!btnFilter('selected') || isLoading">
-                                            <span class="icon"><icon name="check-square-o"></icon></span>
+                                            <span class="icon"><icon name="check"></icon></span>
                                         </button>
                                     </div>
                                     {{-- clear --}}
@@ -470,7 +470,10 @@
                         <div id="loading_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/world.json') }}"></div>
 
                         <transition name="mm-list" mode="out-in">
-                            <h3 key="1" v-if="showProgress">{{ trans('MediaManager::messages.stand_by') }} <strong>@{{ progressCounter }}</strong></h3>
+                            <h3 key="1" v-if="showProgress" class="mm-animated pulse">
+                                {{ trans('MediaManager::messages.stand_by') }}
+                                <strong>@{{ progressCounter }}</strong>
+                            </h3>
                             <h3 key="2" v-else>{{ trans('MediaManager::messages.loading') }}</h3>
                         </transition>
                     </div>
@@ -485,8 +488,8 @@
                     <v-touch id="no_files"
                         v-show="no_files"
                         class="no_files"
-                        @swiperight="goToPrevFolder()"
-                        @swipeleft="goToPrevFolder()"
+                        @swiperight="goToPrevFolder($event, 'no_files')"
+                        @swipeleft="goToPrevFolder($event, 'no_files')"
                         @hold="containerClick($event, 'no_files')"
                         @dbltap="containerClick($event, 'no_files')">
                         <div id="no_files_anim" data-json="{{ asset('assets/vendor/MediaManager/BM/zero.json') }}"></div>
@@ -506,8 +509,8 @@
                 <v-touch class="__stack-files mm-animated"
                     :class="{'__stack-sidebar-hidden' : !infoSidebar}"
                     ref="__stack-files"
-                    @swiperight="goToPrevFolder()"
-                    @swipeleft="goToPrevFolder()"
+                    @swiperight="goToPrevFolder($event, '__stack-files')"
+                    @swipeleft="goToPrevFolder($event, '__stack-files')"
                     @hold="containerClick($event)"
                     @dbltap="containerClick($event)"
                     @pinchin="containerClick($event)">
@@ -528,12 +531,12 @@
                             @click="setSelected(file, index, $event)">
                             <v-touch class="__file-box mm-animated"
                                 :class="{'bulk-selected': IsInBulkList(file), 'selected' : isSelected(file)}"
-                                @swipeup="setSelected(file, index), gesture($event), moveItem()"
-                                @swipedown="setSelected(file, index), gesture($event), deleteItem()"
-                                @swiperight="setSelected(file, index), gesture($event), renameItem()"
-                                @swipeleft="setSelected(file, index), gesture($event), renameItem()"
-                                @hold="setSelected(file, index), gesture($event), imageEditor()"
-                                @dbltap="gesture($event), dbltap($event)">
+                                @swipeup="swipGesture($event, file, index)"
+                                @swipedown="swipGesture($event, file, index)"
+                                @swiperight="swipGesture($event, file, index)"
+                                @swipeleft="swipGesture($event, file, index)"
+                                @hold="pressGesture($event, file, index)"
+                                @dbltap="pressGesture($event, file, index)">
 
                                 {{-- lock file --}}
                                 <button v-if="$refs.lock"
@@ -558,8 +561,16 @@
                                 <div class="__box-data">
                                     <div class="__box-preview">
                                         <template v-if="fileTypeIs(file, 'image')">
-                                            <image-cache v-if="config.lazyLoad" :url="file.path" :db="CDBN" :browser-support="browserSupport"></image-cache>
-                                            <image-intersect v-else :file="file" :browser-support="browserSupport" root-el=".__stack-files"></image-intersect>
+                                            <image-cache v-if="config.lazyLoad"
+                                                :file="file"
+                                                :db="CDBN"
+                                                :browser-support="browserSupport">
+                                            </image-cache>
+                                            <image-intersect v-else
+                                                :file="file"
+                                                :browser-support="browserSupport"
+                                                root-el=".__stack-files">
+                                            </image-intersect>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -598,15 +609,16 @@
                 {{-- ====================================================================== --}}
 
                 {{-- info sidebar --}}
-                <transition name="mm-slide" mode="out-in" appear>
-                    <v-touch v-if="infoSidebar" key="on"
+                <v-touch v-if="infoSidebar"
                         class="__stack-sidebar is-hidden-touch"
                         @swiperight="toggleInfoSidebar(), saveUserPref()"
                         @swipeleft="toggleInfoSidebar(), saveUserPref()">
 
                         {{-- preview --}}
                         <div class="__sidebar-preview">
-                            <transition name="mm-slide" mode="out-in" appear>
+                            <transition name="mm-slide" mode="out-in" appear
+                                v-on:after-enter="isScrollable()">
+
                                 {{-- no selection --}}
                                 <div key="none-selected" class="__sidebar-none-selected" v-if="!selectedFile">
                                     <span @click="reset()" class="link"><icon name="power-off" scale="3.2"></icon></span>
@@ -614,14 +626,28 @@
                                 </div>
 
                                 {{-- img --}}
-                                <img v-else-if="selectedFileIs('image')"
-                                    :src="selectedFilePreview"
-                                    :alt="selectedFile.name"
-                                    :key="selectedFile.name"
+                                <div v-else-if="selectedFileIs('image')"
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
-                                    class="link image"
-                                    @click="isBulkSelecting() ? false : toggleModal('preview_modal')"/>
+                                    :key="selectedFile.name"
+                                    class="image-wrapper">
+                                    <div ref="img-prev" @scroll="updateScrollableDir('img-prev')">
+
+                                        <img :src="selectedFilePreview"
+                                            :alt="selectedFile.name"
+                                            class="link image"
+                                            @click="isBulkSelecting() ? false : toggleModal('preview_modal')"/>
+                                    </div>
+
+                                    <transition :name="scrollableBtn.state ? 'mm-img-nxt': 'mm-img-prv'" appear>
+                                        <div class="image-scroll-btn"
+                                            :class="scrollableBtn.dir"
+                                            v-show="scrollableBtn.state"
+                                            @click="scrollImg('img-prev')">
+                                            <span class="icon is-large"><icon name="chevron-down" scale="1"></icon></span>
+                                        </div>
+                                    </transition>
+                                </div>
 
                                 {{-- video --}}
                                 <div v-else-if="selectedFileIs('video')"
@@ -642,6 +668,15 @@
                                     v-tippy="{arrow: true, position: 'left'}"
                                     title="space"
                                     :key="selectedFile.name">
+                                    <template>
+                                        <img v-if="selectedFilePreview && selectedFilePreview.picture"
+                                            :src="selectedFilePreview.picture"
+                                            :alt="selectedFile.name"
+                                            class="image"/>
+
+                                        <icon v-else class="svg-prev-icon" name="music" scale="8"></icon>
+                                    </template>
+
                                     <audio controls
                                         class="is-hidden"
                                         preload="auto"
@@ -649,10 +684,6 @@
                                         :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.audio.support') }}
                                     </audio>
-                                    <img v-if="selectedFilePreview"
-                                        :src="selectedFilePreview.picture ? selectedFilePreview.picture : selectedFilePreview"
-                                        :alt="selectedFile.name"
-                                        class="image"/>
                                 </div>
 
                                 {{-- icons --}}
@@ -695,7 +726,7 @@
                         {{-- info --}}
                         <div v-if="allItemsCount"
                             class="__sidebar-info"
-                            :style="selectedFile ? 'background-color: white' : ''">
+                            :style="{'background-color': selectedFile ? 'white' : ''}">
 
                             <transition name="mm-list" mode="out-in" appear>
                                 <div :key="selectedFile.name" v-if="selectedFile">
@@ -864,14 +895,13 @@
                                 </div>
                             </transition-group>
                         </div>
-                    </v-touch>
+                </v-touch>
 
-                    <v-touch v-else-if="!infoSidebar && !smallScreen"
-                        key="off" class="__sidebar-swipe-hidden"
-                        @swiperight="toggleInfoSidebar(), saveUserPref()"
-                        @swipeleft="toggleInfoSidebar(), saveUserPref()">
-                    </v-touch>
-                </transition>
+                <v-touch v-else-if="!infoSidebar && !smallScreen"
+                    class="__sidebar-swipe-hidden"
+                    @swiperight="toggleInfoSidebar(), saveUserPref()"
+                    @swipeleft="toggleInfoSidebar(), saveUserPref()">
+                </v-touch>
 
             </section>
 
@@ -881,26 +911,36 @@
             <section class="__stack-breadcrumb level is-mobile">
                 {{-- directories breadCrumb --}}
                 <div class="level-left">
-                    <nav class="breadcrumb is-hidden-touch" v-if="!restrictModeIsOn()">
+                    <nav class="breadcrumb has-arrow-separator is-hidden-touch" v-if="!restrictModeIsOn()">
                         <transition-group tag="ul" name="mm-list" mode="out-in">
                             <li key="library-bc">
                                 <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
-                                    class="p-l-0"
+                                    class="p-l-0 level"
                                     v-tippy
                                     title="backspace"
                                     @click="goToFolder(0)">
-                                    {{ trans('MediaManager::messages.library') }}
+                                    <span class="icon level-item is-marginless"><icon name="map"></icon></span>
+                                    <span class="level-item m-l-5 is-marginless">{{ trans('MediaManager::messages.library') }}</span>
                                 </a>
-                                <p v-else class="p-l-0">{{ trans('MediaManager::messages.library') }}</p>
+                                <p v-else class="p-l-0 level">
+                                    <span class="icon level-item is-marginless"><icon name="map-o"></icon></span>
+                                    <span class="level-item m-l-5 is-marginless">{{ trans('MediaManager::messages.library') }}</span>
+                                </p>
                             </li>
 
                             <li v-for="(folder, index) in folders" :key="index">
-                                <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
+                                <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading"
+                                    class="level">
+                                    <span class="icon level-item is-marginless"><icon name="folder-open-o"></icon></span>
+                                    <span class="level-item m-l-5 is-marginless">@{{ folder }}</span>
+                                </p>
                                 <a v-else
                                     v-tippy
                                     title="backspace"
+                                    class="level"
                                     @click="folders.length > 1 ? goToFolder(index+1) : false">
-                                    @{{ folder }}
+                                    <span class="icon level-item is-marginless"><icon name="folder"></icon></span>
+                                    <span class="level-item m-l-5 is-marginless">@{{ folder }}</span>
                                 </a>
                             </li>
                         </transition-group>
@@ -947,7 +987,11 @@
                 class="modal mm-animated fadeIn is-active __modal-preview">
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
-                    <transition :name="imageSlideDirection == 'next' ? 'mm-img-nxt' : 'mm-img-prv'" mode="out-in">
+                    <transition :name="`mm-img-${imageSlideDirection}`"
+                        mode="out-in" appear
+                        v-on:after-enter="isScrollable()"
+                        v-on:before-leave="scrollableBtn.state = false">
+
                         <div class="modal-content" :key="selectedFile.path">
                             {{-- card v --}}
                             @include('MediaManager::partials.card')
@@ -960,14 +1004,17 @@
             {{-- image_editor --}}
             <div v-if="isActiveModal('imageEditor_modal')"
                 class="modal mm-animated fadeIn is-active __modal-editor">
-                <div class="modal-background link" @click="toggleModal()"></div>
+                <v-touch class="modal-background link" @dbltap="toggleModal()"></v-touch>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <image-editor route="{{ route('media.uploadCropped') }}"
-                        :url="infoSidebar ? selectedFilePreview : selectedFile.path"
+                        :file="selectedFile"
+                        :url="selectedFilePreview"
                         :translations="{{ json_encode([
                             'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']), 
                             'move' => trans('MediaManager::messages.move.main'), 
                             'save_success' => trans('MediaManager::messages.save.success'), 
+                            'diff' => trans('MediaManager::messages.editor.diff'), 
+                            'presets' => trans('MediaManager::messages.crop.presets'), 
                             'crop' => trans('MediaManager::messages.crop.main'), 
                             'crop_reset' => trans('MediaManager::messages.crop.reset'), 
                             'crop_reset_filters' => trans('MediaManager::messages.crop.reset_filters'), 
@@ -1118,9 +1165,9 @@
                                     <span class="select is-fullwidth">
                                         <select ref="move_folder_dropdown" v-model="moveToPath">
                                             <option v-if="moveUpCheck()" value="../">../</option>
-                                            <option v-for="(dir, index) in directories"
-                                                v-if="filterDirList(dir)"
-                                                :key="index" :value="dir">
+                                            <option v-for="(dir, index) in filterDirList()"
+                                                :key="index"
+                                                :value="dir">
                                                 @{{ dir }}
                                             </option>
                                         </select>
@@ -1192,7 +1239,7 @@
 
                             {{-- deleting folder warning --}}
                             <h5 v-show="folderWarning" class="__modal-folder-warning">
-                                <span class="icon"><icon name="warning"></icon></span>
+                                <span class="icon is-medium"><icon name="warning" scale="1.2"></icon></span>
                                 <span>{{ trans('MediaManager::messages.delete.folder') }}</span>
                             </h5>
                         </section>

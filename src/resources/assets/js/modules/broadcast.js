@@ -188,9 +188,7 @@ export default {
                 this.progressCounter = `${data.progress}%`
 
                 if (data.progress >= 100) {
-                    setTimeout(() => {
-                        this.hideProgress()
-                    }, 500)
+                    setTimeout(this.hideProgress, 500)
                 }
             }
 

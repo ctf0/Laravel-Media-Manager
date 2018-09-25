@@ -7,6 +7,7 @@ Vue.use(require('vue2-filters'))
 Vue.use(require('vue-clipboard2'))
 Vue.use(require('vue-ls'))
 Vue.use(require('vue-async-computed'))
+require('vue-list-rendered')
 
 // vue-tippy
 Vue.use(require('vue-tippy'), {
@@ -56,4 +57,8 @@ Vue.component('MediaManager', require('./components/manager.vue'))
 Vue.component('MyNotification', require('vue-notif'))
 
 /*                Events                */
-require('./modules/events')
+if ('connection' in navigator) {
+    if (!navigator.connection.saveData) {
+        require('./modules/events')
+    }
+}

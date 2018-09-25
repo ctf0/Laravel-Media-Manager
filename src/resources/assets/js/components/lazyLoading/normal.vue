@@ -1,6 +1,11 @@
 <template>
     <div class="__box-img">
-        <img v-if="src" ref="img" :src="src" :alt="file.name" async>
+        <img v-if="src"
+             ref="img"
+             :src="src"
+             :alt="file.name"
+             style="opacity: 0"
+             async>
     </div>
 </template>
 
@@ -34,11 +39,10 @@ export default {
             immediate: true,
             handler(val, oldVal) {
                 if (val) {
-                    this.fetchImg(this.file.path).then((img) => {
+                    this.fetchImg().then((img) => {
                         this.src = img
 
                         this.$nextTick(() => {
-                            if (this.$refs.img) this.$refs.img.style.opacity = 0
                             this.sendDimensionsToParent()
                         })
                     })

@@ -21,7 +21,11 @@
             </div>
 
             <transition-group name="mm-gs" tag="ul" class="columns is-multiline" mode="out-in">
-                <li v-for="(item, i) in filterdList" :key="`${i}-${item.name}`" class="column is-2">
+                <li v-list-rendered="[i, filterdList, orch]"
+                    v-for="(item, i) in filterdList"
+                    :key="`${i}-${item.name}`"
+                    class="column is-2">
+
                     <div class="card">
                         <div class="card-image">
                             <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
@@ -104,10 +108,12 @@ export default {
             return this.filterdList.length
         }
     },
-    beforeDestroy() {
-        this.$refs['search-input'].removeEventListener('transitionend', this.ontransitionend)
-    },
     methods: {
+        orch() {
+            setTimeout(() => {
+                EventHub.fire('start-img-observing')
+            }, 100)
+        },
         eventsListener() {
             EventHub.listen('global-search-index', (data) => {
                 this.filesIndex = data
@@ -176,8 +182,10 @@ export default {
             }
         },
         firstRun(val) {
-            if (!val && this.$refs['search-input']) {
-                this.$refs['search-input'].addEventListener('transitionend', this.ontransitionend)
+            if (!val) {
+                if (this.$refs['search-input']) this.$refs['search-input'].addEventListener('transitionend', this.ontransitionend)
+            } else {
+                this.$refs['search-input'].removeEventListener('transitionend', this.ontransitionend)
             }
         }
     }

@@ -6,7 +6,7 @@
            :style="getRatio(val)"
            :title="getToolTipContent(key, val)"
            :key="key"
-           class="progress-bar">
+           class="progress-bar animate">
             <strong v-show="val > 0">{{ key }}</strong>
         </p>
     </div>
@@ -38,28 +38,27 @@ export default {
     watch: {
         list: {
             immediate: true,
+            deep: true,
             handler(val, oldVal) {
-                this.$nextTick(() => {
-                    let ratio = {
-                        image: 0,
-                        audio: 0,
-                        video: 0,
-                        text: 0,
-                        folder: 0,
-                        application: 0
-                    }
+                let ratio = {
+                    image: 0,
+                    audio: 0,
+                    video: 0,
+                    text: 0,
+                    folder: 0,
+                    application: 0
+                }
 
-                    val.forEach((e) => {
-                        if (this.fileTypeIs(e, 'audio')) ratio.audio++
-                        if (this.fileTypeIs(e, 'video')) ratio.video++
-                        if (this.fileTypeIs(e, 'image')) ratio.image++
-                        if (this.fileTypeIs(e, 'folder')) ratio.folder++
-                        if (this.fileTypeIs(e, 'text') || this.fileTypeIs(e, 'pdf')) ratio.text++
-                        if (this.fileTypeIs(e, 'application') || this.fileTypeIs(e, 'compressed')) ratio.application++
-                    })
-
-                    return this.contentRatio = ratio
+                val.forEach((e) => {
+                    if (this.fileTypeIs(e, 'audio')) ratio.audio++
+                    if (this.fileTypeIs(e, 'video')) ratio.video++
+                    if (this.fileTypeIs(e, 'image')) ratio.image++
+                    if (this.fileTypeIs(e, 'folder')) ratio.folder++
+                    if (this.fileTypeIs(e, 'text') || this.fileTypeIs(e, 'pdf')) ratio.text++
+                    if (this.fileTypeIs(e, 'application') || this.fileTypeIs(e, 'compressed')) ratio.application++
                 })
+
+                this.contentRatio = ratio
             }
         }
     }

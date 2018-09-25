@@ -152,14 +152,14 @@ export default {
 
         /*                Cache Storage Api                */
         removeImageCache(url) {
-            if ('caches' in window) {
+            if (this.browserSupport('caches')) {
                 return caches.open(this.CDBN).then((cache) => {
                     return cache.delete(url)
                 })
             }
         },
         clearImageCache() {
-            if ('caches' in window) {
+            if (this.browserSupport('caches')) {
                 return caches.keys().then((keys) => {
                     return Promise.all(
                         keys.map((item) => {

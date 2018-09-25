@@ -11,6 +11,10 @@ export default {
                 return files.some((item) => {
                     return this.IsLocked(item)
                 })
+            } else if (val == 'application') {
+                return files.some((item) => {
+                    return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
+                })
             }
 
             return files.some((item) => {
@@ -22,23 +26,24 @@ export default {
         },
         fileTypeIs(item, val) {
             let mimes = this.config.mimeTypes
+            let type = item.type
 
-            if (item.type) {
-                if (val == 'image' && mimes.image.includes(item.type)) {
+            if (type) {
+                if (val == 'image' && mimes.image.includes(type)) {
                     return true
                 }
 
                 // because "pdf" shows up as "application"
-                if (item.type.includes('pdf') && val != 'pdf') {
+                if (type.includes('pdf') && val != 'pdf') {
                     return false
                 }
 
                 // because "archive" shows up as "application"
-                if (item.type.includes('compressed') || mimes.archive.includes(item.type)) {
+                if (type.includes('compressed') || mimes.archive.includes(type)) {
                     return val == 'compressed' ? true : false
                 }
 
-                return item.type.includes(val)
+                return type.includes(val)
             }
         },
         showFilesOfType(val) {
@@ -60,7 +65,7 @@ export default {
                 this.filterdList = files.filter((item) => {
                     if (val == 'text') {
                         return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
-                    } else if ('application') {
+                    } else if (val == 'application') {
                         return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
                     }
 
@@ -83,14 +88,10 @@ export default {
             if (this.searchFor) {
                 this.updateSearchCount()
             }
-        },
-        filterDirList(dir) {
-            // dont show dirs that have similarity with selected item(s)
-            if (this.bulkItemsCount) {
-                return this.bulkList.filter((e) => dir.match(`(/?)${e.name}(/?)`)).length > 0 ? false : true
-            }
 
-            return this.selectedFile && !dir.includes(this.selectedFile.name)
+            this.$nextTick(() => {
+                EventHub.fire('start-img-observing')
+            })
         },
 
         // search

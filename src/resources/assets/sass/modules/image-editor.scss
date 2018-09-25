@@ -2,13 +2,10 @@
 @import '../partials/vars';
 
 .__modal-editor {
-    .modal-background {
-        background-color: rgba($dark, 0.98);
-    }
-
-    .__cropper {
+    .__editor {
         overflow: unset;
         min-width: unset;
+        transition: margin 0.25s $anim-ease;
         transform: translateX(-50px); // account for the presets width
         background: transparent;
         box-shadow: none;
@@ -21,10 +18,13 @@
         .__side-toolbar {
             display: flex;
             align-self: flex-start;
-            background-color: $editorBtns;
         }
 
         .top {
+            position: sticky;
+            z-index: 30;
+            top: 0;
+
             .__top-toolbar {
                 display: flex;
                 width: 100%;
@@ -32,11 +32,15 @@
                 .left,
                 .right {
                     display: flex;
-                    background-color: $editorBtns;
                 }
 
-                .left {
-                    margin-right: auto;
+                .__left-index {
+                    display: flex;
+                }
+
+                .right {
+                    margin-left: auto;
+                    padding-left: 2rem;
                 }
             }
         }
@@ -46,7 +50,7 @@
                 flex-flow: column nowrap;
             }
 
-            .card-image {
+            .__cropper {
                 position: relative;
                 margin: 1rem;
                 margin-right: 0;
@@ -61,16 +65,47 @@
                     }
                 }
 
-                .__bottom-toolbar {
+                .__loader {
                     position: absolute;
-                    z-index: 1;
-                    right: 0;
-                    bottom: 0;
+                    top: 0;
+                    left: 0;
                     display: flex;
-                    transform: translateY(calc(100% + 1rem));
-                    background-color: $editorBtns;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 100%;
+                    opacity: 0.5;
                 }
 
+                .__diff {
+                    position: absolute;
+                    z-index: 10;
+                    top: 0;
+                    overflow: hidden;
+                    width: 100% !important;
+                    max-height: 75vh;
+
+                    .image-compare-handle {
+                        color: $blue;
+                    }
+
+                    .image-compare-wrapper {
+                        background-color: rgba($black, 0.5);
+                        box-shadow: 10px 0 40px 0 rgba($black, 0.5);
+                    }
+
+                    img,
+                    .image-compare-wrapper,
+                    .image-compare-handle {
+                        transition: all 0.25s $anim-ease;
+                    }
+
+                    &.is-draggable {
+                        .image-compare-wrapper {
+                            background-color: unset;
+                        }
+                    }
+                }
 
                 .__caman-presets {
                     position: absolute;
@@ -85,9 +120,9 @@
                         margin: 0 0 0.5rem;
                         padding: 0.75rem;
                         text-align: center;
-                        color: white;
+                        color: $white;
                         border-radius: 3px;
-                        background: $text;
+                        background: $grad_1;
                     }
 
                     section {
@@ -113,7 +148,6 @@
                         button {
                             margin: 0.25rem;
                             border-radius: 3px;
-                            background-color: $editorBtns;
 
                             &:first-of-type {
                                 margin-top: 0;
@@ -127,37 +161,39 @@
                             &.is-active {
                                 background: $audio;
                             }
+
+                            &:disabled {
+                                background: rgba($black, 0.8);
+                            }
                         }
                     }
+                }
+
+                .__bottom-toolbar {
+                    position: absolute;
+                    z-index: 1;
+                    right: 0;
+                    bottom: 0;
+                    display: flex;
+                    transform: translateY(calc(100% + 1rem));
                 }
             }
         }
     }
 
-    .__caman {
-        position: relative;
-
-        .__caman-controls {
-            position: absolute;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            transform: translateY(-100%);
-            background-color: $editorBtns;
-        }
-    }
-
     .btn-plain {
         padding: 0.75rem;
-        transition: all 0.25s ease-out;
-        color: white;
+        transition: all 0.25s $anim-ease;
+        color: $white;
+        background-color: $editorBtns;
 
         &:hover,
         &.is-active {
-            background: $folder;
+            background: $audio;
         }
 
         &:disabled {
+            opacity: 0.7;
             background: rgba($black, 0.8);
         }
     }
@@ -171,6 +207,7 @@
     }
 }
 
+// crop styles
 .cropper-line {
     background-color: transparent !important;
 }
@@ -192,7 +229,7 @@
         width: 20px;
         height: 20px;
         border-style: solid;
-        border-color: white;
+        border-color: $white;
         background-color: transparent !important;
     }
 
@@ -210,5 +247,61 @@
 
     &.point-sw {
         border-width: 0 0 3px 3px;
+    }
+}
+
+// filter slider
+#contentpopup2 {
+    .title,
+    .icon {
+        color: $range;
+    }
+
+    .range-neg {
+        background-image: linear-gradient(to right, $editorBtns var(--length), $range var(--length),$range 50%, $editorBtns 50%) !important;
+    }
+
+    .range-pos {
+        background-image: linear-gradient(to right, $editorBtns 50%, $range 50%, $range var(--length), $editorBtns var(--length)) !important;
+    }
+
+    input[type='range'] {
+        width: 100%;
+        height: 0.5rem;
+        margin: 0.5rem 0;
+        border-radius: 100vw;
+        background-color: $editorBtns;
+        background-image: linear-gradient(to right, $range var(--length), $editorBtns var(--length));
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+
+        &::-webkit-slider-thumb {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+            border-radius: 100vw;
+            background: $white;
+            -webkit-appearance: none;
+                    appearance: none;
+        }
+
+        &::-moz-range-thumb {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+            border-radius: 100vw;
+            background: $white;
+        }
+    }
+}
+
+// tippy theme
+.tippy-tooltip.mm-theme {
+    color: $white;
+    background: $black;
+
+    [x-arrow] {
+        border-top-color: $black;
     }
 }

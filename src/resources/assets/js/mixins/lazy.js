@@ -1,5 +1,4 @@
-import debounce from 'lodash/debounce'
-import loader from '../wr'
+import {loadImageWithWorker} from '../webworker'
 
 export default {
     props: ['file', 'browserSupport', 'rootEl'],
@@ -7,27 +6,44 @@ export default {
         return {
             observer: null,
             src: null,
-            intersected: false
+            intersected: false,
+            isObserving: false
         }
     },
     mounted() {
         this.init()
     },
     beforeDestroy() {
-        if (this.browserSupport('IntersectionObserver') && this.observer) {
-            this.observer.unobserve(this.$el)
-            this.observer = null
+        if (this.browserSupport('IntersectionObserver')) {
+            this.stop()
         }
     },
     methods: {
         init() {
-            // wait for any DOM stuff to finish
-            this.$nextTick(debounce(() => {
-                this.browserSupport('IntersectionObserver')
-                    ? this.observe()
-                    : this.intersected = true
-            }, 500))
+            EventHub.listen('start-img-observing', () => {
+                this.isObserving = true
+
+                setTimeout(() => {
+                    if (!this.intersected && this.isObserving) {
+                        this.browserSupport('IntersectionObserver')
+                            ? this.observe()
+                            : this.intersected = true
+                    }
+                }, 500)
+            })
+
+            EventHub.listen('stop-img-observing', () => {
+                this.stop()
+            })
         },
+        stop() {
+            if (this.observer) {
+                this.isObserving = false
+                this.observer.unobserve(this.$el)
+                this.observer = null
+            }
+        },
+
         observe() {
             this.observer = new IntersectionObserver((item, observer) => {
                 item.forEach((img) => {
@@ -43,8 +59,8 @@ export default {
 
             this.observer.observe(this.$el)
         },
-        fetchImg(url) {
-            return loader(this.file.path)
+        fetchImg() {
+            return loadImageWithWorker(this.file.path)
         }
     }
 }

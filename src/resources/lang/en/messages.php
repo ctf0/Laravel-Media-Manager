@@ -8,6 +8,7 @@ return array (
     'url' => 'Url ...',
   ),
   'ajax_error' => 'Oh NO! Something Went Wrong',
+  'application' => 'Application',
   'are_you_sure_delete' => 'Are you sure you want to delete ?',
   'audio' => 
   array (
@@ -38,6 +39,7 @@ return array (
     'flip_horizontal' => 'Flip Horizontal',
     'flip_vertical' => 'Flip Vertical',
     'main' => 'Crop',
+    'presets' => 'Presets',
     'reset' => 'Reset All',
     'reset_filters' => 'Clear Filters',
     'rotate_left' => 'Rotate Left',
@@ -61,7 +63,11 @@ return array (
     'folder' => 'Download Folder',
     'sep' => 'Folders Should Be Downloaded Separately',
   ),
-  'editor' => 'Editor',
+  'editor' => 
+  array (
+    'diff' => 'Toggle Diff',
+    'main' => 'Editor',
+  ),
   'error' => 
   array (
     'already_exists' => 'A File/Folder Already Exists With That Name',
@@ -163,5 +169,4 @@ return array (
     'set' => 'Change Visibility',
     'success' => '":attr" Visibility Was Updated',
   ),
-  'application' => 'Application',
 );

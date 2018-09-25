@@ -1,8 +1,10 @@
+// https://gist.github.com/ahem/d19ee198565e20c6f5e1bcd8f87b3408
+
 function createWorker(f) {
     return new Worker(URL.createObjectURL(new Blob([`(${f})()`])))
 }
 
-const worker = createWorker(() => {
+const imgWorker = createWorker(() => {
     self.addEventListener('message', (e) => {
         const src = e.data
 
@@ -15,19 +17,21 @@ const worker = createWorker(() => {
     })
 })
 
-export default function loadImageWithWorker(src) {
+export function loadImageWithWorker(src) {
     return new Promise((resolve, reject) => {
         function handler(e) {
-            if (e.data.src === src) {
-                worker.removeEventListener('message', handler)
-                if (e.data.error) {
-                    reject(e.data.error)
-                }
-                resolve(e.data.bitmap)
+            let data = e.data
+
+            if (data.src === src) {
+                imgWorker.removeEventListener('message', handler)
+
+                data.error
+                    ? reject(data.error)
+                    : resolve(data.bitmap)
             }
         }
 
-        worker.addEventListener('message', handler)
-        worker.postMessage(src)
+        imgWorker.addEventListener('message', handler)
+        imgWorker.postMessage(src)
     })
 }

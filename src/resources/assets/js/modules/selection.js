@@ -1,5 +1,3 @@
-require('../packages/PreventGhostClick')
-
 export default {
     methods: {
         /*                Item                */
@@ -75,56 +73,9 @@ export default {
                 return this.fileTypeIs(this.selectedFile, val)
             }
         },
-        dbltap(e) {
-            PreventGhostClick(e.target)
-
-            if (!this.isBulkSelecting()) {
-                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
-                    return this.toggleModal('preview_modal')
-                }
-
-                if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                    return this.smallScreen
-                        ? this.toggleModal('preview_modal')
-                        : this.playMedia()
-                }
-
-                this.openFolder(this.selectedFile)
-            }
-        },
-
-        /*                Folder                */
-        openFolder(file) {
-            if (this.fileTypeIs(file, 'folder')) {
-                this.folders.push(file.name)
-                this.getFiles(this.folders).then(() => {
-                    this.updatePageUrl()
-                })
-            }
-        },
-        goToFolder(index) {
-            if (!this.isBulkSelecting()) {
-                let prev_folder_name = this.folders[index]
-
-                this.folders = this.folders.splice(0, index)
-
-                this.getFiles(this.folders, prev_folder_name).then(() => {
-                    this.updatePageUrl()
-                })
-            }
-        },
-        goToPrevFolder() {
-            EventHub.fire('stopHammerPropagate')
-
-            if (this.restrictModeIsOn()) {
-                return false
-            }
-
-            let length = this.folders.length
-
-            return length == 0
-                ? false
-                : this.goToFolder(length - 1)
+        textFileType() {
+            // dont open files like "rtf" because browser cant read them, only open "txt"
+            return this.selectedFileIs('text/plain')
         },
 
         /*                Navigation                */
@@ -168,59 +119,78 @@ export default {
             }
 
             // toggle modal off
+            this.checkTypeB4Navigation()
+        },
+        checkTypeB4Navigation() {
             if (
                 this.isActiveModal('preview_modal') &&
-                (this.selectedFileIs('folder') || this.selectedFileIs('application')) ||
-                (this.selectedFileIs('video') || this.selectedFileIs('audio')) && !this.smallScreen
+                (this.selectedFileIs('text') && !this.textFileType()) ||
+                (this.selectedFileIs('folder') || this.selectedFileIs('application') || this.selectedFileIs('compressed')) ||
+                (this.selectedFileIs('video') || this.selectedFileIs('audio')) && this.infoSidebar
             ) {
+                return this.toggleModal()
+            }
+        },
+
+        // items
+        goToNext() {
+            let curSelectedIndex = this.currentFileIndex
+
+            if (curSelectedIndex == this.allItemsCount - 1) {
                 this.toggleModal()
+            }
+
+            if (curSelectedIndex < this.allItemsCount - 1) {
+                this.imageSlideDirection = 'nxt'
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
             }
         },
         goToPrev() {
             let curSelectedIndex = this.currentFileIndex
 
             if (curSelectedIndex !== 0) {
-                this.imageSlideDirection = 'prev'
+                this.imageSlideDirection = 'prv'
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex - 1))
+            } else {
+                this.toggleModal()
             }
-        },
-        goToNext() {
-            let curSelectedIndex = this.currentFileIndex
-
-            if (curSelectedIndex < this.allItemsCount - 1) {
-                this.imageSlideDirection = 'next'
-                this.scrollToFile(this.getElementByIndex(curSelectedIndex + 1))
-            }
-        },
-        goToEnd() {
-            this.imageSlideDirection = 'next'
-
-            let last = this.filesList.length - 1
-            this.scrollToFile(this.getElementByIndex(last))
         },
         goToHome() {
-            this.imageSlideDirection = 'prev'
+            this.imageSlideDirection = 'dwn'
             this.scrollToFile(this.getElementByIndex(0))
         },
-
-        goToPrevRow() {
-            let curSelectedIndex = this.currentFileIndex
-            let moveBy = this.scrollByRows
-
-            if (curSelectedIndex >= moveBy) {
-                this.imageSlideDirection = 'prev'
-                this.scrollToFile(this.getElementByIndex(curSelectedIndex - moveBy))
-            }
+        goToEnd() {
+            this.imageSlideDirection = 'up'
+            this.scrollToFile(this.getElementByIndex(this.filesList.length - 1))
         },
+
+        // rows
         goToNextRow() {
             let curSelectedIndex = this.currentFileIndex
             let moveBy = this.scrollByRows
-            this.imageSlideDirection = 'next'
+            this.imageSlideDirection = 'up'
+
+            if (curSelectedIndex == this.allItemsCount - 1) {
+                this.toggleModal()
+            }
 
             if (curSelectedIndex < this.allItemsCount - moveBy) {
                 this.scrollToFile(this.getElementByIndex(curSelectedIndex + moveBy))
             } else {
                 this.goToEnd()
+            }
+        },
+        goToPrevRow() {
+            let curSelectedIndex = this.currentFileIndex
+            let moveBy = this.scrollByRows
+
+            if (curSelectedIndex == 0) {
+                this.toggleModal()
+            }
+
+            if (curSelectedIndex >= moveBy) {
+                this.imageSlideDirection = 'dwn'
+                this.scrollToFile(this.getElementByIndex(curSelectedIndex - moveBy))
             }
         }
     }

@@ -35,7 +35,7 @@
             }
 
             & + .switcher {
-                transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out 0.02s;
+                transition: box-shadow 0.2s $anim-ease, border-color 0.2s $anim-ease 0.02s;
                 border-color: $green;
                 background-color: $green;
                 box-shadow: 0 0 0 12.5px $green inset;
@@ -62,7 +62,7 @@
         height: 25px;
         padding: 0;
         cursor: pointer;
-        transition: box-shadow 0.2s ease-out 0.02s, border-color 0.2s ease-out;
+        transition: box-shadow 0.2s $anim-ease 0.02s, border-color 0.2s $anim-ease;
         border: 2px solid $active_theme;
         border-radius: 100vw;
         background-color: $active_theme;
@@ -74,7 +74,7 @@
             width: 21px;
             height: 21px;
             content: '';
-            transition: all 0.2s ease-out;
+            transition: all 0.2s $anim-ease;
             transform: translateX(0);
             border-radius: 100vw;
             background-color: $white;

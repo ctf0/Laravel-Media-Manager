@@ -1,4 +1,4 @@
-import loader from '../wr'
+import {loadImageWithWorker} from '../webworker'
 
 export default {
     computed: {
@@ -111,7 +111,7 @@ export default {
 
                     if (this.selectedFileIs('image')) {
                         if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
-                            return loader(url).then((img) => {
+                            return loadImageWithWorker(url).then((img) => {
                                 return img
                             })
                         }
@@ -136,15 +136,33 @@ export default {
                     if (this.selectedFileIs('audio') && this.browserSupport('jsmediatags')) {
                         return this.getCachedResponse(url).then((res) => {
                             if (res) {
+                                // queue the image render
+                                let pic = res.picture
+                                res.picture = null
+                                this.$nextTick(() => {
+                                    setTimeout(() => {
+                                        return res.picture = pic
+                                    }, 250)
+                                })
+
                                 return res
                             }
 
                             return this.getAudioData(url)
                                 .then((val) => {
-                                    this.cacheResponse(val, url)
+                                    // queue the cache save
+                                    setTimeout(() => {
+                                        this.cacheResponse(val, url)
+                                    }, 1000)
+
+                                    // queue the image render
+                                    let pic = val.picture
+                                    val.picture = null
+                                    setTimeout(() => {
+                                        return val.picture = pic
+                                    }, 500)
+
                                     return val
-                                }).catch((err) => {
-                                    return
                                 })
                         })
                     }

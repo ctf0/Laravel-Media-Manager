@@ -1,7 +1,9 @@
 <v-touch class="card"
     :class="{'pdf-prev': selectedFileIs('pdf') || selectedFileIs('text')}"
-    @swiperight="goToPrev()"
-    @swipeleft="goToNext()">
+    @swiperight="cardSwipGesture"
+    @swipeleft="cardSwipGesture"
+    @swipeup="cardSwipGesture"
+    @swipedown="cardSwipGesture">
 
     <div class="card-image">
         {{-- pdf / text --}}
@@ -24,10 +26,17 @@
 
         {{-- audio --}}
         <div v-else-if="selectedFileIs('audio')" class="audio-prev">
-            <img v-if="selectedFilePreview"
-                :src="selectedFilePreview.picture ? selectedFilePreview.picture : selectedFilePreview"
-                :alt="selectedFile.name"
-                class="image"/>
+            <template>
+                <img v-if="selectedFilePreview && selectedFilePreview.picture"
+                    :src="selectedFilePreview.picture"
+                    :alt="selectedFile.name"
+                    class="image"/>
+
+                <div v-else class="audio-icon">
+                    <icon class="svg-prev-icon" name="music" scale="8"></icon>
+                </div>
+            </template>
+
             <audio controls
                 class="is-hidden"
                 preload="auto"
@@ -38,13 +47,26 @@
         </div>
 
         {{-- image --}}
-        <a v-else
-            :href="selectedFile.path"
-            rel="noreferrer noopener"
-            target="_blank"
-            class="image">
-            <img :src="selectedFilePreview" :alt="selectedFile.name">
-        </a>
+        <div v-else class="image-wrapper">
+            <div ref="img-card-prev" @scroll="updateScrollableDir('img-card-prev')">
+
+                <a :href="selectedFile.path"
+                    rel="noreferrer noopener"
+                    target="_blank"
+                    class="image">
+                    <img :src="selectedFilePreview" :alt="selectedFile.name">
+                </a>
+            </div>
+
+            <transition :name="scrollableBtn.state ? 'mm-img-nxt': 'mm-img-prv'" appear>
+                <div class="image-scroll-btn"
+                    :class="scrollableBtn.dir"
+                    v-show="scrollableBtn.state"
+                    @click="scrollImg('img-card-prev')">
+                    <span class="icon is-large"><icon name="chevron-down" scale="1"></icon></span>
+                </div>
+            </transition>
+        </div>
     </div>
 
     <div class="card-content">
@@ -145,7 +167,7 @@
                 :disabled="item_ops() || isLoading"
                 @click="imageEditorCard()">
                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
-                <span>{{ trans('MediaManager::messages.editor') }}</span>
+                <span>{{ trans('MediaManager::messages.editor.main') }}</span>
             </button>
         </div>
 

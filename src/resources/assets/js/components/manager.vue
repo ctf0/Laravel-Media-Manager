@@ -9,6 +9,8 @@ import Cache from '../modules/cache'
 import Computed from '../modules/computed'
 import Download from '../modules/download'
 import Form from '../modules/form'
+import Folder from '../modules/folder'
+import Gestures from '../modules/gestures'
 import Image from '../modules/image'
 import ItemFiltration from '../modules/filtration'
 import ItemVisibility from '../modules/visibility'
@@ -41,6 +43,8 @@ export default {
         Computed,
         Download,
         Form,
+        Folder,
+        Gestures,
         Image,
         ItemFiltration,
         ItemVisibility,
@@ -72,13 +76,13 @@ export default {
             checkForFolders: false,
             disableShortCuts: false,
             firstMeta: false, // for alt + click selection
-            firstRun: true, // for delayed scroll on manager start
+            firstRun: false, // deffer running logic on init
             folderWarning: false,
             imageWasEdited: false,
             infoSidebar: false,
+            introIsOn: false,
             isLoading: false,
             linkCopied: false,
-            introIsOn: false,
             loading_files: false,
             no_files: false,
             no_search: false,
@@ -109,6 +113,10 @@ export default {
             files: [],
             filterdList: [],
             folders: [],
+            scrollableBtn: {
+                state: false,
+                dir: 'down'
+            },
             lockedList: [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
@@ -131,25 +139,20 @@ export default {
     mounted() {
         this.onResize()
         this.eventsListener()
-
-        this.$nextTick(
-            debounce(() => {
-                this.scrollByRow()
-            }, 1000)
-        )
+        this.scrollObserve()
     },
     updated: debounce(function() {
-        this.initPlyr()
+        this.scrollByRow()
+
+        if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+            this.initPlyr()
+        }
 
         if (!this.introIsOn) {
             this.activeModal || this.inModal
                 ? this.noScroll('add')
                 : this.noScroll('remove')
         }
-
-        return this.checkForFolders = this.$refs.move_folder_dropdown.options[0]
-            ? true
-            : false
     }, 250),
     beforeDestroy() {
         window.removeEventListener('resize', this.onResize)
@@ -166,20 +169,22 @@ export default {
                 this.resolveRestrictFolders()
 
                 return this.getFiles(this.folders).then(() => {
-                    this.firstRun = false
                     this.fileUpload()
+                    this.$nextTick(() => {
+                        this.firstRun = true
+                    })
                 })
             }
 
             // normal
             this.getPathFromUrl()
-                .then(() => {
-                    return this.preSaved()
-                })
+                .then(this.preSaved())
                 .then(() => {
                     return this.getFiles(this.folders, null, this.selectedFile).then(() => {
-                        this.firstRun = false
                         this.fileUpload()
+                        this.$nextTick(() => {
+                            this.firstRun = true
+                        })
                     })
                 })
         },
@@ -243,17 +248,19 @@ export default {
                                     this.selectedFileIs('audio') ||
                                     this.selectedFileIs('image') ||
                                     this.selectedFileIs('pdf') ||
-                                    this.selectedFileIs('text')
+                                    this.textFileType()
                                 )) {
                                     e.preventDefault()
 
                                     // play-pause media
-                                    if (!this.smallScreen && (this.selectedFileIs('video') || this.selectedFileIs('audio'))) {
-                                        this.playMedia()
+                                    if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                                        this.infoSidebar
+                                            ? this.playMedia()
+                                            : this.toggleModal('preview_modal')
                                     }
 
                                     // "show" image/pdf/text quick view
-                                    if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('text')) {
+                                    if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.textFileType()) {
                                         this.toggleModal('preview_modal')
                                     }
                                 }
@@ -362,7 +369,7 @@ export default {
                         this.navigation(e)
                     }
 
-                    if (key == 'esc') {
+                    if (key == 'esc' && !this.isActiveModal('imageEditor_modal')) {
                         this.toggleModal()
                     }
                 }
@@ -380,6 +387,15 @@ export default {
                 null,
                 this.selectedFile ? this.selectedFile.name : null
             )
+        },
+        clearAll() {
+            if (!this.isLoading) {
+                this.clearUrlQuery()
+                this.clearLs()
+                this.clearCache()
+                this.clearImageCache()
+                this.ajaxError(false)
+            }
         },
         moveItem() {
             this.$nextTick(() => {

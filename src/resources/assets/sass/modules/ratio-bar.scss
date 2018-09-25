@@ -1,5 +1,19 @@
 @import '../partials/vars';
 
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0,100% 100%;
+    }
+
+    to {
+        background-position: 0 0,100% 100%;
+    }
+}
+
+.progress {
+    box-shadow: none;
+}
+
 .progress-bar {
     box-shadow: none;
 
@@ -10,32 +24,38 @@
         text-overflow: ellipsis;
         mix-blend-mode: difference;
     }
+
+    &.animate {
+        animation: progress-bar-stripes 1.5s linear infinite;
+    }
 }
 
 .is-audio {
-    background: $audio;
+    background: $progress-bars,$audio;
+    background-size: 40px 40px,100% 100%;
 }
 
 .is-video {
-    background: $video;
+    background: $progress-bars,$video;
+    background-size: 40px 40px,100% 100%;
 }
 
 .is-image {
-    background: $image;
+    background: $progress-bars,$image;
+    background-size: 40px 40px,100% 100%;
 }
 
 .is-text {
-    background: $text;
+    background: $progress-bars,$text;
+    background-size: 40px 40px,100% 100%;
 }
 
 .is-folder {
-    background: $folder;
+    background: $progress-bars,$folder;
+    background-size: 40px 40px,100% 100%;
 }
 
 .is-application {
-    background: $application;
-}
-
-.is-pdf {
-    background: $pdf;
+    background: $progress-bars,$application;
+    background-size: 40px 40px,100% 100%;
 }

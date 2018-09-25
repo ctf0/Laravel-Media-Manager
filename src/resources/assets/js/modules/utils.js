@@ -1,6 +1,3 @@
-import isObject from 'lodash/isObject'
-import omitBy from 'lodash/omitBy'
-
 export default {
     methods: {
         /*                Check                */
@@ -9,9 +6,6 @@ export default {
         },
         isActiveModal(el) {
             return this.activeModal == el
-        },
-        moveUpCheck() {
-            return this.allItemsCount && this.folders.length
         },
         smallScreenHelper() {
             if (!this.smallScreen) {
@@ -50,15 +44,6 @@ export default {
                 ? this.selectFirst()
                 : this.lazySelectFirst()
         },
-        clearAll() {
-            if (!this.isLoading) {
-                this.clearUrlQuery()
-                this.clearLs()
-                this.clearCache()
-                this.clearImageCache()
-                this.ajaxError(false)
-            }
-        },
 
         /*                Resolve                */
         getFileName(name) {
@@ -90,33 +75,6 @@ export default {
         },
         getElementByIndex(i) {
             return document.querySelector(`[data-file-index='${i}']`)
-        },
-        getAudioData(url) {
-            return new Promise((resolve, reject) => {
-                jsmediatags.read(url, {
-                    onSuccess(tag) {
-                        let val = tag.tags
-
-                        if (val.picture) {
-                            const {data, format} = val.picture
-                            let base64String = ''
-
-                            for (var value of data) {
-                                base64String += String.fromCharCode(value)
-                            }
-
-                            val.picture = `data:${format};base64,${window.btoa(base64String)}`
-
-                            return resolve(omitBy(val, isObject))
-                        }
-
-                        return reject('no data found')
-                    },
-                    onError(error) {
-                        return reject(error)
-                    }
-                })
-            })
         },
         trans(key) {
             return this.translations[key]
@@ -173,7 +131,6 @@ export default {
                 return EventHub.fire('no-files-show')
             }
 
-            this.smallScreenHelper()
             this.toggleLoader('no_files', false)
             EventHub.fire('no-files-hide')
         },
@@ -213,12 +170,12 @@ export default {
         browserSupport(api) {
             return api in window
         },
+        arrayFilter(arr) {
+            return arr.filter((e) => e)
+        },
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
-        },
-        arrayFilter(arr) {
-            return arr.filter((e) => e)
         },
         resetInput(input, val = null) {
             if (Array.isArray(input)) {
@@ -235,112 +192,29 @@ export default {
 
             return str
         },
-
         onResize() {
-            this.scrollByRow()
+            if (this.firstRun) {
+                if (this.selectedFileIs('image')) {
+                    this.isScrollable()
+                }
 
-            // 1087 = bulma is-hidden-touch
-            if (document.documentElement.clientWidth < 1087) {
-                this.infoSidebar = false
-                this.smallScreen = true
-            } else {
+                // 1087 = bulma is-hidden-touch
+                if (document.documentElement.clientWidth < 1087) {
+                    this.infoSidebar = false
+                    this.smallScreen = true
+                } else {
                 // hide active player modal
-                if (
-                    this.isActiveModal('preview_modal') &&
+                    if (
+                        this.isActiveModal('preview_modal') &&
                     (this.selectedFileIs('video') || this.selectedFileIs('audio'))
-                ) {
-                    this.toggleModal()
+                    ) {
+                        this.toggleModal()
+                    }
+
+                    this.toolBar = true
+                    this.smallScreen = false
+                    this.smallScreenHelper()
                 }
-
-                this.toolBar = true
-                this.smallScreen = false
-                this.smallScreenHelper()
-            }
-        },
-        // files wrapper gestures
-        containerClick(e, cls = '__stack-files') {
-            let type = e.type
-
-            if (e.target.classList.contains(cls)) {
-                if (type == 'hold') {
-                    // this.toggleOverlay()
-                    // this.toggleUploadPanel()
-                    document.querySelector('.dz-clickable').click()
-                }
-
-                if (type == 'dbltap') {
-                    this.createNewFolder()
-                }
-
-                if (type == 'pinchin') {
-                    this.refresh()
-                }
-            }
-        },
-        // gesture animation
-        gesture(e) {
-            let type = e.type
-            let target = e.target
-            let style = {}
-            let cls
-
-            if (!target.classList.contains('__file-box')) {
-                target = target.closest('.__file-box')
-            }
-
-            switch (type) {
-                case 'swipedown':
-                    style = {transform: `translateY(${e.deltaY}px)`}
-                    cls = 'bounceInUp'
-                    break
-                case 'swipeup':
-                    style = {transform: `translateY(${e.deltaY}px)`}
-                    cls = 'bounceInDown'
-                    break
-                case 'swipeleft':
-                    style = {transform: `translateX(${e.deltaX}px)`}
-                    cls = 'bounceInRight'
-                    break
-                case 'swiperight':
-                    style = {transform: `translateX(${e.deltaX}px)`}
-                    cls = 'bounceInLeft'
-                    break
-                case 'hold':
-                    style = {transform: 'scale(0.8)'}
-                    cls = 'jackInTheBox'
-                    break
-                case 'dbltap':
-                    style = {transform: 'scale(0.8)'}
-                    cls = 'bounceIn'
-                    break
-            }
-
-            // folders only, toggle lock
-            if (type == 'hold' && this.selectedFileIs('folder')) {
-                this.lockFileForm()
-            }
-
-            // apply styles
-            Object.assign(target.style, style, {
-                'z-index': 1
-            })
-
-            // apply animation
-            if (cls) {
-                setTimeout(() => { // transition
-                    target.classList.add(cls)
-                    Object.assign(target.style, {
-                        'transform': ''
-                    })
-
-                    setTimeout(() => { // animation
-                        target.classList.remove(cls)
-                        Object.assign(target.style, {
-                            'transform': '',
-                            'z-index': ''
-                        })
-                    }, 750)
-                }, 250)
             }
         },
         showNotif(msg, s = 'success', duration = 3) {

@@ -5,8 +5,10 @@
 ![Browser Status](https://badges.herokuapp.com/browsers?firefox=61&microsoftedge=17&googlechrome=51&safari=!?&iexplore=!?)
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7388088/45594529-90318000-b99c-11e8-9fce-07e3576ae0df.png">
-    <img src="https://user-images.githubusercontent.com/7388088/45594564-6dec3200-b99d-11e8-8827-d9ba5337d46a.png">
+    <img alt="main" src="https://user-images.githubusercontent.com/7388088/46004312-dda3a080-c0b2-11e8-92b4-294757b88653.jpg"/>
+    <img alt="card" src="https://user-images.githubusercontent.com/7388088/46004310-dd0b0a00-c0b2-11e8-8f7a-12352e15f01b.jpg"/>
+    <img alt="filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
+    <img alt="diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
 </p>
 
 - to optimize uploaded files on the fly try [spatie](https://github.com/spatie/laravel-image-optimizer)
@@ -36,9 +38,9 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
   ```bash
-  yarn add vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js
+  yarn add vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js
   # or
-  npm install vue vue-ls vue-async-computed vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js --save
+  npm install vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js --save
   ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -115,47 +117,50 @@
 
   >- the info sidebar is only available on big screens **"> 1087px"**.
   >- if no more **rows** available, pressing `down` will go to the last item in the list **"same as native finder"**.
-  >- dbl click/tap any `audio/video` file on small screen, will open it in the preview card same as images **"because sidebar will be disabled"**.
+  >- dbl click/tap
+  >   + any file type `audio/video` when sidebar is hidden, will open it in the preview card same as images.
+  >   + any file type `application/archive` will download it.
   >- to stop interfering with other `keydown` events you can toggle the manager listener through `EventHub.fire('disable-global-keys', true/false)`.
-  >- when using [`__stack-files-reverse`](https://github.com/ctf0/Laravel-Media-Manager/wiki/Customization-&--Optimization#customization), the **left/right** gestures are also reversed.
-  >- when previewing an item, you can use any of the navigation keys `left/up/right/down/home/end`
+  >- all the **left/right** gestures have their counterparts available as well.
+  >- while previewing an item, you can use any of the navigation keys `left/up/right/down/home/end` & `swipe left/right/up/down`.
+  >- pressing `esc` while using the ***image editor*** wont close the modal but you can dbl click/tap the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
 
   <br>
 
-  |       navigation      |                    button                   |     keyboard     |        click / tap        |              touch              |
-  |-----------------------|---------------------------------------------|------------------|---------------------------|---------------------------------|
-  |                       | toggle upload panel *(toolbar)*             | u                | *                         |                                 |
-  |                       | refresh *(toolbar)*                         | r                | * / hold *(clear cache)*  | pinch in *(items container)*    |
-  |                       | move *(toolbar)*                            | m                | *                         |                                 |
-  |                       | image editor *(toolbar)*                    | e                | *                         |                                 |
-  |                       | delete *(toolbar)*                          | d / del          | *                         |                                 |
-  |                       | lock/unlock *(toolbar)*                     | l                | * / hold *(folders only)* |                                 |
-  |                       | change visibility *(toolbar)*               | v                | *                         |                                 |
-  |                       | toggle bulk selection *(toolbar)*           | b                | *                         |                                 |
-  |                       | (reset) bulk select all *(toolbar)*         | a                | *                         |                                 |
-  |                       | toggle sidebar *(path bar)*                 | t                | *                         | swipe left/right *(sidebar)*    |
-  |                       | confirm *(modal)*                           | enter            | *                         |                                 |
-  |                       | toggle preview image/pdf/text *(item)*      | space            | **                        |                                 |
-  |                       | play/pause media *(item)*                   | space            | **                        |                                 |
-  |                       | hide (modal / upload-panel / global-search) | esc              |                           |                                 |
-  |                       | reset (search / bulk selection / filter)    | esc              |                           |                                 |
-  |                       | &nbsp;                                      |                  |                           |                                 |
-  |                       | move *(item)*                               |                  |                           | swipe up                        |
-  |                       | delete *(item)*                             |                  |                           | swipe down                      |
-  |                       | rename *(item)*                             |                  |                           | swipe left                      |
-  |                       | image editor *(item)*                       |                  |                           | hold                            |
-  |                       | limit bulk select *(item)*                  | shift + click    |                           |                                 |
-  |                       | current + next bulk select *(item)*         | alt/meta + click |                           |                                 |
-  |                       | create new folder                           |                  | ** *(items container)*    |                                 |
-  |                       | &nbsp;                                      |                  |                           |                                 |
-  | select next *(item)*  |                                             | right            | *                         | swipe left  *(preview)*         |
-  | select prev *(item)*  |                                             | left             | *                         | swipe right *(preview)*         |
-  | select first *(item)* |                                             | home             |                           |                                 |
-  | select last *(item)*  |                                             | end              |                           |                                 |
-  | select next *(row)*   |                                             | down             |                           |                                 |
-  | select prev *(row)*   |                                             | up               |                           |                                 |
-  | open folder           |                                             | enter            | **                        |                                 |
-  | go to prev dir        | folderName *(path bar)*                     | backspace        | *                         | swipe right *(items container)* |
+  |      navigation      |                    button                   |     keyboard     |         click / tap          |              touch              |
+  |----------------------|---------------------------------------------|------------------|------------------------------|---------------------------------|
+  |                      | toggle upload panel *(toolbar)*             | u                |                              |                                 |
+  |                      | refresh *(toolbar)*                         | r                | hold *(clear cache)*         | pinch in *(items container)*    |
+  |                      | move *(toolbar)*                            | m                |                              |                                 |
+  |                      | image editor *(toolbar)*                    | e                |                              |                                 |
+  |                      | delete *(toolbar)*                          | d / del          |                              |                                 |
+  |                      | lock/unlock *(toolbar)*                     | l                | hold *(anything but images)* |                                 |
+  |                      | change visibility *(toolbar)*               | v                |                              |                                 |
+  |                      | toggle bulk selection *(toolbar)*           | b                |                              |                                 |
+  |                      | (reset) bulk select all *(toolbar)*         | a                |                              |                                 |
+  |                      | toggle sidebar *(path bar)*                 | t                | *                            | swipe left/right *(sidebar)*    |
+  |                      | confirm *(modal)*                           | enter            |                              |                                 |
+  |                      | toggle preview image/pdf/text *(item)*      | space            | **                           |                                 |
+  |                      | play/pause media *(item)*                   | space            | **                           |                                 |
+  |                      | hide (modal / upload-panel / global-search) | esc              |                              |                                 |
+  |                      | reset (search / bulk selection / filter)    | esc              |                              |                                 |
+  |                      | &nbsp;                                      |                  |                              |                                 |
+  |                      | move *(item)*                               |                  |                              | swipe up                        |
+  |                      | delete *(item)*                             |                  |                              | swipe down                      |
+  |                      | rename *(item)*                             |                  |                              | swipe left                      |
+  |                      | image editor *(item)*                       |                  | hold                         |                                 |
+  |                      | limit bulk select *(item)*                  | shift + click    |                              |                                 |
+  |                      | current + next bulk select *(item)*         | alt/meta + click |                              |                                 |
+  |                      | create new folder                           |                  | ** *(items container)*       |                                 |
+  |                      | &nbsp;                                      |                  |                              |                                 |
+  | go to next *(item)*  |                                             | right            | *                            | swipe left  *(preview)*         |
+  | go to prev *(item)*  |                                             | left             | *                            | swipe right *(preview)*         |
+  | go to first *(item)* |                                             | home             |                              |                                 |
+  | go to last *(item)*  |                                             | end              |                              |                                 |
+  | go to next *(row)*   |                                             | down             |                              | swipe up *(preview)*            |
+  | go to prev *(row)*   |                                             | up               |                              | swipe down *(preview)*          |
+  | open folder          |                                             | enter            | **                           |                                 |
+  | go to prev *(dir)*   | folderName *(path bar)*                     | backspace        | *                            | swipe right *(items container)* |
 
 - events
 
@@ -203,9 +208,9 @@ return [
     'controller' => '\ctf0\MediaManager\Controllers\MediaController',
 
     /*
-     * remove any file special chars except (. _ -)
+     * remove any file special chars except
      */
-    'allowed_fileNames_chars' => '.\_\-',
+    'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
 
     /*
      * remove any folder special chars except (_ -)
@@ -214,7 +219,7 @@ return [
 
     /*
      * disallow uploading files with the following mimetypes
-     * https://www.iana.org/assignments/media-types/media-types.xhtml#text
+     * https://www.iana.org/assignments/media-types/media-types.xhtml
      */
     'unallowed_mimes' => ['php', 'java'],
 

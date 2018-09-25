@@ -7,7 +7,7 @@
 .input,
 .select select {
     border-color: darken($active_theme, 5%) !important;
-    background-color: white;
+    background-color: $white;
 
     &:hover {
         border-color: darken($active_theme, 25%);
@@ -58,6 +58,7 @@
 
     .modal-background {
         position: fixed;
+        background-color: rgba($dark, 0.98);
     }
 
     .modal-card-title {

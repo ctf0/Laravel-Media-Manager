@@ -1,9 +1,17 @@
-$list: (mm-list, mm-img-prv, mm-img-nxt, mm-info-in, mm-info-out, mm-slide, mm-counter, mm-gs);
+$list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-info-out, mm-slide, mm-counter, mm-gs);
 
 @each $class in $list {
     .#{$class}-enter-active,
     .#{$class}-leave-active {
-        transition: all 0.2s;
+        transition: all 0.25s $anim-ease;
+    }
+
+    .#{$class}-enter-active {
+        z-index: 1;
+    }
+
+    .#{$class}-leave-active {
+        z-index: 0;
     }
 
     .#{$class}-enter,
@@ -33,6 +41,22 @@ $list: (mm-list, mm-img-prv, mm-img-nxt, mm-info-in, mm-info-out, mm-slide, mm-c
 
 .mm-img-nxt-leave-to {
     transform: translateX(-90px);
+}
+
+.mm-img-dwn-enter {
+    transform: translateY(-0.7rem);
+}
+
+.mm-img-dwn-leave-to {
+    transform: translateY(90px);
+}
+
+.mm-img-up-enter {
+    transform: translateY(0.7rem);
+}
+
+.mm-img-up-leave-to {
+    transform: translateY(-90px);
 }
 
 /* info toggle btn */

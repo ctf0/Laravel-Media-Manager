@@ -105,8 +105,9 @@ trait Upload
         if ($this->allowUpload()) {
             $type        = $request->mime_type;
             $path        = $request->path;
-            $data        = explode(',', $request->data)[1];
             $original    = $request->name;
+            $data        = explode(',', $request->data)[1];
+
             $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->getRandomString();
             $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
             $file_name   = "$name_only.$ext_only";

@@ -1,4 +1,4 @@
-import MediaModal from '../components/utils/media-modal.vue'
+import MediaModal from '../components/utils/external-modal.vue'
 
 export default {
     components: {MediaModal},

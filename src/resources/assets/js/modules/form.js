@@ -1,11 +1,10 @@
-import debounce from 'lodash/debounce'
 import Dropzone from 'dropzone'
 
 export default {
     methods: {
         /*                Upload                */
         fileUpload() {
-            const manager = this
+            let manager = this
             let uploadTypes = this.restrict.uploadTypes ? this.restrict.uploadTypes.join(',') : null
             let uploadsize = this.restrict.uploadsize ? this.restrict.uploadsize : 256
 
@@ -58,8 +57,7 @@ export default {
                 },
                 queuecomplete() {
                     if (!sending) {
-                        manager.progressCounter = 0
-                        manager.showProgress = false
+                        manager.hideProgress()
 
                         if (clearCache) {
                             manager.removeCachedResponse().then(() => {
@@ -67,10 +65,6 @@ export default {
                                     ? manager.getFiles(manager.folders, null, last)
                                     : manager.getFiles(manager.folders)
                             })
-                        } else {
-                            manager.isLoading = false
-                            manager.smallScreenHelper()
-                            manager.loadingFiles('hide')
                         }
                     }
                 }
@@ -96,34 +90,37 @@ export default {
             this.toggleLoading()
             this.loadingFiles('show')
 
-            axios.post(event.target.action, {
-                path: this.files.path,
-                url: url,
-                random_names: this.randomNames
-            }).then(({data}) => {
-                this.toggleLoading()
-                this.loadingFiles('hide')
+            this.$nextTick(() => {
+                axios.post(event.target.action, {
+                    path: this.files.path,
+                    url: url,
+                    random_names: this.randomNames
+                }).then(({data}) => {
+                    this.toggleLoading()
+                    this.loadingFiles('hide')
 
-                if (!data.success) {
-                    return this.showNotif(data.message, 'danger')
-                }
+                    if (!data.success) {
+                        return this.showNotif(data.message, 'danger')
+                    }
 
-                this.resetInput('urlToUpload')
-                this.$nextTick(() => {
-                    this.$refs.save_link_modal_input.focus()
+                    this.resetInput('urlToUpload')
+                    this.$nextTick(() => {
+                        this.$refs.save_link_modal_input.focus()
+                    })
+
+                    this.showNotif(`${this.trans('save_success')} "${data.message}"`)
+                    this.removeCachedResponse().then(() => {
+                        this.getFiles(this.folders, null, data.message)
+                    })
+
+                }).catch((err) => {
+                    console.error(err)
+
+                    this.toggleLoading()
+                    this.toggleModal()
+                    this.loadingFiles('hide')
+                    this.ajaxError()
                 })
-
-                this.showNotif(`${this.trans('save_success')} "${data.message}"`)
-                this.removeCachedResponse().then(() => {
-                    this.getFiles(this.folders, null, data.message)
-                })
-
-            }).catch((err) => {
-                console.error(err)
-                this.toggleLoading()
-                this.toggleModal()
-                this.loadingFiles('hide')
-                this.ajaxError()
             })
         },
 
@@ -201,51 +198,47 @@ export default {
         },
 
         filesListCheck(folders, prev_folder, prev_file) {
-            // check for hidden extensions
+            let lazy = this.lazyModeIsOn()
+            let files = this.files.items
+
             if (this.hideExt.length) {
-                this.files.items = this.files.items.filter((e) => !this.checkForHiddenExt(e))
+                files = files.filter((e) => !this.checkForHiddenExt(e))
             }
 
-            // check for hidden folders
             if (this.hidePath.length) {
-                this.files.items = this.files.items.filter((e) => !this.checkForHiddenPath(e))
+                files = files.filter((e) => !this.checkForHiddenPath(e))
             }
 
-            // hide folders for restrictionMode
             if (this.restrictModeIsOn()) {
-                this.files.items = this.files.items.filter((e) => e.type != 'folder')
+                files = files.filter((e) => e.type != 'folder')
             }
+
+            this.files.items = files
 
             // we have files
             if (this.allItemsCount) {
-                // check for prev opened folder
-                if (prev_folder) {
-                    this.files.items.some((e, i) => {
-                        if (e.name == prev_folder) {
-                            return this.currentFileIndex = i
+                // check for prev
+                if (prev_file || prev_folder) {
+                    let index = null
+
+                    files.some((e, i) => {
+                        if (prev_file && e.name == prev_file) {
+                            index = lazy
+                                ? this.fileTypeIs(e, 'image') ? null : i
+                                : i
                         }
+
+                        if (prev_folder && e.name == prev_folder) {
+                            index = i
+                        }
+
+                        return this.currentFileIndex = index
                     })
                 }
 
-                // lazy loading is not active
-                if (!this.lazyModeIsOn()) {
-                    // check for prev selected file
-                    if (prev_file) {
-                        this.files.items.some((e, i) => {
-                            if (e.name == prev_file) {
-                                // add the selection class
-                                return this.currentFileIndex = i
-                            }
-                        })
-                    }
-
-                    if (!this.currentFileIndex) {
-                        this.selectFirst()
-                    }
-                }
-                // lazy loading is active & first file is a folder
-                else if (this.fileTypeIs(this.allFiles[0], 'folder')) {
-                    this.selectFirst()
+                // no prev found
+                if (!this.currentFileIndex) {
+                    lazy ? this.lazySelectFirst() : this.selectFirst()
                 }
 
                 if (this.searchFor) {
@@ -256,43 +249,17 @@ export default {
             }
 
             this.isLoading = false
-            this.smallScreenHelper()
             this.loadingFiles('hide')
+            this.smallScreenHelper()
 
-            // avoid unnecessary delay
-            if (this.firstRun && this.allItemsCount > 20) {
-                this.$nextTick(debounce(() => {
-                    this.scrollOnLoad(folders)
-                }, 500))
-            } else {
-                this.$nextTick(() => {
-                    this.scrollOnLoad(folders)
-                })
-            }
-        },
-        dirsListCheck() {
-            const baseUrl = this.config.baseUrl
-
-            // check for hidden folders in directories
-            if (this.hidePath.length) {
-                this.directories = this.directories.filter((e) => !this.checkForFolderName(e))
-            }
-
-            if (this.lockedList.length) {
-                // nested folders
-                if (this.files.path !== '') {
-                    return this.directories = this.directories.filter(
-                        (e) => !this.IsLocked(
-                            this.clearDblSlash(`${baseUrl}/${this.folders.join('/')}/${e}`)
-                        )
-                    )
+            // we dont have files & user clicked the "refresh btn"
+            this.$nextTick(() => {
+                if (!this.allItemsCount && !this.no_files) {
+                    this.noFiles('show')
                 }
 
-                // root
-                this.directories = this.directories.filter(
-                    (e) => !this.IsLocked(this.clearDblSlash(`${baseUrl}/${e}`))
-                )
-            }
+                EventHub.fire('start-img-observing')
+            })
         },
 
         /*                Tool-Bar                */
@@ -469,7 +436,6 @@ export default {
                             }
                         })
                     }
-
                 }).catch((err) => {
                     console.error(err)
                     this.ajaxError()
@@ -509,8 +475,9 @@ export default {
                     if (item.type == 'folder') {
                         cacheNamesList.push(this.getCacheName(item.name))
                     }
-                    // clear cache storage for images
+                    // clear cache storage for images / audio
                     else {
+                        this.deleteCachedResponse(item.url)
                         this.removeImageCache(item.url)
                     }
 

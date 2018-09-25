@@ -19,6 +19,8 @@ $yellow: #ffdd57;
 $red: #ff3860;
 $blue: #3273dc;
 $primary: #00d1b2;
+
+// shadow
 $shadow_1: 0 10px 45px 0 rgba($black, 0.2);
 $shadow_2: 0 6px 25px 0 rgba($black, 0.3);
 $shadow_3: 0 6px 10px rgba($black, 0.08);
@@ -26,12 +28,27 @@ $shadow_3: 0 6px 10px rgba($black, 0.08);
 // ratio
 $image: linear-gradient(45deg, #ff9882 0, #ffbb0a 100%);
 $audio: linear-gradient(45deg, #6868f1 0, #204ee5 100%);
-$video: linear-gradient(45deg, #cdd5e0 0, #bcdbdf 100%);
-$text: linear-gradient(45deg, #ff5da2 0, #b643cd 100%);
-$folder: linear-gradient(45deg, #45eba5 0, #45eba5 100%);
-$application: linear-gradient(45deg, #53c7f0 0, #87e0ff 100%);
-$pdf: linear-gradient(45deg, #efb1ff 0, #9951ff 100%);
+$video: linear-gradient(45deg, #45eba5 0, #45eba5 100%);
+$text: linear-gradient(45deg, #cdd5e0 0, #bcdbdf 100%);
+$folder: linear-gradient(45deg, #ff9c89 0, #ff6696 100%);
+$application: linear-gradient(45deg, #7e9cb8 0, #2f3452 100%);
+//
+$grad_0: linear-gradient(45deg, #53c7f0 0, #87e0ff 100%);
+$grad_1: linear-gradient(45deg, #ff5da2 0, #b643cd 100%);
+$grad_2: linear-gradient(45deg, #efb1ff 0, #9951ff 100%);
 
 // other
+$range: #ffbb0a;
 $breadcrumb: #dde3e6;
 $editorBtns: rgba(darken($active_theme, 70%), 0.8);
+$progress-bars: linear-gradient(
+    45deg,
+    rgba($white, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba($white, 0.15) 50%,
+    rgba($white, 0.15) 75%,
+    transparent 75%,
+    transparent
+);
+$anim-ease: cubic-bezier(0.18, 0.89, 0.32, 1.28);

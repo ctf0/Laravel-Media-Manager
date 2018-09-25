@@ -26,7 +26,7 @@ trait Utils
 
     protected function filePattern($item)
     {
-        return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]|\(|\)+/ius';
+        return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]+/ius';
     }
 
     /**

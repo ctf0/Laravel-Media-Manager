@@ -1,9 +1,12 @@
-import debounce from 'lodash/debounce'
-
 export default {
     watch: {
         // files
         selectedFile(val) {
+            this.scrollableBtn = {
+                state: false,
+                dir: 'down'
+            }
+
             if (val) {
                 if (this.inModal && !this.isBulkSelecting()) {
                     this.selectedFileIs('folder')
@@ -13,10 +16,7 @@ export default {
 
                 if (this.checkForFolders) {
                     this.$nextTick(() => {
-                        let item = this.$refs.move_folder_dropdown.options[0]
-                        if (item) {
-                            return this.moveToPath = item.value
-                        }
+                        this.updateMoveList()
                     })
                 }
 
@@ -115,20 +115,39 @@ export default {
                 this.resetInput('searchItemsCount')
             }
         },
-        infoSidebar(val) {
-            if (!this.firstRun && this.currentFileIndex) {
-                this.$nextTick(debounce(() => {
-                    this.scrollByRow()
-                    this.scrollToSelected(this.getElementByIndex(this.currentFileIndex))
-                }, 500))
+
+        // progress
+        showProgress(val) {
+            if (val) {
+                this.UploadArea = false
+                this.infoSidebar = false
+                this.isLoading = true
+                this.noFiles('hide')
+                this.loadingFiles('show')
+            } else {
+                this.isLoading = false
+                this.loadingFiles('hide')
+                this.smallScreenHelper()
             }
         },
 
         // misc
+        infoSidebar: {
+            deep: true,
+            immediate: true,
+            handler(val) {
+                this.$nextTick(() => {
+                    setTimeout(this.scrollOnLoad, 250)
+                })
+            }
+        },
+        no_files(val) {
+            if (val) this.isLoading = false
+        },
         checkForFolders(val) {
-            !val
-                ? this.resetInput('moveToPath')
-                : this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
+            val
+                ? this.updateMoveList()
+                : this.resetInput('moveToPath')
         },
         activeModal(val) {
             let ref
@@ -157,15 +176,6 @@ export default {
                 this.$nextTick(() => {
                     return this.$refs[ref].focus()
                 })
-            }
-        },
-        showProgress(val) {
-            if (val) {
-                this.UploadArea = false
-                this.infoSidebar = false
-                this.isLoading = true
-                this.noFiles('hide')
-                this.loadingFiles('show')
             }
         },
         plyr: 'autoPlay'

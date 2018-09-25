@@ -22,7 +22,7 @@ export default {
             immediate: true,
             handler(val, oldVal) {
                 if (val) {
-                    this.fetchImg(this.file.path).then((img) => {
+                    this.fetchImg().then((img) => {
                         this.src = img
                     })
                 }

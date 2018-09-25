@@ -1,3 +1,87 @@
+$anim_1: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+$anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+// https://github.com/ConnorAtherton/loaders.css
+@keyframes ball-grid-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.5);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ball-grid-pulse {
+    width: 57px;
+
+    > div {
+        display: inline-block;
+        float: left;
+        width: 15px;
+        height: 15px;
+        margin: 2px;
+        animation-name: ball-grid-pulse;
+        animation-delay: 0;
+        animation-iteration-count: infinite;
+        border-radius: 100%;
+        background: $black;
+        animation-fill-mode: both;
+    }
+
+    > div:nth-child(1) {
+        animation-duration: 0.9s;
+        animation-delay: 0.22s;
+    }
+
+    > div:nth-child(2) {
+        animation-duration: 1s;
+        animation-delay: 0.64s;
+    }
+
+    > div:nth-child(3) {
+        animation-duration: 0.63s;
+        animation-delay: -0.15s;
+    }
+
+    > div:nth-child(4) {
+        animation-duration: 1.24s;
+        animation-delay: -0.03s;
+    }
+
+    > div:nth-child(5) {
+        animation-duration: 1.37s;
+        animation-delay: 0.08s;
+    }
+
+    > div:nth-child(6) {
+        animation-duration: 1.55s;
+        animation-delay: 0.43s;
+    }
+
+    > div:nth-child(7) {
+        animation-duration: 0.7s;
+        animation-delay: 0.05s;
+    }
+
+    > div:nth-child(8) {
+        animation-duration: 0.97s;
+        animation-delay: 0.05s;
+    }
+
+    > div:nth-child(9) {
+        animation-duration: 0.63s;
+        animation-delay: 0.3s;
+    }
+}
+
+// animate.css
 .mm-animated {
     animation-duration: 750ms;
     animation-fill-mode: both;
@@ -5,6 +89,7 @@
 
 .fadeInDown,
 .fadeIn {
+    animation-duration: 500ms;
     animation-timing-function: cubic-bezier(1, 0, 0, 1);
 }
 
@@ -51,18 +136,18 @@
     90%,
     to {
         transform: translate3d(0, 0, 0);
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: $anim_2;
     }
 
     40%,
     43% {
         transform: translate3d(0, -30px, 0);
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: $anim_1;
     }
 
     70% {
         transform: translate3d(0, -15px, 0);
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: $anim_1;
     }
 
     90% {
@@ -80,23 +165,23 @@
     90%,
     to {
         transform: translate3d(0, 0, 0);
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: $anim_2;
     }
 
     40%,
     43% {
         transform: translate3d(0, 60px, 0);
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: $anim_1;
     }
 
     70% {
         transform: translate3d(0, -15px, 0);
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: $anim_1;
     }
 
     85% {
         transform: translate3d(0, -10px, 0);
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: $anim_1;
     }
 
     90% {
@@ -113,7 +198,7 @@
     75%,
     90%,
     to {
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: $anim_2;
     }
 
     60% {
@@ -142,7 +227,7 @@
     75%,
     90%,
     to {
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: $anim_2;
     }
 
     60% {
@@ -172,7 +257,7 @@
     60%,
     80%,
     to {
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: $anim_2;
     }
 
     20% {
@@ -221,4 +306,23 @@
 
 .jackInTheBox {
     animation-name: jackInTheBox;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale3d(1, 1, 1);
+    }
+
+    50% {
+        transform: scale3d(1.05, 1.05, 1.05);
+    }
+
+    to {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.pulse {
+    animation-name: pulse;
+    animation-iteration-count: infinite;
 }

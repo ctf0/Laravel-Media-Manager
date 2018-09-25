@@ -1,56 +1,50 @@
 <template>
-    <div class="card __cropper">
+    <div ref="editor" class="card __editor">
 
-        <!-- effects -->
+        <!-- btns -->
         <div class="top">
-            <div v-if="imageCaman" class="__top-toolbar">
-                <div class="left">
-                    <filters :step="10" :min="-100" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="sun-o" filter-name="brightness"/>
-                    <filters :step="10" :min="-100" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="adjust" filter-name="contrast"/>
-                    <filters :step="10" :min="-100" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="eye-slash" filter-name="saturation"/>
-                    <filters :step="10" :min="-100" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="flash" filter-name="vibrance"/>
-                    <filters :step="10" :min="-100" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="thermometer-half" filter-name="exposure"/>
-                    <filters :step="5" :min="0" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="eyedropper" filter-name="hue"/>
-                    <filters :step="5" :min="0" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="lemon-o" filter-name="sepia"/>
-                    <filters :step="0.1" :min="0" :max="10"
-                             :reset="reset" :processing="processing"
-                             icon="flask" filter-name="gamma"/>
-                    <filters :step="5" :min="0" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="dot-circle-o" filter-name="noise"/>
-                    <filters :step="5" :min="0" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="scissors" filter-name="clip"/>
-                    <filters :step="5" :min="0" :max="100"
-                             :reset="reset" :processing="processing"
-                             icon="diamond" filter-name="sharpen"/>
-                    <filters :step="1" :min="0" :max="20"
-                             :reset="reset" :processing="processing"
-                             icon="filter" filter-name="stackBlur"/>
-                    <filters :reset="reset" :processing="processing"
-                             icon="shield" filter-name="greyscale"/>
-                    <filters :reset="reset" :processing="processing"
-                             icon="cube" filter-name="invert"/>
-                </div>
+            <div class="__top-toolbar">
+                <section class="left">
+                    <!-- filters -->
+                    <filters v-if="!showGlitch && !showDiff"
+                             :reset="!haveFilters()"
+                             :apply-filter="applyFilter"
+                             :processing="processing"
+                             :caman-filters="camanFilters"
+                             class="__left-index"/>
+
+                             <!-- glitch -->
+                             <!-- <glitch v-if="showGlitch"
+                            :cropper="imageCropper"
+                            :show-glitch="showGlitch"
+                            :get-cropper-data="getCropperData"
+                            class="__left-index"/> -->
+                </section>
 
                 <div class="right">
+                    <!-- glitch toggle -->
+                    <!-- <button v-show="!showDiff"
+                            :disabled="processing"
+                            :class="{'is-active': showGlitch}"
+                            class="btn-plain"
+                            @click="toggleGlitch()">
+                        <span class="icon"><icon name="glitch" scale="1.5"/></span>
+                    </button> -->
+
+                    <!-- diff toggle -->
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
+                            v-if="showDiffBtn()"
+                            :disabled="processing && !imageDiffIsReady || showGlitch"
+                            :class="{'is-active': showDiff}"
+                            :title="trans('diff')"
+                            class="btn-plain"
+                            @click="toggleDiff()">
+                        <span class="icon"><icon name="code"/></span>
+                    </button>
+
                     <!-- reset filters -->
-                    <button v-tippy="{arrow: true, theme: 'light'}"
-                            :disabled="processing || haveFilters()"
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
+                            :disabled="processing || !haveFilters() && !showGlitch"
                             :title="trans('crop_reset_filters')"
                             class="btn-plain"
                             @click="resetFilters()">
@@ -62,96 +56,69 @@
 
         <div class="mid">
             <!-- controls -->
-            <div v-if="imageCropper" class="__side-toolbar">
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :class="{'is-active': dragModeIs('move')}"
-                        :disabled="processing"
-                        :title="trans('move')"
-                        class="btn-plain"
-                        @click="Ops('move')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'arrows'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :class="{'is-active': dragModeIs('crop')}"
-                        :disabled="processing"
-                        :title="trans('crop')"
-                        class="btn-plain"
-                        @click="Ops('crop')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'crop'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_zoom_in')"
-                        class="btn-plain"
-                        @click="Ops('zoom-in')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'search-plus'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_zoom_out')"
-                        class="btn-plain"
-                        @click="Ops('zoom-out')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'search-minus'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_rotate_left')"
-                        class="btn-plain"
-                        @click="Ops('rotate-left')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'rotate-left'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_rotate_right')"
-                        class="btn-plain"
-                        @click="Ops('rotate-right')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'rotate-right'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_flip_horizontal')"
-                        class="btn-plain"
-                        @click="Ops('flip-horizontal')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'arrows-h'" :pulse="processing"/></span>
-                </button>
-                <button v-tippy="{arrow: true, theme: 'light'}"
-                        :disabled="processing"
-                        :title="trans('crop_flip_vertical')"
-                        class="btn-plain"
-                        @click="Ops('flip-vertical')">
-                    <span class="icon"><icon :name="processing ? 'spinner' : 'arrows-v'" :pulse="processing"/></span>
-                </button>
-            </div>
+            <controls :style="hiddenBtns"
+                      :drag-mode-is="dragModeIs"
+                      :trans="trans"
+                      :operations="operations"
+                      :processing="processing"
+                      class="__side-toolbar"/>
 
-            <div class="card-image">
+            <div class="__cropper">
                 <!-- img -->
-                <figure class="image">
+                <figure :style="{'opacity': processing ? 0 : 1}" class="image">
                     <img id="cropper" :src="url" crossOrigin>
                 </figure>
 
+                <!-- loading -->
+                <div v-show="processing" class="__loader">
+                    <div class="ball-grid-pulse">
+                        <div/><div/><div/><div/><div/><div/><div/><div/><div/>
+                    </div>
+                </div>
+
+                <!-- diff -->
+                <image-compare v-if="imageDiffIsReady"
+                               :after="diffOriginal"
+                               :before="diffCurrent"
+                               :is-zoomable="true"
+                               :is-draggable="true"
+                               :zoom="{min: 1, max: 15}"
+                               class="__diff is-draggable"
+                               @movment="onDiffDrag">
+                    <icon slot="icon-left" name="arrow-left"/>
+                    <icon slot="icon-right" name="arrow-right"/>
+                </image-compare>
+
                 <!-- presets -->
-                <presets :image-cropper="imageCropper" :processing="processing"/>
+                <presets :style="hiddenBtns"
+                         :processing="processing"
+                         :caman-filters="camanFilters"
+                         :apply-filter="applyFilter"
+                         :trans="trans"
+                         class="__caman-presets"/>
 
                 <!-- operations -->
-                <div v-if="imageCropper" class="__bottom-toolbar">
+                <div :style="hiddenBtns" class="__bottom-toolbar">
                     <!-- reset everything -->
-                    <button v-tippy="{arrow: true, theme: 'light'}"
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_reset')"
                             class="btn-plain"
-                            @click="Ops('reset')">
+                            @click="operations('reset')">
                         <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
                     </button>
+
                     <!-- clear -->
-                    <button v-tippy="{arrow: true, theme: 'light'}"
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
                             :disabled="processing || !croppedByUser"
                             :title="trans('clear')"
                             class="btn-plain"
-                            @click="Ops('clear')">
+                            @click="operations('clear')">
                         <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
                     </button>
+
                     <!-- apply -->
-                    <button v-tippy="{arrow: true, theme: 'light'}"
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_apply')"
                             class="btn-plain"
@@ -167,33 +134,47 @@
 <style lang="scss" src="../../../sass/modules/image-editor.scss"></style>
 
 <script>
-import isEmpty from 'lodash/isEmpty'
 import omit from 'lodash/omit'
-
-import Filters from './filters.vue'
-import Presets from './presets.vue'
+import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
 import Cropper from 'cropperjs'
 
 export default {
-    components: {Filters, Presets},
-    props: ['url', 'translations', 'route'],
+    components: {
+        filters: require('./filters/index.vue'),
+        presets: require('./filters/presets.vue'),
+        controls: require('./controls.vue'),
+        // glitch: require('./glitch/index.vue'),
+        imageCompare: require('vue-image-compare2')
+    },
+    props: [
+        'file',
+        'translations',
+        'route',
+        'url'
+    ],
     data() {
         return {
-            imageCaman: null,
             imageCropper: null,
             dragMode: 'move',
-            hasChanged: false,
+            rotation: 45,
             croppedByUser: false,
+            initData: null,
+
+            diffOriginal: null,
+            diffCurrent: null,
+            showDiff: false,
+            showGlitch: false,
+
+            hasChanged: false,
             processing: false,
             reset: false,
+            imageCaman: null,
             camanFilters: {}
         }
     },
     // make cropperjs rotation follow the new value
     computed: {
-        rotation() {
-            return 45
-        },
         angles() {
             return 360 / this.rotation
         },
@@ -208,16 +189,34 @@ export default {
             })
 
             return final
+        },
+        imageDiffIsReady() {
+            return Boolean(
+                this.showDiff &&
+                this.diffCurrent &&
+                this.diffOriginal
+            )
+        },
+        hiddenBtns() {
+            if (this.showDiff || this.showGlitch) {
+                return {
+                    opacity: 0,
+                    visibility: 'hidden',
+                    'pointer-events': 'none'
+                }
+            }
         }
     },
     created() {
-        window.addEventListener('dblclick', this.ondblclick)
+        window.addEventListener('dblclick', this.onDblClick)
     },
     mounted() {
-        this.camanStart()
+        this.processing = true
+        setTimeout(this.camanStart, 500)
     },
     beforeDestroy() {
-        window.removeEventListener('dblclick', this.ondblclick)
+        window.removeEventListener('dblclick', this.onDblClick)
+        this.imageCropper.destroy()
     },
     methods: {
         // init
@@ -243,16 +242,22 @@ export default {
                 guides: false,
                 highlight: false,
                 autoCrop: false,
-                toggleDragModeOnDblclick: true, // we cant catch the dragMode changes
-                responsive: true
+                toggleDragModeOnDblclick: true,
+                responsive: false
+            })
+
+            image.addEventListener('ready', () => {
+                this.processing = false
+                if (!this.initData) {
+                    return this.initData = this.imageCropper.getCroppedCanvas().toDataURL()
+                }
             })
 
             image.addEventListener('cropmove', (e) => {
-                let action = e.detail.action
+                EventHub.fire('stopHammerPropagate')
 
-                switch (action) {
+                switch (e.detail.action) {
                     case 'move':
-                        EventHub.fire('stopHammerPropagate')
                         break
                     case 'crop':
                         this.croppedByUser = true
@@ -270,7 +275,7 @@ export default {
         },
 
         // operations
-        Ops(action) {
+        operations(action) {
             let cropper = this.imageCropper
             let getData = cropper.getData()
 
@@ -309,7 +314,6 @@ export default {
                     this.croppedByUser = false
                     cropper.clear()
                     break
-                default:
             }
 
             this.checkForChanges()
@@ -318,12 +322,12 @@ export default {
             let cropper = this.imageCropper
             let getData = cropper.getData()
 
-            return this.hasChanged =
+            this.hasChanged =
                 getData.rotate != 0 ||
                 getData.scaleX != 1 ||
                 getData.scaleY != 1 ||
                 cropper.cropped ||
-                !this.haveFilters()
+                this.haveFilters()
                     ? true
                     : false
         },
@@ -336,38 +340,35 @@ export default {
                 this.croppedByUser = false
                 this.reset = true
 
-                cropper.reset() // position
+                cropper.reset() // position, rotation, flip, zoom
                 cropper.clear() // selection
                 cropper.setDragMode(this.dragMode) // active btn
+                this.resetFilters()
 
-                if (!this.haveFilters()) this.resetFilters()
-                this.reset = false
+                this.$nextTick(() => {
+                    this.reset = false
+                })
             })
+        },
+        clearSelection() {
+            if (!this.croppedByUser) {
+                this.imageCropper.clear()
+            }
         },
 
         // filters
         resetFilters() {
+            if (this.showGlitch) {
+                return EventHub.fire('reset-glitch')
+            }
+
             this.camanFilters = {}
             this.imageCaman.reset()
-            this.renderImage()
-            this.checkForChanges()
+            this.imageCropper.replace(this.initData, true) // init
         },
         haveFilters() {
-            return isEmpty(this.camanFilters)
+            return !isEmpty(this.camanFilters)
         },
-
-        // utils
-        dragModeIs(val) {
-            return this.dragMode == val
-        },
-        trans(val) {
-            return this.translations[val]
-        },
-        ondblclick(e) {
-            this.dragMode = e.target.dataset.cropperAction || this.dragMode
-        },
-
-        // filters
         applyFilter(name, val) {
             this.hasChanged = true
 
@@ -400,12 +401,13 @@ export default {
                 cropper.replace(this.toBase64(), true)
             })
         },
+        toggleGlitch() {
+            this.showGlitch = !this.showGlitch
+        },
 
         // save
-        applyChanges() {
-            let cropper = this.imageCropper
-            let file = this.$parent.selectedFile
-            let type = file.type
+        getCropperData(cropper = this.imageCropper) {
+            let type = this.file.type
 
             // has the user made a crop selection ?
             if (!this.croppedByUser) {
@@ -418,40 +420,130 @@ export default {
                 })
             }
 
-            let data = cropper.getCroppedCanvas({
+            let url = cropper.getCroppedCanvas({
                 fillColor: type.includes('png') ? 'transparent' : '#fff',
                 imageSmoothingQuality: 'high'
             }).toDataURL(type)
 
-            // cropper.replace(data)
-            this.saveToDisk(data, file.name, type)
+            this.$nextTick(() => {
+                // reset the auto crop selection we made
+                this.clearSelection()
+            })
+
+            return url
         },
-        saveToDisk(data, name, type) {
+        applyChanges() {
+            this.saveToDisk(this.getCropperData())
+        },
+        saveToDisk(data) {
             const parent = this.$parent
             parent.toggleLoading()
             parent.showNotif(parent.trans('stand_by'), 'info')
 
             axios.post(this.route, {
-                path: parent.files.path,
                 data: data,
-                name: name,
-                mime_type: type
+                path: parent.files.path,
+                name: this.file.name,
+                mime_type: this.file.type
             }).then(({data}) => {
-
                 parent.toggleLoading()
                 data.success
                     ? EventHub.fire('image-edited', data.message) // notify parent to refresh on finish
                     : parent.showNotif(data.message, 'danger')
 
-                // reset the auto crop selection we made
-                if (!this.croppedByUser) {
-                    this.imageCropper.clear()
-                }
-
             }).catch((err) => {
                 console.error(err)
                 parent.ajaxError()
             })
+        },
+
+        // diff
+        showDiffBtn() {
+            return !this.file.type.includes('gif')
+        },
+        toggleDiff() {
+            this.showDiff = !this.showDiff
+        },
+        renderDiff() {
+            // current
+            this.diffCurrent = this.getCropperData()
+
+            // original
+            /**
+             * we need to use the cloneDeep to make sure
+             * we don't apply the diff operations to the original cropper,
+             * otherwise we wont be able to reset to the original image without extra work
+             */
+            let cropperClone = cloneDeep(this.imageCropper)
+            let getData = cropperClone.getData()
+            let x = getData.scaleX
+            let y = getData.scaleY
+            cropperClone.setData({
+                rotate: 0, // reset rotation
+                scaleX: x < 1 ? -x : x, // reset flip-horizontal
+                scaleY: y < 1 ? -y : y // reset flip-vertical
+            })
+
+            if (this.haveFilters()) {
+                cropperClone.replace(this.initData, true)
+                this.diffOriginal = this.getCropperData(cropperClone)
+            } else {
+                this.diffOriginal = this.getCropperData(cropperClone)
+            }
+        },
+
+        // utils
+        dragModeIs(val) {
+            return this.dragMode == val
+        },
+        trans(val) {
+            return this.translations[val]
+        },
+        onDblClick(e) {
+            this.dragMode = e.target.dataset.cropperAction || this.dragMode
+        },
+        onDiffDrag() {
+            EventHub.fire('stopHammerPropagate')
+        }
+    },
+    watch: {
+        showDiff(val) {
+            if (val) {
+                this.processing = true // hide main canvas
+                this.renderDiff()
+            } else {
+                /**
+                 * when we replaced the cropperClone with the original data
+                 * cropper internally replaced the working canvas src which
+                 * has removed the caman render so we just need to reapply it again
+                 * after closing the diff panel
+                 *
+                 * this has no penalties on performance as the data is already saved
+                 * from the last time the effect was applied
+                 */
+                this.renderImage()
+
+                this.processing = false
+                this.diffOriginal = null
+                this.diffCurrent = null
+                this.$refs.editor.style.marginTop = ''
+            }
+        },
+        imageDiffIsReady(val) {
+            if (val) {
+                let t = setInterval(() => {
+                    let diff = document.querySelector('.__diff').offsetHeight
+                    let canvas = document.querySelector('.__cropper').offsetHeight
+
+                    if (diff) {
+                        this.$refs.editor.style.marginTop = diff > canvas
+                            ? `-${(diff - canvas)}px`
+                            : `-${(canvas - diff)}px`
+
+                        clearInterval(t)
+                    }
+                }, 50)
+            }
         }
     }
 }

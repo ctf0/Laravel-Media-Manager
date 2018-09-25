@@ -65,10 +65,10 @@
         background-repeat: no-repeat;
         background-position: 0 60%;
         background-size: 100% 10%;
-        caret-color: $black;
+        caret-color: $white;
 
         &::placeholder {
-            color: rgba(white, 0.5);
+            color: rgba($white, 0.5);
         }
 
         &::selection {

@@ -19,9 +19,16 @@ return [
     'controller' => '\ctf0\MediaManager\Controllers\MediaController',
 
     /*
-     * remove any file special chars except (. _ -)
+     * remove any file special chars except
+     * dot .
+     * dash -
+     * underscore _
+     * single quote ''
+     * white space
+     * parentheses ()
+     * comma ,
      */
-    'allowed_fileNames_chars' => '.\_\-',
+    'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
 
     /*
      * remove any folder special chars except (_ -)
@@ -32,7 +39,7 @@ return [
 
     /*
      * disallow uploading files with the following mimetypes
-     * https://www.iana.org/assignments/media-types/media-types.xhtml#text
+     * https://www.iana.org/assignments/media-types/media-types.xhtml
      */
     'unallowed_mimes' => ['php', 'java'],
 

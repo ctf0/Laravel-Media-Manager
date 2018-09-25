@@ -1,15 +1,21 @@
 <template>
     <div class="__box-img">
-        <img v-if="src" ref="img" :src="src" async>
+        <img v-if="src"
+             ref="img"
+             :src="src"
+             :alt="file.name"
+             style="opacity: 0"
+             async>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['url', 'db', 'browserSupport'],
+    props: ['file', 'db', 'browserSupport'],
     data() {
         return {
-            src: null
+            src: null,
+            url: this.file.path
         }
     },
     created() {
@@ -24,22 +30,27 @@ export default {
         init() {
             EventHub.listen('lazy-image-activate', (url) => {
                 if (url == this.url && !this.src) {
-                    if ('caches' in window) {
+                    if (this.browserSupport('caches')) {
                         return this.cacheImageUrl(this.url)
                     }
                 }
             })
-        },
-        removePhBorder() {
-            return this.$el.style.border = 'none'
         },
         showImg(url) {
             return this.src = url
         },
         sendDimensionsToParent() {
             const manager = this
+            let img = this.$refs.img
 
-            this.$refs.img.addEventListener('load', function() {
+            img.addEventListener('load', function() {
+                if (this.naturalWidth <= 1500) {
+                    img.style.objectFit = 'cover'
+                }
+
+                manager.$el.style.border = 'none'
+                img.style.opacity = ''
+
                 EventHub.fire('save-image-dimensions', {
                     url: manager.url,
                     val: `${this.naturalWidth} x ${this.naturalHeight}`
@@ -76,8 +87,6 @@ export default {
     watch: {
         src(val) {
             if (val) {
-                this.removePhBorder()
-
                 this.$nextTick(() => {
                     this.sendDimensionsToParent()
                 })

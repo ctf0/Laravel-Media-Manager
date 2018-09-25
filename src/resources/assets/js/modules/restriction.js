@@ -5,7 +5,6 @@ export default {
         },
         checkForHiddenPath(folder) {
             if (this.fileTypeIs(folder, 'folder')) {
-
                 return this.checkForFolderName(folder.name)
             }
         },

@@ -42,9 +42,6 @@ export default {
         hideProgress() {
             this.progressCounter = 0
             this.showProgress = false
-            this.isLoading = false
-            this.smallScreenHelper()
-            this.loadingFiles('hide')
         }
     }
 }

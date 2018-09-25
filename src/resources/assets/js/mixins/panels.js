@@ -15,8 +15,8 @@ export default {
         },
         showPanelWatcher(val) {
             if (val) {
-                EventHub.fire('disable-global-keys', true)
                 this.noScroll('add')
+                EventHub.fire('disable-global-keys', true)
                 document.addEventListener('keydown', this.shortCut)
             } else {
                 EventHub.fire('disable-global-keys', false)

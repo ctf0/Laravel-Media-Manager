@@ -2,14 +2,30 @@ import animateScrollTo from '../packages/animated-scroll-to'
 
 export default {
     methods: {
-        scrollOnLoad(folders) {
+        /* https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/ */
+        scrollObserve() {
+            let isScrolling
+
+            this.$refs['__stack-files'].$el.addEventListener('scroll', () => {
+                EventHub.fire('stop-img-observing')
+                window.clearTimeout(isScrolling)
+
+                isScrolling = setTimeout(() => {
+                    return EventHub.fire('start-img-observing')
+                }, 100)
+            }, false)
+        },
+
+        // ops
+        scrollOnLoad() {
             // scroll & click on prev selected item
-            if (this.currentFileIndex) {
+            if (!this.no_files && this.currentFileIndex) {
                 this.scrollToFile(this.getElementByIndex(this.currentFileIndex))
             }
 
             // scroll to breadcrumb item
             if (this.$refs.bc) {
+                let folders = this.clearDblSlash(`/${this.folders.join('/')}`)
                 this.scrollMobileBc(folders.split('/').pop(), this.$refs.bc)
             }
         },
@@ -22,7 +38,7 @@ export default {
         scrollToSelected(file) {
             return animateScrollTo(file, {
                 speed: 150,
-                maxDuration: 500,
+                maxDuration: 2000,
                 offset: -20,
                 element: this.$refs['__stack-files'].$el,
                 useKeys: true
