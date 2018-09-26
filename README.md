@@ -5,7 +5,7 @@
 ![Browser Status](https://badges.herokuapp.com/browsers?firefox=61&microsoftedge=17&googlechrome=51&safari=!?&iexplore=!?)
 
 <p align="center">
-    <img alt="main" src="https://user-images.githubusercontent.com/7388088/46004312-dda3a080-c0b2-11e8-92b4-294757b88653.jpg"/>
+    <img alt="main" src="https://user-images.githubusercontent.com/7388088/46098236-3ca50a80-c1c4-11e8-9a77-66af016f9ead.png"/>
     <img alt="card" src="https://user-images.githubusercontent.com/7388088/46004310-dd0b0a00-c0b2-11e8-8f7a-12352e15f01b.jpg"/>
     <img alt="filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
     <img alt="diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
@@ -115,15 +115,17 @@
 - disable/enable buttons depend on the usage to avoid noise & keep the user focused
 - shortcuts / gestures
 
-  >- the info sidebar is only available on big screens **"> 1087px"**.
   >- if no more **rows** available, pressing `down` will go to the last item in the list **"same as native finder"**.
   >- dbl click/tap
   >   + any file type `audio/video` when sidebar is hidden, will open it in the preview card same as images.
   >   + any file type `application/archive` will download it.
-  >- to stop interfering with other `keydown` events you can toggle the manager listener through `EventHub.fire('disable-global-keys', true/false)`.
   >- all the **left/right** gestures have their counterparts available as well.
   >- while previewing an item, you can use any of the navigation keys `left/up/right/down/home/end` & `swipe left/right/up/down`.
-  >- pressing `esc` while using the ***image editor*** wont close the modal but you can dbl click/tap the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
+  >- pressing `esc` while using the ***image editor*** wont close the modal but you can __*dbl click/tap*__ the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
+
+  \* the info sidebar is only available on big screens **"> 1087px"**.<br>
+  \* to stop interfering with other `keydown` events you can toggle the manager listener through<br>
+  `EventHub.fire('disable-global-keys', true/false)`.
 
   <br>
 
