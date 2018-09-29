@@ -33,7 +33,8 @@ export default {
         imageIntersect: require('./lazyLoading/normal.vue'),
         overlay: require('./utils/overlay.vue'),
         usageIntroBtn: require('./usageIntro/button.vue'),
-        usageIntroPanel: require('./usageIntro/panel.vue')
+        usageIntroPanel: require('./usageIntro/panel.vue'),
+        videoDimension: require('./utils/video-dim.vue')
     },
     name: 'media-manager',
     mixins: [
@@ -137,7 +138,6 @@ export default {
         this.init()
     },
     mounted() {
-        this.onResize()
         this.eventsListener()
         this.scrollObserve()
     },
@@ -172,6 +172,7 @@ export default {
                     this.fileUpload()
                     this.$nextTick(() => {
                         this.firstRun = true
+                        this.onResize()
                     })
                 })
             }
@@ -184,6 +185,7 @@ export default {
                         this.fileUpload()
                         this.$nextTick(() => {
                             this.firstRun = true
+                            this.onResize()
                         })
                     })
                 })

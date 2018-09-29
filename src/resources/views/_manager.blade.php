@@ -560,6 +560,12 @@
 
                                 <div class="__box-data">
                                     <div class="__box-preview">
+                                        {{-- get video dimensions --}}
+                                        <video-dimension v-if="fileTypeIs(file, 'video')"
+                                            class="is-hidden"
+                                            :file="file">
+                                        </video-dimension>
+
                                         <template v-if="fileTypeIs(file, 'image')">
                                             <image-cache v-if="config.lazyLoad"
                                                 :file="file"
@@ -656,7 +662,7 @@
                                     :key="selectedFile.name">
                                     <video controls
                                         playsinline
-                                        preload="auto"
+                                        preload="metadata"
                                         data-player
                                         :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.video_support') }}
@@ -679,7 +685,7 @@
 
                                     <audio controls
                                         class="is-hidden"
-                                        preload="auto"
+                                        preload="metadata"
                                         data-player
                                         :src="selectedFile.path">
                                         {{ trans('MediaManager::messages.audio.support') }}
@@ -806,7 +812,7 @@
 
                                     {{-- file --}}
                                     <template v-else>
-                                        <table v-if="selectedFileIs('image') && dimensions.length">
+                                        <table v-if="(selectedFileIs('image') || selectedFileIs('video')) && dimensions.length">
                                             <tr>
                                                 <td class="t-key">{{ trans('MediaManager::messages.dimension') }}:</td>
                                                 <td class="t-val">@{{ selectedFileDimensions }}</td>

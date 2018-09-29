@@ -1,4 +1,6 @@
-.usage-intro {
+@import '../partials/panels';
+
+.usage-intro-btn {
     position: absolute;
     z-index: 1;
     right: 1rem;
@@ -10,5 +12,98 @@
         transform: translateY(-0.7rem);
         color: $red;
         box-shadow: 0 15px 30px 0 rgba($red, 0.11), 0 5px 15px 0 rgba($red, 0.08);
+    }
+}
+
+.usage-intro-panel {
+    .gradient-pattern {
+        background: radial-gradient(rgba(white, 0.02) 15%, transparent 16%), rgba($dark, 0.98);
+        background-position: 10px 10px;
+        background-clip: border-box;
+        background-origin: padding-box;
+        background-size: 25px 25px;
+    }
+
+    .__choices {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 100%;
+
+        .mid {
+            width: 1px;
+            height: 50%;
+            margin: 0 1rem;
+            background: rgba($white, 0.1);
+        }
+
+        .left,
+        .right {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            height: 100%;
+            cursor: pointer;
+            transition: all 1s;
+            opacity: 0.1;
+            color: $white;
+
+            &:hover {
+                opacity: 1;
+                color: $range;
+            }
+
+            .icon {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    .__corner {
+        font: normal 100%/normal Arial, Helvetica, sans-serif;
+        font-size: 3.5rem;
+        font-weight: bold;
+        line-height: 0.85;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        display: none;
+        width: 8%;
+        margin-bottom: 1rem;
+        word-break: break-all;
+        color: black;
+
+        p {
+            color: black;
+        }
+
+        &::before,
+        &::after {
+            position: absolute;
+            bottom: 0;
+            content: '';
+        }
+
+        &::after {
+            left: -3rem;
+            width: 5px;
+            height: 150%;
+            margin-bottom: -1rem;
+            transform: skew(-40deg);
+            transform-origin: left bottom;
+            background: black;
+        }
+
+        &::before {
+            left: 0;
+            width: 45%;
+            height: 5px;
+            margin-bottom: -1rem;
+            background: $green;
+        }
     }
 }

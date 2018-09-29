@@ -7,8 +7,8 @@
 @import './packages/progress';
 @import './packages/switcher';
 @import './modules/utils';
-@import './modules/media-player';
 @import './modules/usage-intro';
+@import './modules/media-player';
 
 /*                toolbar                */
 .media-manager__toolbar {
@@ -400,6 +400,7 @@
 
 .__box-lock-icon {
     position: absolute;
+    z-index: 1;
     top: 3px;
     right: 3px;
     width: 0.5rem;
@@ -526,6 +527,10 @@
                 height: 100%;
                 border: none;
                 border-radius: 0;
+
+                img {
+                    object-position: top;
+                }
             }
         }
 
@@ -587,7 +592,7 @@
         word-break: break-all;
         background-color: $active_theme;
 
-        > div {
+         > div {
             padding: 0.75rem;
             transition: height 0.25s ease-out;
 
@@ -642,7 +647,7 @@
         white-space: nowrap;
         color: darken($active_theme, 50%);
 
-        > div {
+         > div {
             text-align: center;
 
             &:not(:first-of-type) {
@@ -693,7 +698,7 @@
     position: relative;
     overflow: hidden;
 
-    > div {
+     > div {
         overflow: scroll;
         max-height: 40vh;
     }
@@ -761,10 +766,6 @@
         overflow: scroll;
     }
 
-    .icon.is-outlined {
-        border: 1px solid $breadcrumb;
-    }
-
     .pdf-prev {
         .card-image {
             height: 25vh;
@@ -809,6 +810,16 @@
     }
 }
 
+.card-details {
+    margin-bottom: 1rem;
+
+    .tag {
+        font-size: 1rem;
+        color: $white;
+        background: $application;
+    }
+}
+
 .__modal-delete-total {
     margin-top: 1rem;
     padding-top: 1rem;
@@ -825,7 +836,7 @@
 
 /* manager in modal */
 .modal-manager__Inmodal {
-    > .modal-content {
+     > .modal-content {
         width: 85%;
     }
 
@@ -912,7 +923,7 @@
         .__sidebar-count {
             flex-direction: row;
 
-            > div {
+             > div {
                 &:not(:first-of-type) {
                     border-right: none;
                     border-left: 1px solid darken($active_theme, 10%);

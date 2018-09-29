@@ -17,7 +17,7 @@
         <div v-else-if="selectedFileIs('video')">
             <video controls
                 playsinline
-                preload="auto"
+                preload="metadata"
                 data-player
                 :src="selectedFile.path">
                 {{ trans('MediaManager::messages.video_support') }}
@@ -39,7 +39,7 @@
 
             <audio controls
                 class="is-hidden"
-                preload="auto"
+                preload="metadata"
                 data-player
                 :src="selectedFile.path">
                 {{ trans('MediaManager::messages.audio.support') }}
@@ -49,7 +49,6 @@
         {{-- image --}}
         <div v-else class="image-wrapper">
             <div ref="img-card-prev" @scroll="updateScrollableDir('img-card-prev')">
-
                 <a :href="selectedFile.path"
                     rel="noreferrer noopener"
                     target="_blank"
@@ -70,71 +69,79 @@
     </div>
 
     <div class="card-content">
-        <div class="media">
-            <div class="media-content">
-                {{-- name --}}
-                <p class="title is-marginless">
-                    <span class="link"
-                        @click="copyLink(selectedFile.path)"
-                        :title="linkCopied ? trans('copied') : trans('to_cp')"
-                        v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
-                        @hidden="linkCopied = false">
-                        @{{ selectedFile.name }}
+        <p class="card-details">
+            {{-- dim --}}
+            <span class="tag" v-if="(selectedFileIs('image') || selectedFileIs('video')) && dimensions.length">
+                @{{ selectedFileDimensions }}
+            </span>
+
+            {{-- size --}}
+            <span class="tag" v-if="selectedFile.size > 0">@{{ getFileSize(selectedFile.size) }}</span>
+        </p>
+
+        {{-- name --}}
+        <p class="title is-marginless">
+            <span class="link"
+                @click="copyLink(selectedFile.path)"
+                :title="linkCopied ? trans('copied') : trans('to_cp')"
+                v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
+                @hidden="linkCopied = false">
+                @{{ selectedFile.name }}
+            </span>
+
+            {{-- open url --}}
+            <a :href="selectedFile.path"
+                v-if="selectedFileIs('pdf') || selectedFileIs('text')"
+                rel="noreferrer noopener"
+                target="_blank"
+                title="{{ trans('MediaManager::messages.public_url') }}"
+                v-tippy>
+                <icon name="search" scale="1.1"></icon>
+            </a>
+        </p>
+
+        <p class="subtitle is-6 m-t-5">
+            {{-- date --}}
+            <span>@{{ selectedFile.last_modified_formated }}</span>
+        </p>
+
+        {{-- ops --}}
+        <div class="level is-mobile">
+            <div class="level-left">
+                {{-- lock / unlock --}}
+                <div class="level-item">
+                    <span v-if="$refs.lock"
+                        class="icon is-large link"
+                        :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
+                        :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
+                        v-tippy="{arrow: true, hideOnClick: false}"
+                        @click="$refs.lock.click()">
+                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.1"></icon>
                     </span>
+                </div>
 
-                    {{-- open url --}}
-                    <a :href="selectedFile.path"
-                        v-if="selectedFileIs('pdf') || selectedFileIs('text')"
-                        rel="noreferrer noopener"
-                        target="_blank"
-                        title="{{ trans('MediaManager::messages.public_url') }}"
-                        v-tippy>
-                        <icon name="search" scale="1.1"></icon>
-                    </a>
-                </p>
+                {{-- visibility --}}
+                <div class="level-item">
+                    <span v-if="$refs.vis"
+                        class="icon is-large link"
+                        :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
+                        title="{{ trans('MediaManager::messages.visibility.set') }}"
+                        v-tippy
+                        @click="$refs.vis.click()">
+                        <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
+                    </span>
+                </div>
+            </div>
 
-                {{-- date --}}
-                <p class="subtitle is-6 m-t-5">@{{ selectedFile.last_modified_formated }}</p>
-
-                {{-- ops --}}
-                <div class="level is-mobile">
-                    <div class="level-left">
-                        {{-- lock / unlock --}}
-                        <div class="level-item">
-                            <span v-if="$refs.lock"
-                                class="icon is-large link"
-                                :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
-                                :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
-                                v-tippy="{arrow: true, hideOnClick: false}"
-                                @click="$refs.lock.click()">
-                                <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.1"></icon>
-                            </span>
-                        </div>
-
-                        {{-- visibility --}}
-                        <div class="level-item">
-                            <span v-if="$refs.vis"
-                                class="icon is-large link"
-                                :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
-                                title="{{ trans('MediaManager::messages.visibility.set') }}"
-                                v-tippy
-                                @click="$refs.vis.click()">
-                                <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="level-right">
-                        {{-- download --}}
-                        <div class="level-item">
-                            <span class="icon is-large link is-black"
-                                title="{{ trans('MediaManager::messages.download.file') }}"
-                                v-tippy
-                                @click.prevent="saveFile(selectedFile)">
-                                <icon name="download" scale="1.1"></icon>
-                            </span>
-                        </div>
-                    </div>
+            <div class="level-right">
+                {{-- download --}}
+                <div class="level-item">
+                    <span class="icon is-large link is-black"
+                        title="{{ trans('MediaManager::messages.download.file') }}"
+                        v-tippy
+                        @click.prevent="saveFile(selectedFile)">
+                        <icon name="download" scale="1.1"></icon>
+                    </span>
                 </div>
             </div>
         </div>

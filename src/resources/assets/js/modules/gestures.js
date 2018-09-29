@@ -125,6 +125,7 @@ export default {
             }
         },
         pressGesture(e, file, i) {
+            let type = e.type
             let target = e.target
             let style = {}
             let cls
@@ -133,7 +134,7 @@ export default {
                 target = target.closest('.__file-box')
             }
 
-            switch (e.type) {
+            switch (type) {
                 case 'hold':
                     style = {transform: 'scale(0.8)'}
                     cls = 'jackInTheBox'

@@ -1,5 +1,5 @@
 <template>
-    <div class="usage-intro link" @click="showPanel()">
+    <div class="usage-intro-btn link" @click="showPanel()">
         <span class="icon is-large"><icon name="pref" scale="1.2"/></span>
     </div>
 </template>
