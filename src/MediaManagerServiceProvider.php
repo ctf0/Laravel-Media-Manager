@@ -17,10 +17,7 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->packagePublish();
         $this->extraConfigs();
         $this->socketRoute();
-
-        if ($this->file->exists(public_path('assets/vendor/MediaManager/patterns'))) {
-            $this->viewComp();
-        }
+        $this->viewComp();
 
         // append extra data
         if (!$this->app['cache']->store('file')->has('ct-mm')) {
@@ -44,6 +41,10 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/database' => storage_path('logs'),
         ], 'db');
+
+        $this->publishes([
+            __DIR__ . '/database/migrations' => database_path('migrations'),
+        ], 'migration');
 
         // resources
         $this->publishes([
@@ -90,22 +91,32 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function viewComp()
     {
+        $data   = [];
+
+        // base url
         $config = $this->app['config']->get('mediaManager');
         $url    = $this->app['filesystem']
             ->disk(array_get($config, 'storage_disk'))
             ->url('/');
 
-        $patterns = collect(
-                    $this->file->allFiles(public_path('assets/vendor/MediaManager/patterns'))
-                )->map(function ($item) {
-                    return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $item->getPathName());
-                });
+        $data['base_url'] = preg_replace('/\/+$/', '/', $url);
 
-        view()->composer('MediaManager::_manager', function ($view) use ($url, $patterns, $config) {
-            $view->with([
-               'base_url' => preg_replace('/\/+$/', '/', $url),
-               'patterns' => json_encode($patterns),
-           ]);
+        // upload panel bg patterns
+        $pattern_path = public_path('assets/vendor/MediaManager/patterns');
+
+        if ($this->file->exists($pattern_path)) {
+            $patterns = collect(
+                $this->file->allFiles($pattern_path)
+            )->map(function ($item) {
+                return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $item->getPathName());
+            });
+
+            $data['patterns'] = json_encode($patterns);
+        }
+
+        // share
+        view()->composer('MediaManager::_manager', function ($view) use ($data) {
+            $view->with($data);
         });
     }
 

@@ -5,8 +5,8 @@
 ![Browser Status](https://badges.herokuapp.com/browsers?firefox=61&microsoftedge=17&googlechrome=51&safari=!?&iexplore=!?)
 
 <p align="center">
-    <img alt="main" src="https://user-images.githubusercontent.com/7388088/46098236-3ca50a80-c1c4-11e8-9a77-66af016f9ead.png"/>
-    <img alt="card" src="https://user-images.githubusercontent.com/7388088/46004310-dd0b0a00-c0b2-11e8-8f7a-12352e15f01b.jpg"/>
+    <img alt="main" src="https://user-images.githubusercontent.com/7388088/46549213-88953500-c8d1-11e8-9685-188c7e56506a.png"/>
+    <img alt="card" src="https://user-images.githubusercontent.com/7388088/46549215-892dcb80-c8d1-11e8-8c23-d8bbfe7a10cc.jpg"/>
     <img alt="filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
     <img alt="diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
 </p>
@@ -86,7 +86,7 @@
     + [from modal](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal)
     + [with any wysiwyg editor](https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-With-Any-WYSIWYG-Editor)
 - auto scroll to selected item using **"left, up, right, down, home, end"**
-- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s ***"sqLite must be installed"***
+- [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s.
 - search in the current folder **or** globally through the entire collection.
 - filter by
   + folder
