@@ -3,10 +3,10 @@
 @import './partials/vars';
 @import './partials/vue';
 @import './partials/loaders';
+@import './partials/utils';
 @import './packages/animate';
 @import './packages/progress';
 @import './packages/switcher';
-@import './modules/utils';
 @import './modules/usage-intro';
 @import './modules/media-player';
 
@@ -592,7 +592,7 @@
         word-break: break-all;
         background-color: $active_theme;
 
-         > div {
+        > div {
             padding: 0.75rem;
             transition: height 0.25s ease-out;
 
@@ -647,7 +647,7 @@
         white-space: nowrap;
         color: darken($active_theme, 50%);
 
-         > div {
+        > div {
             text-align: center;
 
             &:not(:first-of-type) {
@@ -698,7 +698,7 @@
     position: relative;
     overflow: hidden;
 
-     > div {
+    > div {
         overflow: scroll;
         max-height: 40vh;
     }
@@ -836,7 +836,7 @@
 
 /* manager in modal */
 .modal-manager__Inmodal {
-     > .modal-content {
+    > .modal-content {
         width: 85%;
     }
 
@@ -923,7 +923,7 @@
         .__sidebar-count {
             flex-direction: row;
 
-             > div {
+            > div {
                 &:not(:first-of-type) {
                     border-right: none;
                     border-left: 1px solid darken($active_theme, 10%);

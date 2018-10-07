@@ -39,9 +39,11 @@ export default {
             this.resetInput(['selectedFile', 'currentFileIndex'])
 
             if (!this.isBulkSelecting()) {
-                !this.lazyModeIsOn()
-                    ? file ? this.setSelected(file, index) : this.selectFirst()
-                    : this.lazySelectFirst()
+                this.lazyModeIsOn()
+                    ? this.lazySelectFirst()
+                    : file
+                        ? this.setSelected(file, index)
+                        : this.selectFirst()
             }
         },
         blkSlctAll() {

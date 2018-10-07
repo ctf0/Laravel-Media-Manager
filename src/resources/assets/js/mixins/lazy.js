@@ -24,11 +24,21 @@ export default {
                 this.isObserving = true
 
                 setTimeout(() => {
-                    if (!this.intersected && this.isObserving) {
+                    if (!this.intersected) {
                         this.browserSupport('IntersectionObserver')
                             ? this.observe()
                             : this.intersected = true
                     }
+                }, 500)
+            })
+
+            EventHub.listen('start-search-observing', () => {
+                this.isObserving = true
+
+                setTimeout(() => {
+                    this.browserSupport('IntersectionObserver')
+                        ? this.observe()
+                        : this.intersected = true
                 }, 500)
             })
 

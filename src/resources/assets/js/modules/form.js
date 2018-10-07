@@ -224,7 +224,9 @@ export default {
                     files.some((e, i) => {
                         if (prev_file && e.name == prev_file) {
                             index = lazy
-                                ? this.fileTypeIs(e, 'image') ? null : i
+                                ? this.fileTypeIs(e, 'image')
+                                    ? null
+                                    : i
                                 : i
                         }
 
@@ -236,16 +238,20 @@ export default {
                     })
                 }
 
-                // no prev found
-                if (!this.currentFileIndex) {
-                    lazy ? this.lazySelectFirst() : this.selectFirst()
-                }
+                this.$nextTick(() => {
+                    // no prev found
+                    if (!this.currentFileIndex) {
+                        lazy ? this.lazySelectFirst() : this.selectFirst()
+                    }
 
-                if (this.searchFor) {
-                    this.updateSearchCount()
-                }
+                    // update search
+                    if (this.searchFor) {
+                        this.updateSearchCount()
+                    }
 
-                this.dirsListCheck()
+                    // update dirs
+                    this.dirsListCheck()
+                })
             }
 
             this.isLoading = false
@@ -430,9 +436,9 @@ export default {
                                     ? this.blkSlct()
                                     : hasErrors
                                         ? false
-                                        : !this.lazyModeIsOn()
-                                            ? this.selectFirst()
-                                            : this.lazySelectFirst()
+                                        : this.lazyModeIsOn()
+                                            ? this.lazySelectFirst()
+                                            : this.selectFirst()
                             }
                         })
                     }
@@ -491,9 +497,9 @@ export default {
                         this.isBulkSelecting()
                             ? this.blkSlct()
                             : this.allItemsCount
-                                ? !this.lazyModeIsOn()
-                                    ? this.selectFirst()
-                                    : this.lazySelectFirst()
+                                ? this.lazyModeIsOn()
+                                    ? this.lazySelectFirst()
+                                    : this.selectFirst()
                                 : false
                     })
                 }
