@@ -1,11 +1,11 @@
 @import '../partials/panels';
 
 .usage-intro-btn {
-    display: none;
     position: absolute;
     z-index: 1;
     right: 1rem;
     bottom: 1rem;
+    display: none;
     transition: transform 0.3s, color 0.3s, box-shadow 0.3s;
     border-radius: 100vw;
 

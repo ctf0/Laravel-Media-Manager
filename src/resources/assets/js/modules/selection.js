@@ -12,7 +12,7 @@ export default {
         setSelected(file, index, e = null) {
             if (!this.isBulkSelecting() && this.isSelected(file)) return
 
-            EventHub.fire('stopHammerPropagate')
+            // EventHub.fire('stopHammerPropagate')
 
             if (e && e.metaKey && !this.firstMeta) {
                 this.firstMeta = true

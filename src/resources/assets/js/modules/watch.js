@@ -78,9 +78,9 @@ export default {
                 }
 
                 if (!this.isBulkSelecting()) {
-                    !this.lazyModeIsOn()
-                        ? this.selectFirst()
-                        : this.lazySelectFirst()
+                    this.lazyModeIsOn()
+                        ? this.lazySelectFirst()
+                        : this.selectFirst()
                 }
             }
         },
@@ -93,24 +93,26 @@ export default {
         // search
         searchFor(val) {
             if (!this.isBulkSelecting()) {
-                !this.lazyModeIsOn()
-                    ? this.selectFirst()
-                    : this.lazySelectFirst()
+                this.lazyModeIsOn()
+                    ? this.lazySelectFirst()
+                    : this.selectFirst()
             }
 
             if (val) {
-                return this.updateSearchCount()
+                this.updateSearchCount()
+            } else {
+                this.resetInput('searchItemsCount')
+                this.noSearch('hide')
+                this.selectFirstInBulkList()
             }
 
-            this.resetInput('searchItemsCount')
-            this.noSearch('hide')
-            this.selectFirstInBulkList()
+            // because the files gets removed & readded to the dom
+            // which will put the images back to its init state "no-preview"
+            this.$nextTick(() => {
+                EventHub.fire('start-search-observing')
+            })
         },
         searchItemsCount(val) {
-            val == 0
-                ? this.resetInput(['selectedFile', 'currentFileIndex'])
-                : this.selectFirstInBulkList()
-
             if (this.allItemsCount == undefined || val == this.allItemsCount) {
                 this.resetInput('searchItemsCount')
             }
@@ -178,6 +180,6 @@ export default {
                 })
             }
         },
-        plyr: 'autoPlay'
+        player: 'autoPlay'
     }
 }

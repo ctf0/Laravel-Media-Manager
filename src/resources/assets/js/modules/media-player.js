@@ -17,24 +17,48 @@ export default {
                     let item = document.querySelector('[data-player]')
 
                     if (item) {
-                        this.plyr = new Plyr(item, options)
+                        this.player.item = new Plyr(item, options)
+
+                        let plr = this.player.item
+
+                        // status
+                        plr.on('playing', (e) => {
+                            this.player.playing = true
+                        })
+                        plr.on('pause', (e) => {
+                            this.player.playing = false
+                        })
+
+                        // fs
+                        plr.on('enterfullscreen', (e) => {
+                            this.player.fs = true
+                            document.querySelector('[data-plyr="fullscreen"]').blur()
+                        })
+                        plr.on('exitfullscreen', (e) => {
+                            this.player.fs = false
+                        })
+
                         clearInterval(t)
                     }
                 }, 50)
             }
         },
         destroyPlyr() {
-            if (this.plyr) this.plyr.destroy()
-            this.plyr = null
+            if (this.player.item) this.player.item.destroy()
+            this.player = {
+                item: null,
+                fs: false,
+                playing: false
+            }
         },
         playMedia() {
-            return this.plyr ? this.plyr.togglePlay() : false
+            if (this.player.item) {
+                this.player.item.togglePlay()
+            }
         },
         autoPlay() {
             if (this.filterNameIs('audio') || this.filterNameIs('video')) {
-                let player = this.plyr
-
-                player.on('ended', () => {
+                this.player.item.on('ended', () => {
                     // stop at the end of list
                     if (this.currentFileIndex < this.allItemsCount - 1) {
                         // nav to next
@@ -42,7 +66,7 @@ export default {
 
                         // play navigated to
                         this.$nextTick(() => {
-                            setTimeout(this.plyr.play(), 500)
+                            setTimeout(this.player.item.play(), 500)
                         })
                     }
                 })

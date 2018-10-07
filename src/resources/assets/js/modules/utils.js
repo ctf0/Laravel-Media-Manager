@@ -40,9 +40,9 @@ export default {
             this.resetInput('bulkList', [])
             this.resetInput('searchFor')
 
-            !this.lazyModeIsOn()
-                ? this.selectFirst()
-                : this.lazySelectFirst()
+            this.lazyModeIsOn()
+                ? this.lazySelectFirst()
+                : this.selectFirst()
         },
 
         /*                Resolve                */
@@ -203,10 +203,12 @@ export default {
                     this.infoSidebar = false
                     this.smallScreen = true
                 } else {
-                // hide active player modal
+                    // hide active player modal
                     if (
                         this.isActiveModal('preview_modal') &&
-                    (this.selectedFileIs('video') || this.selectedFileIs('audio'))
+                        (this.selectedFileIs('video') || this.selectedFileIs('audio')) &&
+                        !this.player.fs &&
+                        !this.player.playing
                     ) {
                         this.toggleModal()
                     }

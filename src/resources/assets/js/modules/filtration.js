@@ -80,9 +80,9 @@ export default {
             }
 
             if (!this.isBulkSelecting()) {
-                !this.lazyModeIsOn()
-                    ? this.selectFirst()
-                    : this.lazySelectFirst()
+                this.lazyModeIsOn()
+                    ? this.lazySelectFirst()
+                    : this.selectFirst()
             }
 
             if (this.searchFor) {
@@ -96,14 +96,24 @@ export default {
 
         // search
         updateSearchCount() {
-            let oldCount = this.searchItemsCount
-
             this.$nextTick(() => {
                 this.searchItemsCount = this.filesList.length
 
-                return this.searchItemsCount == 0
-                    ? oldCount == 0 ? false : this.noSearch('show')
-                    : this.noSearch('hide')
+                this.$nextTick(() => {
+                    if (this.searchItemsCount == 0) {
+                        this.resetInput(['selectedFile', 'currentFileIndex'])
+
+                        !this.no_search
+                            ? this.noSearch('show')
+                            : false
+                    } else {
+                        this.selectFirstInBulkList()
+
+                        this.no_search
+                            ? this.noSearch('hide')
+                            : false
+                    }
+                })
             })
         }
     }

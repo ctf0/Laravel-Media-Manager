@@ -40,25 +40,27 @@ export default {
             immediate: true,
             deep: true,
             handler(val, oldVal) {
-                let ratio = {
-                    image: 0,
-                    audio: 0,
-                    video: 0,
-                    text: 0,
-                    folder: 0,
-                    application: 0
-                }
+                setTimeout(() => {
+                    let ratio = {
+                        image: 0,
+                        audio: 0,
+                        video: 0,
+                        text: 0,
+                        folder: 0,
+                        application: 0
+                    }
 
-                val.forEach((e) => {
-                    if (this.fileTypeIs(e, 'audio')) ratio.audio++
-                    if (this.fileTypeIs(e, 'video')) ratio.video++
-                    if (this.fileTypeIs(e, 'image')) ratio.image++
-                    if (this.fileTypeIs(e, 'folder')) ratio.folder++
-                    if (this.fileTypeIs(e, 'text') || this.fileTypeIs(e, 'pdf')) ratio.text++
-                    if (this.fileTypeIs(e, 'application') || this.fileTypeIs(e, 'compressed')) ratio.application++
-                })
+                    val.forEach((e) => {
+                        if (this.fileTypeIs(e, 'audio')) ratio.audio++
+                        if (this.fileTypeIs(e, 'video')) ratio.video++
+                        if (this.fileTypeIs(e, 'image')) ratio.image++
+                        if (this.fileTypeIs(e, 'folder')) ratio.folder++
+                        if (this.fileTypeIs(e, 'text') || this.fileTypeIs(e, 'pdf')) ratio.text++
+                        if (this.fileTypeIs(e, 'application') || this.fileTypeIs(e, 'compressed')) ratio.application++
+                    })
 
-                this.contentRatio = ratio
+                    this.contentRatio = ratio
+                }, 100)
             }
         }
     }

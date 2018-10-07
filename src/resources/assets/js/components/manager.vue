@@ -101,7 +101,11 @@ export default {
             moveToPath: null,
             newFilename: null,
             newFolderName: null,
-            plyr: null,
+            player: {
+                item: null,
+                fs: false,
+                playing: false
+            },
             searchFor: null,
             searchItemsCount: null,
             selectedFile: null,
@@ -142,16 +146,21 @@ export default {
         this.scrollObserve()
     },
     updated: debounce(function() {
-        this.scrollByRow()
+        if (this.firstRun) {
+            this.scrollByRow()
 
-        if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-            this.initPlyr()
-        }
+            if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                this.destroyPlyr()
+                this.$nextTick(() => {
+                    this.initPlyr()
+                })
+            }
 
-        if (!this.introIsOn) {
-            this.activeModal || this.inModal
-                ? this.noScroll('add')
-                : this.noScroll('remove')
+            if (!this.introIsOn) {
+                this.activeModal || this.inModal
+                    ? this.noScroll('add')
+                    : this.noScroll('remove')
+            }
         }
     }, 250),
     beforeDestroy() {
@@ -202,7 +211,11 @@ export default {
 
             // get images dimensions
             EventHub.listen('save-image-dimensions', (obj) => {
-                this.dimensions.push(obj)
+                let dim = this.dimensions
+
+                if (!dim.some((e) => e.url === obj.url)) {
+                    dim.push(obj)
+                }
             })
 
             // stop listening to shortcuts
@@ -364,8 +377,9 @@ export default {
                 else {
                     if (this.isActiveModal('preview_modal')) {
                         if (key == 'space') {
-                            e.preventDefault()
-                            this.toggleModal()
+                            this.selectedFileIs('video') || this.selectedFileIs('audio')
+                                ? this.playMedia()
+                                : this.toggleModal()
                         }
 
                         this.navigation(e)

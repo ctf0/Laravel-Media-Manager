@@ -18,10 +18,11 @@
     box-shadow: none;
 
     strong {
-        display: none;
+        // display: none;
         overflow: hidden;
         text-transform: uppercase;
         text-overflow: ellipsis;
+        color: $black;
         mix-blend-mode: difference;
     }
 
