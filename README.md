@@ -52,7 +52,10 @@
 
     window.Vue = require('vue')
 
+    // pre Laravel v5.7
     require('../vendor/MediaManager/js/manager')
+    // Laravel v5.7
+    // require('../assets/vendor/MediaManager/js/manager')
 
     new Vue({
         el: '#app'
