@@ -2,6 +2,7 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import Vue2Filters from 'vue2-filters'
 
 import Broadcast from '../modules/broadcast'
 import BulkSelect from '../modules/bulk'
@@ -38,6 +39,7 @@ export default {
     },
     name: 'media-manager',
     mixins: [
+        Vue2Filters.mixin,
         Broadcast,
         BulkSelect,
         Cache,
