@@ -77,13 +77,12 @@ export default {
                 let imgs = this.uploadPanelImgList
                 let grds = this.uploadPanelGradients
 
-                let url = imgs[Math.floor(Math.random() * imgs.length)]
+                let url = imgs.length ? imgs[Math.floor(Math.random() * imgs.length)] : null
                 let color = grds[Math.floor(Math.random() * grds.length)]
-
-                return {
-                    '--gradient': color,
-                    'background-image': `url("${url}")`
-                }
+                
+                return url 
+                    ? {'--gradient': color, 'background-image': `url("${url}")`}
+                    : {'--gradient': color}
             }
         },
 
