@@ -2,9 +2,9 @@
 
 return [
     /*
-     * ignore files pattern
-     *
      * ignore any file starts with "."
+     *
+     * "clear browser cache on change"
      */
     'ignore_files' => '/^\..*/',
 
@@ -67,6 +67,8 @@ return [
     /*
      * display file last modification time as
      *
+     * "clear browser cache on change"
+     *
      * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
      */
     'last_modified_format' => 'toDateString',
@@ -78,6 +80,8 @@ return [
 
     /*
      * load image preview when item is clicked
+     *
+     * "clear browser cache on change"
      */
     'lazy_load_image_on_click' => false,
 
@@ -91,6 +95,8 @@ return [
      * in-order to get the folder items count & size
      * we need to recursively get all the files inside the folders
      * which could make the request take longer
+     *
+     * "clear browser cache on change"
      */
     'get_folder_info' => true,
 
