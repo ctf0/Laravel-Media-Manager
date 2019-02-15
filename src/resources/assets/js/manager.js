@@ -50,11 +50,11 @@ axios.interceptors.response.use(
 
 // vue-awesome
 require('./modules/icons')
-Vue.component('icon', require('vue-awesome/components/Icon'))
+Vue.component('icon', require('vue-awesome/components/Icon').default)
 
 /*                Components                */
-Vue.component('MediaManager', require('./components/manager.vue'))
-Vue.component('MyNotification', require('vue-notif'))
+Vue.component('MediaManager', require('./components/manager.vue').default)
+Vue.component('MyNotification', require('vue-notif').default)
 
 /*                Events                */
 if ('connection' in navigator) {
