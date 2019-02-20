@@ -934,7 +934,7 @@
                                 </p>
                             </li>
 
-                            <li v-for="(folder, index) in folders" :key="index">
+                            <li v-for="(folder, index) in folders" :key="`${index}-${folder}`">
                                 <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading"
                                     class="level">
                                     <span class="icon level-item is-marginless"><icon name="folder-open-o"></icon></span>
