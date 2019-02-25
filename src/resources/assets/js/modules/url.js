@@ -10,7 +10,7 @@ export default {
             return new Promise((resolve) => {
                 if (!this.inModal) {
                     let path = new URLSearchParams(location.search)
-                    this.folders = path.has('path') ? path.get('path').split('/') : []
+                    this.folders = path.has('path') ? path.replace(/\#/g, '').get('path').split('/') : []
                 }
 
                 return resolve()
