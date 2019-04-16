@@ -188,6 +188,7 @@ export default {
                 this.$refs['search-input'].removeEventListener('transitionend', this.ontransitionend)
             }
         }
-    }
+    },
+    render() {}
 }
 </script>
