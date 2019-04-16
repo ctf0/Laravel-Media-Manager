@@ -14,7 +14,7 @@
         <p v-else>{{ trans('MediaManager::messages.library') }}</p>
     </li>
 
-    <li v-for="(folder, index) in folders" :id="folder + '-bc'" :key="index">
+    <li v-for="(folder, index) in folders" :id="folder + '-bc'" :key="${index}_${folder}">
         <p v-if="isLastItem(folder, folders) || isBulkSelecting() || isLoading">@{{ folder }}</p>
         <a v-else
             v-tippy
