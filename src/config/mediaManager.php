@@ -31,11 +31,14 @@ return [
     'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
 
     /*
-     * remove any folder special chars except (_ -)
+     * remove any folder special chars except
+     * dash -
+     * underscore _
+     * white space
      *
-     * to add & nest folders in one go use '\/\_\-'
+     * to add & nest folders in one go add '\/'
      */
-    'allowed_folderNames_chars' => '\_\-',
+    'allowed_folderNames_chars' => '\_\-\s',
 
     /*
      * disallow uploading files with the following mimetypes
@@ -61,6 +64,9 @@ return [
 
     /*
      * when file names gets cleand up
+     *
+     * put here any global function that 
+     * doesnt take arguments
      */
     'sanitized_text' => 'uniqid',
 
