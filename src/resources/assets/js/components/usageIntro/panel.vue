@@ -51,6 +51,7 @@ export default {
         showPanel(val) {
             this.showPanelWatcher(val)
         }
-    }
+    },
+    render() {}
 }
 </script>
