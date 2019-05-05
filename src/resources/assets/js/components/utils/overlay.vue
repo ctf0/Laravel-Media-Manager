@@ -39,6 +39,7 @@ export default {
                 this.show = false
             }, 200)
         })
-    }
+    },
+    render() {}
 }
 </script>
