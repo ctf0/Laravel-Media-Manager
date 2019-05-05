@@ -11,6 +11,7 @@ export default {
         showPanel() {
             EventHub.fire('show-usage-intro')
         }
-    }
+    },
+    render() {}
 }
 </script>
