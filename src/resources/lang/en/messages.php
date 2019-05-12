@@ -17,7 +17,7 @@ return array (
     'main' => 'Audio',
     'support' => 'Your browser does not support the audio element',
     'title' => 'Title',
-    'track' => 'Track Nº',
+    'track' => 'Track Nº',
     'year' => 'Year',
   ),
   'cancel' => 'Cancel',
