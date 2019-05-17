@@ -26,16 +26,16 @@ import Watchers from '../modules/watch'
 
 export default {
     components: {
-        contentRatio: require('./utils/ratio.vue'),
-        globalSearchBtn: require('./globalSearch/button.vue'),
-        globalSearchPanel: require('./globalSearch/panel.vue'),
-        imageCache: require('./lazyLoading/cache.vue'),
-        imageEditor: require('./imageEditor/main.vue'),
-        imageIntersect: require('./lazyLoading/normal.vue'),
-        overlay: require('./utils/overlay.vue'),
-        usageIntroBtn: require('./usageIntro/button.vue'),
-        usageIntroPanel: require('./usageIntro/panel.vue'),
-        videoDimension: require('./utils/video-dim.vue')
+        contentRatio: require('./utils/ratio.vue').default,
+        globalSearchBtn: require('./globalSearch/button.vue').default,
+        globalSearchPanel: require('./globalSearch/panel.vue').default,
+        imageCache: require('./lazyLoading/cache.vue').default,
+        imageEditor: require('./imageEditor/main.vue').default,
+        imageIntersect: require('./lazyLoading/normal.vue').default,
+        overlay: require('./utils/overlay.vue').default,
+        usageIntroBtn: require('./usageIntro/button.vue').default,
+        usageIntroPanel: require('./usageIntro/panel.vue').default,
+        videoDimension: require('./utils/video-dim.vue'.default)
     },
     name: 'media-manager',
     mixins: [
