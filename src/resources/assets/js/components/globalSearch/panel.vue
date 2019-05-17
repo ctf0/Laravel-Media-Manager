@@ -76,14 +76,15 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import VueInputAutowidth from 'vue-input-autowidth'
 import panels from '../../mixins/panels'
 
 export default {
     components: {
-        imageIntersect: require('./lazyLoading.vue')
+        imageIntersect: require('./lazyLoading.vue').default
     },
     directives: {
-        VueInputAutowidth: require('vue-input-autowidth')
+        VueInputAutowidth
     },
     mixins: [panels],
     props: ['trans', 'fileTypeIs', 'noScroll', 'browserSupport'],

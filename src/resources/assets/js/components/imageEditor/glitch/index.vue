@@ -27,7 +27,7 @@ const defaults = {
 
 export default {
     components: {
-        controls: require('./controls.vue')
+        controls: require('./controls.vue').default
     },
     props: [
         'cropper',

@@ -141,11 +141,11 @@ import Cropper from 'cropperjs'
 
 export default {
     components: {
-        filters: require('./filters/index.vue'),
-        presets: require('./filters/presets.vue'),
-        controls: require('./controls.vue'),
-        // glitch: require('./glitch/index.vue'),
-        imageCompare: require('vue-image-compare2')
+        filters: require('./filters/index.vue').default,
+        presets: require('./filters/presets.vue').default,
+        controls: require('./controls.vue').default,
+        // glitch: require('./glitch/index.vue').default,
+        imageCompare: require('vue-image-compare2').default
     },
     props: [
         'file',
