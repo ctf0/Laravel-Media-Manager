@@ -35,7 +35,7 @@ export default {
         overlay: require('./utils/overlay.vue').default,
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
-        videoDimension: require('./utils/video-dim.vue'.default)
+        videoDimension: require('./utils/video-dim.vue').default
     },
     name: 'media-manager',
     mixins: [
