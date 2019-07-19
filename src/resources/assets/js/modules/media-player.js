@@ -8,8 +8,8 @@ export default {
             let options = {
                 debug: false,
                 controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-                tooltips: { controls: true, seek: true },
-                keyboard: { focused: false, global: false }
+                tooltips: {controls: true, seek: true},
+                keyboard: {focused: false, global: false}
             }
 
             if (!this.smallScreen || (this.smallScreen && this.activeModal)) {
@@ -82,7 +82,7 @@ export default {
 
                         if (val) {
                             if (val.picture) {
-                                const { data, format } = val.picture
+                                const {data, format} = val.picture
                                 let base64String = ''
 
                                 for (let value of data) {
