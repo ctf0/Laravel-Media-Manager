@@ -9,8 +9,12 @@ use ctf0\PackageChangeLog\PackageChangeLogServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
+    protected $file;
+
     public function boot()
     {
+        $this->file = $this->app['files'];
+
         $this->packagePublish();
         $this->extraConfigs();
         $this->socketRoute();
