@@ -15,7 +15,7 @@ class PackageSetup extends Command
      */
     public function __construct()
     {
-        $this->file = $this->app['files'];
+        $this->file = app('files');
 
         parent::__construct();
     }
