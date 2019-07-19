@@ -4,25 +4,18 @@ namespace ctf0\MediaManager;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Broadcast;
+use ctf0\MediaManager\Commands\PackageSetup;
 use ctf0\PackageChangeLog\PackageChangeLogServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider
 {
-    protected $file;
-
     public function boot()
     {
-        $this->file = $this->app['files'];
-
         $this->packagePublish();
         $this->extraConfigs();
         $this->socketRoute();
         $this->viewComp();
-
-        // append extra data
-        if (!$this->app['cache']->store('file')->has('ct-mm')) {
-            $this->autoReg();
-        }
+        $this->command();
     }
 
     /**
@@ -91,7 +84,7 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function viewComp()
     {
-        $data   = [];
+        $data = [];
 
         // base url
         $config = $this->app['config']->get('mediaManager');
@@ -121,55 +114,15 @@ class MediaManagerServiceProvider extends ServiceProvider
     }
 
     /**
-     * autoReg package resources.
+     * package commands.
      *
      * @return [type] [description]
      */
-    protected function autoReg()
+    protected function command()
     {
-        // routes
-        $route_file = base_path('routes/web.php');
-        $search     = 'MediaManager';
-
-        if ($this->checkExist($route_file, $search)) {
-            $data = "\n// MediaManager\nctf0\MediaManager\MediaRoutes::routes();";
-
-            $this->file->append($route_file, $data);
-        }
-
-        // mix
-        $mix_file = base_path('webpack.mix.js');
-        $search   = 'MediaManager';
-
-        if ($this->checkExist($mix_file, $search)) {
-            $data =
-<<<EOT
-
-// MediaManager
-mix.sass('resources/assets/vendor/MediaManager/sass/manager.scss', 'public/assets/vendor/MediaManager/style.css')
-    .copyDirectory('resources/assets/vendor/MediaManager/dist', 'public/assets/vendor/MediaManager')
-EOT;
-
-            $this->file->append($mix_file, $data);
-        }
-
-        // run check once
-        $this->app['cache']->store('file')->rememberForever('ct-mm', function () {
-            return 'added';
-        });
-    }
-
-    /**
-     * [checkExist description].
-     *
-     * @param [type] $file   [description]
-     * @param [type] $search [description]
-     *
-     * @return [type] [description]
-     */
-    protected function checkExist($file, $search)
-    {
-        return $this->file->exists($file) && !str_contains($this->file->get($file), $search);
+        $this->commands([
+            PackageSetup::class,
+        ]);
     }
 
     /**

@@ -33,7 +33,7 @@
 
     `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
 
-- after installation, package will auto-add
+- after installation, run php artisan `lmm:setup` to add
     + package routes to `routes/web.php`
     + package assets compiling to `webpack.mix.js`
 
