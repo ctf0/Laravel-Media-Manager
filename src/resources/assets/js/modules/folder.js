@@ -42,7 +42,9 @@ export default {
 
         // misc
         updateMoveList() {
-            this.moveToPath = this.$refs.move_folder_dropdown.options[0].value
+            let ops = this.$refs.move_folder_dropdown.options[0]
+
+            this.moveToPath = ops ? ops.value : null
         },
 
         // filter

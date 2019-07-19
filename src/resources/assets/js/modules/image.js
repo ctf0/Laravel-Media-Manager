@@ -40,7 +40,9 @@ export default {
         },
         updateScrollableDir: debounce(function (ref) {
             let item = this.$refs[ref]
-            return this.scrollableBtn.dir = item.scrollTop + item.clientHeight == item.scrollHeight
+            let margin = 3
+
+            return this.scrollableBtn.dir = (item.scrollTop + item.clientHeight) >= (item.scrollHeight - margin)
                 ? 'up'
                 : 'down'
         }, 250),

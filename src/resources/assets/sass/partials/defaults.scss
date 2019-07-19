@@ -4,12 +4,22 @@
     display: none;
 }
 
+.hide-native-scrollbar {
+    * {
+        scrollbar-width: none; /* Firefox 64 */
+        -ms-overflow-style: none; /* IE 11 */
+        &::-webkit-scrollbar { /** Webkit */
+            display: none;
+        }
+    }
+}
+
 .__stack-container,
 .__stack-files,
 .__stack-sidebar,
 .__files-boxs,
 img {
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
 }
 

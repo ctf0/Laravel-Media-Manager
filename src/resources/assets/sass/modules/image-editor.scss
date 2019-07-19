@@ -3,8 +3,8 @@
 
 .__modal-editor {
     .__editor {
-        overflow: unset;
-        min-width: unset;
+        overflow: unset !important;
+        min-width: unset !important;
         transition: margin 0.25s $anim-ease;
         transform: translateX(-50px); // account for the presets width
         background: transparent;
@@ -258,7 +258,7 @@
     }
 
     .range-neg {
-        background-image: linear-gradient(to right, $editorBtns var(--length), $range var(--length),$range 50%, $editorBtns 50%) !important;
+        background-image: linear-gradient(to right, $editorBtns var(--length), $range var(--length), $range 50%, $editorBtns 50%) !important;
     }
 
     .range-pos {
@@ -273,8 +273,8 @@
         background-color: $editorBtns;
         background-image: linear-gradient(to right, $range var(--length), $editorBtns var(--length));
         -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
+        -moz-appearance: none;
+        appearance: none;
 
         &::-webkit-slider-thumb {
             width: 1rem;
@@ -283,7 +283,7 @@
             border-radius: 100vw;
             background: $white;
             -webkit-appearance: none;
-                    appearance: none;
+            appearance: none;
         }
 
         &::-moz-range-thumb {
