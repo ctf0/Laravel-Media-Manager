@@ -1,6 +1,6 @@
 {{-- component --}}
 <media-manager inline-template v-cloak
-    class=""
+    class='hide-native-scrollbar'
     :config="{{ json_encode([
         'baseUrl' => $base_url,
         'hideFilesExt' => config('mediaManager.hide_files_ext'),
@@ -9,7 +9,8 @@
         'cacheExp' => config('mediaManager.cache_expires_after'),
         'broadcasting' => config('mediaManager.enable_broadcasting'),
         'gfi' => config('mediaManager.get_folder_info'),
-        'ratioBar' => config('mediaManager.show_ratio_bar')
+        'ratioBar' => config('mediaManager.show_ratio_bar'),
+        'previewFilesBeforeUpload' => config('mediaManager.preview_files_before_upload')
     ]) }}"
     :routes="{{ json_encode([
         'files' => route('media.files'),
@@ -42,6 +43,7 @@
         'stand_by' => trans('MediaManager::messages.stand_by'),
         'to_cp' => trans('MediaManager::messages.copy.to_cp'),
         'upload_success' => trans('MediaManager::messages.upload.success'),
+        'upload_in_progress' => trans('MediaManager::messages.upload.in_progress'),
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -50,7 +52,7 @@
     :user-id="{{ config('mediaManager.enable_broadcasting') ? auth()->user()->id : 0 }}"
     :upload-panel-img-list="{{ $patterns ?? '[]' }}">
 
-    <div class="">
+    <div class="" :class="{'__stack-reverse': waitingForUpload}">
 
         {{-- content ratio bar --}}
         <transition name="mm-list" mode="out-in">
@@ -216,7 +218,7 @@
                 {{-- ====================================================================== --}}
 
                 {{-- right toolbar --}}
-                <div class="level-right">
+                <div class="level-right" v-if="!waitingForUpload">
                     <div class="level-item">
                         <div class="field" :class="{'has-addons' : isBulkSelecting()}">
                             {{-- bulk select all --}}
@@ -402,7 +404,7 @@
                                         <button class="button is-black" :disabled="!searchFor"
                                             v-tippy
                                             title="{{ trans('MediaManager::messages.clear', ['attr' => trans('MediaManager::messages.search.main')]) }}"
-                                            @click="resetInput('searchFor')" >
+                                            @click="resetInput('searchFor')">
                                             <span class="icon"><icon name="times"></icon></span>
                                         </button>
                                     </p>
@@ -443,8 +445,6 @@
                         </span>
                     </div>
                 </div>
-
-                <div id="uploadPreview"></div>
             </div>
 
             <transition name="mm-list">
@@ -462,7 +462,67 @@
         {{-- ====================================================================== --}}
 
         <div class="media-manager__stack">
-            <section class="__stack-container">
+            <section class="__stack-container" :class="{'more-height': waitingForUpload}">
+
+                {{-- upload preview --}}
+                <div id="uploadPreview">
+                    <div class="dz-preview-ops">
+                        {{-- add more files --}}
+                        <button v-tippy="{arrow: true, hideOnClick: false}"
+                            title="{{ trans('MediaManager::messages.add.more', ['attr' => null]) }}"
+                            @click="toggleUploadPanel()"
+                            class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="cloud-upload"/>
+                                </icon>
+                            </span>
+                        </button>
+                        {{-- upload --}}
+                        <button v-tippy="{arrow: true, hideOnClick: false}"
+                            title="{{ trans('MediaManager::messages.upload.main') }}"
+                            ref="process-dropzone"
+                            class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="check"/>
+                                </icon>
+                            </span>
+                        </button>
+                        {{-- reset --}}
+                        <button v-tippy="{arrow: true, hideOnClick: false}"
+                            title="{{ trans('MediaManager::messages.clear', ['attr' => null]) }}"
+                            ref="clear-dropzone"
+                            class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="times"/>
+                                </icon>
+                            </span>
+                        </button>
+                    </div>
+
+                    <section class="sidebar-container">
+                        <div class="sidebar"></div>
+                    </section>
+                    <section class="preview">
+                        <template v-if="selectedUploadPreview">
+                            <img :src="selectedUploadPreview.img" v-if="selectedUploadPreview.img">
+                            <div v-else>
+                                <icon v-if="fileTypeIs(selectedUploadPreview, 'application')" name="cogs" scale="10"></icon>
+                                <icon v-else-if="fileTypeIs(selectedUploadPreview, 'compressed')" name="file-archive-o" scale="10"></icon>
+                                <icon v-else-if="fileTypeIs(selectedUploadPreview, 'video')" name="film" scale="10"></icon>
+                                <icon v-else-if="fileTypeIs(selectedUploadPreview, 'audio')" name="music" scale="10"></icon>
+                                <icon v-else-if="fileTypeIs(selectedUploadPreview, 'pdf')" name="file-pdf-o" scale="10"></icon>
+                                <icon v-else-if="fileTypeIs(selectedUploadPreview, 'text')" name="file-text-o" scale="10"></icon>
+                            </div>
+                            <p>@{{ selectedUploadPreview.name }}</p>
+                        </template>
+                    </sect>
+                </div>
 
                 {{-- loadings --}}
                 <section>
@@ -502,7 +562,7 @@
                 </section>
 
                 {{-- usage-intro btn --}}
-                <usage-intro-btn v-show="!isLoading"></usage-intro-btn>
+                <usage-intro-btn v-show="!isLoading && !waitingForUpload"></usage-intro-btn>
 
                 {{-- ====================================================================== --}}
 
@@ -639,7 +699,6 @@
                                     :key="selectedFile.name"
                                     class="image-wrapper">
                                     <div ref="img-prev" @scroll="updateScrollableDir('img-prev')">
-
                                         <img :src="selectedFilePreview"
                                             :alt="selectedFile.name"
                                             class="link image"
@@ -954,8 +1013,18 @@
                     </nav>
                 </div>
 
+                {{-- upload preview info --}}
+                <div class="level-right" v-if="waitingForUpload">
+                    <nav class="breadcrumb">
+                        <ul>
+                            <li><p class="level has-text-weight-bold">@{{ selectedUploadPreviewList.length }} File's</p></li>
+                            <li><p class="level has-text-weight-bold">@{{ uploadPreviewListSize }}</p></li>
+                        </ul>
+                    </nav>
+                </div>
+
                 {{-- toggle sidebar --}}
-                <div class="level-right" v-show="!isLoading">
+                <div class="level-right" v-show="!isLoading && !waitingForUpload">
                     <div class="is-hidden-touch"
                         @click="toggleInfoSidebar(), saveUserPref()"
                         v-tippy
@@ -995,10 +1064,10 @@
                 <div class="modal-background link" @click="toggleModal()"></div>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <transition :name="`mm-img-${imageSlideDirection}`"
-                        mode="out-in" appear
+                        mode="out-in"
+                        appear
                         v-on:after-enter="isScrollable()"
                         v-on:before-leave="scrollableBtn.state = false">
-
                         <div class="modal-content" :key="selectedFile.path">
                             {{-- card v --}}
                             @include('MediaManager::partials.card')
@@ -1014,6 +1083,7 @@
                 <v-touch class="modal-background link" @dbltap="toggleModal()"></v-touch>
                 <div class="mm-animated fadeInDown __modal-content-wrapper">
                     <image-editor route="{{ route('media.uploadCropped') }}"
+                        :no-scroll="noScroll"
                         :file="selectedFile"
                         :url="selectedFilePreview"
                         :translations="{{ json_encode([

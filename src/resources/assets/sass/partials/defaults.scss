@@ -6,10 +6,11 @@
 
 .hide-native-scrollbar {
     * {
-        scrollbar-width: none; /* Firefox 64 */
-        -ms-overflow-style: none; /* IE 11 */
-        &::-webkit-scrollbar { /** Webkit */
-            display: none;
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+            width: 0 !important;
         }
     }
 }
@@ -19,8 +20,8 @@
 .__stack-sidebar,
 .__files-boxs,
 img {
-    transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
 }
 
 .media-manager__stack {

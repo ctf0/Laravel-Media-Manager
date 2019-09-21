@@ -65,7 +65,7 @@ return [
     /*
      * when file names gets cleand up
      *
-     * put here any global function that 
+     * put here any global function that
      * doesnt take arguments
      */
     'sanitized_text' => 'uniqid',
@@ -119,4 +119,9 @@ return [
      * above the manager
      */
     'show_ratio_bar' => true,
+
+    /*
+     * preview and remove files b4 uploading
+     */
+    'preview_files_before_upload' => true,
 ];

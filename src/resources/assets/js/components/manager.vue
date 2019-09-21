@@ -21,6 +21,7 @@ import Restriction from '../modules/restriction'
 import Scroll from '../modules/scroll'
 import Selection from '../modules/selection'
 import Url from '../modules/url'
+import Upload from '../modules/upload'
 import Utilities from '../modules/utils'
 import Watchers from '../modules/watch'
 
@@ -57,6 +58,7 @@ export default {
         Scroll,
         Selection,
         Url,
+        Upload,
         Utilities,
         Watchers
     ],
@@ -94,6 +96,7 @@ export default {
             smallScreen: false,
             toolBar: true,
             UploadArea: false,
+            waitingForUpload: false,
             useCopy: false,
 
             activeModal: null,
@@ -103,11 +106,6 @@ export default {
             moveToPath: null,
             newFilename: null,
             newFolderName: null,
-            player: {
-                item: null,
-                fs: false,
-                playing: false
-            },
             searchFor: null,
             searchItemsCount: null,
             selectedFile: null,
@@ -120,6 +118,17 @@ export default {
             files: [],
             filterdList: [],
             folders: [],
+            selectedUploadPreviewList: [],
+            selectedUploadPreview: {
+                img: null,
+                type: null,
+                name: null
+            },
+            player: {
+                item: null,
+                fs: false,
+                playing: false
+            },
             scrollableBtn: {
                 state: false,
                 dir: 'down'
@@ -138,6 +147,20 @@ export default {
         }
     },
     created() {
+        // confirm file pending upload cancel
+        window.addEventListener('beforeunload', (event) => {
+            if (this.showProgress) {
+                event.preventDefault()
+                event.returnValue = 'Current Upload Will Be Canceled !!'
+            }
+        })
+        window.addEventListener('unload', (event) => {
+            if (this.showProgress) {
+                EventHub.fire('clear-pending-upload')
+            }
+        })
+
+        // rest
         window.addEventListener('resize', this.onResize)
         window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
@@ -163,6 +186,8 @@ export default {
                     ? this.noScroll('add')
                     : this.noScroll('remove')
             }
+
+            this.firstRun = false
         }
     }, 250),
     beforeDestroy() {
@@ -240,7 +265,7 @@ export default {
 
             if (!(this.isLoading || e.altKey || e.ctrlKey || e.metaKey || this.disableShortCuts)) {
                 // when modal isnt visible
-                if (!this.activeModal) {
+                if (!this.activeModal && !this.waitingForUpload) {
                     // when search is not focused
                     if (!this.isFocused('search', e)) {
                         // when no bulk selecting
@@ -260,13 +285,16 @@ export default {
                             if (this.allItemsCount) {
                                 this.navigation(e)
 
-                                if (key == 'space' && e.target == document.body && (
-                                    this.selectedFileIs('video') ||
-                                    this.selectedFileIs('audio') ||
-                                    this.selectedFileIs('image') ||
-                                    this.selectedFileIs('pdf') ||
-                                    this.textFileType()
-                                )) {
+                                if (key == 'space' &&
+                                    e.target == document.body &&
+                                    (
+                                        this.selectedFileIs('video') ||
+                                        this.selectedFileIs('audio') ||
+                                        this.selectedFileIs('image') ||
+                                        this.selectedFileIs('pdf') ||
+                                        this.textFileType()
+                                    )
+                                ) {
                                     e.preventDefault()
 
                                     // play-pause media
@@ -374,7 +402,6 @@ export default {
                     }
                 }
                 /* end of modal isnt visible */
-
                 // when modal is visible
                 else {
                     if (this.isActiveModal('preview_modal')) {
@@ -392,6 +419,29 @@ export default {
                     }
                 }
                 /* end of modal is visible */
+
+                // when upload preview visible
+                if (this.waitingForUpload) {
+                    // proceed with upload
+                    if (key == 'enter') {
+                        this.$refs['process-dropzone'].click()
+                    }
+
+                    // clear upload queue
+                    if (key == 'esc') {
+                        if (this.UploadArea) {
+                            return this.toggleUploadPanel()
+                        }
+
+                        this.$refs['clear-dropzone'].click()
+                        this.waitingForUpload = false
+                    }
+
+                    // trigger upload panel
+                    if (key == 'u') {
+                        this.$refs.upload.click()
+                    }
+                }
             }
         },
         /* end of short cuts */

@@ -1,8 +1,8 @@
-import addMinutes from 'date-fns/add_minutes'
-import getTime from 'date-fns/get_time'
+import addMinutes from 'date-fns/addMinutes'
+import getTime from 'date-fns/getTime'
 import uniq from 'lodash/uniq'
 
-import {Store, get, set, del, clear, keys} from 'idb-keyval'
+import { Store, get, set, del, clear, keys } from 'idb-keyval'
 const cacheStore = new Store(
     'ctf0-Media_Manager',   // db
     'laravel-media-manager' // store
@@ -37,7 +37,7 @@ export default {
             }
         },
         saveUserPref() {
-            this.updateLs({'infoSidebar': this.infoSidebar})
+            this.updateLs({ 'infoSidebar': this.infoSidebar })
         },
 
         /*                IndexedDb                */
@@ -46,7 +46,7 @@ export default {
         },
         cacheResponse(val, key = this.cacheName) {
             let date = getTime(addMinutes(new Date(), this.config.cacheExp))
-            val = Object.assign(val, {expire: date})
+            val = Object.assign(val, { expire: date })
 
             return set(key, val, cacheStore).catch((err) => {
                 console.warn('cacheStore.setItem', err)

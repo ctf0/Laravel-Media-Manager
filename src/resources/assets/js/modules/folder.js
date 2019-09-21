@@ -10,7 +10,7 @@ export default {
             }
         },
         goToFolder(index) {
-            if (!this.isBulkSelecting()) {
+            if (!this.isBulkSelecting() && !this.waitingForUpload) {
                 let folders = this.folders
                 let prev_folder_name = folders[index]
 

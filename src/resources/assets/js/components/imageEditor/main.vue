@@ -1,6 +1,5 @@
 <template>
     <div ref="editor" class="card __editor">
-
         <!-- btns -->
         <div class="top">
             <div class="__top-toolbar">
@@ -13,8 +12,8 @@
                              :caman-filters="camanFilters"
                              class="__left-index"/>
 
-                             <!-- glitch -->
-                             <!-- <glitch v-if="showGlitch"
+                    <!-- glitch -->
+                    <!-- <glitch v-if="showGlitch"
                             :cropper="imageCropper"
                             :show-glitch="showGlitch"
                             :get-cropper-data="getCropperData"
@@ -32,8 +31,8 @@
                     </button> -->
 
                     <!-- diff toggle -->
-                    <button v-tippy="{arrow: true, theme: 'mm'}"
-                            v-if="showDiffBtn()"
+                    <button v-if="showDiffBtn()"
+                            v-tippy="{arrow: true, theme: 'mm'}"
                             :disabled="processing && !imageDiffIsReady || showGlitch"
                             :class="{'is-active': showDiff}"
                             :title="trans('diff')"
@@ -149,6 +148,7 @@ export default {
     },
     props: [
         'file',
+        'noScroll',
         'translations',
         'route',
         'url'
@@ -205,9 +205,12 @@ export default {
                     'pointer-events': 'none'
                 }
             }
+
+            return {}
         }
     },
     created() {
+        this.noScroll('add')
         window.addEventListener('dblclick', this.onDblClick)
     },
     mounted() {
@@ -217,6 +220,7 @@ export default {
     beforeDestroy() {
         window.removeEventListener('dblclick', this.onDblClick)
         this.imageCropper.destroy()
+        this.noScroll('remove')
     },
     methods: {
         // init
@@ -322,14 +326,13 @@ export default {
             let cropper = this.imageCropper
             let getData = cropper.getData()
 
-            this.hasChanged =
+            this.hasChanged = (
                 getData.rotate != 0 ||
                 getData.scaleX != 1 ||
                 getData.scaleY != 1 ||
                 cropper.cropped ||
                 this.haveFilters()
-                    ? true
-                    : false
+            ) ? true : false
         },
         resetAll() {
             this.$nextTick(() => {

@@ -29,10 +29,10 @@ export default {
         },
         vis_btn() {
             return this.searchItemsCount == 0 ||
-            this.isLoading ||
-            !this.allItemsCount ||
-            !this.isBulkSelecting() && this.selectedFileIs('folder') ||
-            this.isBulkSelecting() && !this.bulkItemsCount
+                this.isLoading ||
+                !this.allItemsCount ||
+                !this.isBulkSelecting() && this.selectedFileIs('folder') ||
+                this.isBulkSelecting() && !this.bulkItemsCount
         },
         reset() {
             this.bulkSelect = false
@@ -53,7 +53,7 @@ export default {
 
             return name.replace(/(.[^.]*)$/, '')
         },
-        getFileSize(bytes) {
+        getFileSize(bytes, numberOnly = false) {
             if (bytes === 0) {
                 return 'N/A'
             }
@@ -62,8 +62,9 @@ export default {
             let dm = 2
             let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
             let i = Math.floor(Math.log(bytes) / Math.log(k))
+            let res = parseFloat((bytes / Math.pow(k, i)).toFixed(dm))
 
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ` ${sizes[i]}`
+            return !numberOnly ? `${res} ${sizes[i]}` : res
         },
         getExtension(name) {
             let index = name.lastIndexOf('.')

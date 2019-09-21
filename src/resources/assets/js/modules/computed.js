@@ -79,11 +79,18 @@ export default {
 
                 let url = imgs.length ? imgs[Math.floor(Math.random() * imgs.length)] : null
                 let color = grds[Math.floor(Math.random() * grds.length)]
-                
-                return url 
+
+                return url
                     ? {'--gradient': color, 'background-image': `url("${url}")`}
                     : {'--gradient': color}
             }
+        },
+        uploadPreviewListSize() {
+            let size = this.selectedUploadPreviewList
+                .map((el) => el.size)
+                .reduce((a, b) => a + b, 0)
+
+            return this.getFileSize(size)
         },
 
         // caching

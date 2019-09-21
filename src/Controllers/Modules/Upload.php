@@ -3,6 +3,7 @@
 namespace ctf0\MediaManager\Controllers\Moduels;
 
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use ctf0\MediaManager\Events\MediaFileOpsNotifications;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -39,7 +40,7 @@ trait Upload
 
                 try {
                     // check for mime type
-                    if (str_contains($file_type, $this->unallowedMimes)) {
+                    if (Str::contains($file_type, $this->unallowedMimes)) {
                         throw new Exception(
                             trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
                         );
@@ -103,10 +104,10 @@ trait Upload
     public function uploadEditedImage(Request $request)
     {
         if ($this->allowUpload()) {
-            $type        = $request->mime_type;
-            $path        = $request->path;
-            $original    = $request->name;
-            $data        = explode(',', $request->data)[1];
+            $type     = $request->mime_type;
+            $path     = $request->path;
+            $original = $request->name;
+            $data     = explode(',', $request->data)[1];
 
             $name_only   = pathinfo($original, PATHINFO_FILENAME) . '_' . $this->getRandomString();
             $ext_only    = pathinfo($original, PATHINFO_EXTENSION);
@@ -126,14 +127,14 @@ trait Upload
 
                 // fire event
                 event('MMFileSaved', [
-                    'file_path'  => $this->getItemPath($destination),
-                    'mime_type'  => $type,
+                    'file_path' => $this->getItemPath($destination),
+                    'mime_type' => $type,
                 ]);
 
                 // broadcast
                 broadcast(new MediaFileOpsNotifications([
-                    'op'      => 'upload',
-                    'path'    => $path,
+                    'op'   => 'upload',
+                    'path' => $path,
                 ]))->toOthers();
 
                 $result = [
@@ -182,7 +183,7 @@ trait Upload
 
             try {
                 // check for mime type
-                if (str_contains($file_type, $this->unallowedMimes)) {
+                if (Str::contains($file_type, $this->unallowedMimes)) {
                     throw new Exception(
                         trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
                     );
@@ -200,8 +201,8 @@ trait Upload
 
                 // fire event
                 event('MMFileSaved', [
-                    'file_path'  => $this->getItemPath($destination),
-                    'mime_type'  => $file_type,
+                    'file_path' => $this->getItemPath($destination),
+                    'mime_type' => $file_type,
                 ]);
 
                 // broadcast

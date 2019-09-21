@@ -12,14 +12,14 @@
         "MediaManager"
     ],
     "authors": [
-       {
-           "name": "Muah",
-           "email": "muah003@gmail.com"
-       }
-   ],
+        {
+            "name": "Muah",
+            "email": "muah003@gmail.com"
+        }
+    ],
     "require": {
-        "php" : "~7.0",
-        "illuminate/support": "5.4 - 5.8",
+        "php": "~7.0",
+        "illuminate/support": "5.4 - 6.0",
         "maennchen/zipstream-php": "~1.0",
         "ctf0/package-changelog": "*"
     },

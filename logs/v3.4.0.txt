@@ -1,0 +1,8 @@
+- move db file from logs to database
+- remove db connection auto register for Lock Files & Folder, check: https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder
+- add support for laravel 6.0
+- some cleanup to the js code
+- add support to preview files before uploading (along with total uploads & size)
+- remove deprecated laravel helper methods
+- fix incorrect upload panel img paths
+- update date-fns imports

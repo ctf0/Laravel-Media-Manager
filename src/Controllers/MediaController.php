@@ -43,15 +43,16 @@ class MediaController extends Controller
 
     public function __construct()
     {
-        $config                = app('config')->get('mediaManager');
-        $this->fileSystem      = array_get($config, 'storage_disk');
-        $this->ignoreFiles     = array_get($config, 'ignore_files');
-        $this->fileChars       = array_get($config, 'allowed_fileNames_chars');
-        $this->folderChars     = array_get($config, 'allowed_folderNames_chars');
-        $this->sanitizedText   = array_get($config, 'sanitized_text');
-        $this->unallowedMimes  = array_get($config, 'unallowed_mimes');
-        $this->LMF             = array_get($config, 'last_modified_format');
-        $this->GFI             = array_get($config, 'get_folder_info', true);
+        $config = app('config')->get('mediaManager');
+
+        $this->fileSystem     = $config['storage_disk'];
+        $this->ignoreFiles    = $config['ignore_files'];
+        $this->fileChars      = $config['allowed_fileNames_chars'];
+        $this->folderChars    = $config['allowed_folderNames_chars'];
+        $this->sanitizedText  = $config['sanitized_text'];
+        $this->unallowedMimes = $config['unallowed_mimes'];
+        $this->LMF            = $config['last_modified_format'];
+        $this->GFI            = $config['get_folder_info'] ?? true;
 
         $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");

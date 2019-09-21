@@ -16,7 +16,6 @@ class MediaManagerServiceProvider extends ServiceProvider
         $this->file = $this->app['files'];
 
         $this->packagePublish();
-        $this->extraConfigs();
         $this->socketRoute();
         $this->viewComp();
         $this->command();
@@ -36,7 +35,7 @@ class MediaManagerServiceProvider extends ServiceProvider
 
         // database
         $this->publishes([
-            __DIR__ . '/database' => storage_path('logs'),
+            __DIR__ . '/database/MediaManager.sqlite' => database_path('MediaManager.sqlite'),
         ], 'db');
 
         $this->publishes([
@@ -61,19 +60,6 @@ class MediaManagerServiceProvider extends ServiceProvider
         ], 'view');
     }
 
-    protected function extraConfigs()
-    {
-        // database
-        $db = storage_path('logs/MediaManager.sqlite');
-
-        if ($this->file->exists($db)) {
-            $this->app['config']->set('database.connections.mediamanager', [
-                'driver'   => 'sqlite',
-                'database' => $db,
-            ]);
-        }
-    }
-
     protected function socketRoute()
     {
         Broadcast::channel('User.{id}.media', function ($user, $id) {
@@ -93,8 +79,8 @@ class MediaManagerServiceProvider extends ServiceProvider
         // base url
         $config = $this->app['config']->get('mediaManager');
         $url    = $this->app['filesystem']
-            ->disk(array_get($config, 'storage_disk'))
-            ->url('/');
+                    ->disk($config['storage_disk'])
+                    ->url('/');
 
         $data['base_url'] = preg_replace('/\/+$/', '/', $url);
 
@@ -105,7 +91,9 @@ class MediaManagerServiceProvider extends ServiceProvider
             $patterns = collect(
                 $this->file->allFiles($pattern_path)
             )->map(function ($item) {
-                return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $item->getPathName());
+                $name = str_replace('\\', '/', $item->getPathName());
+
+                return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $name);
             });
 
             $data['patterns'] = json_encode($patterns);

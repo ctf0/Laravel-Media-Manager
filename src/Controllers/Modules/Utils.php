@@ -40,14 +40,14 @@ trait Utils
     {
         $info = $this->storageDiskInfo;
         $url  = $this->resolveUrl($path); // get the file url
-        $root = array_get($info, 'root');
+        $root = $info['root'] ?? null;
 
         // for other disks without root ex."cloud"
         if (!$root) {
             return preg_replace('/(.*\/\/.*?)\//', '', $url); // get the full path
         }
 
-        $dir = str_replace(array_get($info, 'url'), '', $url); // remove the uri
+        $dir = str_replace($info['url'], '', $url); // remove the uri
 
         return $root . $dir; // get the full path
     }

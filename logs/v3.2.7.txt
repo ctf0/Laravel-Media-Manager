@@ -1,8 +1,0 @@
-- cleanups/fixes & some UIs here and there
-- better performance “still need a way to orchestrate components animation”
-- more options to the default file char allowed
-- add more gestures “check rdme”
-- add support to show the image editor diff with support for “zoom & drag”
-- new npm dep “vue-image-compare vue-list-rendered”
-- changed filters +/- to range slider instead & a reset btn per filter
-- image editor will now have some ui even while processing 

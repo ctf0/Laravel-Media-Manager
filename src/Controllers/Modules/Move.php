@@ -57,9 +57,9 @@ trait Move
                             if (app('files')->copyDirectory($old, $new)) {
                                 $result[] = array_merge($defaults, ['success' => true]);
                             } else {
-                                $exc = array_get($this->storageDiskInfo, 'root')
-                                            ? trans('MediaManager::messages.error.moving')
-                                            : trans('MediaManager::messages.error.moving_cloud');
+                                $exc = isset($this->storageDiskInfo['root'])
+                                        ? trans('MediaManager::messages.error.moving')
+                                        : trans('MediaManager::messages.error.moving_cloud');
 
                                 throw new Exception($exc);
                             }
@@ -92,7 +92,7 @@ trait Move
                         } else {
                             $exc = trans('MediaManager::messages.error.moving');
 
-                            if ($file_type == 'folder' && !array_get($this->storageDiskInfo, 'root')) {
+                            if ($file_type == 'folder' && !isset($this->storageDiskInfo['root'])) {
                                 $exc = trans('MediaManager::messages.error.moving_cloud');
                             }
 

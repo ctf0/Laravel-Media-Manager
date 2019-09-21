@@ -2,6 +2,7 @@
 
 namespace ctf0\MediaManager\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 
 class PackageSetup extends Command
@@ -66,6 +67,6 @@ EOT;
      */
     protected function checkExist($file, $search)
     {
-        return $this->file->exists($file) && !str_contains($this->file->get($file), $search);
+        return $this->file->exists($file) && !Str::contains($this->file->get($file), $search);
     }
 }
