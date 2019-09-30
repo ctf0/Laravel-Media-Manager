@@ -1,5 +1,6 @@
 {{-- component --}}
-<media-manager inline-template v-cloak
+<media-manager inline-template
+    v-cloak
     class='hide-native-scrollbar'
     :config="{{ json_encode([
         'baseUrl' => $base_url,
@@ -44,6 +45,7 @@
         'to_cp' => trans('MediaManager::messages.copy.to_cp'),
         'upload_success' => trans('MediaManager::messages.upload.success'),
         'upload_in_progress' => trans('MediaManager::messages.upload.in_progress'),
+        'already_exists' => trans('MediaManager::messages.error.already_exists'),
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -521,7 +523,7 @@
                             </div>
                             <p>@{{ selectedUploadPreview.name }}</p>
                         </template>
-                    </sect>
+                    </section>
                 </div>
 
                 {{-- loadings --}}
@@ -739,7 +741,6 @@
                                             :src="selectedFilePreview.picture"
                                             :alt="selectedFile.name"
                                             class="image"/>
-
                                         <icon v-else class="svg-prev-icon" name="music" scale="8"></icon>
                                     </template>
 
@@ -903,7 +904,10 @@
                                                     </td>
                                                     <td class="t-val">
                                                         {{-- zip --}}
-                                                        <form action="{{ route('media.files_download') }}" method="post" @submit.prevent="ZipDownload($event)" v-show="isBulkSelecting()">
+                                                        <form action="{{ route('media.files_download') }}"
+                                                            method="post"
+                                                            @submit.prevent="ZipDownload($event)"
+                                                            v-show="isBulkSelecting()">
                                                             {{ csrf_field() }}
                                                             <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
                                                             <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
@@ -968,7 +972,6 @@
                     @swiperight="toggleInfoSidebar(), saveUserPref()"
                     @swipeleft="toggleInfoSidebar(), saveUserPref()">
                 </v-touch>
-
             </section>
 
             {{-- ====================================================================== --}}
@@ -1310,7 +1313,8 @@
                         <button type="button" class="delete" @click="toggleModal()"></button>
                     </header>
 
-                    <form action="{{ route('media.delete_file') }}" @submit.prevent="DeleteFileForm($event)">
+                    <form action="{{ route('media.delete_file') }}"
+                        @submit.prevent="DeleteFileForm($event)">
                         <section class="modal-card-body">
                             @include('MediaManager::partials.modal-files-info')
 

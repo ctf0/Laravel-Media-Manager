@@ -41,10 +41,7 @@ export default {
                 if (val) {
                     this.fetchImg().then((img) => {
                         this.src = img
-
-                        this.$nextTick(() => {
-                            this.sendDimensionsToParent()
-                        })
+                        this.$nextTick(this.sendDimensionsToParent)
                     })
                 }
             }

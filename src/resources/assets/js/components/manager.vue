@@ -119,6 +119,7 @@ export default {
             filterdList: [],
             folders: [],
             selectedUploadPreviewList: [],
+            selectedUploadPreviewExistList: [],
             selectedUploadPreview: {
                 img: null,
                 type: null,
@@ -172,13 +173,11 @@ export default {
     },
     updated: debounce(function() {
         if (this.firstRun) {
-            this.scrollByRow()
+            this.updateScrollByRow()
 
             if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
                 this.destroyPlyr()
-                this.$nextTick(() => {
-                    this.initPlyr()
-                })
+                this.$nextTick(this.initPlyr)
             }
 
             if (!this.introIsOn) {
@@ -186,8 +185,6 @@ export default {
                     ? this.noScroll('add')
                     : this.noScroll('remove')
             }
-
-            this.firstRun = false
         }
     }, 250),
     beforeDestroy() {
@@ -341,7 +338,7 @@ export default {
                                 }
                             }
                         }
-                        /* end of no bulk selection */
+                        // end of no bulk selection
 
                         // we have files
                         if (this.allItemsCount) {
@@ -386,7 +383,7 @@ export default {
                                 this.$refs.vis.click()
                             }
                         }
-                        /* end of we have files */
+                        // end of we have files
 
                         // toggle file details sidebar
                         if (key == 't' && !this.smallScreen) {
@@ -394,14 +391,15 @@ export default {
                             this.saveUserPref()
                         }
                     }
-                    /* end of search is not focused */
+                    // end of search is not focused
 
                     // cancel search
                     else if (key == 'esc') {
                         this.resetInput('searchFor')
                     }
                 }
-                /* end of modal isnt visible */
+                // end of modal isnt visible
+
                 // when modal is visible
                 else {
                     if (this.isActiveModal('preview_modal')) {
@@ -414,13 +412,14 @@ export default {
                         this.navigation(e)
                     }
 
+                    // hide modal
                     if (key == 'esc' && !this.isActiveModal('imageEditor_modal')) {
                         this.toggleModal()
                     }
                 }
-                /* end of modal is visible */
+                // end of modal is visible
 
-                // when upload preview visible
+                // when upload preview is visible
                 if (this.waitingForUpload) {
                     // proceed with upload
                     if (key == 'enter') {
@@ -444,7 +443,7 @@ export default {
                 }
             }
         },
-        /* end of short cuts */
+        // end of short cuts
 
         refresh() {
             EventHub.fire('clear-global-search')

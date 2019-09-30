@@ -32,7 +32,11 @@ export default {
         scrollToFile(file) {
             if (file) {
                 file.click()
-                this.scrollToSelected(file)
+
+                // make sure scrolling fires
+                setTimeout(() => {
+                    this.scrollToSelected(file)
+                }, 500)
             }
         },
         scrollToSelected(file) {
@@ -52,7 +56,7 @@ export default {
                 element: bc.$el
             })
         },
-        scrollByRow() {
+        updateScrollByRow() {
             const cont = this.$refs['__stack-files'] ? this.$refs['__stack-files'].$el : null
 
             if (cont) {

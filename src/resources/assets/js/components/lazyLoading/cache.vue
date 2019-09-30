@@ -87,9 +87,7 @@ export default {
     watch: {
         src(val) {
             if (val) {
-                this.$nextTick(() => {
-                    this.sendDimensionsToParent()
-                })
+                this.$nextTick(this.sendDimensionsToParent)
             }
         }
     }

@@ -428,10 +428,8 @@ export default {
                 imageSmoothingQuality: 'high'
             }).toDataURL(type)
 
-            this.$nextTick(() => {
-                // reset the auto crop selection we made
-                this.clearSelection()
-            })
+            // reset the auto crop selection we made
+            this.$nextTick(this.clearSelection)
 
             return url
         },

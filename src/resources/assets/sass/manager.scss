@@ -185,7 +185,6 @@
         .sidebar {
             display: flex;
             flex-wrap: wrap;
-            height: fit-content;
         }
     }
 
@@ -193,14 +192,11 @@
         align-items: center;
         display: flex;
         flex-direction: column;
+        height: 100%;
         justify-content: center;
-        padding: 1rem;
+        overflow-y: scroll;
         position: relative;
         width: 100%;
-
-        img {
-            height: 100%;
-        }
 
         p {
             background: $black;
@@ -239,6 +235,31 @@
     }
 }
 
+@include media('max', 1087) {
+    #uploadPreview.show {
+        flex-direction: column;
+
+        .sidebar-container {
+            border-bottom: 2px dashed darken($active_theme, 5%);
+            border-right: none;
+            height: unset;
+            max-width: unset;
+            min-height: fit-content;
+            overflow-x: auto;
+
+            .sidebar {
+                flex-wrap: nowrap;
+            }
+        }
+
+        .preview p {
+            bottom: unset;
+            left: 0;
+            top: 1rem;
+        }
+    }
+}
+
 .dz-success-mark,
 .dz-error-message,
 .dz-error-mark,
@@ -247,10 +268,8 @@
 }
 
 .dz-preview {
-    align-items: flex-end;
     display: flex;
-    flex-direction: column;
-    height: fit-content;
+    flex: 0 0 auto;
     padding: 1rem;
     position: relative;
 
@@ -1078,8 +1097,6 @@
 }
 
 /*                Progress bar                */
-@include media('max', 768) {
-    .progress-bar strong {
-        display: none;
-    }
+.progress-bar strong {
+    display: none;
 }

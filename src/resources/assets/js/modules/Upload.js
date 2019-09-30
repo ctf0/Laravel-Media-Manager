@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce'
 import Dropzone from 'dropzone'
 
 export default {
@@ -28,7 +29,8 @@ export default {
                         // cancel pending upload
                         EventHub.listen('clear-pending-upload', this.removeAllFiles(true))
 
-                        this.on('removedfile', (file) => {
+                        // remove
+                        this.on('removedfile', debounce((file) => {
                             manager.selectedUploadPreviewList = this.files
 
                             if (file.name == manager.selectedUploadPreview.name) {
@@ -38,8 +40,9 @@ export default {
                             if (!this.files.length) {
                                 manager.clearUploadPreview(previewContainer)
                             }
-                        })
+                        }, 100))
 
+                        // add
                         this.on('addedfile', (file) => {
                             let fileList = this.files
 
@@ -57,8 +60,8 @@ export default {
 
                             let el = file.previewElement
 
+                            manager.addToPreExistenceList(file)
                             manager.selectedUploadPreviewList = fileList
-                            // toggle stuff
                             manager.UploadArea = false
                             manager.toolBar = false
                             manager.infoSidebar = false
@@ -83,6 +86,7 @@ export default {
                             }
                         })
 
+                        // upload preview
                         this.on('thumbnail', (file, dataUrl) => {
                             file.previewElement.classList.remove('is-hidden')
                         })
@@ -92,6 +96,7 @@ export default {
                             this.removeAllFiles()
                             manager.clearUploadPreview(previewContainer)
                         })
+
                         // start the upload
                         manager.$refs['process-dropzone'].addEventListener('click', () => {
                             // because dz is dump
@@ -104,7 +109,13 @@ export default {
                         })
                     }
                 }
-                : {}
+                : {
+                    init: function () {
+                        this.on('addedfile', (file) => {
+                            manager.addToPreExistenceList(file)
+                        })
+                    }
+                }
 
             let options = {
                 url: manager.routes.upload,
@@ -126,10 +137,14 @@ export default {
                         return done(manager.trans('upload_in_progress'))
                     }
 
+                    if (manager.checkPreExistence(file)) {
+                        return done(manager.trans('already_exists'))
+                    }
+
                     allFiles++
                     done()
                 },
-                sending(file, xhr, formData) {
+                sending: function (file, xhr, formData) {
                     uploadProgress += parseFloat(100 / allFiles)
                     manager.progressCounter = `${Math.round(uploadProgress)}%`
 
@@ -152,7 +167,7 @@ export default {
                         }
                     })
                 },
-                errormultiple(file, res) {
+                errormultiple: function (file, res) {
                     file = Array.isArray(file) ? file[0] : file
                     manager.showNotif(`"${file.name}" ${res}`, 'danger')
                     this.removeFile(file)
@@ -184,20 +199,22 @@ export default {
             // upload panel
             new Dropzone('#new-upload', options)
             // drag & drop on empty area
-            new Dropzone('.__stack-container', Object.assign(options, {
-                clickable: false
-            }))
+            new Dropzone('.__stack-container', Object.assign(options, {clickable: false}))
         },
+
         clearUploadPreview(previewContainer) {
             previewContainer.classList.remove('show')
 
             this.$nextTick(() => {
                 this.waitingForUpload = false
                 this.toolBar = true
+                this.smallScreenHelper()
                 this.selectedUploadPreviewList = []
+                this.selectedUploadPreviewExistList = []
                 this.selectedUploadPreview = {}
             })
         },
+        // not used yet
         updateDropZoneFile(i, data) {
             Dropzone.instances.some((item) => {
                 let files = item.files
@@ -206,6 +223,18 @@ export default {
                     return files[i].height = data.height
                 }
             })
+        },
+
+        // already uploaded checks
+        addToPreExistenceList(file) {
+            this.filesNamesList.some((item) => {
+                if (item == file.name && this.selectedUploadPreviewExistList.indexOf(item) < 0) {
+                    this.selectedUploadPreviewExistList.push(item)
+                }
+            })
+        },
+        checkPreExistence(file) {
+            return this.selectedUploadPreviewExistList.some((item) => item == file.name)
         },
 
         // show large preview

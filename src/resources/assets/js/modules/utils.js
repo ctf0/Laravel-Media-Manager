@@ -215,11 +215,15 @@ export default {
                         }
                     }, 500)
 
-                    this.toolBar = true
+                    if (!this.waitingForUpload) {
+                        this.toolBar = true
+                    }
                     this.smallScreen = false
                     this.smallScreenHelper()
                 }
             }
+
+            this.updateScrollByRow()
         },
         showNotif(msg, s = 'success', duration = 3) {
             let title

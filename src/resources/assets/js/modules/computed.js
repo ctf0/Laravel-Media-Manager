@@ -5,6 +5,11 @@ export default {
         filesList() {
             return this.$refs.filesList.children
         },
+        filesNamesList() {
+            return this.files.items.map((item) => {
+                return item.name
+            })
+        },
         allFiles() {
             if (this.filteredItemsCount) {
                 return this.filterdList

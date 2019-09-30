@@ -5,27 +5,30 @@
             <div ref="search-input" :class="{'move': firstRun}" class="search-input">
                 <section>
                     <div class="input-wrapper">
-                        <input v-autowidth
-                               ref="search"
+                        <input ref="search"
                                v-model="search"
+                               v-autowidth
                                :placeholder="trans('find')"
                                autofocus>
                     </div>
                     <transition name="mm-info-in">
                         <div v-show="listCount" class="count">
-                            <p class="title is-marginless is-2">{{ listCount }}</p>
-                            <p class="heading is-marginless">{{ trans('found') }}</p>
+                            <p class="title is-marginless is-2">
+                                {{ listCount }}
+                            </p>
+                            <p class="heading is-marginless">
+                                {{ trans('found') }}
+                            </p>
                         </div>
                     </transition>
                 </section>
             </div>
 
             <transition-group name="mm-gs" tag="ul" class="columns is-multiline" mode="out-in">
-                <li v-list-rendered="[i, filterdList, orch]"
-                    v-for="(item, i) in filterdList"
+                <li v-for="(item, i) in filterdList"
                     :key="`${i}-${item.name}`"
+                    v-list-rendered="[i, filterdList, orch]"
                     class="column is-2">
-
                     <div class="card">
                         <div class="card-image">
                             <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
@@ -64,7 +67,9 @@
 
                 <!-- nothing found -->
                 <li v-if="noData" key="noData" class="column no-data">
-                    <p class="title">{{ trans('nothing_found') }} !!</p>
+                    <p class="title">
+                        {{ trans('nothing_found') }} !!
+                    </p>
                 </li>
             </transition-group>
         </div>
@@ -95,7 +100,8 @@ export default {
             search: '',
             noData: false,
             linkCopied: false,
-            firstRun: false
+            firstRun: false,
+            showPanel: false
         }
     },
     computed: {

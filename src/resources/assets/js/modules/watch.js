@@ -15,9 +15,7 @@ export default {
                 }
 
                 if (this.checkForFolders) {
-                    this.$nextTick(() => {
-                        this.updateMoveList()
-                    })
+                    this.$nextTick(this.updateMoveList)
                 }
 
                 return this.updateLs({'selectedFileName': val.name})
@@ -108,9 +106,7 @@ export default {
 
             // because the files gets removed & readded to the dom
             // which will put the images back to its init state "no-preview"
-            this.$nextTick(() => {
-                EventHub.fire('start-search-observing')
-            })
+            this.$nextTick(EventHub.fire('start-search-observing'))
         },
         searchItemsCount(val) {
             if (this.allItemsCount == undefined || val == this.allItemsCount) {

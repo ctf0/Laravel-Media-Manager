@@ -21,9 +21,7 @@ export default {
             return this.config.lazyLoad
         },
         lazyImageActivate(url) {
-            this.$nextTick(() => {
-                EventHub.fire('lazy-image-activate', url)
-            })
+            this.$nextTick(EventHub.fire('lazy-image-activate', url))
         },
         lazySelectFirst() {
             if (this.fileTypeIs(this.allFiles[0], 'folder')) {

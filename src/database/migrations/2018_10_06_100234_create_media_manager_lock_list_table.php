@@ -12,7 +12,7 @@ class CreateMediaManagerLockListTable extends Migration
     public function up()
     {
         Schema::create('locked', function (Blueprint $table) {
-            $table->integer('id');
+            $table->bigIncrements('id');
             $table->string('path');
         });
     }

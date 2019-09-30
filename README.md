@@ -202,106 +202,123 @@
 <br>
 
 ## Config
-**config/mediaManager.php**
+- **config/mediaManager.php**
 
-```php
-return [
-    /*
-     * ignore files pattern
-     */
-    'ignore_files' => '/^\..*/',
+    ```php
+    return [
+        /*
+        * ignore files pattern
+        */
+        'ignore_files' => '/^\..*/',
 
-    /*
-     * filesystem disk
-     */
-    'storage_disk' => 'public',
+        /*
+        * filesystem disk
+        */
+        'storage_disk' => 'public',
 
-    /*
-     * manager controller
-     */
-    'controller' => '\ctf0\MediaManager\Controllers\MediaController',
+        /*
+        * manager controller
+        */
+        'controller' => '\ctf0\MediaManager\Controllers\MediaController',
 
-    /*
-     * remove any file special chars except
-     */
-    'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
+        /*
+        * remove any file special chars except
+        */
+        'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
 
-    /*
-     * remove any folder special chars except (_ -)
-     */
-    'allowed_folderNames_chars' => '\_\-',
+        /*
+        * remove any folder special chars except (_ -)
+        */
+        'allowed_folderNames_chars' => '\_\-',
 
-    /*
-     * disallow uploading files with the following mimetypes
-     * https://www.iana.org/assignments/media-types/media-types.xhtml
-     */
-    'unallowed_mimes' => ['php', 'java'],
+        /*
+        * disallow uploading files with the following mimetypes
+        * https://www.iana.org/assignments/media-types/media-types.xhtml
+        */
+        'unallowed_mimes' => ['php', 'java'],
 
-    /*
-     * extra mime-types
-     */
-    'extended_mimes' => [
-        'image' => [
-            'binary/octet-stream',
+        /*
+        * extra mime-types
+        */
+        'extended_mimes' => [
+            'image' => [
+                'binary/octet-stream',
+            ],
+            'archive' => [
+                'application/x-tar',
+                'application/zip',
+            ],
         ],
-        'archive' => [
-            'application/x-tar',
-            'application/zip',
-        ],
-    ],
 
-    /*
-     * when file names gets cleand up
-     */
-    'sanitized_text' => 'uniqid',
+        /*
+        * when file names gets cleand up
+        */
+        'sanitized_text' => 'uniqid',
 
-    /*
-     * display file last modification time as
-     * http://carbon.nesbot.com/docs/#api-formatting
-     */
-    'last_modified_format' => 'toDateString',
+        /*
+        * display file last modification time as
+        * http://carbon.nesbot.com/docs/#api-formatting
+        */
+        'last_modified_format' => 'toDateString',
 
-    /**
-     * hide file extension in files list
-     */
-    'hide_files_ext' => true,
+        /**
+        * hide file extension in files list
+        */
+        'hide_files_ext' => true,
 
-    /*
-     * load image preview only when item is clicked ?
-     */
-    'lazy_load_image_on_click' => false,
+        /*
+        * load image preview only when item is clicked ?
+        */
+        'lazy_load_image_on_click' => false,
 
-    /*
-     * automatically invalidate cache after "in Minutes"
-     */
-    'cache_expires_after' => 60,
+        /*
+        * automatically invalidate cache after "in Minutes"
+        */
+        'cache_expires_after' => 60,
 
-    /*
-     * in-order to get the folder items count & size
-     * we need to recursively get all the files inside the folders
-     * which could make the request take longer
-     */
-    'get_folder_info' => true,
+        /*
+        * in-order to get the folder items count & size
+        * we need to recursively get all the files inside the folders
+        * which could make the request take longer
+        */
+        'get_folder_info' => true,
 
-    /**
-     * do you want to enable broadcasting the changes
-     * made by one user to others ?
-     *
-     * "laravel-echo" must be installed
-     */
-    'enable_broadcasting' => false,
+        /**
+        * do you want to enable broadcasting the changes
+        * made by one user to others ?
+        *
+        * "laravel-echo" must be installed
+        */
+        'enable_broadcasting' => false,
 
-    /**
-     * show "an itunes like" content ratio bar
-     */
-    'show_ratio_bar' => true,
+        /**
+        * show "an itunes like" content ratio bar
+        */
+        'show_ratio_bar' => true,
 
-    /*
-     * preview and remove files b4 uploading
-     */
-    'preview_files_before_upload' => true,
-];
-```
+        /*
+        * preview and remove files b4 uploading
+        */
+        'preview_files_before_upload' => true,
+    ];
+    ```
+
+- **config/database.php**
+
+    ```php
+    'connections' => [
+        // ...
+
+        'mediamanager' => [
+            'driver'   => 'mysql', // or whatever you want
+            'database' => env('DB_DATABASE'), // or database_path('MediaManager.sqlite')
+            'host'     => env('DB_HOST'),
+            'port'     => env('DB_PORT'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+        ]
+    ]
+    ```
 
 <br>
 
