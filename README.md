@@ -304,7 +304,7 @@
         /*
          * Database connection (defaults to "mediamanager")
          */
-        'database_connection' => 'mediamanager',
+        'database_connection' => env('DB_CONNECTION'),
         
         /*
          * Locked items table name (defaults to "locked")
@@ -313,7 +313,7 @@
     ];
     ```
 
-- **config/database.php**
+- **config/database.php** (incase you need to use a different db driver for the manager ex.sqlite)
 
     ```php
     'connections' => [
