@@ -128,7 +128,7 @@ return [
     /*
      * Database connection (defaults to "mediamanager")
      */
-    'database_connection' => 'mediamanager',
+    'database_connection' => env('DB_CONNECTION'),
 
     /*
      * Locked items table name (defaults to "locked")
