@@ -300,6 +300,16 @@
         * preview and remove files b4 uploading
         */
         'preview_files_before_upload' => true,
+          
+        /*
+         * Database connection (defaults to "mediamanager")
+         */
+        'database_connection' => 'mediamanager',
+        
+        /*
+         * Locked items table name (defaults to "locked")
+         */
+        'table_locked' => 'locked'  
     ];
     ```
 
