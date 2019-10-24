@@ -6,12 +6,19 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateMediaManagerLockListTable extends Migration
 {
+    protected $tableName;
+
+    public function __construct()
+    {
+        $this->tableName = config('mediaManager.table_locked', 'locked');
+    }
+
     /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::create('locked', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('path');
         });
@@ -22,6 +29,6 @@ class CreateMediaManagerLockListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('locked');
+        Schema::dropIfExists($this->tableName);
     }
 }
