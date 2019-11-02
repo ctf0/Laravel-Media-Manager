@@ -91,7 +91,7 @@ export default {
             }
         },
         uploadPreviewListSize() {
-            let size = this.selectedUploadPreviewList
+            let size = this.uploadPreviewList
                 .map((el) => el.size)
                 .reduce((a, b) => a + b, 0)
 

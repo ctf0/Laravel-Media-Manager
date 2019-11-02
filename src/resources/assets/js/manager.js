@@ -1,12 +1,15 @@
 /*                Libs                */
+import Vue2Filters from 'vue2-filters'
+import VueClipboard from 'vue-clipboard2'
+import AsyncComputed from 'vue-async-computed'
+
+Vue.use(Vue2Filters)
+Vue.use(VueClipboard)
+Vue.use(AsyncComputed)
+Vue.use(require('vue-ls'))
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
 window.Fuse = require('fuse.js')
-
-Vue.use(require('vue2-filters'))
-Vue.use(require('vue-clipboard2'))
-Vue.use(require('vue-ls'))
-Vue.use(require('vue-async-computed'))
 require('vue-list-rendered')
 
 // vue-tippy

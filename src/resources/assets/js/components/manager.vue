@@ -16,7 +16,7 @@ import Image from '../modules/image'
 import ItemFiltration from '../modules/filtration'
 import ItemVisibility from '../modules/visibility'
 import LockItem from '../modules/lock'
-import MediaPlayer from '../modules/media-player'
+import MediaPlayer from '../modules/player'
 import Restriction from '../modules/restriction'
 import Scroll from '../modules/scroll'
 import Selection from '../modules/selection'
@@ -36,7 +36,8 @@ export default {
         overlay: require('./utils/overlay.vue').default,
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
-        videoDimension: require('./utils/video-dim.vue').default
+        videoDimension: require('./utils/video-dim.vue').default,
+        previewPh: require('./utils/preview-ph.vue').default
     },
     name: 'media-manager',
     mixins: [
@@ -118,13 +119,11 @@ export default {
             files: [],
             filterdList: [],
             folders: [],
-            selectedUploadPreviewList: [],
-            selectedUploadPreviewExistList: [],
-            selectedUploadPreview: {
-                img: null,
-                type: null,
-                name: null
-            },
+            uploadPreviewList: [],
+            uploadPreviewNamesList: [],
+            uploadPreviewOptionsList: [],
+            uploadPreviewOptionsPanelIsVisible: false,
+            selectedUploadPreview: null,
             player: {
                 item: null,
                 fs: false,
@@ -420,7 +419,7 @@ export default {
                 // end of modal is visible
 
                 // when upload preview is visible
-                if (this.waitingForUpload) {
+                if (this.waitingForUpload && !this.uploadPreviewOptionsPanelIsVisible) {
                     // proceed with upload
                     if (key == 'enter') {
                         this.$refs['process-dropzone'].click()

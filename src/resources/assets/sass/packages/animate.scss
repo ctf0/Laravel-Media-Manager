@@ -8,13 +8,13 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
     }
 
     50% {
-        transform: scale(0.5);
         opacity: 0.7;
+        transform: scale(0.5);
     }
 
     100% {
-        transform: scale(1);
         opacity: 1;
+        transform: scale(1);
     }
 }
 
@@ -22,62 +22,62 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
     width: 57px;
 
     > div {
+        animation-delay: 0;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-name: ball-grid-pulse;
+        background-color: $black;
+        border-radius: 100%;
         display: inline-block;
         float: left;
-        width: 15px;
         height: 15px;
         margin: 2px;
-        animation-name: ball-grid-pulse;
-        animation-delay: 0;
-        animation-iteration-count: infinite;
-        border-radius: 100%;
-        background: $black;
-        animation-fill-mode: both;
+        width: 15px;
     }
 
     > div:nth-child(1) {
-        animation-duration: 0.9s;
         animation-delay: 0.22s;
+        animation-duration: 0.9s;
     }
 
     > div:nth-child(2) {
-        animation-duration: 1s;
         animation-delay: 0.64s;
+        animation-duration: 1s;
     }
 
     > div:nth-child(3) {
-        animation-duration: 0.63s;
         animation-delay: -0.15s;
+        animation-duration: 0.63s;
     }
 
     > div:nth-child(4) {
-        animation-duration: 1.24s;
         animation-delay: -0.03s;
+        animation-duration: 1.24s;
     }
 
     > div:nth-child(5) {
-        animation-duration: 1.37s;
         animation-delay: 0.08s;
+        animation-duration: 1.37s;
     }
 
     > div:nth-child(6) {
-        animation-duration: 1.55s;
         animation-delay: 0.43s;
+        animation-duration: 1.55s;
     }
 
     > div:nth-child(7) {
-        animation-duration: 0.7s;
         animation-delay: 0.05s;
+        animation-duration: 0.7s;
     }
 
     > div:nth-child(8) {
-        animation-duration: 0.97s;
         animation-delay: 0.05s;
+        animation-duration: 0.97s;
     }
 
     > div:nth-child(9) {
-        animation-duration: 0.63s;
         animation-delay: 0.3s;
+        animation-duration: 0.63s;
     }
 }
 
@@ -95,13 +95,13 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
 
 @keyframes fadeInDown {
     from {
-        transform: translate3d(0, -100%, 0);
         opacity: 0;
+        transform: translate3d(0, -100%, 0);
     }
 
     to {
-        transform: none;
         opacity: 1;
+        transform: none;
     }
 }
 
@@ -135,19 +135,19 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
     75%,
     90%,
     to {
-        transform: translate3d(0, 0, 0);
         animation-timing-function: $anim_2;
+        transform: translate3d(0, 0, 0);
     }
 
     40%,
     43% {
-        transform: translate3d(0, -30px, 0);
         animation-timing-function: $anim_1;
+        transform: translate3d(0, -30px, 0);
     }
 
     70% {
-        transform: translate3d(0, -15px, 0);
         animation-timing-function: $anim_1;
+        transform: translate3d(0, -15px, 0);
     }
 
     90% {
@@ -164,24 +164,24 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
     75%,
     90%,
     to {
-        transform: translate3d(0, 0, 0);
         animation-timing-function: $anim_2;
+        transform: translate3d(0, 0, 0);
     }
 
     40%,
     43% {
-        transform: translate3d(0, 60px, 0);
         animation-timing-function: $anim_1;
+        transform: translate3d(0, 60px, 0);
     }
 
     70% {
-        transform: translate3d(0, -15px, 0);
         animation-timing-function: $anim_1;
+        transform: translate3d(0, -15px, 0);
     }
 
     85% {
-        transform: translate3d(0, -10px, 0);
         animation-timing-function: $anim_1;
+        transform: translate3d(0, -10px, 0);
     }
 
     90% {
@@ -323,6 +323,6 @@ $anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .pulse {
-    animation-name: pulse;
     animation-iteration-count: infinite;
+    animation-name: pulse;
 }

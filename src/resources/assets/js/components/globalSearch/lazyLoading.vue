@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img v-if="src" ref="img" :src="src" :alt="file.name" async>
+        <img v-if="src" ref="img" :src="src" :alt="file.name" loading="lazy">
         <!-- <img v-else src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"> -->
         <img v-else src="/assets/vendor/MediaManager/patterns/gif/5b98026bab87a.gif">
     </div>
@@ -8,8 +8,9 @@
 
 <style scoped>
     img {
-        background: black;
+        background-color: black;
     }
+
 </style>
 
 <script>

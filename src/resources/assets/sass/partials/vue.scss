@@ -3,7 +3,7 @@ $list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-i
 @each $class in $list {
     .#{$class}-enter-active,
     .#{$class}-leave-active {
-        transition: all 0.25s $anim-ease;
+        transition: all $anim-time $anim-ease;
     }
 
     .#{$class}-enter-active {
@@ -77,9 +77,9 @@ $list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-i
 }
 
 .mm-gs-leave-active {
+    opacity: 0;
     position: absolute;
     z-index: -1;
-    opacity: 0;
 }
 
 /* info panel */

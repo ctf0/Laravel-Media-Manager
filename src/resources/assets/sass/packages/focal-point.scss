@@ -1,0 +1,22 @@
+@import '~vue-focuspoint-component/src/scss/focus-point';
+
+.focus-point {
+    cursor: crosshair;
+    margin: auto;
+    overflow: hidden;
+    width: fit-content;
+
+    &-pin {
+        background-color: rgba($black, 0.5);
+        border: 2px dashed rgba($white, 0.75);
+        border-radius: 100vw;
+        opacity: 0.5;
+        padding: 2rem;
+        pointer-events: auto;
+        transition: all $anim-time $anim-ease;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}

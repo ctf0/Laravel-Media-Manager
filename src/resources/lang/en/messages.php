@@ -7,6 +7,7 @@ return [
         'url'        => 'Url ...',
         'more'       => 'Add More Files',
     ],
+    'options'             => 'Options',
     'ajax_error'          => 'Oh NO! Something Went Wrong',
     'application'         => 'Application',
     'are_you_sure_delete' => 'Are you sure you want to delete ?',
@@ -50,9 +51,11 @@ return [
         'main'    => 'Delete',
         'success' => 'Successfully Deleted',
     ],
-    'destination_folder' => 'Destination Folder',
-    'dimension'          => 'Dimensions',
-    'download'           => [
+    'destination_folder'   => 'Destination Folder',
+    'dimension'            => 'Dimensions',
+    'description'          => 'Description',
+    'focals'               => 'Focal Points',
+    'download'             => [
         'downloaded' => 'Downloaded',
         'file'       => 'Download File',
         'folder'     => 'Download Folder',

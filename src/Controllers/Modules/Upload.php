@@ -23,20 +23,21 @@ trait Upload
         $random_name = filter_var($request->random_names, FILTER_VALIDATE_BOOLEAN);
         $result      = [];
         $broadcast   = false;
+        $custom_attr = collect(json_decode($request->custom_attrs));
 
         foreach ($request->file as $one) {
             if ($this->allowUpload($one)) {
-                $one = $this->optimizeUpload($one);
-
-                $original  = $one->getClientOriginalName();
-                $name_only = pathinfo($original, PATHINFO_FILENAME);
-                $ext_only  = pathinfo($original, PATHINFO_EXTENSION);
-                $file_name = $random_name
+                $one        = $this->optimizeUpload($one);
+                $orig_name  = $one->getClientOriginalName();
+                $name_only  = pathinfo($orig_name, PATHINFO_FILENAME);
+                $ext_only   = pathinfo($orig_name, PATHINFO_EXTENSION);
+                $final_name = $random_name
                                 ? $this->getRandomString() . ".$ext_only"
                                 : $this->cleanName($name_only) . ".$ext_only";
 
-                $file_type   = $one->getMimeType();
-                $destination = !$upload_path ? $file_name : $this->clearDblSlash("$upload_path/$file_name");
+                $file_options = optional($custom_attr->firstWhere('name', $orig_name))->options;
+                $file_type    = $one->getMimeType();
+                $destination  = !$upload_path ? $final_name : $this->clearDblSlash("$upload_path/$final_name");
 
                 try {
                     // check for mime type
@@ -54,12 +55,13 @@ trait Upload
                     }
 
                     // save file
-                    $saved_name = $this->storeFile($one, $upload_path, $file_name);
+                    $full_path = $this->storeFile($one, $upload_path, $final_name);
 
                     // fire event
                     event('MMFileUploaded', [
-                        'file_path'  => $this->getItemPath($saved_name),
+                        'file_path'  => $this->getItemPath($full_path),
                         'mime_type'  => $file_type,
+                        'options'    => $file_options,
                         'cache_path' => $upload_path,
                     ]);
 
@@ -67,12 +69,12 @@ trait Upload
 
                     $result[] = [
                         'success'   => true,
-                        'file_name' => $file_name,
+                        'file_name' => $final_name,
                     ];
                 } catch (Exception $e) {
                     $result[] = [
                         'success' => false,
-                        'message' => "\"$file_name\" " . $e->getMessage(),
+                        'message' => "\"$final_name\" " . $e->getMessage(),
                     ];
                 }
             } else {

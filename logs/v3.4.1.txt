@@ -1,8 +1,0 @@
-- some cleanup
-- fix scroll by row after upload
-- fix autoscroll to item not firing when the manager panel height changes
-- fix mysql-db id issue
-- fix missing vue prop for search panel
-- check if name of the file being uploaded already exists & ignore it, this way we dont need to wait for the upload to finish just to get an error
-- update uploadpreview for small screens
-- fix img size in uploadpreview

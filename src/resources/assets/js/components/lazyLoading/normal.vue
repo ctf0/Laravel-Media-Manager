@@ -5,7 +5,7 @@
              :src="src"
              :alt="file.name"
              style="opacity: 0"
-             async>
+             loading="lazy">
     </div>
 </template>
 

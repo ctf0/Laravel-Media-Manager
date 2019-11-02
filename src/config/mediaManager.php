@@ -72,10 +72,9 @@ return [
 
     /*
      * display file last modification time as
+     * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
      *
      * "clear browser cache on change"
-     *
-     * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
      */
     'last_modified_format' => 'toDateString',
 
@@ -126,12 +125,12 @@ return [
     'preview_files_before_upload' => true,
 
     /*
-     * Database connection (defaults to "mediamanager")
+     * Database connection
      */
-    'database_connection' => 'mediamanager',
+    'database_connection' => env('DB_CONNECTION'),
 
     /*
      * Locked items table name (defaults to "locked")
      */
-    'table_locked' => 'locked'
+    'table_locked' => 'locked',
 ];

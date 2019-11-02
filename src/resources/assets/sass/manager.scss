@@ -8,11 +8,11 @@
 @import './packages/progress';
 @import './packages/switcher';
 @import './modules/usage-intro';
-@import './modules/media-player';
+@import './modules/player';
 
 /*                toolbar                */
 .media-manager__toolbar {
-    background: darken($active_theme, 2.5%);
+    background-color: darken($active_theme, 2.5%);
     border: 1px solid darken($active_theme, 5%);
     border-radius: 4px 4px 0 0;
     flex-wrap: wrap;
@@ -35,12 +35,12 @@
     margin: 0;
     opacity: 0;
     padding: 0;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
     visibility: hidden;
 }
 
 .__dz-active {
-    border: 2px dashed darken($active_theme, 5%);
+    border: 2px $dashed-border;
     border-radius: 5px;
     height: unset;
     margin: 15px 0;
@@ -57,7 +57,7 @@
     cursor: pointer;
     overflow: hidden;
     position: relative;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
 
     &::before {
         background-image: var(--gradient);
@@ -69,7 +69,7 @@
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
-        transition: all 0.25s $anim-ease;
+        transition: all $anim-time $anim-ease;
         width: 25vw;
     }
 
@@ -108,7 +108,7 @@
 
         .circle,
         .anchor {
-            transition: all 0.25s $anim-ease;
+            transition: all $anim-time $anim-ease;
         }
 
         .circle {
@@ -152,70 +152,6 @@
 #uploadPreview {
     display: none;
 
-    .dz-preview-ops {
-        bottom: 1rem;
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        right: 1rem;
-        z-index: 2;
-
-        button {
-            color: $white;
-            filter: drop-shadow(0 4px 6px rgba($black, 0.1));
-            transition: transform 0.3s, box-shadow 0.3s;
-
-            &:hover {
-                transform: translateY(-0.2rem);
-            }
-        }
-
-        .icon-btn {
-            color: $black;
-        }
-    }
-
-    .sidebar-container {
-        border-right: 2px dashed darken($active_theme, 5%);
-        height: 100%;
-        max-width: 20%;
-        min-width: 20%;
-        overflow-y: scroll;
-
-        .sidebar {
-            display: flex;
-            flex-wrap: wrap;
-        }
-    }
-
-    .preview {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        justify-content: center;
-        overflow-y: scroll;
-        position: relative;
-        width: 100%;
-
-        p {
-            background: $black;
-            bottom: 1rem;
-            color: $white;
-            left: -2px;
-            padding: 0.5rem 1rem;
-            position: absolute;
-
-            &:hover {
-                opacity: 0;
-            }
-
-            &:empty {
-                padding: 0;
-            }
-        }
-    }
-
     &.show {
         background-color: $active_theme;
         display: flex;
@@ -233,6 +169,46 @@
             opacity: 0.25;
         }
     }
+
+    .dz-preview-ops {
+        bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        right: 0.25rem;
+        z-index: 2;
+    }
+
+    .icon-btn {
+        color: $black;
+    }
+
+    .btn-animate {
+        button {
+            color: $white;
+            opacity: 0.7;
+            transition: all 0.3s ease-out;
+
+            &:hover {
+                filter: drop-shadow(0 4px 6px rgba($black, 0.1));
+                opacity: 1;
+                transform: translateY(-0.2rem);
+            }
+        }
+    }
+
+    .sidebar-container {
+        border-right: 2px $dashed-border;
+        height: 100%;
+        max-width: 20%;
+        min-width: 20%;
+        overflow-y: scroll;
+
+        .sidebar {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
 }
 
 @include media('max', 1087) {
@@ -240,7 +216,7 @@
         flex-direction: column;
 
         .sidebar-container {
-            border-bottom: 2px dashed darken($active_theme, 5%);
+            border-bottom: 2px $dashed-border;
             border-right: none;
             height: unset;
             max-width: unset;
@@ -250,12 +226,6 @@
             .sidebar {
                 flex-wrap: nowrap;
             }
-        }
-
-        .preview p {
-            bottom: unset;
-            left: 0;
-            top: 1rem;
         }
     }
 }
@@ -277,7 +247,7 @@
         border-radius: 8px;
         cursor: pointer;
         display: block;
-        transition: all 0.25s $anim-ease;
+        transition: all $anim-time $anim-ease;
     }
 
     .dz-remove {
@@ -320,7 +290,7 @@
     list-style: none;
     overflow: scroll;
     padding: 1rem 0;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
     width: 100%;
 
     li {
@@ -377,7 +347,7 @@
 
         a,
         p {
-            background: $white;
+            background-color: $white;
             border-radius: 5px;
             display: block;
             padding: 1rem;
@@ -387,7 +357,7 @@
         a {
             box-shadow: $shadow_3;
             color: $blue;
-            transition: all 0.25s $anim-ease;
+            transition: all $anim-time $anim-ease;
 
             &:hover {
                 box-shadow: none;
@@ -398,7 +368,7 @@
 
 // default
 .__stack-breadcrumb {
-    background: $active_theme;
+    background-color: $active_theme;
     border-top: 1px solid darken($active_theme, 5%);
     margin: 0 !important;
     padding: 0.75rem;
@@ -459,7 +429,7 @@
     min-height: 50vh;
     overflow: hidden;
     position: relative;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
     z-index: 1;
 
     &.more-height {
@@ -492,7 +462,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
     will-change: width, left, right;
 }
 
@@ -504,7 +474,7 @@
     display: flex;
     flex-wrap: wrap;
     list-style: none;
-    transition: height 0.25s ease-out;
+    transition: height $anim-time ease-out;
     user-select: none;
 
     li {
@@ -517,7 +487,7 @@
 }
 
 .__file-box {
-    background: lighten($active_theme, 2.5%);
+    background-color: lighten($active_theme, 2.5%);
     border: 1px solid darken($active_theme, 2.5%);
     border-radius: 4px;
     color: darken($active_theme, 60%);
@@ -527,13 +497,13 @@
     overflow: hidden;
     padding: 0.75rem;
     position: relative;
-    transition: all 0.25s;
+    transition: all $anim-time;
     width: 100%;
 
     &.selected,
     &.bulk-selected,
     &:hover {
-        background: $blue;
+        background-color: $blue;
         border-color: darken($blue, 5%);
         color: $white;
 
@@ -696,16 +666,16 @@
     flex-direction: column;
     min-width: 20%;
     position: relative;
-    transition: all 0.25s $anim-ease;
+    transition: all $anim-time $anim-ease;
     width: 20%;
     will-change: widht, left, right;
 
     .__sidebar-preview {
-        border-bottom: 1px dashed darken($active_theme, 5%);
+        border-bottom: 1px $dashed-border;
         color: darken($active_theme, 50%);
         flex: 0 0 auto;
         text-align: center;
-        transition: height 0.25s ease-out;
+        transition: height $anim-time ease-out;
 
         .__sidebar-none-selected {
             align-items: center;
@@ -736,12 +706,12 @@
         display: flex;
         flex: 1 0 auto;
         flex-direction: column;
-        transition: all 0.25s $anim-ease;
+        transition: all $anim-time $anim-ease;
         word-break: break-all;
 
         > div {
             padding: 0.75rem;
-            transition: height 0.25s ease-out;
+            transition: height $anim-time ease-out;
 
             &:not(.__sidebar-count) {
                 flex: 1;
@@ -803,7 +773,7 @@
 
             &:not(:only-of-type) {
                 flex: 1;
-                transition: all 0.25s $anim-ease;
+                transition: all $anim-time $anim-ease;
             }
 
             &:only-of-type {
@@ -857,7 +827,7 @@
         color: $white;
         position: absolute;
         right: 1rem;
-        transition: all 0.25s;
+        transition: all $anim-time;
 
         &.up {
             transform: rotate(180deg);
@@ -926,7 +896,7 @@
     }
 
     .audio-prev {
-        border-bottom: 1px dashed darken($active_theme, 5%);
+        border-bottom: 1px $dashed-border;
 
         .audio-icon {
             background-color: $active_theme;

@@ -15,13 +15,13 @@
 }
 
 .m-v-15 {
-    margin-top: 15px !important;
     margin-bottom: 15px !important;
+    margin-top: 15px !important;
 }
 
 .m-v-10 {
-    margin-top: 10px !important;
     margin-bottom: 10px !important;
+    margin-top: 10px !important;
 }
 
 .m-t-5 {
@@ -48,18 +48,22 @@
     cursor: pointer;
 }
 
+.no-click {
+    pointer-events: none;
+}
+
 .btn-plain {
-    padding: 0;
-    cursor: pointer;
-    vertical-align: bottom;
-    color: $black;
+    background: transparent;
     border: none;
     border-radius: 0;
-    background: transparent;
+    color: $black;
+    cursor: pointer;
+    padding: 0;
+    vertical-align: bottom;
 
     &:focus {
-        border: none;
         box-shadow: none !important;
+        outline: none;
     }
 
     &:disabled {

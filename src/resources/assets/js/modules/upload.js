@@ -31,15 +31,17 @@ export default {
 
                         // remove
                         this.on('removedfile', debounce((file) => {
-                            manager.selectedUploadPreviewList = this.files
-
-                            if (file.name == manager.selectedUploadPreview.name) {
-                                manager.selectedUploadPreview = {}
-                            }
+                            manager.uploadPreviewOptionsList.some((item, i) => {
+                                if (item.name == file.name) {
+                                    manager.uploadPreviewOptionsList.splice(i, 1)
+                                }
+                            })
 
                             if (!this.files.length) {
                                 manager.clearUploadPreview(previewContainer)
                             }
+
+                            manager.uploadPreviewList = this.files
                         }, 100))
 
                         // add
@@ -60,8 +62,8 @@ export default {
 
                             let el = file.previewElement
 
-                            manager.addToPreExistenceList(file)
-                            manager.selectedUploadPreviewList = fileList
+                            manager.addToPreUploadedList(file)
+                            manager.uploadPreviewList = fileList
                             manager.UploadArea = false
                             manager.toolBar = false
                             manager.infoSidebar = false
@@ -112,7 +114,7 @@ export default {
                 : {
                     init: function () {
                         this.on('addedfile', (file) => {
-                            manager.addToPreExistenceList(file)
+                            manager.addToPreUploadedList(file)
                         })
                     }
                 }
@@ -129,6 +131,10 @@ export default {
                     'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null,
                     'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
+                params: {
+                    upload_path: manager.files.path,
+                    random_names: manager.randomNames
+                },
                 timeout: 3600000, // 60 mins
                 autoProcessQueue: true,
                 previewsContainer: `${uploadPreview} .sidebar`,
@@ -137,7 +143,7 @@ export default {
                         return done(manager.trans('upload_in_progress'))
                     }
 
-                    if (manager.checkPreExistence(file)) {
+                    if (manager.checkPreUploadedList(file)) {
                         return done(manager.trans('already_exists'))
                     }
 
@@ -148,8 +154,8 @@ export default {
                     uploadProgress += parseFloat(100 / allFiles)
                     manager.progressCounter = `${Math.round(uploadProgress)}%`
 
-                    formData.append('upload_path', manager.files.path)
-                    formData.append('random_names', manager.randomNames)
+                    // send files custom options
+                    formData.append('custom_attrs', JSON.stringify(manager.uploadPreviewOptionsList))
                 },
                 processingmultiple() {
                     manager.showProgress = true
@@ -209,32 +215,26 @@ export default {
                 this.waitingForUpload = false
                 this.toolBar = true
                 this.smallScreenHelper()
-                this.selectedUploadPreviewList = []
-                this.selectedUploadPreviewExistList = []
-                this.selectedUploadPreview = {}
-            })
-        },
-        // not used yet
-        updateDropZoneFile(i, data) {
-            Dropzone.instances.some((item) => {
-                let files = item.files
-                if (files.length) {
-                    files[i].width = data.width
-                    return files[i].height = data.height
-                }
+                this.uploadPreviewList = []
+                this.uploadPreviewNamesList = []
+                this.uploadPreviewOptionsList = []
+                this.selectedUploadPreview = null
             })
         },
 
         // already uploaded checks
-        addToPreExistenceList(file) {
-            this.filesNamesList.some((item) => {
-                if (item == file.name && this.selectedUploadPreviewExistList.indexOf(item) < 0) {
-                    this.selectedUploadPreviewExistList.push(item)
+        checkPreUploadedList(file) {
+            return this.uploadPreviewNamesList.some((name) => name == file.name)
+        },
+        addToPreUploadedList(file) {
+            this.filesNamesList.some((name) => {
+                if (name == file.name && !this.checkPreUploadedList(file)) {
+                    this.uploadPreviewNamesList.push(name)
                 }
             })
         },
-        checkPreExistence(file) {
-            return this.selectedUploadPreviewExistList.some((item) => item == file.name)
+        checkForUploadedFile(name) {
+            return this.uploadPreviewList.some((file) => file.name == name)
         },
 
         // show large preview
@@ -245,22 +245,19 @@ export default {
             let container = box.closest('.dz-preview')
 
             if (container) {
-                let file = this.selectedUploadPreviewList.find((el) => {
-                    return el.name == container.dataset.name
-                })
+                let name = container.dataset.name
 
-                this.selectedUploadPreview = {
-                    img: file.dataURL,
-                    type: file.type,
-                    name: file.name
+                if (this.checkForUploadedFile(name)) {
+                    this.selectedUploadPreview = name
+
+                    // illuminate selected preview
+                    this.$nextTick(() => {
+                        let active = document.querySelector('.is-previewing')
+                        if (active) active.classList.remove('is-previewing')
+                        box.classList.add('is-previewing')
+                    })
                 }
 
-                // illuminate selected preview
-                this.$nextTick(() => {
-                    let active = document.querySelector('.is-previewing')
-                    if (active) active.classList.remove('is-previewing')
-                    box.classList.add('is-previewing')
-                })
             }
         },
 
