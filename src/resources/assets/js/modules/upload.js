@@ -281,10 +281,7 @@ export default {
                     }
 
                     this.resetInput('urlToUpload')
-                    this.$nextTick(() => {
-                        this.$refs.save_link_modal_input.focus()
-                    })
-
+                    this.$nextTick(() => this.$refs.save_link_modal_input.focus())
                     this.showNotif(`${this.trans('save_success')} "${data.message}"`)
                     this.getFiles(this.folders, null, data.message)
 

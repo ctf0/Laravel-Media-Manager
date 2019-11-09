@@ -57,7 +57,10 @@ export default {
             }
         },
         autoPlay() {
-            if (this.filterNameIs('audio') || this.filterNameIs('video')) {
+            if (
+                (this.filterNameIs('audio') || this.filterNameIs('video')) &&
+                this.player.playing
+            ) {
                 this.player.item.on('ended', () => {
                     // stop at the end of list
                     if (this.currentFileIndex < this.allItemsCount - 1) {
@@ -89,7 +92,7 @@ export default {
                                     base64String += String.fromCharCode(value)
                                 }
 
-                                val.picture = `data:${format};base64, ${window.btoa(base64String)}`
+                                val.picture = `data:${format};base64,${window.btoa(base64String)}`
                             }
 
                             return resolve(omitBy(val, isObject))

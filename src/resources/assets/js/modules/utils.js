@@ -91,6 +91,7 @@ export default {
                 }
 
                 this.resetInput('activeModal')
+
                 return EventHub.fire('modal-hide')
             }
 
@@ -126,6 +127,7 @@ export default {
             if (s == 'show') {
                 this.infoSidebar = false
                 this.toggleLoader('no_files', true)
+
                 return EventHub.fire('no-files-show')
             }
 
@@ -135,6 +137,7 @@ export default {
         noSearch(s) {
             if (s == 'show') {
                 this.toggleLoader('no_search', true)
+
                 return EventHub.fire('no-search-show')
             }
 
@@ -144,6 +147,7 @@ export default {
         loadingFiles(s) {
             if (s == 'show') {
                 this.toggleLoader('loading_files', true)
+
                 return EventHub.fire('loading-files-show')
             }
 
@@ -154,6 +158,7 @@ export default {
             if (s) {
                 this.infoSidebar = false
                 this.toggleLoader('ajax_error', true)
+
                 return EventHub.fire('ajax-error-show')
             }
 

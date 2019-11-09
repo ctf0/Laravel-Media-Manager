@@ -1,25 +1,31 @@
 <template>
-    <div v-tippy="{arrow: true, theme: 'mm'}" :title="filterName">
+    <div v-tippy="{arrow: true, theme: 'mm'}"
+         :title="filterName">
         <section v-if="!isControlable">
             <button v-tippy="{html: '#contentpopup2', interactive: true, trigger: 'click', theme: 'mm'}"
                     :class="{'is-active': isUsed()}"
                     :disabled="processing"
                     class="btn-plain">
-                <span class="icon"><icon :name="processing ? 'spinner' : icon" :pulse="processing"/></span>
+                <span class="icon"><icon :name="processing ? 'spinner' : icon"
+                                         :pulse="processing"/></span>
             </button>
 
             <div id="contentpopup2">
                 <div class="level is-marginless">
                     <transition name="mm-list">
-                        <div v-show="range != 0" class="level-item">
-                            <p class="heading is-marginless link" @click="resetFilter()">
+                        <div v-show="range != 0"
+                             class="level-item">
+                            <p class="heading is-marginless link"
+                               @click="resetFilter()">
                                 <span class="icon"><icon name="times"/></span>
                             </p>
                         </div>
                     </transition>
 
                     <div class="level-item">
-                        <p class="title is-5 is-marginless">{{ range }}</p>
+                        <p class="title is-5 is-marginless">
+                            {{ range }}
+                        </p>
                     </div>
                 </div>
 
@@ -39,7 +45,8 @@
                 class="btn-plain"
                 @click="update()">
             <span class="icon">
-                <icon :name="processing ? 'spinner' : icon" :pulse="processing"/>
+                <icon :name="processing ? 'spinner' : icon"
+                      :pulse="processing"/>
             </span>
         </button>
     </div>
@@ -105,6 +112,7 @@ export default {
                         ((min - val) * 100 / total).toFixed(2)
                     )) + '%'
                     item.style.setProperty('--length', perc)
+
                     return item.classList.add('range-neg')
                 }
                 // 0 > +
@@ -116,6 +124,7 @@ export default {
                         (calc * 100 / total).toFixed(2)
                     ) + '%'
                     item.style.setProperty('--length', perc)
+
                     return item.classList.add('range-pos')
                 }
             }
@@ -134,9 +143,7 @@ export default {
             if (val) {
                 this.wasReset = true
                 this.resetFilter()
-                this.$nextTick(() => {
-                    this.wasReset = false
-                })
+                this.$nextTick(() => this.wasReset = false)
             }
         },
         range(val) {

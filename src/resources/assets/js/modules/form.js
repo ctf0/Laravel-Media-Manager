@@ -27,10 +27,14 @@ export default {
                 }
 
                 // return data
-                this.files = data.files
+                this.files = {
+                    path: data.files.path,
+                    items: data.files.items.data,
+                    next: data.files.items.next_page_url
+                }
                 this.lockedList = data.locked
                 this.directories = data.dirs
-                this.filesListCheck(folders, prev_folder, prev_file)
+                this.filesListCheck(prev_folder, prev_file)
 
             }).catch((err) => {
                 console.error(err)
@@ -40,6 +44,37 @@ export default {
                 this.ajaxError()
             })
         },
+        loadPaginatedFiles($state) {
+            let folders = this.folders
+
+            if (folders) {
+                folders = this.clearDblSlash(`/${folders.join('/')}`)
+            }
+
+            return axios.post(this.files.next, {
+                folder: folders,
+                dirs: this.folders
+            }).then(({data}) => {
+                // folder no longer exist
+                if (data.error) {
+                    return this.showNotif(data.error, 'danger')
+                }
+
+                let next_page = data.files.items.next_page_url
+
+                // add extra items
+                this.files.items = this.files.items.concat(data.files.items.data)
+                this.files.next = next_page
+
+                next_page
+                    ? $state.loaded()
+                    : $state.complete()
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
+
         updateDirsList() {
             axios.post(this.routes.dirs, {
                 folder_location: this.folders
@@ -51,7 +86,7 @@ export default {
             })
         },
 
-        filesListCheck(folders, prev_folder, prev_file) {
+        filesListCheck(prev_folder, prev_file) {
             let files = this.files.items
 
             if (this.hideExt.length) {
@@ -344,7 +379,6 @@ export default {
         },
         updateFolderCount(destination, count, weight = 0) {
             if (destination !== '../') {
-
                 if (destination.includes('/')) {
                     // get the first dir in the path
                     // because this is what the user is currently viewing

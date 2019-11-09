@@ -53,11 +53,13 @@ class MediaController extends Controller
         $this->unallowedMimes = $config['unallowed_mimes'];
         $this->LMF            = $config['last_modified_format'];
         $this->GFI            = $config['get_folder_info'] ?? true;
+        $this->pag_amount     = $config['pagination_amount'] ?? 50;
 
         $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
         $this->baseUrl         = $this->storageDisk->url('/');
-        $this->db              = app('db')->connection($config['database_connection'] ?? 'mediamanager')->table($config['table_locked'] ?? 'locked');
+        $this->db              = app('db')->connection($config['database_connection'] ?? 'mediamanager')
+                                            ->table($config['table_locked'] ?? 'locked');
 
         $this->storageDisk->addPlugin(new ListWith());
     }
@@ -74,16 +76,17 @@ class MediaController extends Controller
 
     public function globalSearch()
     {
-        return collect($this->getFolderContent('/', true))->reject(function ($item) { // remove unwanted
-            return preg_grep($this->ignoreFiles, [$item['path']]) || $item['type'] == 'dir';
-        })->map(function ($file) {
-            return $file = [
-                'name'                   => $file['basename'],
-                'type'                   => $file['mimetype'],
-                'path'                   => $this->resolveUrl($file['path']),
-                'dir'                    => $file['dirname'] != '' ? $file['dirname'] : '/',
-                'last_modified_formated' => $this->getItemTime($file['timestamp']),
-            ];
-        })->values()->all();
+        return collect($this->getFolderContent('/', true))
+                ->reject(function ($item) { // remove unwanted
+                    return preg_grep($this->ignoreFiles, [$item['path']]) || $item['type'] == 'dir';
+                })->map(function ($file) {
+                    return $file = [
+                        'name'                   => $file['basename'],
+                        'type'                   => $file['mimetype'],
+                        'path'                   => $this->resolveUrl($file['path']),
+                        'dir'                    => $file['dirname'] != '' ? $file['dirname'] : '/',
+                        'last_modified_formated' => $this->getItemTime($file['timestamp']),
+                    ];
+                })->values()->all();
     }
 }

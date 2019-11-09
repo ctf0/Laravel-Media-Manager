@@ -20,9 +20,8 @@ export default {
                 this.folders = folders.splice(0, index)
 
                 this.$nextTick(() => {
-                    this.getFiles(this.folders, prev_folder_name).then(() => {
-                        this.updatePageUrl()
-                    })
+                    this.getFiles(this.folders, prev_folder_name)
+                        .then(() => this.updatePageUrl())
                 })
             }
         },

@@ -1,0 +1,4 @@
+- remove browser caching to give chance to new features
+- data are now being paginated and loaded on scroll, check https://github.com/ctf0/Laravel-Media-Manager/issues/104
+- fix lots of weird styling
+- config, rdme, wiki are updated

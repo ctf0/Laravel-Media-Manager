@@ -44,7 +44,7 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
-    yarn add vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js
+    yarn add vue vue-ls vue-infinite-loading vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js
     ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -98,7 +98,7 @@
         * parentheses ()
         * comma ,
         */
-        'allowed_fileNames_chars' => '\._-\'\s\(\),',
+        'allowed_fileNames_chars' => '\._\-\'\s\(\),',
 
         /*
         * remove any folder special chars except
@@ -185,6 +185,11 @@
         * Locked items table name (defaults to "locked")
         */
         'table_locked' => 'locked',
+
+        /*
+        * loaded chunk amount "pagination"
+        */
+        'pagination_amount' => 50,
     ];
 
     ```

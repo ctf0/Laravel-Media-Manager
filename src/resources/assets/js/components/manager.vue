@@ -36,7 +36,8 @@ export default {
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
         videoDimension: require('./utils/video-dim.vue').default,
-        uploadPreview: require('./utils/upload-preview.vue').default
+        uploadPreview: require('./utils/upload-preview.vue').default,
+        InfiniteLoading: require('vue-infinite-loading').default
     },
     name: 'media-manager',
     mixins: [
@@ -175,7 +176,7 @@ export default {
 
             if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
                 this.destroyPlyr()
-                this.$nextTick(this.initPlyr)
+                this.$nextTick(() => this.initPlyr())
             }
 
             if (!this.introIsOn) {

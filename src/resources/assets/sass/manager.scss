@@ -457,8 +457,7 @@
 .__stack-files {
     bottom: 0;
     left: 20%;
-    overflow: scroll;
-    padding: 0.75rem;
+    overflow-y: scroll;
     position: absolute;
     right: 0;
     top: 0;
@@ -473,6 +472,7 @@
 .__files-boxs {
     display: flex;
     flex-wrap: wrap;
+    padding: 0.75rem;
     list-style: none;
     transition: height $anim-time ease-out;
     user-select: none;

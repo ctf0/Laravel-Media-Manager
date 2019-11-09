@@ -1,2 +1,0 @@
-- some cleanup
-- more options for upload preview, check https://github.com/ctf0/Laravel-Media-Manager/wiki/Preview-Files-Before-Uploading

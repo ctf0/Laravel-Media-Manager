@@ -26,7 +26,7 @@ return [
      * parentheses ()
      * comma ,
      */
-    'allowed_fileNames_chars' => '\._-\'\s\(\),',
+    'allowed_fileNames_chars' => '\._\-\'\s\(\),',
 
     /*
      * remove any folder special chars except
@@ -113,4 +113,9 @@ return [
      * Locked items table name (defaults to "locked")
      */
     'table_locked' => 'locked',
+
+    /*
+     * loaded chunk amount "pagination"
+     */
+    'pagination_amount' => 50,
 ];

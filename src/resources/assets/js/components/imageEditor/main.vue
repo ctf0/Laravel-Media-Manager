@@ -1,5 +1,6 @@
 <template>
-    <div ref="editor" class="card __editor">
+    <div ref="editor"
+         class="card __editor">
         <!-- btns -->
         <div class="top">
             <div class="__top-toolbar">
@@ -47,7 +48,8 @@
                             :title="trans('crop_reset_filters')"
                             class="btn-plain"
                             @click="resetFilters()">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'"
+                                                 :pulse="processing"/></span>
                     </button>
                 </div>
             </div>
@@ -64,12 +66,16 @@
 
             <div class="__cropper">
                 <!-- img -->
-                <figure :style="{'opacity': processing ? 0 : 1}" class="image">
-                    <img id="cropper" :src="url" crossOrigin>
+                <figure :style="{'opacity': processing ? 0 : 1}"
+                        class="image">
+                    <img id="cropper"
+                         :src="url"
+                         crossOrigin>
                 </figure>
 
                 <!-- loading -->
-                <div v-show="processing" class="__loader">
+                <div v-show="processing"
+                     class="__loader">
                     <div class="ball-grid-pulse">
                         <div/><div/><div/><div/><div/><div/><div/><div/><div/>
                     </div>
@@ -84,8 +90,10 @@
                                :zoom="{min: 1, max: 15}"
                                class="__diff is-draggable"
                                @movment="onDiffDrag">
-                    <icon slot="icon-left" name="arrow-left"/>
-                    <icon slot="icon-right" name="arrow-right"/>
+                    <icon slot="icon-left"
+                          name="arrow-left"/>
+                    <icon slot="icon-right"
+                          name="arrow-right"/>
                 </image-compare>
 
                 <!-- presets -->
@@ -97,14 +105,16 @@
                          class="__caman-presets"/>
 
                 <!-- operations -->
-                <div :style="hiddenBtns" class="__bottom-toolbar">
+                <div :style="hiddenBtns"
+                     class="__bottom-toolbar">
                     <!-- reset everything -->
                     <button v-tippy="{arrow: true, theme: 'mm'}"
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_reset')"
                             class="btn-plain"
                             @click="operations('reset')">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'" :pulse="processing"/></span>
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'"
+                                                 :pulse="processing"/></span>
                     </button>
 
                     <!-- clear -->
@@ -113,7 +123,8 @@
                             :title="trans('clear')"
                             class="btn-plain"
                             @click="operations('clear')">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'ban'" :pulse="processing"/></span>
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'ban'"
+                                                 :pulse="processing"/></span>
                     </button>
 
                     <!-- apply -->
@@ -122,7 +133,8 @@
                             :title="trans('crop_apply')"
                             class="btn-plain"
                             @click="applyChanges()">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'check'" :pulse="processing"/></span>
+                        <span class="icon"><icon :name="processing ? 'spinner' : 'check'"
+                                                 :pulse="processing"/></span>
                     </button>
                 </div>
             </div>
@@ -291,9 +303,11 @@ export default {
                     break
                 case 'zoom-in':
                     cropper.zoom(0.1)
+
                     return this.hasChanged = true
                 case 'zoom-out':
                     cropper.zoom(-0.1)
+
                     return this.hasChanged = true
                 case 'rotate-left':
                     cropper.rotate(-this.rotation)
@@ -348,9 +362,7 @@ export default {
                 cropper.setDragMode(this.dragMode) // active btn
                 this.resetFilters()
 
-                this.$nextTick(() => {
-                    this.reset = false
-                })
+                this.$nextTick(() => this.reset = false)
             })
         },
         clearSelection() {
@@ -429,7 +441,7 @@ export default {
             }).toDataURL(type)
 
             // reset the auto crop selection we made
-            this.$nextTick(this.clearSelection)
+            this.$nextTick(() => this.clearSelection())
 
             return url
         },

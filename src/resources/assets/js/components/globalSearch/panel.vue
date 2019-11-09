@@ -31,7 +31,7 @@
 
             <transition-group name="mm-gs"
                               tag="ul"
-                              class="columns is-multiline">
+                              class="columns is-multiline m-0">
                 <li v-for="(item, i) in filterdList"
                     :key="`${i}-${item.name}`"
                     v-list-rendered="[i, filterdList, orch]"
@@ -206,9 +206,7 @@ export default {
             this.showPanelWatcher(val)
 
             if (val) {
-                this.$nextTick(() => {
-                    this.$refs.search.focus()
-                })
+                this.$nextTick(() => this.$refs.search.focus())
             } else {
                 this.$nextTick(() => {
                     this.noData = false
@@ -220,9 +218,7 @@ export default {
             this.getList()
 
             if (!this.firstRun) {
-                this.$nextTick(() => {
-                    this.firstRun = true
-                })
+                this.$nextTick(() => this.firstRun = true)
             }
         },
         firstRun(val) {

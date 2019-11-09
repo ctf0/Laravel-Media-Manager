@@ -670,6 +670,9 @@
                             </v-touch>
                         </li>
                     </ul>
+                    <infinite-loading v-if="files.next" spinner="waveDots" @infinite="loadPaginatedFiles">
+                        <span slot="no-more"></span>
+                    </infinite-loading>
                 </v-touch>
 
                 {{-- ====================================================================== --}}

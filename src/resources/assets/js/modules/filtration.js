@@ -77,9 +77,6 @@ export default {
 
             if (!this.isBulkSelecting()) {
                 this.resetInput(['selectedFile', 'currentFileIndex'])
-            }
-
-            if (!this.isBulkSelecting()) {
                 this.selectFirst()
             }
 
@@ -87,7 +84,7 @@ export default {
                 this.updateSearchCount()
             }
 
-            this.$nextTick(EventHub.fire('start-img-observing'))
+            this.$nextTick(() => EventHub.fire('start-img-observing'))
         },
 
         // search
