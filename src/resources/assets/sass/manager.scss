@@ -721,6 +721,14 @@
         table {
             margin-bottom: 0.25rem;
 
+            &:first-of-type tbody {
+                margin: 10px 0;
+
+                &:empty {
+                    margin: 0;
+                }
+            }
+
             td {
                 font-size: 1rem;
                 vertical-align: top;

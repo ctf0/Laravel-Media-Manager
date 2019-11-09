@@ -89,7 +89,7 @@ export default {
                                     base64String += String.fromCharCode(value)
                                 }
 
-                                val.picture = `data:${format};base64,${window.btoa(base64String)}`
+                                val.picture = `data:${format};base64, ${window.btoa(base64String)}`
                             }
 
                             return resolve(omitBy(val, isObject))

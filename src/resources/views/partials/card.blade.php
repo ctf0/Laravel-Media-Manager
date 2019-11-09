@@ -27,8 +27,8 @@
         {{-- audio --}}
         <div v-else-if="selectedFileIs('audio')" class="audio-prev">
             <template>
-                <img v-if="selectedFilePreview && selectedFilePreview.picture"
-                    :src="selectedFilePreview.picture"
+                <img v-if="selectedFilePreview"
+                    :src="selectedFilePreview"
                     :alt="selectedFile.name"
                     class="image"/>
 
@@ -57,7 +57,7 @@
                 </a>
             </div>
 
-            <transition :name="scrollableBtn.state ? 'mm-img-nxt': 'mm-img-prv'" appear>
+            <transition :name="scrollableBtn.state ? 'mm-img-nxt' : 'mm-img-prv'" appear>
                 <div class="image-scroll-btn"
                     :class="scrollableBtn.dir"
                     v-show="scrollableBtn.state"
@@ -113,7 +113,7 @@
                     <span v-if="$refs.lock"
                         class="icon is-large link"
                         :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
-                        :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}': '{{ trans('MediaManager::messages.lock') }}'"
+                        :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}' : '{{ trans('MediaManager::messages.lock') }}'"
                         v-tippy="{arrow: true, hideOnClick: false}"
                         @click="$refs.lock.click()">
                         <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.1"></icon>

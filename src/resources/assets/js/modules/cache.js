@@ -1,13 +1,3 @@
-import addMinutes from 'date-fns/addMinutes'
-import getTime from 'date-fns/getTime'
-import uniq from 'lodash/uniq'
-
-import { Store, get, set, del, clear, keys } from 'idb-keyval'
-const cacheStore = new Store(
-    'ctf0-Media_Manager',   // db
-    'laravel-media-manager' // store
-)
-
 export default {
     methods: {
         /*                Local Storage                */
@@ -37,139 +27,30 @@ export default {
             }
         },
         saveUserPref() {
-            this.updateLs({ 'infoSidebar': this.infoSidebar })
+            this.updateLs({'infoSidebar': this.infoSidebar})
         },
 
-        /*                IndexedDb                */
-        getCachedResponse(key = this.cacheName) {
-            return get(key, cacheStore)
-        },
-        cacheResponse(val, key = this.cacheName) {
-            let date = getTime(addMinutes(new Date(), this.config.cacheExp))
-            val = Object.assign(val, { expire: date })
-
-            return set(key, val, cacheStore).catch((err) => {
-                console.warn('cacheStore.setItem', err)
-            })
-        },
-        removeCachedResponse(destination = null, extra = []) {
-            let cacheName = this.getCacheName(destination || this.cacheName)
-            let items = ['root_']
-            let promises = []
-
-            items.push(...this.getRecursivePathParent(cacheName))
-
-            if (extra.length) {
-                extra.forEach((e) => {
-                    items.push(...this.getRecursivePathParent(e))
-                })
-            }
-
-            // clear dups and delete items
-            uniq(items).sort().forEach((one) => {
-                promises.push(this.deleteCachedResponse(one))
-            })
-
-            return Promise.all(promises)
-        },
-        removeCachedResponseForOther(extra) {
-            let items = ['root_']
-            let promises = []
-
-            extra.forEach((e) => {
-                items.push(...this.getRecursivePathParent(e))
-            })
-
-            // clear dups and delete items
-            uniq(items).sort().forEach((one) => {
-                promises.push(this.deleteCachedResponse(one))
-            })
-
-            return Promise.all(promises)
-        },
-        deleteCachedResponse(item) {
-            return del(item, cacheStore).then(() => {
-                // console.log(`${item} Cache Cleared !`)
-            }).catch((err) => {
-                console.error('cacheStore.removeItem', err)
-            })
-        },
-        clearCache(notif = true) {
-            return clear(cacheStore).then(() => {
-                this.refresh().then(() => {
-                    if (notif) this.showNotif('Cache Cleared !')
-                })
-            }).catch((err) => {
-                console.error(err)
-            })
-        },
-        invalidateCache() {
-            let now = getTime(new Date())
-
-            return keys(cacheStore).then((keys) => {
-                return Promise.all(
-                    keys.map((key) => {
-                        return this.getCachedResponse(key).then((item) => {
-                            if (item.expire <= now) {
-                                return this.deleteCachedResponse(key)
-                            }
-                        })
-                    })
-                )
-            }).catch((err) => {
-                console.error(err)
-            })
-        },
-
-        // helpers
-        getCacheName(path) {
+        // other
+        getCacheName(file_name) {
             let str = this.cacheName == 'root_'
-                ? path == 'root_'
-                    ? path
-                    : `/${path}`
-                : this.cacheName == path
-                    ? `/${path}`
-                    : `${this.cacheName}/${path}`
+                ? file_name == 'root_'
+                    ? file_name
+                    : `/${file_name}`
+                : this.cacheName == file_name
+                    ? `/${file_name}`
+                    : `${this.cacheName}/${file_name}`
 
             return this.clearDblSlash(str)
+        }
+    },
+    computed: {
+        CDBN() {
+            return 'ctf0-Media_Manager'
         },
-        getRecursivePathParent(path) {
-            let list = []
+        cacheName() {
+            let folders = this.folders
 
-            if (path) {
-                let arr = this.arrayFilter(path.split('/'))
-                let i = arr.length - 1
-
-                for (i; i >= 0; i--) {
-                    list.push(path)            // add current
-                    arr.pop()                  // remove last
-                    path = `/${arr.join('/')}` // regroup remaining
-                }
-            }
-
-            return list
-        },
-
-        /*                Cache Storage Api                */
-        removeImageCache(url) {
-            if (this.browserSupport('caches')) {
-                return caches.open(this.CDBN).then((cache) => {
-                    return cache.delete(url)
-                })
-            }
-        },
-        clearImageCache() {
-            if (this.browserSupport('caches')) {
-                return caches.keys().then((keys) => {
-                    return Promise.all(
-                        keys.map((item) => {
-                            if (item == this.CDBN) {
-                                return caches.delete(item)
-                            }
-                        })
-                    )
-                })
-            }
+            return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
         }
     }
 }

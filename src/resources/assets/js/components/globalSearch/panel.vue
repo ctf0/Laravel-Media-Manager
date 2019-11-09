@@ -1,8 +1,12 @@
 <template>
-    <div v-if="showPanel" id="gsearch-panel" class="modal mm-animated fadeIn is-active">
+    <div v-if="showPanel"
+         id="gsearch-panel"
+         class="modal mm-animated fadeIn is-active">
         <div class="modal-background"/>
         <div class="modal-content">
-            <div ref="search-input" :class="{'move': firstRun}" class="search-input">
+            <div ref="search-input"
+                 :class="{'move': firstRun}"
+                 class="search-input">
                 <section>
                     <div class="input-wrapper">
                         <input ref="search"
@@ -12,7 +16,8 @@
                                autofocus>
                     </div>
                     <transition name="mm-info-in">
-                        <div v-show="listCount" class="count">
+                        <div v-show="listCount"
+                             class="count">
                             <p class="title is-marginless is-2">
                                 {{ listCount }}
                             </p>
@@ -24,24 +29,50 @@
                 </section>
             </div>
 
-            <transition-group name="mm-gs" tag="ul" class="columns is-multiline" mode="out-in">
+            <transition-group name="mm-gs"
+                              tag="ul"
+                              class="columns is-multiline">
                 <li v-for="(item, i) in filterdList"
                     :key="`${i}-${item.name}`"
                     v-list-rendered="[i, filterdList, orch]"
                     class="column is-2">
                     <div class="card">
                         <div class="card-image">
-                            <a v-if="fileTypeIs(item, 'image')" :href="item.path" target="_blank" class="image">
-                                <image-intersect :file="item" :browser-support="browserSupport" root-el="#gsearch-panel"/>
+                            <a v-if="fileTypeIs(item, 'image')"
+                               :href="item.path"
+                               target="_blank"
+                               class="image">
+                                <image-intersect :file="item"
+                                                 :browser-support="browserSupport"
+                                                 root-el="#gsearch-panel"/>
                             </a>
 
-                            <div v-else class="glbl_search_panel">
-                                <icon v-if="fileTypeIs(item, 'folder')" class="svg-prev-icon" name="folder" scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'application')" class="svg-prev-icon" name="cogs" scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'video')" class="svg-prev-icon" name="film" scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'audio')" class="svg-prev-icon" name="music" scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'pdf')" class="svg-prev-icon" name="file-pdf-o" scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'text')" class="svg-prev-icon" name="file-text-o" scale="5.0"/>
+                            <div v-else
+                                 class="glbl_search_panel">
+                                <icon v-if="fileTypeIs(item, 'folder')"
+                                      class="svg-prev-icon"
+                                      name="folder"
+                                      scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'application')"
+                                      class="svg-prev-icon"
+                                      name="cogs"
+                                      scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'video')"
+                                      class="svg-prev-icon"
+                                      name="film"
+                                      scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'audio')"
+                                      class="svg-prev-icon"
+                                      name="music"
+                                      scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'pdf')"
+                                      class="svg-prev-icon"
+                                      name="file-pdf-o"
+                                      scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'text')"
+                                      class="svg-prev-icon"
+                                      name="file-text-o"
+                                      scale="5.0"/>
                             </div>
                         </div>
                         <div class="card-content">
@@ -53,9 +84,11 @@
                                 {{ item.name }}
                             </p>
                             <br>
-                            <p class="subtitle is-marginless link" @click="goToFolder(item.dir, item.name)">
+                            <p class="subtitle is-marginless link"
+                               @click="goToFolder(item.dir, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
-                                <span v-tippy :title="trans('go_to_folder')">{{ item.dir }}</span>
+                                <span v-tippy
+                                      :title="trans('go_to_folder')">{{ item.dir }}</span>
                             </p>
                             <time>
                                 <span class="icon"><icon name="clock-o"/></span>
@@ -66,14 +99,17 @@
                 </li>
 
                 <!-- nothing found -->
-                <li v-if="noData" key="noData" class="column no-data">
+                <li v-if="noData"
+                    key="noData"
+                    class="column no-data">
                     <p class="title">
                         {{ trans('nothing_found') }} !!
                     </p>
                 </li>
             </transition-group>
         </div>
-        <button class="modal-close is-large" @click="closePanel()"/>
+        <button class="modal-close is-large"
+                @click="closePanel()"/>
     </div>
 </template>
 
@@ -86,7 +122,7 @@ import panels from '../../mixins/panels'
 
 export default {
     components: {
-        imageIntersect: require('./lazyLoading.vue').default
+        imageIntersect: require('./image.vue').default
     },
     directives: {
         VueInputAutowidth
@@ -154,6 +190,7 @@ export default {
 
             if (search) {
                 this.filterdList = this.fuseLib.search(search)
+
                 return this.noData = this.listCount ? false : true
             }
 

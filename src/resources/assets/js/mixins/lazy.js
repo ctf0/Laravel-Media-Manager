@@ -1,4 +1,4 @@
-import {loadImageWithWorker} from '../webworker'
+import {loadImageWithWorker} from '../webworkers/image'
 
 export default {
     props: ['file', 'browserSupport', 'rootEl'],
@@ -20,7 +20,7 @@ export default {
     },
     methods: {
         init() {
-            EventHub.listen('start-img-observing', () => {
+            EventHub.listen(['start-img-observing', 'start-search-observing'], () => {
                 this.isObserving = true
 
                 setTimeout(() => {
@@ -29,16 +29,6 @@ export default {
                             ? this.observe()
                             : this.intersected = true
                     }
-                }, 500)
-            })
-
-            EventHub.listen('start-search-observing', () => {
-                this.isObserving = true
-
-                setTimeout(() => {
-                    this.browserSupport('IntersectionObserver')
-                        ? this.observe()
-                        : this.intersected = true
                 }, 500)
             })
 
@@ -53,7 +43,6 @@ export default {
                 this.observer = null
             }
         },
-
         observe() {
             this.observer = new IntersectionObserver((item, observer) => {
                 item.forEach((img) => {

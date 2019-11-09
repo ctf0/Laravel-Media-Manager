@@ -30,14 +30,13 @@ export default {
         contentRatio: require('./utils/ratio.vue').default,
         globalSearchBtn: require('./globalSearch/button.vue').default,
         globalSearchPanel: require('./globalSearch/panel.vue').default,
-        imageCache: require('./lazyLoading/cache.vue').default,
         imageEditor: require('./imageEditor/main.vue').default,
-        imageIntersect: require('./lazyLoading/normal.vue').default,
-        overlay: require('./utils/overlay.vue').default,
+        imageIntersect: require('./utils/image-lazyLoading.vue').default,
+        introOverlay: require('./utils/intro-overlay.vue').default,
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
         videoDimension: require('./utils/video-dim.vue').default,
-        previewPh: require('./utils/preview-ph.vue').default
+        uploadPreview: require('./utils/upload-preview.vue').default
     },
     name: 'media-manager',
     mixins: [
@@ -227,9 +226,7 @@ export default {
             // check if image was edited
             EventHub.listen('image-edited', (msg) => {
                 this.imageWasEdited = true
-                this.removeCachedResponse().then(() => {
-                    this.showNotif(`${this.trans('save_success')} "${msg}"`)
-                })
+                this.showNotif(`${this.trans('save_success')} "${msg}"`)
             })
 
             // get images dimensions
@@ -458,8 +455,6 @@ export default {
             if (!this.isLoading) {
                 this.clearUrlQuery()
                 this.clearLs()
-                this.clearCache()
-                this.clearImageCache()
                 this.ajaxError(false)
             }
         },

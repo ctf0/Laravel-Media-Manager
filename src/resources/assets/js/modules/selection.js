@@ -57,10 +57,6 @@ export default {
             this.selectedFile = file
             this.currentFileIndex = index
 
-            if (this.lazyModeIsOn()) {
-                this.lazyImageActivate(file.path)
-            }
-
             // bulk selection
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)

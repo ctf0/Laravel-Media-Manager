@@ -16,19 +16,6 @@ export default {
             setTimeout(this.imageEditor, 10)
         },
 
-        // lazy
-        lazyModeIsOn() {
-            return this.config.lazyLoad
-        },
-        lazyImageActivate(url) {
-            this.$nextTick(EventHub.fire('lazy-image-activate', url))
-        },
-        lazySelectFirst() {
-            if (this.fileTypeIs(this.allFiles[0], 'folder')) {
-                return this.selectFirst()
-            }
-        },
-
         // scrollable
         isScrollable() {
             let item = this.$refs[this.activeModal ? 'img-card-prev' : 'img-prev']

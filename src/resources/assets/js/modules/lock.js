@@ -82,7 +82,6 @@ export default {
                 this.updateLockOps(data)
                 this.resetInput(['currentFilterName'])
                 this.isBulkSelecting() ? this.blkSlct() : false
-                this.removeCachedResponse()
 
             }).catch((err) => {
                 console.error(err)

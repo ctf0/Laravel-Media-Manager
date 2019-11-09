@@ -13,11 +13,11 @@
     <img alt="diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
 </p>
 
-- [Installation](##Installation)
-- [Config](##Config)
-- [Features](##Features)
-- [Events](##Events)
-- [Usage](##Usage)
+- [Installation](#Installation)
+- [Config](#Config)
+- [Features](#Features)
+- [Events](#Events)
+- [Usage](#Usage)
 
 <br>
 
@@ -44,9 +44,7 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
-    yarn add vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js
-    # or
-    npm install vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component idb-keyval axios dropzone cropperjs keycode date-fns lottie-web plyr fuse.js --save
+    yarn add vue vue-ls vue-async-computed vue-list-rendered vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js
     ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -57,9 +55,9 @@
 
     window.Vue = require('vue')
 
-    // pre Laravel v5.7
+    // Laravel < v5.7
     require('../vendor/MediaManager/js/manager')
-    // Laravel v5.7+
+    // Laravel > v5.7
     // require('../assets/vendor/MediaManager/js/manager')
 
     new Vue({
@@ -76,14 +74,14 @@
     ```php
     return [
         /*
-        * ignore files pattern
+        * ignore any file starts with "."
         */
         'ignore_files' => '/^\..*/',
 
         /*
         * filesystem disk
         */
-        'storage_disk' => 'public',
+        'storage_disk' => env('FILESYSTEM_DRIVER', 'public'),
 
         /*
         * manager controller
@@ -92,13 +90,25 @@
 
         /*
         * remove any file special chars except
+        * dot .
+        * dash -
+        * underscore _
+        * single quote ''
+        * white space
+        * parentheses ()
+        * comma ,
         */
-        'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
+        'allowed_fileNames_chars' => '\._-\'\s\(\),',
 
         /*
-        * remove any folder special chars except (_ -)
+        * remove any folder special chars except
+        * dash -
+        * underscore _
+        * white space
+        *
+        * to add & nest folders in one go add '\/'
         */
-        'allowed_folderNames_chars' => '\_\-',
+        'allowed_folderNames_chars' => '_-\s',
 
         /*
         * disallow uploading files with the following mimetypes
@@ -110,9 +120,12 @@
         * extra mime-types
         */
         'extended_mimes' => [
+            // any extra mime-types that doesnt have "image" in it
             'image' => [
-                'binary/octet-stream',
+                'binary/octet-stream', // aws
             ],
+
+            // any extra mime-types that doesnt have "compressed" in it
             'archive' => [
                 'application/x-tar',
                 'application/zip',
@@ -121,6 +134,9 @@
 
         /*
         * when file names gets cleand up
+        *
+        * put here any global function that
+        * doesnt take arguments
         */
         'sanitized_text' => 'uniqid',
 
@@ -130,20 +146,10 @@
         */
         'last_modified_format' => 'toDateString',
 
-        /**
+        /*
         * hide file extension in files list
         */
         'hide_files_ext' => true,
-
-        /*
-        * load image preview only when item is clicked ?
-        */
-        'lazy_load_image_on_click' => false,
-
-        /*
-        * automatically invalidate cache after "in Minutes"
-        */
-        'cache_expires_after' => 60,
 
         /*
         * in-order to get the folder items count & size
@@ -152,7 +158,7 @@
         */
         'get_folder_info' => true,
 
-        /**
+        /*
         * do you want to enable broadcasting the changes
         * made by one user to others ?
         *
@@ -160,7 +166,7 @@
         */
         'enable_broadcasting' => false,
 
-        /**
+        /*
         * show "an itunes like" content ratio bar
         */
         'show_ratio_bar' => true,
@@ -171,15 +177,16 @@
         'preview_files_before_upload' => true,
 
         /*
-         * Database connection
-         */
+        * Database connection
+        */
         'database_connection' => env('DB_CONNECTION'),
 
         /*
-         * Locked items table name (defaults to "locked")
-         */
-        'table_locked' => 'locked'
+        * Locked items table name (defaults to "locked")
+        */
+        'table_locked' => 'locked',
     ];
+
     ```
 
 <br>
@@ -198,8 +205,6 @@
 - [preview files before uploading](https://github.com/ctf0/Laravel-Media-Manager/wiki/Preview-Files-Before-Uploading)
 - toggle between `random/original` names for uploaded files
 - upload an image from a url
-- [load image on demand](https://github.com/ctf0/Laravel-Media-Manager/wiki/Caching-Strategies#cache-api-image-offline-caching)
-- [cache requests](https://github.com/ctf0/Laravel-Media-Manager/wiki/Caching-Strategies)
 - [asynchronous Updates](https://github.com/ctf0/Laravel-Media-Manager/wiki/Async-Update-The-Manager)
 - bulk selection
 - change item/s visibility
@@ -306,8 +311,8 @@
 |                 | multi_file_selected *([when inside modal][modal])* | get bulk selected files urls                                                    |
 |                 | folder_selected *([when inside modal][modal])*     | get selected folder path                                                        |
 | [Laravel][lara] |                                                    |                                                                                 |
-|                 | MMFileUploaded($file_path, $mime_type)             | get uploaded file full [path][path], mime type, [custom options][customOptions] |
-|                 | [MMFileSaved][event]($file_path, $mime_type)       | get saved (edited/link) image full [path][path] & mime type                     |
+|                 | MMFileUploaded($file_path, $mime_type, $options)   | get uploaded file full [path][path], mime type, [custom options][customOptions] |
+|                 | [MMFileSaved][event]($file_path, $mime_type)       | get saved (edited/link) image full [path][path], mime type                      |
 |                 | MMFileDeleted($file_path, $is_folder)              | get deleted file/folder full [path][path]                                       |
 |                 | MMFileRenamed($old_path, $new_path)                | get renamed file/folder "old & new" [path][path]                                |
 |                 | MMFileMoved($old_path, $new_path)                  | get moved file/folder "old & new" [path][path]                                  |
@@ -318,7 +323,7 @@
 [path]: https://gist.github.com/ctf0/9fa6013954654384052d2e2e809b9bf6
 [modal]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Use-The-Manager-From-A-Modal
 [showPreview]: https://github.com/ctf0/Laravel-Media-Manager/blob/master/src/config/mediaManager.php#L126
-[customOptions]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Preview-Files-Before-Uploading#send-custom-options-with-uploaded-files
+[customOptions]: https://github.com/ctf0/Laravel-Media-Manager/wiki/Preview-Files-Before-Uploading#-send-custom-options-with-uploaded-files
 
 <br>
 

@@ -1,5 +1,3 @@
-import uniq from 'lodash/uniq'
-
 export default {
     mounted() {
         if (this.browserSupport('Echo') && this.config.broadcasting) {
@@ -31,9 +29,6 @@ export default {
                         case 'visibility':
                             this.bcVisibility(data)
                             break
-                        case 'clear-cache':
-                            this.bcClearCache(data)
-                            break
                     }
                 })
 
@@ -56,12 +51,10 @@ export default {
         bcUpload(data) {
             let path = data.path || 'root_'
 
-            this.removeCachedResponseForOther([path]).then(() => {
-                // if user is viewing the same dir
-                if (path == this.cacheName) {
-                    this.bcNotif(`${this.trans('new_uploads_notif')}, ${this.trans('refresh_notif')}`)
-                }
-            })
+            // if user is viewing the same dir
+            if (path == this.cacheName) {
+                this.bcNotif(`${this.trans('new_uploads_notif')}, ${this.trans('refresh_notif')}`)
+            }
         },
         bcNewFolder(data) {
             let path = data.path || 'root_'
@@ -70,13 +63,10 @@ export default {
             if (path == this.cacheName) {
                 this.bcNotif(`${this.trans('create_folder_notif')}, ${this.trans('refresh_notif')}`)
             }
-
-            this.deleteCachedResponse(path)
         },
         bcMove(data) {
             let selected = this.selectedFile
             let path = data.path
-            let cacheNamesList = [path.old || 'root_', path.new || 'root_']
             let reselect = false
             let check = path.current || 'root_'
 
@@ -95,7 +85,6 @@ export default {
             }
 
             if (reselect) this.selectFirst()
-            this.removeCachedResponseForOther(uniq(cacheNamesList))
         },
         bcRename(data) {
             let path = data.path || 'root_'
@@ -108,6 +97,7 @@ export default {
                     this.filterdList.some((e) => {
                         if (e.name == item.oldName && e.type == item.type) {
                             e.name = item.newName
+
                             return e.path.replace(item.oldName, item.newName)
                         }
                     })
@@ -116,18 +106,16 @@ export default {
                 this.files.items.some((e) => {
                     if (e.name == item.oldName && e.type == item.type) {
                         e.name = item.newName
+
                         return e.path.replace(item.oldName, item.newName)
                     }
                 })
 
                 this.bcNotif(`${this.trans('rename_success')} "${item.oldName}" to "${item.newName}"`)
             }
-
-            this.removeCachedResponseForOther([path])
         },
         bcDelete(data) {
             let selected = this.selectedFile
-            let cacheNamesList = []
             let reselect = false
             let current = data.path || this.cacheName == 'root_'
 
@@ -135,28 +123,21 @@ export default {
                 // if user is viewing the same dir
                 if (current) {
                     this.removeFromLists(item.name, item.type, false)
-                    this.removeImageCache(item.url)
                     this.bcNotif(`${this.trans('delete_success')} "${item.name}"`)
 
                     if (selected.name == item.name && selected.type == item.type) {
                         reselect = true
                     }
                 }
-
-                // clear indexdb cache for dirs
-                cacheNamesList.push(item.path ? this.clearDblSlash(`/${item.path}`) : 'root_')
             })
 
             if (reselect) this.selectFirst()
-            this.removeCachedResponseForOther(uniq(cacheNamesList))
         },
         bcLock(data) {
             // if user is viewing the same dir
             if (data.path || this.cacheName == 'root_') {
                 this.updateLockOps(data)
             }
-
-            this.removeCachedResponseForOther([data.path])
         },
         bcVisibility(data) {
             // if user is viewing the same dir
@@ -180,8 +161,6 @@ export default {
                     }
                 })
             }
-
-            this.removeCachedResponseForOther([data.path])
         },
         bcZip(data) {
             if (data.progress) {
@@ -195,10 +174,6 @@ export default {
             if (data.type == 'warn') {
                 this.showNotif(data.msg, 'warning')
             }
-        },
-        bcClearCache(data) {
-            this.removeCachedResponse(data.path)
-            this.refresh()
         }
     }
 }

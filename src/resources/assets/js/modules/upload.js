@@ -12,7 +12,6 @@ export default {
             let manager = this
             let queueFix = false
             let last = null
-            let clearCache = false
             let uploadPreview = '#uploadPreview'
             let uploadSize = this.restrict.uploadSize ? this.restrict.uploadSize : 256
             let uploadTypes = this.restrict.uploadTypes ? this.restrict.uploadTypes.join(',') : null
@@ -165,7 +164,6 @@ export default {
                         uploaded++
 
                         if (item.success) {
-                            clearCache = true
                             last = item.file_name
                             manager.showNotif(`${manager.trans('upload_success')} "${item.file_name}"`)
                         } else {
@@ -189,13 +187,9 @@ export default {
                         uploaded = 0
                         allFiles = 0
 
-                        if (clearCache) {
-                            manager.removeCachedResponse().then(() => {
-                                last
-                                    ? manager.getFiles(manager.folders, null, last)
-                                    : manager.getFiles(manager.folders)
-                            })
-                        }
+                        last
+                            ? manager.getFiles(manager.folders, null, last)
+                            : manager.getFiles(manager.folders)
                     }
                 }
             }
@@ -292,9 +286,7 @@ export default {
                     })
 
                     this.showNotif(`${this.trans('save_success')} "${data.message}"`)
-                    this.removeCachedResponse().then(() => {
-                        this.getFiles(this.folders, null, data.message)
-                    })
+                    this.getFiles(this.folders, null, data.message)
 
                 }).catch((err) => {
                     console.error(err)

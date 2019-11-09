@@ -1,4 +1,4 @@
-import {loadImageWithWorker} from '../webworker'
+import {loadImageWithWorker} from '../webworkers/image'
 
 export default {
     computed: {
@@ -33,6 +33,8 @@ export default {
             if (typeof this.bulkList !== 'undefined' && this.bulkList.length > 0) {
                 return this.bulkList.length
             }
+
+            return null
         },
         bulkItemsSize() {
             let count = 0
@@ -63,6 +65,8 @@ export default {
 
                 return count
             }
+
+            return null
         },
         bulkItemsFilter() {
             return this.lockedList.length
@@ -89,6 +93,8 @@ export default {
                     ? {'--gradient': color, 'background-image': `url("${url}")`}
                     : {'--gradient': color}
             }
+
+            return null
         },
         uploadPreviewListSize() {
             let size = this.uploadPreviewList
@@ -98,20 +104,11 @@ export default {
             return this.getFileSize(size)
         },
 
-        // caching
-        CDBN() {
-            return 'ctf0-Media_Manager'
-        },
-        cacheName() {
-            let folders = this.folders
-            return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
-        },
-
         // misc
         selectedFileDimensions() {
             let f = this.dimensions.find((e) => e.url == this.selectedFile.path)
 
-            return f ? f.val : '...'
+            return f ? f.val : null
         }
     },
     asyncComputed: {
@@ -121,65 +118,20 @@ export default {
                     let url = this.selectedFile.path
 
                     if (this.selectedFileIs('image')) {
-                        if (!this.lazyModeIsOn() || !this.browserSupport('caches')) {
-                            return loadImageWithWorker(url).then((img) => {
-                                return img
-                            })
-                        }
-
-                        return caches.open(this.CDBN).then((cache) => {
-                            // wait until the item is cached & return it
-                            return new Promise((resolve) => {
-                                let t = setInterval(() => {
-                                    return cache.match(url).then((response) => {
-                                        return response ? response.blob() : null
-                                    }).then((blob) => {
-                                        if (blob) {
-                                            clearInterval(t)
-                                            return resolve(URL.createObjectURL(blob))
-                                        }
-                                    })
-                                }, 250)
-                            })
+                        return loadImageWithWorker(url).then((img) => {
+                            return img
                         })
                     }
 
                     if (this.selectedFileIs('audio') && this.browserSupport('jsmediatags')) {
-                        return this.getCachedResponse(url).then((res) => {
-                            if (res) {
-                                // queue the image render
-                                let pic = res.picture
-                                res.picture = null
-                                this.$nextTick(() => {
-                                    setTimeout(() => {
-                                        return res.picture = pic
-                                    }, 250)
-                                })
-
-                                return res
-                            }
-
-                            return this.getAudioData(url)
-                                .then((val) => {
-                                    // queue the cache save
-                                    setTimeout(() => {
-                                        this.cacheResponse(val, url)
-                                    }, 1000)
-
-                                    // queue the image render
-                                    let pic = val.picture
-                                    val.picture = null
-                                    setTimeout(() => {
-                                        return val.picture = pic
-                                    }, 500)
-
-                                    return val
-                                })
+                        return this.getAudioData(url).then((val) => {
+                            return val.picture
                         })
                     }
                 }
             },
-            default: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            watch: ['selectedFile'],
+            default: 'data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             lazy: true
         }
     }

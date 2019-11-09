@@ -80,9 +80,7 @@ export default {
             }
 
             if (!this.isBulkSelecting()) {
-                this.lazyModeIsOn()
-                    ? this.lazySelectFirst()
-                    : this.selectFirst()
+                this.selectFirst()
             }
 
             if (this.searchFor) {

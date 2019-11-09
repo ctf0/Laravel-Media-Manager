@@ -14,7 +14,7 @@ export default {
 
             this.bulkList.splice(this.bulkList.indexOf(file), 1)
 
-            this.bulkItemsCount && !this.lazyModeIsOn()
+            this.bulkItemsCount
                 ? this.selectedFile = this.bulkList[this.bulkItemsCount - 1] // select prev item
                 : this.resetInput(['selectedFile', 'currentFileIndex'])
         },
@@ -39,11 +39,9 @@ export default {
             this.resetInput(['selectedFile', 'currentFileIndex'])
 
             if (!this.isBulkSelecting()) {
-                this.lazyModeIsOn()
-                    ? this.lazySelectFirst()
-                    : file
-                        ? this.setSelected(file, index)
-                        : this.selectFirst()
+                file
+                    ? this.setSelected(file, index)
+                    : this.selectFirst()
             }
         },
         blkSlctAll() {
@@ -104,7 +102,7 @@ export default {
             }
 
             // if we have items in bulk list, select first item
-            if (this.bulkItemsCount && !this.lazyModeIsOn()) {
+            if (this.bulkItemsCount) {
                 this.selectedFile = this.bulkList[0]
             }
         }

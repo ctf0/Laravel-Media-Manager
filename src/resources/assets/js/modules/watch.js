@@ -76,9 +76,7 @@ export default {
                 }
 
                 if (!this.isBulkSelecting()) {
-                    this.lazyModeIsOn()
-                        ? this.lazySelectFirst()
-                        : this.selectFirst()
+                    this.selectFirst()
                 }
             }
         },
@@ -91,9 +89,7 @@ export default {
         // search
         searchFor(val) {
             if (!this.isBulkSelecting()) {
-                this.lazyModeIsOn()
-                    ? this.lazySelectFirst()
-                    : this.selectFirst()
+                this.selectFirst()
             }
 
             if (val) {

@@ -1,5 +1,6 @@
 <template>
-    <video :src="file.path" preload="metadata"/>
+    <video :src="file.path"
+           preload="metadata"/>
 </template>
 
 <script>
@@ -16,7 +17,7 @@ export default {
             let t = e.target
 
             EventHub.fire('save-image-dimensions', {
-                url: t.src,
+                url: t.src.replace(/%20/g, ' '), // because browser convert 'spaces' to '%20'
                 val: `${t.videoWidth} x ${t.videoHeight}`
             })
         }

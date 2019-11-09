@@ -2,8 +2,7 @@
     class="__stack-breadcrumb-mobile is-hidden-desktop"
     ref="bc"
     v-if="folders.length > 0 && !restrictModeIsOn()"
-    name="list"
-    mode="out-in">
+    name="list">
     <li id="library-bc" key="library-bc">
         <a v-if="folders.length > 0 && !(isBulkSelecting() || isLoading)"
             v-tippy

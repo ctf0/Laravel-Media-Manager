@@ -38,7 +38,6 @@ export default {
                 })
 
                 this.isBulkSelecting() ? this.blkSlct() : false
-                this.removeCachedResponse()
 
             }).catch((err) => {
                 console.error(err)

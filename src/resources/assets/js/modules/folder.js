@@ -1,11 +1,14 @@
 export default {
     methods: {
         // navigation
-        openFolder(file) {
-            if (this.fileTypeIs(file, 'folder')) {
-                this.folders.push(file.name)
-                this.getFiles(this.folders).then(() => {
-                    this.updatePageUrl()
+        openFolder(folder) {
+            if (this.fileTypeIs(folder, 'folder')) {
+                this.folders.push(folder.name)
+
+                this.$nextTick(() => {
+                    this.getFiles(this.folders).then(() => {
+                        this.updatePageUrl()
+                    })
                 })
             }
         },
@@ -16,8 +19,10 @@ export default {
 
                 this.folders = folders.splice(0, index)
 
-                this.getFiles(this.folders, prev_folder_name).then(() => {
-                    this.updatePageUrl()
+                this.$nextTick(() => {
+                    this.getFiles(this.folders, prev_folder_name).then(() => {
+                        this.updatePageUrl()
+                    })
                 })
             }
         },

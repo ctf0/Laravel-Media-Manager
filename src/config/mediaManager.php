@@ -3,15 +3,13 @@
 return [
     /*
      * ignore any file starts with "."
-     *
-     * "clear browser cache on change"
      */
     'ignore_files' => '/^\..*/',
 
     /*
      * filesystem disk
      */
-    'storage_disk' => 'public',
+    'storage_disk' => env('FILESYSTEM_DRIVER', 'public'),
 
     /*
      * manager controller
@@ -28,7 +26,7 @@ return [
      * parentheses ()
      * comma ,
      */
-    'allowed_fileNames_chars' => '.\_\-\'\s\(\)\,',
+    'allowed_fileNames_chars' => '\._-\'\s\(\),',
 
     /*
      * remove any folder special chars except
@@ -38,7 +36,7 @@ return [
      *
      * to add & nest folders in one go add '\/'
      */
-    'allowed_folderNames_chars' => '\_\-\s',
+    'allowed_folderNames_chars' => '_-\s',
 
     /*
      * disallow uploading files with the following mimetypes
@@ -72,9 +70,7 @@ return [
 
     /*
      * display file last modification time as
-     * check "/vendor/nesbot/carbon/src/Carbon/Carbon.php"
-     *
-     * "clear browser cache on change"
+     * http://carbon.nesbot.com/docs/#api-formatting
      */
     'last_modified_format' => 'toDateString',
 
@@ -84,24 +80,9 @@ return [
     'hide_files_ext' => true,
 
     /*
-     * load image preview when item is clicked
-     *
-     * "clear browser cache on change"
-     */
-    'lazy_load_image_on_click' => false,
-
-    /*
-     * automatically invalidate cache after ?
-     * in "Minutes"
-     */
-    'cache_expires_after' => 60,
-
-    /*
      * in-order to get the folder items count & size
      * we need to recursively get all the files inside the folders
      * which could make the request take longer
-     *
-     * "clear browser cache on change"
      */
     'get_folder_info' => true,
 
@@ -115,7 +96,6 @@ return [
 
     /*
      * show "an itunes like" content ratio bar
-     * above the manager
      */
     'show_ratio_bar' => true,
 

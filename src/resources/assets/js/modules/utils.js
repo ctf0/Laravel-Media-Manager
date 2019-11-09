@@ -39,10 +39,7 @@ export default {
             this.bulkSelectAll = false
             this.resetInput('bulkList', [])
             this.resetInput('searchFor')
-
-            this.lazyModeIsOn()
-                ? this.lazySelectFirst()
-                : this.selectFirst()
+            this.selectFirst()
         },
 
         /*                Resolve                */

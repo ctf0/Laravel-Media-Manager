@@ -62,7 +62,6 @@ trait Upload
                         'file_path'  => $this->getItemPath($full_path),
                         'mime_type'  => $file_type,
                         'options'    => $file_options,
-                        'cache_path' => $upload_path,
                     ]);
 
                     $broadcast = true;

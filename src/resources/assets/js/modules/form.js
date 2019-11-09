@@ -16,50 +16,28 @@ export default {
                 folders = this.clearDblSlash(`/${folders.join('/')}`)
             }
 
-            // clear expired cache
-            return this.invalidateCache().then(() => {
-                // fix db-click to open folder not reseting the file selection
-                this.resetInput(['selectedFile', 'currentFileIndex'])
+            // get data
+            return axios.post(this.routes.files, {
+                folder: folders,
+                dirs: this.folders
+            }).then(({data}) => {
+                // folder doesnt exist
+                if (data.error) {
+                    return this.showNotif(data.error, 'danger')
+                }
 
-                // get data
-                return this.getCachedResponse().then((res) => {
-                    // return cache
-                    if (res) {
-                        this.files = res.files
-                        this.directories = res.dirs
-                        return this.filesListCheck(folders, prev_folder, prev_file)
-                    }
+                // return data
+                this.files = data.files
+                this.lockedList = data.locked
+                this.directories = data.dirs
+                this.filesListCheck(folders, prev_folder, prev_file)
 
-                    // or make new call
-                    return axios.post(this.routes.files, {
-                        folder: folders,
-                        dirs: this.folders
-                    }).then(({data}) => {
-                        // folder doesnt exist
-                        if (data.error) {
-                            return this.showNotif(data.error, 'danger')
-                        }
+            }).catch((err) => {
+                console.error(err)
 
-                        // cache response
-                        this.cacheResponse({
-                            files: data.files,
-                            dirs: data.dirs
-                        })
-
-                        // return data
-                        this.files = data.files
-                        this.lockedList = data.locked
-                        this.directories = data.dirs
-                        this.filesListCheck(folders, prev_folder, prev_file)
-
-                    }).catch((err) => {
-                        console.error(err)
-
-                        this.isLoading = false
-                        this.loadingFiles('hide')
-                        this.ajaxError()
-                    })
-                })
+                this.isLoading = false
+                this.loadingFiles('hide')
+                this.ajaxError()
             })
         },
         updateDirsList() {
@@ -74,7 +52,6 @@ export default {
         },
 
         filesListCheck(folders, prev_folder, prev_file) {
-            let lazy = this.lazyModeIsOn()
             let files = this.files.items
 
             if (this.hideExt.length) {
@@ -99,11 +76,7 @@ export default {
 
                     files.some((e, i) => {
                         if (prev_file && e.name == prev_file) {
-                            index = lazy
-                                ? this.fileTypeIs(e, 'image')
-                                    ? null
-                                    : i
-                                : i
+                            index = i
                         }
 
                         if (prev_folder && e.name == prev_folder) {
@@ -117,7 +90,7 @@ export default {
                 this.$nextTick(() => {
                     // no prev found
                     if (!this.currentFileIndex) {
-                        lazy ? this.lazySelectFirst() : this.selectFirst()
+                        this.selectFirst()
                     }
 
                     // update search
@@ -169,9 +142,7 @@ export default {
 
                 this.showNotif(`${this.trans('create_success')} "${data.new_folder_name}" at "${path || '/'}"`)
                 this.isBulkSelecting() ? this.blkSlct() : false
-                this.deleteCachedResponse(this.cacheName).then(() => {
-                    this.getFiles(this.folders, data.new_folder_name)
-                })
+                this.getFiles(this.folders, data.new_folder_name)
 
             }).catch((err) => {
                 console.error(err)
@@ -184,7 +155,6 @@ export default {
             let selected = this.selectedFile
             let changed = this.newFilename
             let filename = selected.name
-            let cacheName = this.getCacheName(filename)
             let ext = this.getExtension(filename)
             let newFilename = ext == null ? changed : `${changed}.${ext}`
 
@@ -192,8 +162,9 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            if (this.selectedFileIs('folder') && this.hasLockedItems(filename, cacheName)) {
+            if (this.selectedFileIs('folder') && this.hasLockedItems(filename, this.getCacheName(filename))) {
                 this.showNotif(`"${filename}" ${this.trans('error_altered_fwli')}`, 'danger')
+
                 return this.toggleModal()
             }
 
@@ -212,23 +183,15 @@ export default {
                     return this.showNotif(data.message, 'danger')
                 }
 
-                // clear image cache
-                if (this.selectedFileIs('image')) {
-                    this.removeImageCache(this.selectedFile.path)
-                }
-
                 let savedName = data.new_filename
 
                 this.showNotif(`${this.trans('rename_success')} "${filename}" to "${savedName}"`)
                 selected.name = savedName
                 selected.path = selected.path.replace(filename, savedName)
 
-                // clear folders cache
+                // update folders
                 if (this.selectedFileIs('folder')) {
                     this.updateDirsList()
-                    this.removeCachedResponse(null, [cacheName])
-                } else {
-                    this.removeCachedResponse()
                 }
 
             }).catch((err) => {
@@ -241,9 +204,6 @@ export default {
         MoveFileForm(event) {
             if (this.checkForFolders) {
                 let hasErrors = false
-                let clearCache = false
-                let cacheNamesList = []
-
                 let destination = this.moveToPath
                 let copy = this.useCopy
                 let files = this.checkNestedLockedItems(
@@ -270,10 +230,9 @@ export default {
                     data.map((item) => {
                         if (!item.success) {
                             hasErrors = true
+
                             return this.showNotif(item.message, 'danger')
                         }
-
-                        clearCache = true
 
                         // copy
                         if (copy) {
@@ -292,10 +251,6 @@ export default {
                             if (this.searchFor) {
                                 this.searchItemsCount = this.filesList.length
                             }
-
-                            if (this.fileTypeIs(item, 'folder')) {
-                                cacheNamesList.push(`${this.cacheName}/${item.name}`)
-                            }
                         }
 
                         // update folder count when folder is moved/copied into another
@@ -304,19 +259,12 @@ export default {
                             : this.updateFolderCount(destination, 1, item.size)
                     })
 
-                    if (clearCache) {
-                        this.clearImageCache()
-                        this.removeCachedResponse(destination == '../' ? null : destination, cacheNamesList).then(() => {
-                            if (this.allItemsCount) {
-                                this.isBulkSelecting()
-                                    ? this.blkSlct()
-                                    : hasErrors
-                                        ? false
-                                        : this.lazyModeIsOn()
-                                            ? this.lazySelectFirst()
-                                            : this.selectFirst()
-                            }
-                        })
+                    if (this.allItemsCount) {
+                        this.isBulkSelecting()
+                            ? this.blkSlct()
+                            : hasErrors
+                                ? false
+                                : this.selectFirst()
                     }
                 }).catch((err) => {
                     console.error(err)
@@ -327,8 +275,6 @@ export default {
 
         // delete
         DeleteFileForm(event) {
-            let clearCache = false
-            let cacheNamesList = []
             let files = this.checkNestedLockedItems(
                 this.bulkItemsCount
                     ? this.bulkItemsFilter
@@ -353,32 +299,15 @@ export default {
                         return this.showNotif(item.message, 'danger')
                     }
 
-                    // clear indexdb cache for dirs
-                    if (item.type == 'folder') {
-                        cacheNamesList.push(this.getCacheName(item.name))
-                    }
-                    // clear cache storage for images / audio
-                    else {
-                        this.deleteCachedResponse(item.url)
-                        this.removeImageCache(item.url)
-                    }
-
-                    clearCache = true
                     this.showNotif(`${this.trans('delete_success')} "${item.name}"`)
                     this.removeFromLists(item.name, item.type)
                 })
 
-                if (clearCache) {
-                    this.removeCachedResponse(null, cacheNamesList).then(() => {
-                        this.isBulkSelecting()
-                            ? this.blkSlct()
-                            : this.allItemsCount
-                                ? this.lazyModeIsOn()
-                                    ? this.lazySelectFirst()
-                                    : this.selectFirst()
-                                : false
-                    })
-                }
+                this.isBulkSelecting()
+                    ? this.blkSlct()
+                    : this.allItemsCount
+                        ? this.selectFirst()
+                        : false
 
                 this.$nextTick(() => {
                     if (this.searchFor) {
