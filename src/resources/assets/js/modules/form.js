@@ -147,8 +147,6 @@ export default {
                 if (!this.allItemsCount && !this.no_files) {
                     this.noFiles('show')
                 }
-
-                EventHub.fire('start-img-observing')
             })
         },
 

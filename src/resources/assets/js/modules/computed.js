@@ -1,5 +1,3 @@
-import {loadImageWithWorker} from '../webworkers/image'
-
 export default {
     computed: {
         filesList() {
@@ -118,15 +116,11 @@ export default {
                     let url = this.selectedFile.path
 
                     if (this.selectedFileIs('image')) {
-                        return loadImageWithWorker(url).then((img) => {
-                            return img
-                        })
+                        return url
                     }
 
                     if (this.selectedFileIs('audio') && this.browserSupport('jsmediatags')) {
-                        return this.getAudioData(url).then((val) => {
-                            return val.picture
-                        })
+                        return this.getAudioData(url).then((val) => val)
                     }
                 }
             },

@@ -27,8 +27,8 @@
         {{-- audio --}}
         <div v-else-if="selectedFileIs('audio')" class="audio-prev">
             <template>
-                <img v-if="selectedFilePreview"
-                    :src="selectedFilePreview"
+                <img v-if="selectedFilePreview && selectedFilePreview.picture"
+                    :src="selectedFilePreview.picture"
                     :alt="selectedFile.name"
                     class="image"/>
 

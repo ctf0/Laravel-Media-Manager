@@ -83,8 +83,6 @@ export default {
             if (this.searchFor) {
                 this.updateSearchCount()
             }
-
-            this.$nextTick(() => EventHub.fire('start-img-observing'))
         },
 
         // search

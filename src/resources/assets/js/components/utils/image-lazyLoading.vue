@@ -39,10 +39,8 @@ export default {
             immediate: true,
             handler(val, oldVal) {
                 if (val) {
-                    this.fetchImg().then((img) => {
-                        this.src = img
-                        this.$nextTick(() => this.sendDimensionsToParent())
-                    })
+                    this.src = this.file.path
+                    this.$nextTick(() => this.sendDimensionsToParent())
                 }
             }
         }

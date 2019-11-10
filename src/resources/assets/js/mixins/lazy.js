@@ -1,5 +1,3 @@
-import {loadImageWithWorker} from '../webworkers/image'
-
 export default {
     props: ['file', 'browserSupport', 'rootEl'],
     data() {
@@ -20,21 +18,11 @@ export default {
     },
     methods: {
         init() {
-            EventHub.listen(['start-img-observing', 'start-search-observing'], () => {
-                this.isObserving = true
-
-                setTimeout(() => {
-                    if (!this.intersected) {
-                        this.browserSupport('IntersectionObserver')
-                            ? this.observe()
-                            : this.intersected = true
-                    }
-                }, 500)
-            })
-
-            EventHub.listen('stop-img-observing', () => {
-                this.stop()
-            })
+            if (!this.intersected) {
+                this.browserSupport('IntersectionObserver')
+                    ? this.observe()
+                    : this.intersected = true
+            }
         },
         stop() {
             if (this.observer) {
@@ -57,9 +45,6 @@ export default {
             })
 
             this.observer.observe(this.$el)
-        },
-        fetchImg() {
-            return loadImageWithWorker(this.file.path)
         }
     }
 }

@@ -3,37 +3,9 @@
 namespace ctf0\MediaManager\Controllers\Moduels;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 trait GetContent
 {
-    /**
-     * helper to paginate array.
-     *
-     * @param [type] $items
-     * @param int    $perPage
-     * @param [type] $page
-     */
-    public function paginate($items, $perPage = 10, $page = null)
-    {
-        $pageName = 'page';
-        $page     = $page ?: (Paginator::resolveCurrentPage($pageName) ?: 1);
-        $items    = $items instanceof Collection ? $items : Collection::make($items);
-
-        return new LengthAwarePaginator(
-            $items->forPage($page, $perPage)->values(),
-            $items->count(),
-            $perPage,
-            $page,
-            [
-                'path'     => Paginator::resolveCurrentPath(),
-                'pageName' => $pageName,
-            ]
-        );
-    }
-
     /**
      * get files in path.
      *
@@ -82,8 +54,8 @@ trait GetContent
     {
         $list           = [];
         $dirList        = $this->getFolderContent($dir);
-        $storageFiles   = $this->getFolderListByType($dirList, 'file');
         $storageFolders = $this->getFolderListByType($dirList, 'dir');
+        $storageFiles   = $this->getFolderListByType($dirList, 'file');
         $pattern        = $this->ignoreFiles;
 
         foreach ($storageFolders as $folder) {

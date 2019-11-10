@@ -737,8 +737,8 @@
                                 title="space"
                                 :key="selectedFile.name">
                                 <template>
-                                    <img v-if="selectedFilePreview"
-                                        :src="selectedFilePreview"
+                                    <img v-if="selectedFilePreview && selectedFilePreview.picture"
+                                        :src="selectedFilePreview.picture"
                                         :alt="selectedFile.name"
                                         class="image"/>
                                     <icon v-else class="svg-prev-icon" name="music" scale="8"></icon>
@@ -798,7 +798,7 @@
                         <transition name="mm-list" mode="out-in" appear>
                             <div :key="selectedFile.name" v-if="selectedFile">
                                 {{-- audio extra info --}}
-                                <template v-if="selectedFileIs('audio') && selectedFilePreview">
+                                <template v-if="selectedFileIs('audio') && checkAudioData()">
                                     <table>
                                         <tbody>
                                             <tr v-if="selectedFilePreview.artist">
@@ -823,6 +823,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <hr>
                                 </template>
 
                                 <table>

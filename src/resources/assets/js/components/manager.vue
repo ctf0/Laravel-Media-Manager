@@ -164,11 +164,10 @@ export default {
         window.addEventListener('resize', this.onResize)
         window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
-        this.init()
     },
     mounted() {
+        this.init()
         this.eventsListener()
-        this.scrollObserve()
     },
     updated: debounce(function() {
         if (this.firstRun) {

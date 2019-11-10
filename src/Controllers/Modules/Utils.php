@@ -3,9 +3,37 @@
 namespace ctf0\MediaManager\Controllers\Moduels;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Utils
 {
+    /**
+     * helper to paginate array.
+     *
+     * @param [type] $items
+     * @param int    $perPage
+     * @param [type] $page
+     */
+    public function paginate($items, $perPage = 10, $page = null)
+    {
+        $pageName = 'page';
+        $page     = $page ?: (Paginator::resolveCurrentPage($pageName) ?: 1);
+        $items    = $items instanceof Collection ? $items : Collection::make($items);
+
+        return new LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $items->count(),
+            $perPage,
+            $page,
+            [
+                'path'     => Paginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]
+        );
+    }
+
     /**
      * sanitize input.
      *

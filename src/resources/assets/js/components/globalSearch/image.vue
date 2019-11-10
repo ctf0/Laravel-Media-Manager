@@ -1,8 +1,13 @@
 <template>
     <div>
-        <img v-if="src" ref="img" :src="src" :alt="file.name" loading="lazy">
+        <img v-if="src"
+             ref="img"
+             :src="src"
+             :alt="file.name"
+             loading="lazy">
         <!-- <img v-else src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"> -->
-        <img v-else src="/assets/vendor/MediaManager/patterns/gif/5b98026bab87a.gif">
+        <img v-else
+             src="/assets/vendor/MediaManager/patterns/gif/5b98026bab87a.gif">
     </div>
 </template>
 
@@ -23,9 +28,7 @@ export default {
             immediate: true,
             handler(val, oldVal) {
                 if (val) {
-                    this.fetchImg().then((img) => {
-                        this.src = img
-                    })
+                    this.src = this.file.path
                 }
             }
         }

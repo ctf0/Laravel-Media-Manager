@@ -105,6 +105,21 @@ export default {
                     }
                 })
             })
+        },
+        checkAudioData() {
+            if (this.selectedFilePreview) {
+                return [
+                    'artist',
+                    'title',
+                    'album',
+                    'track',
+                    'year'
+                ].some((prop) => {
+                    return this.selectedFilePreview.hasOwnProperty(prop)
+                })
+            }
+
+            return false
         }
     }
 }

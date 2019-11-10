@@ -34,7 +34,6 @@
                               class="columns is-multiline m-0">
                 <li v-for="(item, i) in filterdList"
                     :key="`${i}-${item.name}`"
-                    v-list-rendered="[i, filterdList, orch]"
                     class="column is-2">
                     <div class="card">
                         <div class="card-image">
@@ -152,11 +151,6 @@ export default {
         }
     },
     methods: {
-        orch() {
-            setTimeout(() => {
-                EventHub.fire('start-img-observing')
-            }, 100)
-        },
         eventsListener() {
             EventHub.listen('global-search-index', (data) => {
                 this.filesIndex = data
