@@ -1,6 +1,6 @@
-import omitBy from 'lodash/omitBy'
-import isObject from 'lodash/isObject'
 import Plyr from 'plyr'
+import AudioWorker from 'worker-loader!../webworkers/audio'
+import omit from 'lodash/omit'
 
 export default {
     methods: {
@@ -17,9 +17,7 @@ export default {
                     let item = document.querySelector('[data-player]')
 
                     if (item) {
-                        this.player.item = new Plyr(item, options)
-
-                        let plr = this.player.item
+                        let plr = this.player.item = new Plyr(item, options)
 
                         // status
                         plr.on('playing', (e) => {
@@ -78,36 +76,32 @@ export default {
 
         // audio
         getAudioData(url) {
-            return new Promise((resolve, reject) => {
-                jsmediatags.read(url, {
-                    onSuccess(tag) {
-                        let val = tag.tags
+            return this.db('get', url).then((cache) => {
+                // cached
+                if (cache) {
+                    this.audioFileMeta = cache
+                }
 
-                        if (val) {
-                            if (val.picture) {
-                                const {data, format} = val.picture
-                                let base64String = ''
-
-                                for (let value of data) {
-                                    base64String += String.fromCharCode(value)
-                                }
-
-                                val.picture = `data:${format};base64,${window.btoa(base64String)}`
-                            }
-
-                            return resolve(omitBy(val, isObject))
-                        }
-
-                        return reject('no data found')
-                    },
-                    onError(error) {
-                        return reject(error)
+                // fetch
+                // we do that even when cache is found because
+                // cover could be corrupted when loaded from cache
+                // so we have to refetch it
+                // also to save space we cache all except 'cover'
+                const audio = new AudioWorker()
+                audio.addEventListener('message', ({data}) => {
+                    if (!cache) {
+                        this.db('set', url, omit(data, ['cover']))
                     }
+
+                    this.audioFileMeta = data
                 })
+                audio.postMessage(url)
             })
         },
         checkAudioData() {
-            if (this.selectedFilePreview) {
+            let selected = this.audioFileMeta
+
+            if (selected) {
                 return [
                     'artist',
                     'title',
@@ -115,7 +109,7 @@ export default {
                     'track',
                     'year'
                 ].some((prop) => {
-                    return this.selectedFilePreview.hasOwnProperty(prop)
+                    return selected.hasOwnProperty(prop)
                 })
             }
 

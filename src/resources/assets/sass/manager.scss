@@ -8,7 +8,7 @@
 @import './packages/progress';
 @import './packages/switcher';
 @import './modules/usage-intro';
-@import './modules/player';
+@import './modules/media_player';
 
 /*                toolbar                */
 .media-manager__toolbar {
@@ -20,13 +20,13 @@
     padding: 1rem;
 } // .media-manager__toolbar
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .media-manager__toolbar {
         .level-left + .level-right {
             margin-top: 0.75rem;
-        } // @include media('max', 1087) .media-manager__toolbar .level-left + .level-right
-    } // @include media('max', 1087) .media-manager__toolbar
-} // @include media('max', 1087)
+        } // @include media('max', 1023) .media-manager__toolbar .level-left + .level-right
+    } // @include media('max', 1023) .media-manager__toolbar
+} // @include media('max', 1023)
 
 /*                upload                */
 .media-manager__dz {
@@ -131,12 +131,12 @@
     } // #new-upload .save_link
 } // #new-upload
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     #new-upload::before {
         height: 40vw;
         width: 40vw;
-    } // @include media('max', 1087) #new-upload::before
-} // @include media('max', 1087)
+    } // @include media('max', 1023) #new-upload::before
+} // @include media('max', 1023)
 
 @include media('max', 768) {
     #new-upload::before {
@@ -171,12 +171,8 @@
     } // #uploadPreview.show
 
     .dz-preview-ops {
-        bottom: 1rem;
         display: flex;
         flex-direction: column;
-        position: absolute;
-        right: 0.25rem;
-        z-index: 2;
     } // #uploadPreview .dz-preview-ops
 
     .icon-btn {
@@ -187,7 +183,7 @@
         button {
             color: $white;
             opacity: 0.7;
-            transition: all 0.3s ease-out;
+            transition: all $anim-time ease-out;
 
             &:hover {
                 filter: drop-shadow(0 4px 6px rgba($black, 0.1));
@@ -211,7 +207,7 @@
     } // #uploadPreview .sidebar-container
 } // #uploadPreview
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     #uploadPreview.show {
         flex-direction: column;
 
@@ -225,10 +221,10 @@
 
             .sidebar {
                 flex-wrap: nowrap;
-            } // @include media('max', 1087) #uploadPreview.show .sidebar-container .sidebar
-        } // @include media('max', 1087) #uploadPreview.show .sidebar-container
-    } // @include media('max', 1087) #uploadPreview.show
-} // @include media('max', 1087)
+            } // @include media('max', 1023) #uploadPreview.show .sidebar-container .sidebar
+        } // @include media('max', 1023) #uploadPreview.show .sidebar-container
+    } // @include media('max', 1023) #uploadPreview.show
+} // @include media('max', 1023)
 
 .dz-success-mark,
 .dz-error-message,
@@ -447,11 +443,11 @@
     } // .__stack-container.dz-drag-hover
 } // .__stack-container
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .__stack-container {
         max-height: 75vh;
-    } // @include media('max', 1087) .__stack-container
-} // @include media('max', 1087)
+    } // @include media('max', 1023) .__stack-container
+} // @include media('max', 1023)
 
 // files list container
 .__stack-files {
@@ -595,13 +591,13 @@
     } // .__box-data .__box-info
 } // .__box-data
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .__stack-files {
         left: 0;
         position: relative;
         right: 0;
         width: 100%;
-    } // @include media('max', 1087) .__stack-files
+    } // @include media('max', 1023) .__stack-files
 
     .__files-boxs {
         li {
@@ -609,17 +605,17 @@
             max-width: 200px;
             min-height: 200px;
             min-width: 200px;
-        } // @include media('max', 1087) .__files-boxs li
-    } // @include media('max', 1087) .__files-boxs
+        } // @include media('max', 1023) .__files-boxs li
+    } // @include media('max', 1023) .__files-boxs
 
     .__file-box {
         padding: 0;
-    } // @include media('max', 1087) .__file-box
+    } // @include media('max', 1023) .__file-box
 
     .__box-copy-link {
         bottom: 1px;
         right: 1px;
-    } // @include media('max', 1087) .__box-copy-link
+    } // @include media('max', 1023) .__box-copy-link
 
     .__box-data {
         align-self: unset;
@@ -637,7 +633,7 @@
 
             svg {
                 transform: scale(1.5);
-            } // @include media('max', 1087) .__box-data .__box-preview svg
+            } // @include media('max', 1023) .__box-data .__box-preview svg
 
             .__box-img {
                 border: none;
@@ -647,16 +643,16 @@
 
                 img {
                     object-position: top;
-                } // @include media('max', 1087) .__box-data .__box-preview .__box-img img
-            } // @include media('max', 1087) .__box-data .__box-preview .__box-img
-        } // @include media('max', 1087) .__box-data .__box-preview
+                } // @include media('max', 1023) .__box-data .__box-preview .__box-img img
+            } // @include media('max', 1023) .__box-data .__box-preview .__box-img
+        } // @include media('max', 1023) .__box-data .__box-preview
 
         .__box-info {
             padding: 0.75rem;
             width: 100%;
-        } // @include media('max', 1087) .__box-data .__box-info
-    } // @include media('max', 1087) .__box-data
-} // @include media('max', 1087)
+        } // @include media('max', 1023) .__box-data .__box-info
+    } // @include media('max', 1023) .__box-data
+} // @include media('max', 1023)
 
 // info sidebar
 .__stack-sidebar {
@@ -711,7 +707,7 @@
 
         > div {
             padding: 0.75rem;
-            transition: height $anim-time ease-out;
+            transition: all $anim-time ease-out;
 
             &:not(.__sidebar-count) {
                 flex: 1;
@@ -814,50 +810,44 @@
     margin: 4rem 0;
 } // .svg-prev-icon
 
-// sidebar/card image scroll
-.image-wrapper {
-    overflow: hidden;
+/*                movable                */
+.movable-list {
     position: relative;
 
-    > div {
-        max-height: 40vh;
-        overflow-y: scroll;
-    } // .image-wrapper > div
-
-    .image-scroll-btn {
-        background: $image;
-        border-radius: 100vw;
-        bottom: 1rem;
+    .circle {
         color: $white;
+    } // .movable-list .circle
+
+    .counter {
+        background: $red;
+        border-radius: 100vw;
+        color: $white;
+        font-size: 0.75rem;
+        font-weight: bold;
+        line-height: 1;
+        padding: 0.2rem 0.5rem;
         position: absolute;
-        right: 1rem;
-        transition: all $anim-time;
+        right: 0;
+        top: 0.1rem;
 
-        &.up {
-            transform: rotate(180deg);
+        &:empty {
+            display: none;
+        } // .movable-list .counter:empty
+    } // .movable-list .counter
+} // .movable-list
 
-            &:hover {
-                box-shadow: 0 -15px 30px 0 rgba($black, 0.11), 0 -5px 15px 0 rgba($black, 0.08);
-                transform: translateY(-0.7rem) rotate(180deg);
-            } // .image-wrapper .image-scroll-btn.up:hover
+.media.link {
+    border: 2px dashed transparent;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    transition: all $anim-time * 2 ease-in-out;
 
-            &:active {
-                box-shadow: 0 -10px 10px 0 rgba($black, 0.15), 0 -5px 10px 0 rgba($black, 0.1);
-                transform: translateY(-0.7rem) scale(0.8) rotate(180deg);
-            } // .image-wrapper .image-scroll-btn.up:active
-        } // .image-wrapper .image-scroll-btn.up
-
-        &:hover {
-            box-shadow: 0 15px 30px 0 rgba($black, 0.11), 0 5px 15px 0 rgba($black, 0.08);
-            transform: translateY(-0.7rem);
-        } // .image-wrapper .image-scroll-btn:hover
-
-        &:active {
-            box-shadow: 0 10px 10px 0 rgba($black, 0.15), 0 5px 10px 0 rgba($black, 0.1);
-            transform: translateY(-0.7rem) scale(0.8);
-        } // .image-wrapper .image-scroll-btn:active
-    } // .image-wrapper .image-scroll-btn
-} // .image-wrapper
+    &:hover {
+        border-color: darken($active_theme, 5%);
+        transform: translateY(-0.15rem);
+    } // .media.link:hover
+} // .media.link
 
 /*                modal                */
 .__modal-content-wrapper {
@@ -915,13 +905,13 @@
     } // .__modal-preview .audio-prev
 } // .__modal-preview
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .__modal-preview {
         .modal-content {
             max-width: 50vw;
-        } // @include media('max', 1087) .__modal-preview .modal-content
-    } // @include media('max', 1087) .__modal-preview
-} // @include media('max', 1087)
+        } // @include media('max', 1023) .__modal-preview .modal-content
+    } // @include media('max', 1023) .__modal-preview
+} // @include media('max', 1023)
 
 @include media('max', 768) {
     .__modal-preview {
@@ -996,13 +986,13 @@
     } // .modal-manager__Inmodal .__modal-preview
 } // .modal-manager__Inmodal
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .modal-manager__Inmodal {
         .modal-content {
             width: 95%;
-        } // @include media('max', 1087) .modal-manager__Inmodal .modal-content
-    } // @include media('max', 1087) .modal-manager__Inmodal
-} // @include media('max', 1087)
+        } // @include media('max', 1023) .modal-manager__Inmodal .modal-content
+    } // @include media('max', 1023) .modal-manager__Inmodal
+} // @include media('max', 1023)
 
 .__Inmodal-editor,
 .__Inmodal-editor-hide {
@@ -1074,3 +1064,10 @@
 .progress-bar strong {
     display: none;
 } // .progress-bar strong
+
+.extra-func-btns {
+    bottom: $option_btns-space;
+    position: absolute;
+    right: $option_btns-space;
+    z-index: 2;
+} // .extra-func-btns

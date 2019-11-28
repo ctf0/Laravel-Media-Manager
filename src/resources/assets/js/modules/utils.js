@@ -4,22 +4,19 @@ export default {
         isLastItem(item, list) {
             return item == list[list.length - 1]
         },
+        isLastItemByIndex(i, list) {
+            return i == list.length - 1
+        },
         isActiveModal(el) {
             return this.activeModal == el
-        },
-        smallScreenHelper() {
-            if (!this.smallScreen) {
-                this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
-            }
         },
 
         /*                Buttons                */
         item_ops() {
-            if (this.isBulkSelecting()) {
-                return this.bulkItemsFilter.length == 0
-            }
-
-            return !this.selectedFile || this.IsLocked(this.selectedFile)
+            return (this.isBulkSelecting() && !this.bulkItemsFilter.length) ||
+                this.isLoading ||
+                !this.selectedFile ||
+                this.IsLocked(this.selectedFile)
         },
         lock_btn() {
             return this.searchItemsCount == 0 ||
@@ -43,6 +40,19 @@ export default {
         },
 
         /*                Resolve                */
+        resolveFileFullPath(file_name) {
+            let path = this.files.path
+            let str =
+                path == ''
+                    ? file_name == ''
+                        ? file_name
+                        : `/${file_name}`
+                    : path == file_name
+                        ? `/${file_name}`
+                        : `${path}/${file_name}`
+
+            return this.clearDblSlash(str)
+        },
         getFileName(name) {
             if (!this.config.hideFilesExt) {
                 return name
@@ -77,6 +87,20 @@ export default {
         trans(key) {
             return this.translations[key]
         },
+        delOrMoveList() {
+            return this.bulkItemsCount
+                ? this.bulkItemsFilter
+                : [this.selectedFile]
+        },
+        getListTotalSize(list) {
+            let total_size = 0
+
+            list.forEach((item) => {
+                total_size += parseInt(item.size)
+            })
+
+            return total_size !== 0 ? this.getFileSize(total_size) : 0
+        },
 
         /*                Toggle                */
         toggleOverlay() {
@@ -107,7 +131,7 @@ export default {
             return this.infoSidebar = !this.infoSidebar
         },
         toggleUploadPanel() {
-            return this.UploadArea = !this.UploadArea
+            return this.uploadArea = !this.uploadArea
         },
         toggleLoader(key, state) {
             return this[key] = state
@@ -195,16 +219,53 @@ export default {
 
             return str
         },
+        showNotif(msg, s = 'success', duration = 3) {
+            let title
+
+            switch (s) {
+                case 'black':
+                case 'danger':
+                    title = 'Error'
+                    duration = null
+                    break
+                case 'warning':
+                    title = 'Warning'
+                    break
+                case 'info':
+                case 'link':
+                    title = 'Info'
+                    duration = duration ? 5 : null
+                    break
+                default:
+                    title = 'Success'
+            }
+
+            EventHub.fire('showNotif', {
+                title: title,
+                body: msg,
+                type: s,
+                duration: duration
+            })
+        },
+
+        /*                Window Size                */
+        checkForSmallScreen() {
+            // 1023 = bulma is-hidden-touch
+            return document.documentElement.clientWidth <= 1023
+        },
+        smallScreenHelper() {
+            if (!this.smallScreen) {
+                this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
+            }
+        },
+        applySmallScreen() {
+            this.infoSidebar = false
+            this.smallScreen = true
+        },
         onResize() {
             if (this.firstRun) {
-                if (this.selectedFileIs('image')) {
-                    this.isScrollable()
-                }
-
-                // 1087 = bulma is-hidden-touch
-                if (document.documentElement.clientWidth < 1087) {
-                    this.infoSidebar = false
-                    this.smallScreen = true
+                if (this.checkForSmallScreen()) {
+                    this.applySmallScreen()
                 } else {
                     // hide active player modal
                     setTimeout(() => {
@@ -226,33 +287,6 @@ export default {
             }
 
             this.updateScrollByRow()
-        },
-        showNotif(msg, s = 'success', duration = 3) {
-            let title
-
-            switch (s) {
-                case 'black':
-                case 'danger':
-                    title = 'Error'
-                    duration = null
-                    break
-                case 'warning':
-                    title = 'Warning'
-                    break
-                case 'info':
-                    title = 'Info'
-                    duration = 5
-                    break
-                default:
-                    title = 'Success'
-            }
-
-            EventHub.fire('showNotif', {
-                title: title,
-                body: msg,
-                type: s,
-                duration: duration
-            })
         }
     }
 }

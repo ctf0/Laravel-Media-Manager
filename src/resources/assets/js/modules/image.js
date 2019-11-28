@@ -1,6 +1,3 @@
-import debounce from 'lodash/debounce'
-import animateScrollTo from '../packages/animated-scroll-to'
-
 export default {
     methods: {
         // btns
@@ -16,31 +13,27 @@ export default {
             setTimeout(this.imageEditor, 10)
         },
 
-        // scrollable
-        isScrollable() {
-            let item = this.$refs[this.activeModal ? 'img-card-prev' : 'img-prev']
-            if (item) {
-                return this.scrollableBtn.state = item.scrollHeight > item.offsetHeight
-            }
+        // dimensions
+        checkForDimensions(url) {
+            return this.dimensions.some((e) => e.url == url)
         },
-        updateScrollableDir: debounce(function (ref) {
-            let item = this.$refs[ref]
-            let margin = 3
+        saveVideoDimensions(e) {
+            let t = e.target
+            let url = t.src.replace(/%20/g, ' ') // because browser convert 'spaces' to '%20'
 
-            return this.scrollableBtn.dir = (item.scrollTop + item.clientHeight) >= (item.scrollHeight - margin)
-                ? 'up'
-                : 'down'
-        }, 250),
-        scrollImg(ref) {
-            let item = this.$refs[ref]
+            if (!this.checkForDimensions(url)) {
+                EventHub.fire('save-image-dimensions', {
+                    url: url,
+                    val: `${t.videoWidth} x ${t.videoHeight}`
+                })
+            }
+        }
+    },
+    computed: {
+        selectedFileDimensions() {
+            let f = this.dimensions.find((e) => e.url == this.selectedFile.path)
 
-            return animateScrollTo(item, {
-                speed: 250,
-                maxDuration: 500,
-                offset: this.scrollableBtn.dir == 'up' ? -item.scrollHeight : item.scrollHeight,
-                element: item,
-                useKeys: true
-            })
+            return f ? f.val : '...'
         }
     }
 }

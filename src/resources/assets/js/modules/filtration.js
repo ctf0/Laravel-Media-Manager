@@ -47,30 +47,28 @@ export default {
             }
         },
         showFilesOfType(val) {
-            if (this.currentFilterName == val) {
-                return
-            }
+            if (this.currentFilterName == val) return
 
             let files = this.files.items
 
             if (val == 'all') {
                 this.resetInput('currentFilterName')
-            } else if (val == 'locked') {
-                this.filterdList = files.filter((item) => this.IsLocked(item))
-                this.currentFilterName = val
-            } else if (val == 'selected') {
-                this.filterdList = this.bulkList
-                this.currentFilterName = val
             } else {
-                this.filterdList = files.filter((item) => {
-                    if (val == 'text') {
-                        return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
-                    } else if (val == 'application') {
-                        return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
-                    }
+                if (val == 'locked') {
+                    this.filterdList = files.filter((item) => this.IsLocked(item))
+                } else if (val == 'selected') {
+                    this.filterdList = this.bulkList
+                } else {
+                    this.filterdList = files.filter((item) => {
+                        if (val == 'text') {
+                            return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
+                        } else if (val == 'application') {
+                            return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
+                        }
 
-                    return this.fileTypeIs(item, val)
-                })
+                        return this.fileTypeIs(item, val)
+                    })
+                }
 
                 this.currentFilterName = val
             }

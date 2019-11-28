@@ -28,7 +28,9 @@ class MediaGlobalSearch implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel("User.{$this->user->id}.media");
+        $id = optional($this->user)->id ?? 0;
+
+        return new PrivateChannel("User.{$id}.media");
     }
 
     public function broadcastAs()

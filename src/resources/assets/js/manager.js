@@ -1,11 +1,9 @@
 /*                Libs                */
 import Vue2Filters from 'vue2-filters'
 import VueClipboard from 'vue-clipboard2'
-import AsyncComputed from 'vue-async-computed'
 
 Vue.use(Vue2Filters)
 Vue.use(VueClipboard)
-Vue.use(AsyncComputed)
 Vue.use(require('vue-ls'))
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')

@@ -1,4 +1,38 @@
 export default {
+    computed: {
+        bulkItemsCount() {
+            return this.bulkList.length
+        },
+        bulkItemsSize() {
+            return this.getListTotalSize(this.bulkList)
+        },
+        bulkItemsChild() {
+            let bulk = this.bulkItemsCount
+            let count = 0
+
+            if (bulk) {
+                if (bulk == 1 && !this.selectedFileIs('folder')) return
+
+                this.bulkList.map((item) => {
+                    let list = item.count
+
+                    if (list) {
+                        count += list
+                    }
+                })
+            }
+
+            return count
+        },
+        bulkItemsFilter() {
+            return this.lockedList.length
+                ? this.bulkList.filter((e) => !this.IsLocked(e.path))
+                : this.bulkList
+        },
+        bulkItemsFilterSize() {
+            return this.getListTotalSize(this.bulkItemsFilter)
+        }
+    },
     methods: {
         // ops
         isBulkSelecting() {

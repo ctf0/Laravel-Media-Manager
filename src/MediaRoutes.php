@@ -27,6 +27,7 @@ class MediaRoutes
             app('router')->post('lock-file', ['uses' => "$controller@lockItem", 'as' => 'lock_file']);
 
             app('router')->get('global-search', ['uses' => "$controller@globalSearch", 'as' => 'global_search']);
+            app('router')->post('locked-list', ['uses' => "$controller@getLockList", 'as' => 'locked_list']);
 
             app('router')->post('folder-download', ['uses' => "$controller@downloadFolder", 'as' => 'folder_download']);
             app('router')->post('files-download', ['uses' => "$controller@downloadFiles", 'as' => 'files_download']);

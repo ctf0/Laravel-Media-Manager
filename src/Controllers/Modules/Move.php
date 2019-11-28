@@ -3,6 +3,7 @@
 namespace ctf0\MediaManager\Controllers\Moduels;
 
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use ctf0\MediaManager\Events\MediaFileOpsNotifications;
 
@@ -17,51 +18,42 @@ trait Move
      */
     public function moveItem(Request $request)
     {
-        $path        = $request->path;
         $copy        = $request->use_copy;
+        $destination = $request->destination;
         $result      = [];
-        $broadcast   = true;
         $toBroadCast = [];
 
         foreach ($request->moved_files as $one) {
             $file_name = $one['name'];
             $file_type = $one['type'];
+            $old_path  = $one['storage_path'];
             $defaults  = [
-                'name'  => $file_name,
-                'type'  => $file_type,
-                'size'  => $one['size'],
-                'items' => $one['items'] ?? 0,
+                'name'     => $file_name,
+                'old_path' => $old_path,
             ];
 
-            $destination = "{$request->destination}/$file_name";
-            $old_path    = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
-            $new_path    = $destination == '../'
-                                ? '/' . pathinfo($path, PATHINFO_DIRNAME) . '/' . str_replace('../', '', $destination)
-                                : "$path/$destination";
-
-            $pattern = [
-                '/[[:alnum:]]+\/\.\.\/\//' => '',
-                '/\/\//'                   => '/',
-            ];
-            $new_path = preg_replace(array_keys($pattern), array_values($pattern), $new_path);
+            $new_path = "$destination/$file_name";
 
             try {
+                if ($file_type == 'folder' && Str::startsWith($destination, "/$old_path")) {
+                    throw new Exception(
+                        trans('MediaManager::messages.error.move_into_self')
+                    );
+                }
+
                 if (!file_exists($new_path)) {
                     // copy
                     if ($copy) {
                         // folders
                         if ($file_type == 'folder') {
-                            $old = $this->getItemPath($old_path);
-                            $new = $this->getItemPath($new_path);
-
-                            if (app('files')->copyDirectory($old, $new)) {
+                            if (app('files')->copyDirectory($old_path, $new_path)) {
                                 $result[] = array_merge($defaults, ['success' => true]);
                             } else {
-                                $exc = isset($this->storageDiskInfo['root'])
+                                throw new Exception(
+                                    isset($this->storageDiskInfo['root'])
                                         ? trans('MediaManager::messages.error.moving')
-                                        : trans('MediaManager::messages.error.moving_cloud');
-
-                                throw new Exception($exc);
+                                        : trans('MediaManager::messages.error.moving_cloud')
+                                );
                             }
                         }
 
@@ -80,14 +72,13 @@ trait Move
                     // move
                     else {
                         if ($this->storageDisk->move($old_path, $new_path)) {
-                            $result[] = array_merge($defaults, ['success' => true]);
-
+                            $result[]      = array_merge($defaults, ['success' => true]);
                             $toBroadCast[] = $defaults;
 
                             // fire event
                             event('MMFileMoved', [
-                                'old_path' => $this->getItemPath($old_path),
-                                'new_path' => $this->getItemPath($new_path),
+                                'old_path' => $old_path,
+                                'new_path' => $new_path,
                             ]);
                         } else {
                             $exc = trans('MediaManager::messages.error.moving');
@@ -105,7 +96,6 @@ trait Move
                     );
                 }
             } catch (Exception $e) {
-                $broadcast = false;
                 $result[]  = [
                     'success' => false,
                     'message' => "\"$old_path\" " . $e->getMessage(),
@@ -114,17 +104,10 @@ trait Move
         }
 
         // broadcast
-        if ($broadcast) {
-            broadcast(new MediaFileOpsNotifications([
-                'op'    => 'move',
-                'items' => $toBroadCast,
-                'path'  => [
-                    'current' => $path,
-                    'old'     => pathinfo($old_path, PATHINFO_DIRNAME),
-                    'new'     => pathinfo($new_path, PATHINFO_DIRNAME),
-                ],
-            ]))->toOthers();
-        }
+        broadcast(new MediaFileOpsNotifications([
+            'op'    => 'move',
+            'path'  => $destination,
+        ]))->toOthers();
 
         return response()->json($result);
     }

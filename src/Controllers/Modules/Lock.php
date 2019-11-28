@@ -8,6 +8,29 @@ use ctf0\MediaManager\Events\MediaFileOpsNotifications;
 trait Lock
 {
     /**
+     * get locked items & directories list.
+     *
+     * @param [type] $dirs
+     */
+    public function getLockList(Request $request)
+    {
+        return response()->json($this->lockList($request->path));
+    }
+
+    /**
+     * get data.
+     *
+     * @param [type] $path
+     */
+    public function lockList($path)
+    {
+        return [
+            'locked' => $this->db->pluck('path'),
+            'dirs'   => $this->getDirectoriesList($path),
+        ];
+    }
+
+    /**
      * lock/unlock files/folders.
      *
      * @param Request $request [description]
@@ -22,30 +45,26 @@ trait Lock
         $toRemove = [];
         $toAdd    = [];
         $result   = [];
-        $removed  = [];
-        $added    = [];
 
         foreach ($request->list as $item) {
             $url  = $item['path'];
-            $type = $item['type'];
             $name = $item['name'];
 
             if (in_array($url, $lockedList)) {
                 $toRemove[] = $url;
-                $removed[]  = compact('url', 'type', 'name');
             } else {
-                $toAdd[] = ['path'=>$url];
-                $added[] = compact('url', 'type', 'name');
+                $toAdd[] = ['path' => $url];
             }
 
             $result[] = [
-                'message' => trans('MediaManager::messages.lock_success', ['attr' => $item['name']]),
+                'message' => trans('MediaManager::messages.lock_success', ['attr' => $name]),
             ];
         }
 
         if ($toRemove) {
             $this->db->whereIn('path', $toRemove)->delete();
         }
+
         if ($toAdd) {
             $this->db->insert($toAdd);
         }
@@ -54,10 +73,8 @@ trait Lock
         broadcast(new MediaFileOpsNotifications([
             'op'      => 'lock',
             'path'    => $path,
-            'removed' => $removed,
-            'added'   => $added,
         ]))->toOthers();
 
-        return response()->json(compact('result', 'removed', 'added'));
+        return compact('result');
     }
 }

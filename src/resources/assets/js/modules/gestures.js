@@ -23,30 +23,6 @@ export default {
             }
         },
 
-        dbltap(e) {
-            PreventGhostClick(e.target)
-
-            if (!this.isBulkSelecting()) {
-                // image / text
-                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.textFileType()) {
-                    return this.toggleModal('preview_modal')
-                }
-                // media
-                else if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                    return !this.infoSidebar || this.smallScreen
-                        ? this.toggleModal('preview_modal')
-                        : this.playMedia()
-                }
-                // folder
-                else if (this.selectedFileIs('folder')) {
-                    this.openFolder(this.selectedFile)
-                }
-                // other
-                else {
-                    this.saveFile(this.selectedFile)
-                }
-            }
-        },
         cardSwipGesture(e) {
             EventHub.fire('stopHammerPropagate')
 
@@ -83,7 +59,7 @@ export default {
                 case 'swipeup':
                     style = {transform: `translateY(${e.deltaY}px)`}
                     cls = 'bounceInDown'
-                    this.moveItem()
+                    this.addToMovableList(file)
                     break
                 case 'swipedown':
                     style = {transform: `translateY(${e.deltaY}px)`}
@@ -179,27 +155,30 @@ export default {
             }
 
             if (type == 'dbltap') {
-                PreventGhostClick(e.target)
+                this.dbltap(e)
+            }
+        },
+        dbltap(e) {
+            PreventGhostClick(e.target)
 
-                if (!this.isBulkSelecting()) {
-                    // image / text
-                    if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.textFileType()) {
-                        return this.toggleModal('preview_modal')
-                    }
-                    // media
-                    else if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                        return !this.infoSidebar || this.smallScreen
-                            ? this.toggleModal('preview_modal')
-                            : this.playMedia()
-                    }
-                    // folder
-                    else if (this.selectedFileIs('folder')) {
-                        this.openFolder(this.selectedFile)
-                    }
-                    // other
-                    else {
-                        this.saveFile(this.selectedFile)
-                    }
+            if (!this.isBulkSelecting()) {
+                // image / text
+                if (this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.textFileType()) {
+                    return this.toggleModal('preview_modal')
+                }
+                // media
+                else if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
+                    return !this.infoSidebar || this.smallScreen
+                        ? this.toggleModal('preview_modal')
+                        : this.playMedia()
+                }
+                // folder
+                else if (this.selectedFileIs('folder')) {
+                    this.openFolder(this.selectedFile)
+                }
+                // other
+                else {
+                    this.saveFile(this.selectedFile)
                 }
             }
         }

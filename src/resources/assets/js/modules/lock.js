@@ -2,65 +2,25 @@ export default {
     methods: {
         IsLocked(item) {
             if (item) {
-                if (item.path) {
-                    return this.lockedList.includes(item.path)
-                }
-
-                return this.lockedList.includes(item)
+                return item.path
+                    ? this.hasLockedItems(item.path)
+                    : this.hasLockedItems(item)
             }
         },
-
-        // for folders with nested items
-        hasLockedItems(name, cacheName) {
-            return this.lockedList.some((e) => {
-                return e.startsWith(this.clearDblSlash(`${this.config.baseUrl}/${cacheName}`))
-            })
+        hasLockedItems(url, side = 'end') {
+            return side == 'end'
+                ? this.lockedList.some((e) => e.endsWith(url))
+                : this.lockedList.some((e) => e.startsWith(url))
         },
-        checkNestedLockedItems(list) {
-            list.map((e) => {
-                if (e.type == 'folder') {
-                    let name = e.name
-                    let cacheName = this.getCacheName(name)
+        checkForNestedLockedItems(list) {
+            return list.filter((e, i) => {
+                if (e.type == 'folder' && this.hasLockedItems(e.path, 'start')) {
+                    this.showNotif(`"${e.name}" ${this.trans('error_altered_fwli')}`, 'danger')
 
-                    if (this.hasLockedItems(name, cacheName)) {
-                        this.showNotif(`"${cacheName}" ${this.trans('error_altered_fwli')}`, 'danger')
-                        list.splice(list.indexOf(e), 1)
-                    }
-                }
-            })
-
-            return list
-        },
-        updateLockOps(data) {
-            let path = this.files.path
-            let dirs = this.directories
-            let locked = this.lockedList
-
-            data.removed.map((item) => {
-                // dirslist
-                if (item.type == 'folder') {
-                    let name = path
-                        ? `${path}/${item.name}`
-                        : this.cacheName == 'root_'
-                            ? item.name
-                            : `/${item.name}`
-
-                    dirs.push(name)
+                    return false
                 }
 
-                // locklist
-                locked.splice(locked.indexOf(item.url), 1)
-            })
-
-            data.added.map((item) => {
-                // dirslist
-                if (item.type == 'folder') {
-                    let name = path ? `${path}/${item.name}` : item.name
-                    dirs.splice(dirs.indexOf(name), 1)
-                }
-
-                // locklist
-                locked.push(item.url)
+                return true
             })
         },
 
@@ -71,18 +31,28 @@ export default {
                 : [this.selectedFile]
 
             axios.post(this.routes.lock, {
-                list: list,
-                path: this.files.path
+                path: this.files.path,
+                list: list
             }).then(({data}) => {
 
                 data.result.map((item) => {
                     this.showNotif(item.message)
                 })
 
-                this.updateLockOps(data)
+                this.updateLockList()
                 this.resetInput(['currentFilterName'])
                 this.isBulkSelecting() ? this.blkSlct() : false
 
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
+        updateLockList(data) {
+            return axios.post(this.routes.locked_list, {
+                path: this.files.path
+            }).then(({data}) => {
+                this.lockedList = data.locked
             }).catch((err) => {
                 console.error(err)
                 this.ajaxError()

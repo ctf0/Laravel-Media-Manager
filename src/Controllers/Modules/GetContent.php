@@ -15,34 +15,25 @@ trait GetContent
      */
     public function getFiles(Request $request)
     {
-        $folder = $request->folder != '/' ? $request->folder : '';
+        $path = $request->path == '/' ? '' : $request->path;
 
-        if ($folder && !$this->storageDisk->exists($folder)) {
+        if ($path && !$this->storageDisk->exists($path)) {
             return response()->json([
-                'error' => trans('MediaManager::messages.error.doesnt_exist', ['attr' => $folder]),
+                'error' => trans('MediaManager::messages.error.doesnt_exist', ['attr' => $path]),
             ]);
         }
 
-        return response()->json([
-            'locked' => $this->db->pluck('path'),
-            'dirs'   => $this->getDirectoriesList($request->dirs),
-            'files'  => [
-                'path'  => $folder,
-                'items' => $this->paginate($this->getData($folder), $this->pag_amount),
-            ],
-        ]);
-    }
-
-    /**
-     * get all directories in path.
-     *
-     * @param Request $request [description]
-     *
-     * @return [type] [description]
-     */
-    public function getFolders(Request $request)
-    {
-        return response()->json($this->getDirectoriesList($request->folder_location));
+        return response()->json(
+            array_merge(
+                $this->lockList($path),
+                [
+                    'files'  => [
+                        'path'  => $path,
+                        'items' => $this->paginate($this->getData($path), $this->paginationAmount),
+                    ],
+                ]
+            )
+        );
     }
 
     /**
@@ -58,6 +49,7 @@ trait GetContent
         $storageFiles   = $this->getFolderListByType($dirList, 'file');
         $pattern        = $this->ignoreFiles;
 
+        // folders
         foreach ($storageFolders as $folder) {
             $path = $folder['path'];
             $time = $folder['timestamp'];
@@ -71,6 +63,7 @@ trait GetContent
                     'name'                   => $folder['basename'],
                     'type'                   => 'folder',
                     'path'                   => $this->resolveUrl($path),
+                    'storage_path'           => $path,
                     'size'                   => isset($info) ? $info['size'] : 0,
                     'count'                  => isset($info) ? $info['count'] : 0,
                     'last_modified'          => $time,
@@ -79,6 +72,7 @@ trait GetContent
             }
         }
 
+        // files
         foreach ($storageFiles as $file) {
             $path = $file['path'];
             $time = $file['timestamp'];
@@ -88,6 +82,7 @@ trait GetContent
                     'name'                   => $file['basename'],
                     'type'                   => $file['mimetype'],
                     'path'                   => $this->resolveUrl($path),
+                    'storage_path'           => $path,
                     'size'                   => $file['size'],
                     'visibility'             => $file['visibility'],
                     'last_modified'          => $time,
@@ -144,10 +139,6 @@ trait GetContent
 
     protected function getDirectoriesList($location)
     {
-        if (is_array($location)) {
-            $location = rtrim(implode('/', $location), '/');
-        }
-
         return str_replace($location, '', $this->storageDisk->allDirectories($location));
     }
 }

@@ -23,7 +23,7 @@ trait Visibility
         foreach ($request->list as $file) {
             $name      = $file['name'];
             $type      = $file['visibility'] == 'public' ? 'private' : 'public';
-            $file_path = !$path ? $name : $this->clearDblSlash("$path/$name");
+            $file_path = $file['storage_path'];
 
             if ($this->storageDisk->setVisibility($file_path, $type)) {
                 $result[] = [

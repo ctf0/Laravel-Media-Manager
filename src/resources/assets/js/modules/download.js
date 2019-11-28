@@ -18,6 +18,7 @@ export default {
             }
 
             downloadFile(item.path)
+
             return this.showNotif(`"${item.name}" ${this.trans('downloaded')}`)
         },
         hasFolder() {

@@ -52,29 +52,30 @@ trait Download
             // track changes
             $counter  = 100 / count($list);
             $progress = 0;
-            broadcast(new MediaZipProgress(['progress'=>$progress]));
+            broadcast(new MediaZipProgress(['progress' => $progress]));
 
             $zip = new ZipStream("$name.zip", $this->getZipOptions());
 
             foreach ($list as $file) {
-                $file_name  = $file['name'];
-                $streamRead = $this->storageDisk->readStream($this->clearUrl($file['path']));
+                $name = $file['name'];
+                $path = $file['storage_path'];
+                $streamRead = $this->storageDisk->readStream($path);
 
                 // add to zip
                 if ($streamRead) {
                     $progress += $counter;
-                    broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
+                    broadcast(new MediaZipProgress(['progress' => round($progress, 0)]));
 
-                    $zip->addFileFromStream($file_name, $streamRead);
+                    $zip->addFileFromStream($name, $streamRead);
                 } else {
                     broadcast(new MediaZipProgress([
-                        'msg' => $file_name,
-                        'type'=> 'warn',
+                        'msg'  => $name,
+                        'type' => 'warn',
                     ]));
                 }
             }
 
-            broadcast(new MediaZipProgress(['progress'=>100]));
+            broadcast(new MediaZipProgress(['progress' => 100]));
             $zip->finish();
         });
     }
@@ -85,7 +86,7 @@ trait Download
             // track changes
             $counter  = 100 / count($list);
             $progress = 0;
-            broadcast(new MediaZipProgress(['progress'=>$progress]));
+            broadcast(new MediaZipProgress(['progress' => $progress]));
 
             $zip = new ZipStream("$name.zip", $this->getZipOptions());
 
@@ -98,18 +99,18 @@ trait Download
                 // add to zip
                 if ($streamRead) {
                     $progress += $counter;
-                    broadcast(new MediaZipProgress(['progress'=>round($progress, 0)]));
+                    broadcast(new MediaZipProgress(['progress' => round($progress, 0)]));
 
                     $zip->addFileFromStream($full_name, $streamRead);
                 } else {
                     broadcast(new MediaZipProgress([
-                        'msg' => $full_name,
-                        'type'=> 'warn',
+                        'msg'  => $full_name,
+                        'type' => 'warn',
                     ]));
                 }
             }
 
-            broadcast(new MediaZipProgress(['progress'=>100]));
+            broadcast(new MediaZipProgress(['progress' => 100]));
             $zip->finish();
         });
     }

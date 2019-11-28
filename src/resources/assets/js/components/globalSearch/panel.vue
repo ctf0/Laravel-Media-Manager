@@ -31,7 +31,7 @@
 
             <transition-group name="mm-gs"
                               tag="ul"
-                              class="columns is-multiline m-0">
+                              class="columns is-multiline is-marginless">
                 <li v-for="(item, i) in filterdList"
                     :key="`${i}-${item.name}`"
                     class="column is-2">
@@ -83,16 +83,27 @@
                                 {{ item.name }}
                             </p>
                             <br>
+
                             <p class="subtitle is-marginless link"
-                               @click="goToFolder(item.dir, item.name)">
+                               @click="goToFolder(item.dir_path, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
                                 <span v-tippy
-                                      :title="trans('go_to_folder')">{{ item.dir }}</span>
+                                      :title="trans('go_to_folder')">{{ item.dir_path }}</span>
                             </p>
                             <time>
                                 <span class="icon"><icon name="clock-o"/></span>
                                 <span>{{ item.last_modified_formated }}</span>
                             </time>
+                            <p class="subtitle is-marginless link"
+                               @click="deleteItem(item, i)">
+                                <span class="icon"><icon name="times"/></span>
+                                <span>{{ trans('delete') }}</span>
+                            </p>
+                            <p class="subtitle is-marginless link"
+                               @click="addToMovableList(item)">
+                                <span class="icon"><icon name="shopping-cart"/></span>
+                                <span>{{ inMovableList(item) ? trans('added') : trans('add_to_list') }}</span>
+                            </p>
                         </div>
                     </div>
                 </li>
@@ -127,7 +138,14 @@ export default {
         VueInputAutowidth
     },
     mixins: [panels],
-    props: ['trans', 'fileTypeIs', 'noScroll', 'browserSupport'],
+    props: [
+        'trans',
+        'fileTypeIs',
+        'noScroll',
+        'browserSupport',
+        'addToMovableList',
+        'inMovableList'
+    ],
     data() {
         return {
             filesIndex: [],
@@ -156,27 +174,42 @@ export default {
                 this.filesIndex = data
             })
 
-            EventHub.listen('show-global-search', (data) => {
-                this.showPanel = true
+            EventHub.listen('toggle-global-search', (data) => {
+                this.showPanel = data
             })
 
             EventHub.listen('clear-global-search', () => {
                 this.search = ''
+            })
+
+            EventHub.listen('global-search-deleted', (path) => {
+                let list = this.filterdList
+
+                return list.some((e, i) => {
+                    if (e.path == path) {
+                        list.splice(i, 1)
+                    }
+                })
             })
         },
         copyLink(path) {
             this.linkCopied = true
             this.$copyText(path)
         },
+        deleteItem(item, i) {
+            EventHub.fire('global-search-delete-item', item)
+        },
         closePanel() {
             this.search = ''
             this.showPanel = false
+            EventHub.fire('toggle-global-search', false)
         },
         goToFolder(dir, name) {
-            EventHub.fire('search-go-to-folder', {
+            EventHub.fire('global-search-go-to-folder', {
                 dir: dir,
                 name: name
             })
+
             this.closePanel()
         },
         getList: debounce(function () {
@@ -216,10 +249,14 @@ export default {
             }
         },
         firstRun(val) {
+            let ref = this.$refs['search-input']
+
             if (!val) {
-                if (this.$refs['search-input']) this.$refs['search-input'].addEventListener('transitionend', this.ontransitionend)
+                if (ref) {
+                    ref.addEventListener('transitionend', this.ontransitionend)
+                }
             } else {
-                this.$refs['search-input'].removeEventListener('transitionend', this.ontransitionend)
+                ref.removeEventListener('transitionend', this.ontransitionend)
             }
         }
     }

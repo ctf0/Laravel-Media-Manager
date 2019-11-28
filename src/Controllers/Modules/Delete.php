@@ -23,61 +23,30 @@ trait Delete
         foreach ($request->deleted_files as $one) {
             $name      = $one['name'];
             $type      = $one['type'];
-            $item_path = !$path ? $name : $this->clearDblSlash("$path/$name");
+            $item_path = $one['storage_path'];
             $defaults  = [
                 'name' => $name,
-                'type' => $type,
+                'path' => $item_path,
             ];
 
-            // folder
-            if ($type == 'folder') {
-                if ($this->storageDisk->deleteDirectory($item_path)) {
-                    $result[] = array_merge($defaults, ['success' => true]);
+            $del = $type == 'folder'
+                    ? $this->storageDisk->deleteDirectory($item_path)
+                    : $this->storageDisk->delete($item_path);
 
-                    $toBroadCast[] = array_merge($defaults, [
-                        'path' => $item_path,
-                        'url'  => null,
-                    ]);
+            if ($del) {
+                $result[]      = array_merge($defaults, ['success' => true]);
+                $toBroadCast[] = $defaults;
 
-                    // fire event
-                    event('MMFileDeleted', [
-                        'file_path' => $this->getItemPath($item_path),
-                        'is_folder' => true,
-                    ]);
-                } else {
-                    $result[] = array_merge($defaults, [
-                        'success' => false,
-                        'message' => trans('MediaManager::messages.error.deleting_file'),
-                    ]);
-                }
-            }
-
-            // file
-            else {
-                if ($this->storageDisk->delete($item_path)) {
-                    $result[] = array_merge($defaults, [
-                        'success' => true,
-                        'url'     => $this->resolveUrl($item_path),
-                    ]);
-
-                    $toBroadCast[] = array_merge($defaults, [
-                        'path' => $path,
-                        'url'  => $this->resolveUrl($item_path),
-                    ]);
-
-                    // fire event
-                    event('MMFileDeleted', [
-                        'file_path' => $this->getItemPath($item_path),
-                        'is_folder' => false,
-                    ]);
-                } else {
-                    $result[] = [
-                        'success' => false,
-                        'name'    => $item_path,
-                        'type'    => $type,
-                        'message' => trans('MediaManager::messages.error.deleting_file'),
-                    ];
-                }
+                // fire event
+                event('MMFileDeleted', [
+                    'file_path' => $item_path,
+                    'is_folder' => $type == 'folder',
+                ]);
+            } else {
+                $result[] = array_merge($defaults, [
+                    'success' => false,
+                    'message' => trans('MediaManager::messages.error.deleting_file'),
+                ]);
             }
         }
 
@@ -85,6 +54,7 @@ trait Delete
         broadcast(new MediaFileOpsNotifications([
             'op'    => 'delete',
             'items' => $toBroadCast,
+            'path'  => $path,
         ]))->toOthers();
 
         return response()->json($result);

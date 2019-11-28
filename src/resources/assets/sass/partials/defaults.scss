@@ -2,7 +2,7 @@
 
 [v-cloak] {
     display: none;
-}
+} // [v-cloak]
 
 .hide-native-scrollbar {
     * {
@@ -11,9 +11,9 @@
 
         &::-webkit-scrollbar {
             width: 0 !important;
-        }
-    }
-}
+        } // .hide-native-scrollbar *::-webkit-scrollbar
+    } // .hide-native-scrollbar *
+} // .hide-native-scrollbar
 
 .__stack-container,
 .__stack-files,
@@ -22,8 +22,8 @@
 img {
     backface-visibility: hidden;
     transform: translate3d(0, 0, 0);
-}
+} // img
 
 .media-manager * {
     font-family: 'Miriam Libre', 'Arial', sans-serif;
-}
+} // .media-manager *

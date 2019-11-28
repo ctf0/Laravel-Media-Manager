@@ -12,7 +12,11 @@
                   class="__caman-filters"/>
 
         <div class="__caman-filters">
-            <button :disabled="processing" class="btn-plain" @click="random()">randomize</button>
+            <button :disabled="processing"
+                    class="btn-plain"
+                    @click="random()">
+                randomize
+            </button>
         </div>
     </div>
 </template>
@@ -74,10 +78,9 @@ export default {
     mounted() {
         new Promise((resolve) => {
             this.init = this.getCropperData()
+
             return resolve()
-        }).then(() => {
-            this.distort()
-        })
+        }).then(() => this.distort())
 
         EventHub.listen('reset-glitch', () => {
             this.cropper.replace(this.init, true)

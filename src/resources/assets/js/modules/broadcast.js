@@ -44,53 +44,40 @@ export default {
     },
     methods: {
         bcNotif(msg) {
-            return this.showNotif(msg, 'info')
+            return this.showNotif(msg, 'link')
         },
 
         // ops
         bcUpload(data) {
-            let path = data.path || 'root_'
+            let path = data.path || ''
 
             // if user is viewing the same dir
-            if (path == this.cacheName) {
+            if (path == this.files.path) {
                 this.bcNotif(`${this.trans('new_uploads_notif')}, ${this.trans('refresh_notif')}`)
             }
         },
         bcNewFolder(data) {
-            let path = data.path || 'root_'
+            let path = data.path || ''
 
             // if user is viewing the same dir
-            if (path == this.cacheName) {
+            if (path == this.files.path) {
                 this.bcNotif(`${this.trans('create_folder_notif')}, ${this.trans('refresh_notif')}`)
             }
         },
         bcMove(data) {
-            let selected = this.selectedFile
-            let path = data.path
-            let reselect = false
-            let check = path.current || 'root_'
+            let path = data.path || ''
 
             // if user is viewing the same dir
-            if (check == this.cacheName || path.new == this.cacheName) {
-                data.items.map((item) => {
-                    this.removeFromLists(item.name, item.type, false)
-
-                    if (selected && (selected.name == item.name && selected.type == item.type)) {
-                        reselect = true
-                    }
-
-                    // this.bcNotif(`${this.trans('new_uploads_notif')}, ${this.trans('refresh_notif')}`)
-                    // this.bcNotif(`${this.trans('move_success')} "${item.name}", ${this.trans('refresh_notif')}`)
-                })
+            if (path == this.files.path) {
+                this.db('clr')
+                this.bcNotif(`${this.trans('move_success')}, ${this.trans('refresh_notif')}`)
             }
-
-            if (reselect) this.selectFirst()
         },
         bcRename(data) {
-            let path = data.path || 'root_'
+            let path = data.path || ''
 
             // if user is viewing the same dir
-            if (path == this.cacheName) {
+            if (path == this.files.path) {
                 let item = data.item
 
                 if (this.filteredItemsCount) {
@@ -116,32 +103,31 @@ export default {
         },
         bcDelete(data) {
             let selected = this.selectedFile
-            let reselect = false
-            let current = data.path || this.cacheName == 'root_'
+            let path = data.path || ''
 
-            data.items.map((item) => {
-                // if user is viewing the same dir
-                if (current) {
-                    this.removeFromLists(item.name, item.type, false)
+            // if user is viewing the same dir
+            if (path == this.files.path) {
+                this.db('clr')
+
+                data.items.map((item) => {
+                    let storage_path = item.path
+
+                    this.removeFromLists(storage_path, storage_path == selected.storage_path)
                     this.bcNotif(`${this.trans('delete_success')} "${item.name}"`)
-
-                    if (selected.name == item.name && selected.type == item.type) {
-                        reselect = true
-                    }
-                }
-            })
-
-            if (reselect) this.selectFirst()
+                })
+            }
         },
         bcLock(data) {
+            let path = data.path || ''
+
             // if user is viewing the same dir
-            if (data.path || this.cacheName == 'root_') {
-                this.updateLockOps(data)
+            if (path == this.files.path) {
+                this.updateLockList()
             }
         },
         bcVisibility(data) {
             // if user is viewing the same dir
-            if (data.path || this.cacheName == 'root_') {
+            if (data.path || this.files.path == '') {
                 let files = this.files.items
                 let filterd = this.filteredItemsCount ? this.filterdList : null
 

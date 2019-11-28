@@ -1,8 +1,8 @@
+import cloneDeep from 'lodash/cloneDeep'
 import animateScrollTo from '../packages/animated-scroll-to'
 
 export default {
     methods: {
-        // ops
         scrollOnLoad() {
             // scroll & click on prev selected item
             if (!this.no_files && this.currentFileIndex) {
@@ -11,8 +11,8 @@ export default {
 
             // scroll to breadcrumb item
             if (this.$refs.bc) {
-                let folders = this.clearDblSlash(`/${this.folders.join('/')}`)
-                this.scrollMobileBc(folders.split('/').pop(), this.$refs.bc)
+                let folders = cloneDeep(this.folders).pop()
+                this.scrollMobileBc(folders, this.$refs.bc)
             }
         },
         scrollToFile(file) {
@@ -20,9 +20,7 @@ export default {
                 file.click()
 
                 // make sure scrolling fires
-                setTimeout(() => {
-                    this.scrollToSelected(file)
-                }, 500)
+                setTimeout(this.scrollToSelected(file), 500)
             }
         },
         scrollToSelected(file) {

@@ -16,7 +16,8 @@ import Image from '../modules/image'
 import ItemFiltration from '../modules/filtration'
 import ItemVisibility from '../modules/visibility'
 import LockItem from '../modules/lock'
-import MediaPlayer from '../modules/player'
+import Movable from '../modules/movable'
+import MediaPlayer from '../modules/media_player'
 import Restriction from '../modules/restriction'
 import Scroll from '../modules/scroll'
 import Selection from '../modules/selection'
@@ -30,12 +31,12 @@ export default {
         contentRatio: require('./utils/ratio.vue').default,
         globalSearchBtn: require('./globalSearch/button.vue').default,
         globalSearchPanel: require('./globalSearch/panel.vue').default,
-        imageEditor: require('./imageEditor/main.vue').default,
-        imageIntersect: require('./utils/image-lazyLoading.vue').default,
-        introOverlay: require('./utils/intro-overlay.vue').default,
+        imageEditor: require('./image/editor/main.vue').default,
+        imageIntersect: require('./image/lazyLoading.vue').default,
+        imagePreview: require('./image/preview.vue').default,
+        usageIntroOverlay: require('./usageIntro/overlay.vue').default,
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
-        videoDimension: require('./utils/video-dim.vue').default,
         uploadPreview: require('./utils/upload-preview.vue').default,
         InfiniteLoading: require('vue-infinite-loading').default
     },
@@ -54,6 +55,7 @@ export default {
         ItemFiltration,
         ItemVisibility,
         LockItem,
+        Movable,
         MediaPlayer,
         Restriction,
         Scroll,
@@ -79,7 +81,6 @@ export default {
             ajax_error: false,
             bulkSelect: false,
             bulkSelectAll: false,
-            checkForFolders: false,
             disableShortCuts: false,
             firstMeta: false, // for alt + click selection
             firstRun: false, // deffer running logic on init
@@ -96,43 +97,41 @@ export default {
             showProgress: false,
             smallScreen: false,
             toolBar: true,
-            UploadArea: false,
+            uploadArea: false,
             waitingForUpload: false,
             useCopy: false,
+            uploadPreviewOptionsPanelIsVisible: false,
+            globalSearchPanelIsVisible: false,
 
             activeModal: null,
             currentFileIndex: null,
             currentFilterName: null,
             imageSlideDirection: null,
-            moveToPath: null,
             newFilename: null,
             newFolderName: null,
             searchFor: null,
             searchItemsCount: null,
             selectedFile: null,
+            global_search_item: null,
             sortBy: null,
             urlToUpload: null,
+            selectedUploadPreview: null,
 
+            movableList: [],
             bulkList: [],
             dimensions: [],
-            directories: [],
             files: [],
             filterdList: [],
             folders: [],
             uploadPreviewList: [],
             uploadPreviewNamesList: [],
             uploadPreviewOptionsList: [],
-            uploadPreviewOptionsPanelIsVisible: false,
-            selectedUploadPreview: null,
             player: {
                 item: null,
                 fs: false,
                 playing: false
             },
-            scrollableBtn: {
-                state: false,
-                dir: 'down'
-            },
+            audioFileMeta: {},
             lockedList: [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
@@ -194,16 +193,21 @@ export default {
     },
     methods: {
         init() {
+            // small screen stuff
+            if (this.checkForSmallScreen()) {
+                this.applySmallScreen()
+            }
+
             // restricted
-            if (this.restrictModeIsOn()) {
+            if (this.restrictModeIsOn) {
                 this.clearUrlQuery()
                 this.resolveRestrictFolders()
 
-                return this.getFiles(this.folders).then(() => {
+                return this.getFiles().then(() => {
                     this.fileUpload()
                     this.$nextTick(() => {
-                        this.firstRun = true
                         this.onResize()
+                        this.firstRun = true
                     })
                 })
             }
@@ -212,11 +216,11 @@ export default {
             this.getPathFromUrl()
                 .then(this.preSaved())
                 .then(() => {
-                    return this.getFiles(this.folders, null, this.selectedFile).then(() => {
+                    return this.getFiles(null, this.selectedFile).then(() => {
                         this.fileUpload()
                         this.$nextTick(() => {
-                            this.firstRun = true
                             this.onResize()
+                            this.firstRun = true
                         })
                     })
                 })
@@ -226,15 +230,13 @@ export default {
             // check if image was edited
             EventHub.listen('image-edited', (msg) => {
                 this.imageWasEdited = true
-                this.showNotif(`${this.trans('save_success')} "${msg}"`)
+                this.showNotif(`${this.trans('save_success')} "${msg}"`, 'success', 5)
             })
 
             // get images dimensions
             EventHub.listen('save-image-dimensions', (obj) => {
-                let dim = this.dimensions
-
-                if (!dim.some((e) => e.url === obj.url)) {
-                    dim.push(obj)
+                if (!this.checkForDimensions(obj.url)) {
+                    this.dimensions.push(obj)
                 }
             })
 
@@ -243,14 +245,27 @@ export default {
                 this.disableShortCuts = val
             })
 
-            // gls
-            EventHub.listen('search-go-to-folder', (data) => {
+            // global-search
+            EventHub.listen('toggle-global-search', (data) => {
+                this.globalSearchPanelIsVisible = data
+            })
+
+            EventHub.listen('global-search-go-to-folder', (data) => {
                 this.folders = this.arrayFilter(data.dir.split('/'))
 
-                return this.getFiles(this.folders, null, data.name).then(() => {
-                    this.updatePageUrl()
-                })
+                return this.getFiles(null, data.name).then(() => this.updatePageUrl())
             })
+
+            EventHub.listen('global-search-delete-item', (data) => {
+                this.global_search_item = data
+
+                this.fileTypeIs(data, 'folder')
+                    ? this.folderWarning = true
+                    : this.folderWarning = false
+
+                this.deleteItem()
+            })
+
         },
 
         shortCuts(e) {
@@ -324,7 +339,7 @@ export default {
 
                             if (key == 'esc') {
                                 // hide upload panel
-                                if (this.UploadArea) {
+                                if (this.uploadArea) {
                                     this.toggleUploadPanel()
                                 }
 
@@ -340,9 +355,7 @@ export default {
                         if (this.allItemsCount) {
                             // bulk select
                             if (key == 'b') {
-                                if (this.searchFor && this.searchItemsCount == 0) {
-                                    return
-                                }
+                                if (this.searchFor && this.searchItemsCount == 0) return
 
                                 this.$refs.bulkSelect.click()
                             }
@@ -364,9 +377,9 @@ export default {
                                 this.$refs.delete.click()
                             }
 
-                            // move file
-                            if (this.checkForFolders && key == 'm') {
-                                this.$refs.move.click()
+                            // copy file
+                            if (key == 'c') {
+                                this.addToMovableList()
                             }
 
                             // lock files
@@ -376,10 +389,15 @@ export default {
 
                             // set visibility
                             if (key == 'v') {
-                                this.$refs.vis.click()
+                                this.$refs.visibility.click()
                             }
                         }
                         // end of we have files
+
+                        // move file
+                        if (key == 'm' && this.movableItemsCount) {
+                            this.showMovableList()
+                        }
 
                         // toggle file details sidebar
                         if (key == 't' && !this.smallScreen) {
@@ -424,7 +442,7 @@ export default {
 
                     // clear upload queue
                     if (key == 'esc') {
-                        if (this.UploadArea) {
+                        if (this.uploadArea) {
                             return this.toggleUploadPanel()
                         }
 
@@ -445,11 +463,7 @@ export default {
             EventHub.fire('clear-global-search')
             this.resetInput('searchFor')
 
-            return this.getFiles(
-                this.folders,
-                null,
-                this.selectedFile ? this.selectedFile.name : null
-            )
+            return this.getFiles(null, this.selectedFile ? this.selectedFile.name : null)
         },
         clearAll() {
             if (!this.isLoading) {
@@ -460,40 +474,36 @@ export default {
         },
         moveItem() {
             this.$nextTick(() => {
-                if (this.$refs.move.disabled) {
-                    return
-                }
+                if (this.$refs.move.disabled) return
 
                 this.toggleModal('move_file_modal')
             })
         },
         renameItem() {
             this.$nextTick(() => {
-                if (this.$refs.rename.disabled) {
-                    return
-                }
+                if (this.$refs.rename.disabled) return
 
                 this.toggleModal('rename_file_modal')
             })
         },
         deleteItem() {
             this.$nextTick(() => {
-                if (this.$refs.delete.disabled) {
-                    return
-                }
+                if (!this.globalSearchPanelIsVisible) {
+                    if (this.$refs.delete.disabled) return
 
-                if (!this.isBulkSelecting() && this.selectedFile) {
-                    this.selectedFileIs('folder')
-                        ? this.folderWarning = true
-                        : this.folderWarning = false
-                }
-
-                if (this.bulkItemsCount) {
-                    this.bulkItemsFilter.some((item) => {
-                        return this.fileTypeIs(item, 'folder')
+                    if (!this.isBulkSelecting() && this.selectedFile) {
+                        this.selectedFileIs('folder')
                             ? this.folderWarning = true
                             : this.folderWarning = false
-                    })
+                    }
+
+                    if (this.bulkItemsCount) {
+                        this.bulkItemsFilter.some((item) => {
+                            if (this.fileTypeIs(item, 'folder')) {
+                                return this.folderWarning = true
+                            }
+                        })
+                    }
                 }
 
                 this.toggleModal('confirm_delete_modal')

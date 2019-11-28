@@ -1,3 +1,5 @@
+import DbWorker from 'worker-loader!../webworkers/db'
+
 export default {
     methods: {
         /*                Local Storage                */
@@ -9,10 +11,6 @@ export default {
             this.$ls.set(this.CDBN, storage)
         },
         clearLs() {
-            if (!this.restrictModeIsOn()) {
-                this.folders = []
-            }
-
             this.$ls.remove(this.CDBN)
         },
         preSaved() {
@@ -30,27 +28,22 @@ export default {
             this.updateLs({'infoSidebar': this.infoSidebar})
         },
 
-        // other
-        getCacheName(file_name) {
-            let str = this.cacheName == 'root_'
-                ? file_name == 'root_'
-                    ? file_name
-                    : `/${file_name}`
-                : this.cacheName == file_name
-                    ? `/${file_name}`
-                    : `${this.cacheName}/${file_name}`
-
-            return this.clearDblSlash(str)
+        /*                idb                */
+        db(type, key = null, val = null) {
+            return new Promise((resolve) => {
+                const db = new DbWorker()
+                db.addEventListener('message', (e) => resolve(e.data))
+                db.postMessage({
+                    type: type, // get,set,del,clr
+                    key: key ? encodeURI(key) : null,
+                    val: val
+                })
+            })
         }
     },
     computed: {
         CDBN() {
             return 'ctf0-Media_Manager'
-        },
-        cacheName() {
-            let folders = this.folders
-
-            return folders.length ? this.clearDblSlash(`/${folders.join('/')}`) : 'root_'
         }
     }
 }

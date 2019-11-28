@@ -6,9 +6,7 @@
         <div class="mm-animated fadeInDown __modal-content-wrapper">
             <transition :name="`mm-img-${imageSlideDirection}`"
                 mode="out-in"
-                appear
-                v-on:after-enter="isScrollable()"
-                v-on:before-leave="scrollableBtn.state = false">
+                appear>
                 <div class="modal-content" :key="selectedFile.path">
                     {{-- card v --}}
                     @include('MediaManager::partials.card')
@@ -26,7 +24,6 @@
             <image-editor route="{{ route('media.uploadCropped') }}"
                 :no-scroll="noScroll"
                 :file="selectedFile"
-                :url="selectedFilePreview"
                 :translations="{{ json_encode([
                     'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']),
                     'move' => trans('MediaManager::messages.move.main'),
@@ -157,7 +154,9 @@
     <div class="modal mm-animated fadeIn"
         :class="{'is-active': isActiveModal('move_file_modal')}">
         <div class="modal-background link" @click="toggleModal()"></div>
-        <div class="modal-card mm-animated fadeInDown">
+        <form class="modal-card mm-animated fadeInDown"
+            action="{{ route('media.move_file') }}"
+            @submit.prevent="MoveFileForm($event)">
             <header class="modal-card-head is-warning">
                 <p class="modal-card-title">
                     <transition :name="useCopy ? 'mm-info-in' : 'mm-info-out'" mode="out-in">
@@ -174,69 +173,60 @@
                 <button type="button" class="delete" @click="toggleModal()"></button>
             </header>
 
-            <form action="{{ route('media.move_file') }}" @submit.prevent="MoveFileForm($event)">
-                <section class="modal-card-body">
-                    {{-- destination --}}
-                    <h5 class="subtitle m-b-10">{{ trans('MediaManager::messages.destination_folder') }}</h5>
-                    <div class="field">
-                        <div class="control has-icons-left">
-                            <span class="select is-fullwidth">
-                                <select ref="move_folder_dropdown" v-model="moveToPath">
-                                    <option v-if="moveUpCheck()" value="../">../</option>
-                                    <option v-for="(dir, index) in filterDirList()"
-                                        :key="index"
-                                        :value="dir">
-                                        @{{ dir }}
-                                    </option>
-                                </select>
-                            </span>
-                            <span class="icon is-left">
-                                <icon name="search"></icon>
-                            </span>
-                        </div>
-                    </div>
+            <section class="modal-card-body">
+                {{-- destination --}}
+                <h5 class="subtitle m-b-10">{{ trans('MediaManager::messages.destination_folder') }} :</h5>
+                <div class="field">
+                    <div class="tag is-black is-medium">@{{ files.path || '/' }}</div>
+                </div>
 
-                    <br>
-                    @include('MediaManager::partials.modal.files-info')
-                </section>
+                @include('MediaManager::partials.modal.mov-files-info')
+            </section>
 
-                <footer class="modal-card-foot">
+            <footer class="modal-card-foot">
+                <div class="level is-mobile full-width">
                     {{-- switcher --}}
-                    <div class="level is-mobile full-width">
-                        <div class="level-left">
-                            <div class="level-item">
-                                <div class="form-switcher">
-                                    <input type="checkbox" name="use_copy" id="use_copy" v-model="useCopy">
-                                    <label class="switcher" for="use_copy"></label>
-                                </div>
-                            </div>
-                            <div class="level-item">
-                                <label class="label" for="use_copy">{{ trans('MediaManager::messages.copy.files') }}</label>
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="form-switcher">
+                                <input type="checkbox" name="use_copy" id="use_copy" v-model="useCopy">
+                                <label class="switcher" for="use_copy"></label>
                             </div>
                         </div>
-
-                        <div class="level-right">
-                            <div class="level-item">
-                                <button type="reset" class="button" @click="toggleModal()">
-                                    {{ trans('MediaManager::messages.cancel') }}
-                                </button>
-                            </div>
-                            <div class="level-item">
-                                <button type="submit"
-                                    class="button is-warning"
-                                    :disabled="isLoading || !moveToPath"
-                                    :class="{'is-loading': isLoading}">
-                                    <transition :name="useCopy ? 'mm-img-prv' : 'mm-img-nxt'" mode="out-in">
-                                        <span key="1" v-if="useCopy">{{ trans('MediaManager::messages.copy.main') }}</span>
-                                        <span key="2" v-else>{{ trans('MediaManager::messages.move.main') }}</span>
-                                    </transition>
-                                </button>
-                            </div>
+                        <div class="level-item">
+                            <label class="label" for="use_copy">{{ trans('MediaManager::messages.copy.files') }}</label>
                         </div>
                     </div>
-                </footer>
-            </form>
-        </div>
+
+                    {{-- btns --}}
+                    <div class="level-right">
+                        <div class="level-item">
+                            <button type="reset"
+                                class="button"
+                                @click="toggleModal()">
+                                {{ trans('MediaManager::messages.cancel') }}
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button type="reset"
+                                class="button is-danger"
+                                @click="clearMovableList()">
+                                {{ trans('MediaManager::messages.crop.reset') }}
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button type="submit"
+                                ref="move_file_modal_submit"
+                                class="button is-warning"
+                                :disabled="isLoading"
+                                :class="{'is-loading': isLoading}">
+                                <span>{{ trans('MediaManager::messages.paste') }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </form>
     </div>
 
     {{-- confirm_delete_modal --}}
@@ -254,7 +244,7 @@
             <form action="{{ route('media.delete_file') }}"
                 @submit.prevent="DeleteFileForm($event)">
                 <section class="modal-card-body">
-                    @include('MediaManager::partials.modal.files-info')
+                    @include('MediaManager::partials.modal.del-files-info')
 
                     {{-- deleting folder warning --}}
                     <h5 v-show="folderWarning" class="__modal-folder-warning">

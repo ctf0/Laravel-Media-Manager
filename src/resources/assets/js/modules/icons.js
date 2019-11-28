@@ -44,6 +44,7 @@ import 'vue-awesome/icons/file-archive-o'
 import 'vue-awesome/icons/chevron-down'
 import 'vue-awesome/icons/chevron-up'
 import 'vue-awesome/icons/cloud-upload'
+import 'vue-awesome/icons/shopping-cart'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'

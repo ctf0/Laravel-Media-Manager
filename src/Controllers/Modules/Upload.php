@@ -59,14 +59,13 @@ trait Upload
 
                     // fire event
                     event('MMFileUploaded', [
-                        'file_path'  => $this->getItemPath($full_path),
+                        'file_path'  => $full_path,
                         'mime_type'  => $file_type,
                         'options'    => $file_options,
                     ]);
 
                     $broadcast = true;
-
-                    $result[] = [
+                    $result[]  = [
                         'success'   => true,
                         'file_name' => $final_name,
                     ];
@@ -128,7 +127,7 @@ trait Upload
 
                 // fire event
                 event('MMFileSaved', [
-                    'file_path' => $this->getItemPath($destination),
+                    'file_path' => $destination,
                     'mime_type' => $type,
                 ]);
 
@@ -180,7 +179,7 @@ trait Upload
                             : $this->cleanName($name_only) . ".$ext_only";
 
             $destination = !$path ? $file_name : $this->clearDblSlash("$path/$file_name");
-            $file_type   = image_type_to_mime_type(exif_imagetype($url));
+            $file_type   = image_type_to_mime_type(@exif_imagetype($url));
 
             try {
                 // check for mime type
@@ -202,7 +201,7 @@ trait Upload
 
                 // fire event
                 event('MMFileSaved', [
-                    'file_path' => $this->getItemPath($destination),
+                    'file_path' => $destination,
                     'mime_type' => $file_type,
                 ]);
 

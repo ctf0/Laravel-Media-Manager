@@ -10,14 +10,16 @@ export default {
             return new Promise((resolve) => {
                 if (!this.inModal) {
                     let path = new URLSearchParams(location.search)
-                    this.folders = path.has('path') ? path.get('path').replace(/#/g, '').split('/') : []
+                    this.folders = path.has('path')
+                        ? this.arrayFilter(path.get('path').replace(/#/g, '').split('/'))
+                        : []
                 }
 
                 return resolve()
             })
         },
         updatePageUrl() {
-            if (!this.inModal) {
+            if (!this.inModal && !this.restrictModeIsOn) {
                 let url = this.getUrlWithoutQuery()
                 let folders = this.folders
 
@@ -30,9 +32,7 @@ export default {
         },
         urlNavigation(e) {
             if (!this.inModal) {
-                this.getPathFromUrl().then(() => {
-                    this.getFiles(this.folders)
-                })
+                this.getPathFromUrl().then(() => this.getFiles())
             }
         }
     }

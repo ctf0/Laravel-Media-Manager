@@ -1,7 +1,8 @@
 {{-- multi --}}
 <template v-if="bulkItemsFilter.length">
+    {{-- less than 8 items --}}
     <template v-if="bulkItemsFilter.length <= 8">
-        <div class="media" v-for="one in bulkItemsFilter">
+        <div class="media" v-for="one in bulkItemsFilter" :key="one.path">
             <figure class="media-left">
                 <span class="icon has-text-link">
                     <icon v-if="fileTypeIs(one, 'folder')" name="folder" scale="1.2"></icon>

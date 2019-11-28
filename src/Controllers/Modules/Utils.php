@@ -57,29 +57,6 @@ trait Utils
         return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]+/ius';
     }
 
-    /**
-     * get file path from storage.
-     *
-     * @param [type] $path [description]
-     *
-     * @return [type] [description]
-     */
-    protected function getItemPath($path)
-    {
-        $info = $this->storageDiskInfo;
-        $url  = $this->resolveUrl($path); // get the file url
-        $root = $info['root'] ?? null;
-
-        // for other disks without root ex."cloud"
-        if (!$root) {
-            return preg_replace('/(.*\/\/.*?)\//', '', $url); // get the full path
-        }
-
-        $dir = str_replace($info['url'], '', $url); // remove the uri
-
-        return $root . $dir; // get the full path
-    }
-
     protected function getItemTime($time)
     {
         return Carbon::createFromTimestamp($time)->{$this->LMF}();
@@ -96,11 +73,6 @@ trait Utils
     protected function resolveUrl($path)
     {
         return $this->clearDblSlash("{$this->baseUrl}/{$path}");
-    }
-
-    protected function clearUrl($path)
-    {
-        return str_replace($this->baseUrl, '', $path);
     }
 
     protected function clearDblSlash($str)

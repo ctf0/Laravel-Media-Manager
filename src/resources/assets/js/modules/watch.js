@@ -2,20 +2,17 @@ export default {
     watch: {
         // files
         selectedFile(val) {
-            this.scrollableBtn = {
-                state: false,
-                dir: 'down'
-            }
+            this.resetInput('audioFileMeta', {})
 
             if (val) {
-                if (this.inModal && !this.isBulkSelecting()) {
-                    this.selectedFileIs('folder')
-                        ? EventHub.fire('folder_selected', `${this.files.path}/${val.name}`)
-                        : EventHub.fire('file_selected', val.path)
+                if (this.selectedFileIs('audio')) {
+                    this.getAudioData(val.path)
                 }
 
-                if (this.checkForFolders) {
-                    this.$nextTick(() => this.updateMoveList())
+                if (this.inModal && !this.isBulkSelecting()) {
+                    this.selectedFileIs('folder')
+                        ? EventHub.fire('folder_selected', val.storage_path)
+                        : EventHub.fire('file_selected', val.path)
                 }
 
                 return this.updateLs({'selectedFileName': val.name})
@@ -47,10 +44,17 @@ export default {
             }
         },
         bulkSelect(val) {
-            this.UploadArea = false
+            this.uploadArea = false
 
             if (!val) {
                 this.firstMeta = false
+            }
+        },
+
+        // copy
+        movableItemsCount(val) {
+            if (!val && this.isActiveModal('move_file_modal')) {
+                return this.toggleModal()
             }
         },
 
@@ -113,7 +117,7 @@ export default {
         // progress
         showProgress(val) {
             if (val) {
-                this.UploadArea = false
+                this.uploadArea = false
                 this.infoSidebar = false
                 this.isLoading = true
                 this.noFiles('hide')
@@ -126,20 +130,11 @@ export default {
         },
 
         // misc
-        infoSidebar: {
-            deep: true,
-            immediate: true,
-            handler(val) {
-                this.$nextTick(() => setTimeout(this.scrollOnLoad, 250))
-            }
+        infoSidebar(val) {
+            this.$nextTick(() => setTimeout(this.scrollOnLoad, 150))
         },
         no_files(val) {
             if (val) this.isLoading = false
-        },
-        checkForFolders(val) {
-            val
-                ? this.updateMoveList()
-                : this.resetInput('moveToPath')
         },
         activeModal(val) {
             let ref
@@ -151,11 +146,11 @@ export default {
                 case 'rename_file_modal':
                     ref = 'rename_file_modal_input'
                     break
-                case 'move_file_modal':
-                    ref = 'move_folder_dropdown'
-                    break
                 case 'confirm_delete_modal':
                     ref = 'confirm_delete_modal_submit'
+                    break
+                case 'move_file_modal':
+                    ref = 'move_file_modal_submit'
                     break
                 case 'save_link_modal':
                     ref = 'save_link_modal_input'

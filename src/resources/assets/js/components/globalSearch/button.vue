@@ -4,7 +4,10 @@
             :title="trans('glbl_search')"
             class="button"
             @click="done ? showSearchPanel() : init()">
-        <span class="icon"><icon :spin="loading" name="globe"/></span>
+        <span class="icon">
+            <icon :spin="loading"
+                  name="globe"/>
+        </span>
     </button>
 </template>
 
@@ -38,7 +41,7 @@ export default {
                 })
         },
         showSearchPanel() {
-            EventHub.fire('show-global-search')
+            EventHub.fire('toggle-global-search', true)
         }
     }
 }

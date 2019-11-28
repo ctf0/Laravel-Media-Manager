@@ -1,5 +1,6 @@
 <template>
-    <section class="preview-container">
+    <section class="preview-container"
+             style="--width: 25%;">
         <!-- preview -->
         <focus-point v-if="img"
                      v-model="options.focalPoint">
@@ -183,7 +184,6 @@
 <style lang="scss">
     @import '../../../sass/partials/vars';
     @import '../../../sass/packages/focal-point';
-    $width: 25%;
 
     img {
         display: block;
@@ -227,19 +227,18 @@
             display: flex;
             height: 100%;
             position: fixed;
-            right: calc(-#{$width} + 52px);
             top: 0;
             transition: all $anim-time ease;
-            width: $width;
+            width: var(--width);
 
             &.show {
-                right: 0;
+                right: 0 !important;
                 z-index: 3;
             }
 
-            button.btn-plain {
-                padding-right: 0.25rem;
-                padding-top: 0.5rem;
+            .btn-plain {
+                padding-right: $option_btns-space;
+                padding-top: $option_btns-space;
                 z-index: 2;
 
                 &.alt {
@@ -331,7 +330,7 @@
         }
     }
 
-    @include media('max', 1087) {
+    @include media('max', 1023) {
         .preview-container {
             .info {
                 left: 0;
@@ -380,9 +379,20 @@ export default {
         }
     },
     activated() {
-        this.$parent.uploadPreviewOptionsPanelIsVisible = this.panelIsVisible
+        this.updateParentPanel()
+        this.addSpaceToOptBtn()
     },
     methods: {
+        updateParentPanel() {
+            this.$parent.uploadPreviewOptionsPanelIsVisible = this.panelIsVisible
+        },
+        addSpaceToOptBtn() {
+            let cont = document.querySelector('.options')
+            if (cont) {
+                let btn = cont.querySelector('.btn-plain')
+                cont.style.right = `calc((var(--width) * -1) + ${btn.offsetWidth}px)`
+            }
+        },
         switchPanel() {
             return this.panelIsVisible = !this.panelIsVisible
         },
@@ -417,7 +427,7 @@ export default {
             }
         },
         panelIsVisible(val) {
-            this.$parent.uploadPreviewOptionsPanelIsVisible = val
+            this.updateParentPanel()
         }
     }
 }

@@ -2,9 +2,9 @@
 @import '../partials/panels';
 
 #gsearch-panel {
-    overflow-x: auto;
-    overflow-y: scroll;
-}
+    overflow-x: auto !important;
+    overflow-y: scroll !important;
+} // #gsearch-panel
 
 .glbl_search_panel {
     background-color: $active_theme;
@@ -13,20 +13,20 @@
 
     .svg-prev-icon {
         margin: 4rem 0;
-    }
-}
+    } // .glbl_search_panel .svg-prev-icon
+} // .glbl_search_panel
 
 .modal {
     align-items: start;
 
     .modal-content {
         padding-bottom: 3rem; // add some space to breath
-    }
-}
+    } // .modal .modal-content
+} // .modal
 
 .column {
     backface-visibility: hidden;
-}
+} // .column
 
 .search-input {
     color: $white;
@@ -55,7 +55,7 @@
         top: 0;
         transition: all 1s ease 1s;
         width: 100%;
-    }
+    } // .search-input::before
 
     section {
         align-items: center;
@@ -63,7 +63,7 @@
         margin: 0 auto;
         position: relative;
         width: 75%;
-    }
+    } // .search-input section
 
     input {
         background-color: transparent;
@@ -80,12 +80,12 @@
 
         &::placeholder {
             color: rgba($white, 0.5);
-        }
+        } // .search-input input::placeholder
 
         &::selection {
             background: #efb1ff;
-        }
-    }
+        } // .search-input input::selection
+    } // .search-input input
 
     .count {
         text-align: center;
@@ -94,48 +94,48 @@
         .title {
             color: $white;
             text-shadow: 4px 4px $red;
-        }
+        } // .search-input .count .title
 
         .heading {
             color: $white;
             font-weight: bold;
-        }
-    }
+        } // .search-input .count .heading
+    } // .search-input .count
 
     &.move {
         transform: translate(0);
 
         &::before {
             opacity: 1;
-        }
+        } // .search-input.move::before
 
         .input-wrapper {
             width: 100%;
 
             input {
                 font-size: 3rem;
-            }
-        }
-    }
-}
+            } // .search-input.move .input-wrapper input
+        } // .search-input.move .input-wrapper
+    } // .search-input.move
+} // .search-input
 
 .no-data {
     text-align: center;
 
     * {
         color: rgba($white, 0.5);
-    }
-}
+    } // .no-data *
+} // .no-data
 
 .card {
     border-radius: 4px;
     min-width: unset;
     overflow: hidden;
-}
+} // .card
 
 .icon {
     vertical-align: middle;
-}
+} // .icon
 
 @media screen and (max-width: 1083px) {
     .search-input {
@@ -143,14 +143,14 @@
 
         section {
             width: 100%;
-        }
+        } // .search-input section
 
         input {
             line-height: 2;
-        }
-    }
+        } // .search-input input
+    } // .search-input
 
     .modal-close {
         top: 1.5rem;
-    }
+    } // .modal-close
 }

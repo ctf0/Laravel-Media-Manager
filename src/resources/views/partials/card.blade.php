@@ -27,8 +27,8 @@
         {{-- audio --}}
         <div v-else-if="selectedFileIs('audio')" class="audio-prev">
             <template>
-                <img v-if="selectedFilePreview && selectedFilePreview.picture"
-                    :src="selectedFilePreview.picture"
+                <img v-if="audioFileMeta && audioFileMeta.cover"
+                    :src="audioFileMeta.cover"
                     :alt="selectedFile.name"
                     class="image"/>
 
@@ -47,25 +47,14 @@
         </div>
 
         {{-- image --}}
-        <div v-else class="image-wrapper">
-            <div ref="img-card-prev" @scroll="updateScrollableDir('img-card-prev')">
-                <a :href="selectedFile.path"
-                    rel="noreferrer noopener"
-                    target="_blank"
-                    class="image">
-                    <img :src="selectedFilePreview" :alt="selectedFile.name">
-                </a>
-            </div>
-
-            <transition :name="scrollableBtn.state ? 'mm-img-nxt' : 'mm-img-prv'" appear>
-                <div class="image-scroll-btn"
-                    :class="scrollableBtn.dir"
-                    v-show="scrollableBtn.state"
-                    @click="scrollImg('img-card-prev')">
-                    <span class="icon is-large"><icon name="chevron-down" scale="1"></icon></span>
-                </div>
-            </transition>
-        </div>
+        <image-preview v-else class="wrapper">
+            <a :href="selectedFile.path"
+                rel="noreferrer noopener"
+                target="_blank"
+                class="image">
+                <img :src="selectedFile.path" :alt="selectedFile.name">
+            </a>
+        </image-preview>
     </div>
 
     <div class="card-content">
@@ -122,12 +111,12 @@
 
                 {{-- visibility --}}
                 <div class="level-item">
-                    <span v-if="$refs.vis"
+                    <span v-if="$refs.visibility"
                         class="icon is-large link"
                         :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
                         title="{{ trans('MediaManager::messages.visibility.set') }}"
                         v-tippy
-                        @click="$refs.vis.click()">
+                        @click="$refs.visibility.click()">
                         <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
                     </span>
                 </div>
@@ -151,7 +140,7 @@
         {{-- move --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || !checkForFolders || isLoading"
+                :disabled="item_ops()"
                 @click="moveItem()">
                 <span class="icon is-small"><icon name="share"></icon></span>
                 <span>{{ trans('MediaManager::messages.move.main') }}</span>
@@ -161,7 +150,7 @@
         {{-- rename --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || isLoading"
+                :disabled="item_ops()"
                 @click="renameItem()">
                 <span class="icon is-small"><icon name="terminal"></icon></span>
                 <span>{{ trans('MediaManager::messages.rename.main') }}</span>
@@ -171,7 +160,7 @@
         {{-- editor --}}
         <div class="card-footer-item" v-if="selectedFileIs('image')">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || isLoading"
+                :disabled="item_ops()"
                 @click="imageEditorCard()">
                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.editor.main') }}</span>
@@ -181,7 +170,7 @@
         {{-- delete --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops() || isLoading"
+                :disabled="item_ops()"
                 @click="deleteItem()">
                 <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete.main') }}</span>

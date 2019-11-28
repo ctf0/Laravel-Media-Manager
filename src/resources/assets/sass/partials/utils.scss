@@ -1,60 +1,56 @@
 .full-width {
     width: 100%;
-}
-
-.m-0 {
-    margin: 0 !important;
-}
+} // .full-width
 
 .p-l-0 {
     padding-left: 0 !important;
-}
+} // .p-l-0
 
 .p-r-0 {
     padding-right: 0 !important;
-}
+} // .p-r-0
 
 .p-t-10 {
     padding-top: 10px !important;
-}
+} // .p-t-10
 
 .m-v-15 {
     margin-bottom: 15px !important;
     margin-top: 15px !important;
-}
+} // .m-v-15
 
 .m-v-10 {
     margin-bottom: 10px !important;
     margin-top: 10px !important;
-}
+} // .m-v-10
 
 .m-t-5 {
     margin-top: 5px !important;
-}
+} // .m-t-5
 
 .m-b-10 {
     margin-bottom: 10px !important;
-}
+} // .m-b-10
 
 .m-l-50 {
     margin-left: 50px !important;
-}
+} // .m-l-50
 
 .m-l-5 {
     margin-left: 5px !important;
-}
+} // .m-l-5
 
 .no-scroll {
     overflow: hidden;
-}
+} // .no-scroll
 
 .link {
     cursor: pointer;
-}
+} // .link
 
 .no-click {
     pointer-events: none;
-}
+} // .no-click
 
 .btn-plain {
     background: transparent;
@@ -68,17 +64,17 @@
     &:focus {
         box-shadow: none !important;
         outline: none;
-    }
+    } // .btn-plain:focus
 
     &:disabled {
         cursor: not-allowed;
 
         * {
             color: darken($active_theme, 25%);
-        }
-    }
-}
+        } // .btn-plain:disabled *
+    } // .btn-plain:disabled
+} // .btn-plain
 
 a[target='_blank'] {
     cursor: alias;
-}
+} // a[target='_blank']

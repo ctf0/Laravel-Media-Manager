@@ -33,6 +33,6 @@ trait NewFolder
             'path' => $path,
         ]))->toOthers();
 
-        return compact('message', 'new_folder_name', 'full_path');
+        return compact('message', 'new_folder_name');
     }
 }

@@ -199,7 +199,7 @@
     }
 }
 
-@include media('max', 1087) {
+@include media('max', 1023) {
     .__modal-editor {
         .image {
             max-width: 75vw !important;

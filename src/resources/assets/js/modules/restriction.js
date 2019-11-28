@@ -1,30 +1,38 @@
 export default {
     methods: {
+        // hide
         checkForHiddenExt(file) {
             return this.hideExt.includes(this.getExtension(file.name))
         },
         checkForHiddenPath(folder) {
-            if (this.fileTypeIs(folder, 'folder')) {
-                return this.checkForFolderName(folder.name)
-            }
+            return this.fileTypeIs(folder, 'folder') && this.checkForFolderName(folder.storage_path)
         },
-        checkForFolderName(name) {
-            if (this.folders.length) {
-                return this.hidePath.includes(
-                    this.clearDblSlash(`${this.folders.join('/')}/${name}`)
-                )
-            }
+        checkForFolderName(path) {
+            return this.hidePath.some((e) => e == path)
+        },
 
-            return this.hidePath.includes(name)
-        },
-        restrictModeIsOn() {
-            return Boolean(this.restrict.path)
-        },
+        // restrict
         restrictUpload() {
             return Boolean(this.restrict.uploadTypes || this.restrict.uploadsize)
         },
         resolveRestrictFolders() {
-            return this.folders = this.restrict.path.split('/')
+            return this.folders = this.getRestrictedPathArray()
+        },
+        getRestrictedPathArray() {
+            return this.arrayFilter(this.resrtictPath.split('/'))
+        }
+    },
+    computed: {
+        resrtictPath() {
+            let path = this.restrict.path
+
+            return path ? path.replace(/^\/+/, '') : ''
+        },
+        restrictModeIsOn() {
+            return Boolean(this.resrtictPath)
+        },
+        restrictIsCurrent() {
+            return this.restrictModeIsOn && this.folders.join('/') == this.resrtictPath
         }
     }
 }

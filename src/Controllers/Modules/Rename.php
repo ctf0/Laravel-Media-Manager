@@ -17,13 +17,14 @@ trait Rename
      */
     public function renameItem(Request $request)
     {
-        $path         = $request->path;
-        $filename     = $request->filename;
-        $new_filename = $this->cleanName($request->new_filename);
-        $message      = '';
-
-        $old_path = !$path ? $filename : $this->clearDblSlash("$path/$filename");
-        $new_path = !$path ? $new_filename : $this->clearDblSlash("$path/$new_filename");
+        $path             = $request->path;
+        $file             = $request->file;
+        $old_filename     = $file['name'];
+        $type             = $file['type'];
+        $new_filename     = $this->cleanName($request->new_filename, $type == 'folder');
+        $old_path         = $file['storage_path'];
+        $new_path         = dirname($old_path) . "/$new_filename";
+        $message          = '';
 
         try {
             if (!$this->storageDisk->exists($new_path)) {
@@ -33,16 +34,16 @@ trait Rename
                         'op'   => 'rename',
                         'path' => $path,
                         'item' => [
-                            'type'    => $request->type,
-                            'oldName' => $filename,
+                            'type'    => $type,
+                            'oldName' => $old_filename,
                             'newName' => $new_filename,
                         ],
                     ]))->toOthers();
 
                     // fire event
                     event('MMFileRenamed', [
-                        'old_path' => $this->getItemPath($old_path),
-                        'new_path' => $this->getItemPath($new_path),
+                        'old_path' => $old_path,
+                        'new_path' => $new_path,
                     ]);
                 } else {
                     throw new Exception(

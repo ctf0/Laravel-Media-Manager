@@ -2,6 +2,30 @@ import debounce from 'lodash/debounce'
 import Dropzone from 'dropzone'
 
 export default {
+    computed: {
+        uploadPanelImg() {
+            if (this.uploadArea) {
+                let imgs = this.uploadPanelImgList
+                let grds = this.uploadPanelGradients
+
+                let url = imgs.length ? imgs[Math.floor(Math.random() * imgs.length)] : null
+                let color = grds[Math.floor(Math.random() * grds.length)]
+
+                return url
+                    ? {'--gradient': color, 'background-image': `url("${url}")`}
+                    : {'--gradient': color}
+            }
+
+            return {}
+        },
+        uploadPreviewListSize() {
+            let size = this.uploadPreviewList
+                .map((el) => el.size)
+                .reduce((a, b) => a + b, 0)
+
+            return this.getFileSize(size)
+        }
+    },
     methods: {
         // dropzone
         fileUpload() {
@@ -63,7 +87,7 @@ export default {
 
                             manager.addToPreUploadedList(file)
                             manager.uploadPreviewList = fileList
-                            manager.UploadArea = false
+                            manager.uploadArea = false
                             manager.toolBar = false
                             manager.infoSidebar = false
                             manager.waitingForUpload = true
@@ -130,10 +154,6 @@ export default {
                     'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null,
                     'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                params: {
-                    upload_path: manager.files.path,
-                    random_names: manager.randomNames
-                },
                 timeout: 3600000, // 60 mins
                 autoProcessQueue: true,
                 previewsContainer: `${uploadPreview} .sidebar`,
@@ -165,7 +185,11 @@ export default {
 
                         if (item.success) {
                             last = item.file_name
-                            manager.showNotif(`${manager.trans('upload_success')} "${item.file_name}"`)
+                            let msg = manager.restrictModeIsOn
+                                ? `"${item.file_name}"`
+                                : `"${item.file_name}" at "${manager.files.path}"`
+
+                            manager.showNotif(`${manager.trans('upload_success')} ${msg}`)
                         } else {
                             manager.showNotif(item.message, 'danger')
                         }
@@ -188,8 +212,8 @@ export default {
                         allFiles = 0
 
                         last
-                            ? manager.getFiles(manager.folders, null, last)
-                            : manager.getFiles(manager.folders)
+                            ? manager.getFiles(null, last)
+                            : manager.getFiles()
                     }
                 }
             }
@@ -209,10 +233,12 @@ export default {
                 this.waitingForUpload = false
                 this.toolBar = true
                 this.smallScreenHelper()
-                this.uploadPreviewList = []
-                this.uploadPreviewNamesList = []
-                this.uploadPreviewOptionsList = []
-                this.selectedUploadPreview = null
+                this.resetInput([
+                    'uploadPreviewList',
+                    'uploadPreviewNamesList',
+                    'uploadPreviewOptionsList'
+                ], [])
+                this.resetInput('selectedUploadPreview')
             })
         },
 
@@ -263,7 +289,7 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            this.UploadArea = false
+            this.uploadArea = false
             this.toggleLoading()
             this.loadingFiles('show')
 
@@ -283,7 +309,7 @@ export default {
                     this.resetInput('urlToUpload')
                     this.$nextTick(() => this.$refs.save_link_modal_input.focus())
                     this.showNotif(`${this.trans('save_success')} "${data.message}"`)
-                    this.getFiles(this.folders, null, data.message)
+                    this.getFiles(null, data.message)
 
                 }).catch((err) => {
                     console.error(err)

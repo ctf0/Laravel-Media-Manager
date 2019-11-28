@@ -14,6 +14,7 @@ use ctf0\MediaManager\Controllers\Moduels\Download;
 use ctf0\MediaManager\Controllers\Moduels\NewFolder;
 use ctf0\MediaManager\Controllers\Moduels\GetContent;
 use ctf0\MediaManager\Controllers\Moduels\Visibility;
+use ctf0\MediaManager\Controllers\Moduels\GlobalSearch;
 
 class MediaController extends Controller
 {
@@ -26,7 +27,8 @@ class MediaController extends Controller
         Rename,
         Upload,
         NewFolder,
-        Visibility;
+        Visibility,
+        GlobalSearch;
 
     protected $baseUrl;
     protected $db;
@@ -45,21 +47,22 @@ class MediaController extends Controller
     {
         $config = app('config')->get('mediaManager');
 
-        $this->fileSystem     = $config['storage_disk'];
-        $this->ignoreFiles    = $config['ignore_files'];
-        $this->fileChars      = $config['allowed_fileNames_chars'];
-        $this->folderChars    = $config['allowed_folderNames_chars'];
-        $this->sanitizedText  = $config['sanitized_text'];
-        $this->unallowedMimes = $config['unallowed_mimes'];
-        $this->LMF            = $config['last_modified_format'];
-        $this->GFI            = $config['get_folder_info'] ?? true;
-        $this->pag_amount     = $config['pagination_amount'] ?? 50;
+        $this->fileSystem           = $config['storage_disk'];
+        $this->ignoreFiles          = $config['ignore_files'];
+        $this->fileChars            = $config['allowed_fileNames_chars'];
+        $this->folderChars          = $config['allowed_folderNames_chars'];
+        $this->sanitizedText        = $config['sanitized_text'];
+        $this->unallowedMimes       = $config['unallowed_mimes'];
+        $this->LMF                  = $config['last_modified_format'];
+        $this->GFI                  = $config['get_folder_info']   ?? true;
+        $this->paginationAmount     = $config['pagination_amount'] ?? 50;
 
         $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
         $this->baseUrl         = $this->storageDisk->url('/');
-        $this->db              = app('db')->connection($config['database_connection'] ?? 'mediamanager')
-                                            ->table($config['table_locked'] ?? 'locked');
+        $this->db              = app('db')
+                                    ->connection($config['database_connection'] ?? 'mediamanager')
+                                    ->table($config['table_locked'] ?? 'locked');
 
         $this->storageDisk->addPlugin(new ListWith());
     }
@@ -72,21 +75,5 @@ class MediaController extends Controller
     public function index()
     {
         return view('MediaManager::media');
-    }
-
-    public function globalSearch()
-    {
-        return collect($this->getFolderContent('/', true))
-                ->reject(function ($item) { // remove unwanted
-                    return preg_grep($this->ignoreFiles, [$item['path']]) || $item['type'] == 'dir';
-                })->map(function ($file) {
-                    return $file = [
-                        'name'                   => $file['basename'],
-                        'type'                   => $file['mimetype'],
-                        'path'                   => $this->resolveUrl($file['path']),
-                        'dir'                    => $file['dirname'] != '' ? $file['dirname'] : '/',
-                        'last_modified_formated' => $this->getItemTime($file['timestamp']),
-                    ];
-                })->values()->all();
     }
 }

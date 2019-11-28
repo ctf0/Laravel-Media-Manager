@@ -142,7 +142,7 @@
     </div>
 </template>
 
-<style lang="scss" src="../../../sass/modules/image-editor.scss"></style>
+<style lang="scss" src="../../../../sass/modules/image-editor.scss"></style>
 
 <script>
 import omit from 'lodash/omit'
@@ -162,11 +162,11 @@ export default {
         'file',
         'noScroll',
         'translations',
-        'route',
-        'url'
+        'route'
     ],
     data() {
         return {
+            url: this.file.path,
             imageCropper: null,
             dragMode: 'move',
             rotation: 45,

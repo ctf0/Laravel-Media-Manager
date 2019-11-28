@@ -1,8 +1,8 @@
 export default {
     methods: {
         /*                Item                */
-        selectFirst() {
-            this.$nextTick(() => this.scrollToFile(this.getElementByIndex(0)))
+        selectFirst(i = 0) {
+            this.$nextTick(() => this.scrollToFile(this.getElementByIndex(i)))
         },
         isSelected(file) {
             return this.selectedFile == file
@@ -21,7 +21,7 @@ export default {
             // select with shift
             if (e && e.shiftKey) {
                 this.bulkSelect = true
-                this.bulkList = []
+                this.resetInput('bulkList', [])
 
                 // forward
                 let begin = this.currentFileIndex
@@ -63,8 +63,10 @@ export default {
             }
         },
         selectedFileIs(val) {
-            if (this.selectedFile !== null) {
-                return this.fileTypeIs(this.selectedFile, val)
+            let selected = this.selectedFile
+
+            if (selected) {
+                return this.fileTypeIs(selected, val)
             }
         },
         textFileType() {
