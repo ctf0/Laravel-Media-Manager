@@ -35,6 +35,7 @@
         'glbl_search_avail' => trans('MediaManager::messages.search.glbl_avail'),
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'),
         'move_success' => trans('MediaManager::messages.move.success'),
+        'move_clear' => trans('MediaManager::messages.move.clear_list'),
         'new_uploads_notif' => trans('MediaManager::messages.upload.new_uploads_notif'),
         'no_val' => trans('MediaManager::messages.no_val'),
         'nothing_found' => trans('MediaManager::messages.nothing_found'),
@@ -123,7 +124,7 @@
                                     ref="move"
                                     :disabled="isLoading || !movableItemsCount"
                                     v-tippy
-                                    title="m"
+                                    title="m / p"
                                     @click="moveItem()">
                                     <span class="icon"><icon name="share" scale="0.8"></icon></span>
                                     <span>{{ trans('MediaManager::messages.move.main') }}</span>
@@ -582,7 +583,7 @@
                 <div class="movable-list extra-func-btns">
                     <v-touch class="btn-plain"
                         v-tippy="{arrow: true, hideOnClick: false}"
-                        :title="inMovableList() ? '{{ trans('MediaManager::messages.add.added') }}' : '{{ trans('MediaManager::messages.add.list') }}'"
+                        :title="inMovableList() ? '{{ trans('MediaManager::messages.add.added') }}' : '{{ trans('MediaManager::messages.add.list') }} (c / x)'"
                         @tap="addToMovableList()"
                         @dbltap="showMovableList()"
                         @hold="clearMovableList()">

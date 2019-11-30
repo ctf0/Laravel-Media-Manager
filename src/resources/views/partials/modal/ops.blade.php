@@ -175,10 +175,10 @@
 
             <section class="modal-card-body">
                 {{-- destination --}}
-                <h5 class="subtitle m-b-10">{{ trans('MediaManager::messages.destination_folder') }} :</h5>
-                <div class="field">
-                    <div class="tag is-black is-medium">@{{ files.path || '/' }}</div>
-                </div>
+                <h5 class="subtitle m-b-20">
+                    {{ trans('MediaManager::messages.destination_folder') }} :
+                    <span class="tag is-black is-medium">@{{ files.path || '/' }}</span>
+                </h5>
 
                 @include('MediaManager::partials.modal.mov-files-info')
             </section>

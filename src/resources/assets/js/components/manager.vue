@@ -378,7 +378,7 @@ export default {
                             }
 
                             // copy file
-                            if (key == 'c') {
+                            if (key == 'c' || key == 'x') {
                                 this.addToMovableList()
                             }
 
@@ -395,7 +395,7 @@ export default {
                         // end of we have files
 
                         // move file
-                        if (key == 'm' && this.movableItemsCount) {
+                        if ((key == 'm' || key == 'p') && this.movableItemsCount) {
                             this.showMovableList()
                         }
 

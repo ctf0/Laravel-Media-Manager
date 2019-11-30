@@ -261,7 +261,7 @@
     >- all the **left/right** gestures have their counterparts available as well.
     >- pressing `esc` while using the ***image editor*** wont close the modal but you can ***dbl click/tap*** the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
 
-    \* the info sidebar is only available on big screens **"> 1087px"**.<br>
+    \* the info sidebar is only available on big screens **"> 1023px"**.<br>
     \* to stop interfering with other `keydown` events you can toggle the manager listener through<br>
     `EventHub.fire('disable-global-keys', true/false)`.
 
@@ -271,14 +271,14 @@
 |----------------------|------------------------------------------|------------------|------------------------------|---------------------------------|
 |                      | toggle upload panel *(toolbar)*          | u                |                              |                                 |
 |                      | refresh *(toolbar)*                      | r                | hold *"clear cache"*         | pinch in *(items container)*    |
-|                      | move/show movable list *(toolbar)*       | m                |                              |                                 |
+|                      | move/show movable list *(toolbar)*       | m / p            |                              |                                 |
 |                      | image editor *(toolbar)*                 | e                |                              |                                 |
 |                      | delete *(toolbar)*                       | d / del          |                              |                                 |
 |                      | lock/unlock *(toolbar)*                  | l                | hold *"anything but images"* |                                 |
 |                      | change visibility *(toolbar)*            | v                |                              |                                 |
 |                      | toggle bulk selection *(toolbar)*        | b                |                              |                                 |
 |                      | (reset) bulk select all *(toolbar)*      | a                |                              |                                 |
-|                      | add to movable list *(shopping cart)*    | c                | *                            |                                 |
+|                      | add to movable list *(shopping cart)*    | c / x            | *                            |                                 |
 |                      | move/show movable list *(shopping cart)* |                  | **                           |                                 |
 |                      | clear movable list *(shopping cart)*     |                  | hold                         |                                 |
 |                      | toggle sidebar *(path bar)*              | t                | *                            | swipe left/right *(sidebar)*    |

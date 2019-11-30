@@ -219,10 +219,10 @@ export default {
 
             return str
         },
-        showNotif(msg, s = 'success', duration = 3) {
+        showNotif(msg, t = 'success', duration = 3) {
             let title
 
-            switch (s) {
+            switch (t) {
                 case 'black':
                 case 'danger':
                     title = 'Error'
@@ -243,7 +243,7 @@ export default {
             EventHub.fire('showNotif', {
                 title: title,
                 body: msg,
-                type: s,
+                type: t,
                 duration: duration
             })
         },

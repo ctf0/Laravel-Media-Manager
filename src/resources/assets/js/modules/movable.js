@@ -36,7 +36,9 @@ export default {
             return this.movableList.splice(i, 1)
         },
         clearMovableList() {
-            return this.resetInput('movableList', [])
+            this.resetInput('movableList', [])
+
+            return this.showNotif(this.trans('move_clear'))
         },
         inMovableList(item = this.selectedFile) {
             return item &&
