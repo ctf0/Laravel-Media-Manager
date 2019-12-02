@@ -54,7 +54,6 @@
 
     ```js
     // app.js
-
     window.Vue = require('vue')
 
     // Laravel < v5.7
