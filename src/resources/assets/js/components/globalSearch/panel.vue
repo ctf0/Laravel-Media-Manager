@@ -72,6 +72,10 @@
                                       class="svg-prev-icon"
                                       name="file-text-o"
                                       scale="5.0"/>
+                                <icon v-else-if="fileTypeIs(item, 'compressed')"
+                                      class="svg-prev-icon"
+                                      name="file-archive-o"
+                                      scale="5.0"/>
                             </div>
                         </div>
                         <div class="card-content">

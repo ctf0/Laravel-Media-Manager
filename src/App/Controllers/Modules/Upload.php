@@ -1,11 +1,11 @@
 <?php
 
-namespace ctf0\MediaManager\Controllers\Moduels;
+namespace ctf0\MediaManager\App\Controllers\Moduels;
 
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use ctf0\MediaManager\Events\MediaFileOpsNotifications;
+use ctf0\MediaManager\App\Events\MediaFileOpsNotifications;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait Upload

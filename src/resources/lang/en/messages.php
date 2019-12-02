@@ -81,8 +81,11 @@ return [
         'moving_cloud'   => 'Cloud Folders Can\'t Be "Renamed, Moved Or Copied"',
         'move_into_self' => 'Folder Can\'t Be "Moved Or Copied" Into It Self',
     ],
-    'filter'         => 'Filter',
-    'filter_by'      => 'Filter By :attr',
+    'filter'         => [
+        'main'       => 'Filter',
+        'by'         => 'Filter By :attr',
+        'filtration' => 'Filters & Sorting',
+    ],
     'find'           => 'Find...',
     'folder'         => 'Folder',
     'found'          => 'Found',

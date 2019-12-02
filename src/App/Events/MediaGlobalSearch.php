@@ -1,15 +1,13 @@
 <?php
 
-namespace ctf0\MediaManager\Events;
+namespace ctf0\MediaManager\App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class MediaFileOpsNotifications implements ShouldBroadcastNow
+class MediaGlobalSearch implements ShouldBroadcastNow
 {
-    use InteractsWithSockets;
-
+    protected $user;
     public $data;
 
     /**
@@ -19,6 +17,7 @@ class MediaFileOpsNotifications implements ShouldBroadcastNow
      */
     public function __construct($data)
     {
+        $this->user = auth()->user();
         $this->data = $data;
     }
 
@@ -29,11 +28,13 @@ class MediaFileOpsNotifications implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('User.media');
+        $id = optional($this->user)->id ?? 0;
+
+        return new PrivateChannel("User.{$id}.media");
     }
 
     public function broadcastAs()
     {
-        return 'user.media.ops';
+        return 'user.media.search';
     }
 }

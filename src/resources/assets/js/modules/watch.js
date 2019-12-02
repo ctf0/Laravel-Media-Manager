@@ -28,7 +28,7 @@ export default {
         },
         filteredItemsCount(val) {
             if (!val) {
-                this.resetInput('currentFilterName')
+                this.resetInput('filterName')
             }
         },
 
@@ -73,20 +73,17 @@ export default {
         },
 
         // filter
-        sortBy(val) {
+        filterName(val) {
             if (val) {
-                if (val == 'clear') {
-                    this.resetInput('sortBy')
-                }
-
-                if (!this.isBulkSelecting()) {
-                    this.selectFirst()
-                }
+                this.showFilesOfType(val)
+            } else {
+                this.resetInput('filterdList', [])
+                this.selectFirst()
             }
         },
-        currentFilterName(val) {
-            if (!val) {
-                this.resetInput('filterdList', [])
+        sortName(val) {
+            if (!this.isBulkSelecting()) {
+                this.selectFirst()
             }
         },
 
@@ -103,10 +100,6 @@ export default {
                 this.noSearch('hide')
                 this.selectFirstInBulkList()
             }
-
-            // because the files gets removed & readded to the dom
-            // which will put the images back to its init state "no-preview"
-            this.$nextTick(() => EventHub.fire('start-search-observing'))
         },
         searchItemsCount(val) {
             if (this.allItemsCount == undefined || val == this.allItemsCount) {
@@ -162,7 +155,6 @@ export default {
             if (ref) {
                 this.$nextTick(() => this.$refs[ref].focus())
             }
-        },
-        player: 'autoPlay'
+        }
     }
 }

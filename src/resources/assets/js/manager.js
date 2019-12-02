@@ -8,7 +8,6 @@ Vue.use(require('vue-ls'))
 window.EventHub = require('vuemit')
 window.keycode = require('keycode')
 window.Fuse = require('fuse.js')
-require('vue-list-rendered')
 
 // vue-tippy
 Vue.use(require('vue-tippy'), {

@@ -1,13 +1,15 @@
 <?php
 
-namespace ctf0\MediaManager\Events;
+namespace ctf0\MediaManager\App\Events;
 
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class MediaZipProgress implements ShouldBroadcastNow
+class MediaFileOpsNotifications implements ShouldBroadcastNow
 {
-    protected $user;
+    use InteractsWithSockets;
+
     public $data;
 
     /**
@@ -17,7 +19,6 @@ class MediaZipProgress implements ShouldBroadcastNow
      */
     public function __construct($data)
     {
-        $this->user = auth()->user();
         $this->data = $data;
     }
 
@@ -28,13 +29,11 @@ class MediaZipProgress implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        $id = optional($this->user)->id ?? 0;
-
-        return new PrivateChannel("User.{$id}.media");
+        return new Channel('User.media');
     }
 
     public function broadcastAs()
     {
-        return 'user.media.zip';
+        return 'user.media.ops';
     }
 }

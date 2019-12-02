@@ -1,0 +1,3 @@
+- change package structure, make sure to change the controller namespace in config to "\ctf0\MediaManager\App\Controllers\MediaController"
+- merge sortBy & filterBy into one list to save space in toolbar
+- add missing icon for compressed files in global search

@@ -1,28 +1,68 @@
 export default {
     methods: {
-        btnFilter(val) {
-            let files = this.files.items
-
-            if (val == 'all') {
-                return this.filteredItemsCount
-            } else if (val == 'selected') {
-                return this.bulkItemsCount && this.bulkItemsCount > 1 ? true : false
-            } else if (val == 'locked') {
-                return files.some((item) => {
-                    return this.IsLocked(item)
-                })
-            } else if (val == 'application') {
-                return files.some((item) => {
-                    return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
-                })
+        // setters
+        setFilterName(val) {
+            if (val == 'non') {
+                return this.resetInput('filterName')
+            } else if (!this.filterNameIs(val) && this.haveAFileOfType(val)) {
+                this.filterName = val
             }
+        },
+        setSortName(val) {
+            if (val == 'non') {
+                return this.resetInput('sortName')
+            } else if (!this.sortNameIs(val)) {
+                this.sortName = val
+            }
+        },
 
-            return files.some((item) => {
-                return this.fileTypeIs(item, val)
-            })
+        // helper
+        haveAFileOfType(val) {
+            if (val == 'selected') {
+                return Boolean(this.bulkItemsCount)
+            } else if (val == 'locked' && !this.lockedList.length) {
+                return false
+            } else {
+                return this.files.items.some((item) => this.fileTypeIs(item, val))
+            }
         },
         filterNameIs(val) {
-            return this.currentFilterName == val
+            return this.filterName == val
+        },
+        sortNameIs(val) {
+            return this.sortName == val
+        },
+
+        // filter
+        showFilesOfType(val) {
+            let files = this.files.items
+
+            switch (val) {
+                case 'locked':
+                    this.filterdList = files.filter((item) => this.IsLocked(item))
+                    break
+                case 'selected':
+                    this.filterdList = this.bulkList
+                    break
+                case 'text':
+                    this.filterdList = files.filter((item) => this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf'))
+                    break
+                case 'application':
+                    this.filterdList = files.filter((item) => this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed'))
+                    break
+                default:
+                    this.filterdList = files.filter((item) => this.fileTypeIs(item, val))
+                    break
+            }
+
+            if (!this.isBulkSelecting()) {
+                this.resetInput(['selectedFile', 'currentFileIndex'])
+                this.selectFirst()
+            }
+
+            if (this.searchFor) {
+                this.updateSearchCount()
+            }
         },
         fileTypeIs(item, val) {
             let mimes = this.config.mimeTypes
@@ -44,42 +84,6 @@ export default {
                 }
 
                 return type.includes(val)
-            }
-        },
-        showFilesOfType(val) {
-            if (this.currentFilterName == val) return
-
-            let files = this.files.items
-
-            if (val == 'all') {
-                this.resetInput('currentFilterName')
-            } else {
-                if (val == 'locked') {
-                    this.filterdList = files.filter((item) => this.IsLocked(item))
-                } else if (val == 'selected') {
-                    this.filterdList = this.bulkList
-                } else {
-                    this.filterdList = files.filter((item) => {
-                        if (val == 'text') {
-                            return this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf')
-                        } else if (val == 'application') {
-                            return this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed')
-                        }
-
-                        return this.fileTypeIs(item, val)
-                    })
-                }
-
-                this.currentFilterName = val
-            }
-
-            if (!this.isBulkSelecting()) {
-                this.resetInput(['selectedFile', 'currentFileIndex'])
-                this.selectFirst()
-            }
-
-            if (this.searchFor) {
-                this.updateSearchCount()
             }
         },
 

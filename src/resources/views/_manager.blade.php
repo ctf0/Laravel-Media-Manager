@@ -266,120 +266,32 @@
                     </div>
 
                     <template v-if="allItemsCount">
-                        {{-- filter by --}}
-                        <div class="level-item" v-show="searchItemsCount != 0">
-                            <div class="control">
-                                <div class="field has-addons">
-                                    <div class="control">
-                                        <button @click="showFilesOfType('image')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.image')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('image')}"
-                                            :disabled="!btnFilter('image') || isLoading">
-                                            <span class="icon"><icon name="image"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('video')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.video')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('video')}"
-                                            :disabled="!btnFilter('video') || isLoading">
-                                            <span class="icon"><icon name="video-camera"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('audio')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.audio.main')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('audio')}"
-                                            :disabled="!btnFilter('audio') || isLoading">
-                                            <span class="icon"><icon name="music"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('folder')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.folder')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('folder')}"
-                                            :disabled="!btnFilter('folder') || isLoading">
-                                            <span class="icon"><icon name="folder"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('text')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.text')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('text')}"
-                                            :disabled="!btnFilter('text') || isLoading">
-                                            <span class="icon"><icon name="file-text-o"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('application')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.application')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('application')}"
-                                            :disabled="!btnFilter('application') || isLoading">
-                                            <span class="icon"><icon name="cogs"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('locked')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.locked')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('locked')}"
-                                            :disabled="!btnFilter('locked') || isLoading">
-                                            <span class="icon"><icon name="key"></icon></span>
-                                        </button>
-                                    </div>
-                                    <div class="control">
-                                        <button @click="showFilesOfType('selected')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.filter_by', ['attr' => trans('MediaManager::messages.select.selected')]) }}"
-                                            class="button"
-                                            :class="{'is-link': filterNameIs('selected')}"
-                                            :disabled="!btnFilter('selected') || isLoading">
-                                            <span class="icon"><icon name="check"></icon></span>
-                                        </button>
-                                    </div>
-                                    {{-- clear --}}
-                                    <div class="control">
-                                        <button @click="showFilesOfType('all')"
-                                            v-tippy
-                                            title="{{ trans('MediaManager::messages.clear', ['attr' => trans('MediaManager::messages.filter')]) }}"
-                                            class="button"
-                                            :class="{'is-danger': btnFilter('all')}"
-                                            :disabled="!btnFilter('all') || isLoading">
-                                            <span class="icon"><icon name="times"></icon></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- sort by --}}
-                        <div class="level-item" v-show="searchItemsCount != 0">
-                            <div class="control has-icons-left">
-                                <div class="select">
-                                    <select v-model="sortBy" :disabled="isLoading">
-                                        <option disabled value="null">{{ trans('MediaManager::messages.sort_by') }}</option>
-                                        <option value="clear">{{ trans('MediaManager::messages.non') }}</option>
-                                        <option value="size">{{ trans('MediaManager::messages.size') }}</option>
-                                        <option value="last_modified">{{ trans('MediaManager::messages.last_modified') }}</option>
-                                    </select>
-                                </div>
-                                <div class="icon is-left">
-                                    <icon name="bell-o"></icon>
-                                </div>
-                            </div>
+                       {{-- filter & sort --}}
+                        <div class="level-item" v-if="searchItemsCount != 0">
+                            <filter-and-sorting :disabled="isLoading"
+                                :filter-name-is="filterNameIs"
+                                :sort-name-is="sortNameIs"
+                                :set-filter-name="setFilterName"
+                                :set-sort-name="setSortName"
+                                :have-a-file-of-type="haveAFileOfType"
+                                :translations="{{ json_encode([
+                                    'filtration' => trans('MediaManager::messages.filter.filtration'),
+                                    'sort_by' => trans('MediaManager::messages.sort_by'),
+                                    'filter_by' => trans('MediaManager::messages.filter.by', ['attr' => '']),
+                                    'image' => trans('MediaManager::messages.image'),
+                                    'video' => trans('MediaManager::messages.video'),
+                                    'audio' => trans('MediaManager::messages.audio.main'),
+                                    'folder' => trans('MediaManager::messages.folder'),
+                                    'text' => trans('MediaManager::messages.text'),
+                                    'application' => trans('MediaManager::messages.application'),
+                                    'locked' => trans('MediaManager::messages.locked'),
+                                    'selected' => trans('MediaManager::messages.select.selected'),
+                                    'non' => trans('MediaManager::messages.non'),
+                                    'name' => trans('MediaManager::messages.name'),
+                                    'size' => trans('MediaManager::messages.size'),
+                                    'last_modified' => trans('MediaManager::messages.last_modified')
+                                ]) }}">
+                            </filter-and-sorting>
                         </div>
 
                         {{-- search --}}
@@ -619,7 +531,7 @@
 
                     {{-- files --}}
                     <ul class="__files-boxs" ref="filesList">
-                        <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortBy, -1)"
+                        <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortName, sortDir)"
                             :key="file.name"
                             :data-file-index="index"
                             @click="setSelected(file, index, $event)">

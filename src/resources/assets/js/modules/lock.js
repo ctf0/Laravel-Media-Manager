@@ -40,7 +40,7 @@ export default {
                 })
 
                 this.updateLockList()
-                this.resetInput(['currentFilterName'])
+                this.resetInput('filterName')
                 this.isBulkSelecting() ? this.blkSlct() : false
 
             }).catch((err) => {

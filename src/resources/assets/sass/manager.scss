@@ -20,13 +20,13 @@
     padding: 1rem;
 } // .media-manager__toolbar
 
-@include media('max', 1023) {
+@include media('max', 768) {
     .media-manager__toolbar {
         .level-left + .level-right {
             margin-top: 0.75rem;
-        } // @include media('max', 1023) .media-manager__toolbar .level-left + .level-right
-    } // @include media('max', 1023) .media-manager__toolbar
-} // @include media('max', 1023)
+        } // @include media('max', 768) .media-manager__toolbar .level-left + .level-right
+    } // @include media('max', 768) .media-manager__toolbar
+} // @include media('max', 768)
 
 /*                upload                */
 .media-manager__dz {

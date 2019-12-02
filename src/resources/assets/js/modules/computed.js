@@ -30,6 +30,9 @@ export default {
             }
 
             return 0
+        },
+        sortDir() {
+            return this.sortName != 'name' ? -1 : 1
         }
     }
 }

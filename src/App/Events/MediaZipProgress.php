@@ -1,11 +1,11 @@
 <?php
 
-namespace ctf0\MediaManager\Events;
+namespace ctf0\MediaManager\App\Events;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class MediaGlobalSearch implements ShouldBroadcastNow
+class MediaZipProgress implements ShouldBroadcastNow
 {
     protected $user;
     public $data;
@@ -35,6 +35,6 @@ class MediaGlobalSearch implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'user.media.search';
+        return 'user.media.zip';
     }
 }

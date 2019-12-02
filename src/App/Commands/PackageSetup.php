@@ -1,6 +1,6 @@
 <?php
 
-namespace ctf0\MediaManager\Commands;
+namespace ctf0\MediaManager\App\Commands;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;

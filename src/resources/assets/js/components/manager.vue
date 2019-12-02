@@ -38,7 +38,8 @@ export default {
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
         uploadPreview: require('./utils/upload-preview.vue').default,
-        InfiniteLoading: require('vue-infinite-loading').default
+        InfiniteLoading: require('vue-infinite-loading').default,
+        filterAndSorting: require('./utils/filter-sort.vue').default
     },
     name: 'media-manager',
     mixins: [
@@ -105,7 +106,8 @@ export default {
 
             activeModal: null,
             currentFileIndex: null,
-            currentFilterName: null,
+            filterName: null,
+            sortName: null,
             imageSlideDirection: null,
             newFilename: null,
             newFolderName: null,
@@ -113,7 +115,6 @@ export default {
             searchItemsCount: null,
             selectedFile: null,
             global_search_item: null,
-            sortBy: null,
             urlToUpload: null,
             selectedUploadPreview: null,
 
@@ -336,18 +337,6 @@ export default {
                             if (key == 'u') {
                                 this.$refs.upload.click()
                             }
-
-                            if (key == 'esc') {
-                                // hide upload panel
-                                if (this.uploadArea) {
-                                    this.toggleUploadPanel()
-                                }
-
-                                // clear filter
-                                if (this.currentFilterName) {
-                                    this.showFilesOfType('all')
-                                }
-                            }
                         }
                         // end of no bulk selection
 
@@ -393,6 +382,17 @@ export default {
                             }
                         }
                         // end of we have files
+
+                        // reset stuff
+                        if (key == 'esc') {
+                            // hide upload panel
+                            if (this.uploadArea) {
+                                this.toggleUploadPanel()
+                            }
+
+                            // clear filter & sort
+                            this.resetInput(['filterName', 'sortName'])
+                        }
 
                         // move file
                         if ((key == 'm' || key == 'p') && this.movableItemsCount) {

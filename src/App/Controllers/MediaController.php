@@ -1,20 +1,20 @@
 <?php
 
-namespace ctf0\MediaManager\Controllers;
+namespace ctf0\MediaManager\App\Controllers;
 
 use App\Http\Controllers\Controller;
 use League\Flysystem\Plugin\ListWith;
-use ctf0\MediaManager\Controllers\Moduels\Lock;
-use ctf0\MediaManager\Controllers\Moduels\Move;
-use ctf0\MediaManager\Controllers\Moduels\Utils;
-use ctf0\MediaManager\Controllers\Moduels\Delete;
-use ctf0\MediaManager\Controllers\Moduels\Rename;
-use ctf0\MediaManager\Controllers\Moduels\Upload;
-use ctf0\MediaManager\Controllers\Moduels\Download;
-use ctf0\MediaManager\Controllers\Moduels\NewFolder;
-use ctf0\MediaManager\Controllers\Moduels\GetContent;
-use ctf0\MediaManager\Controllers\Moduels\Visibility;
-use ctf0\MediaManager\Controllers\Moduels\GlobalSearch;
+use ctf0\MediaManager\App\Controllers\Moduels\Lock;
+use ctf0\MediaManager\App\Controllers\Moduels\Move;
+use ctf0\MediaManager\App\Controllers\Moduels\Utils;
+use ctf0\MediaManager\App\Controllers\Moduels\Delete;
+use ctf0\MediaManager\App\Controllers\Moduels\Rename;
+use ctf0\MediaManager\App\Controllers\Moduels\Upload;
+use ctf0\MediaManager\App\Controllers\Moduels\Download;
+use ctf0\MediaManager\App\Controllers\Moduels\NewFolder;
+use ctf0\MediaManager\App\Controllers\Moduels\GetContent;
+use ctf0\MediaManager\App\Controllers\Moduels\Visibility;
+use ctf0\MediaManager\App\Controllers\Moduels\GlobalSearch;
 
 class MediaController extends Controller
 {

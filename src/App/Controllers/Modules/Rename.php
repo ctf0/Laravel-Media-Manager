@@ -1,10 +1,10 @@
 <?php
 
-namespace ctf0\MediaManager\Controllers\Moduels;
+namespace ctf0\MediaManager\App\Controllers\Moduels;
 
 use Exception;
 use Illuminate\Http\Request;
-use ctf0\MediaManager\Events\MediaFileOpsNotifications;
+use ctf0\MediaManager\App\Events\MediaFileOpsNotifications;
 
 trait Rename
 {

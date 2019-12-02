@@ -4,7 +4,7 @@ namespace ctf0\MediaManager;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Broadcast;
-use ctf0\MediaManager\Commands\PackageSetup;
+use ctf0\MediaManager\App\Commands\PackageSetup;
 use ctf0\PackageChangeLog\PackageChangeLogServiceProvider;
 
 class MediaManagerServiceProvider extends ServiceProvider

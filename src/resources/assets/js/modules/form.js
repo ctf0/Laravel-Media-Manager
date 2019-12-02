@@ -2,7 +2,7 @@ export default {
     methods: {
         /*                Main                */
         getFiles(prev_folder = null, prev_file = null) {
-            this.resetInput(['sortBy', 'currentFilterName', 'selectedFile', 'currentFileIndex'])
+            this.resetInput(['sortName', 'filterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
             this.destroyPlyr()
 
@@ -167,6 +167,11 @@ export default {
 
             if (!files.length) {
                 return this.toggleModal()
+            }
+
+            // remove from move list if found
+            if (this.inMovableList()) {
+                this.removeFromMovableList(this.movableList.indexOf(selected))
             }
 
             this.toggleLoading()

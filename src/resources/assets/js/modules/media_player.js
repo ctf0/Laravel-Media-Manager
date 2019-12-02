@@ -54,25 +54,6 @@ export default {
                 this.player.item.togglePlay()
             }
         },
-        autoPlay() {
-            if (
-                (this.filterNameIs('audio') || this.filterNameIs('video')) &&
-                this.player.playing
-            ) {
-                this.player.item.on('ended', () => {
-                    // stop at the end of list
-                    if (this.currentFileIndex < this.allItemsCount - 1) {
-                        // nav to next
-                        this.goToNext()
-
-                        // play navigated to
-                        this.$nextTick(() => {
-                            setTimeout(this.player.item.play(), 500)
-                        })
-                    }
-                })
-            }
-        },
 
         // audio
         getAudioData(url) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ctf0\MediaManager\Controllers\Moduels;
+namespace ctf0\MediaManager\App\Controllers\Moduels;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

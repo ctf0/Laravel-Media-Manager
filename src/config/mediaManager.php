@@ -14,7 +14,7 @@ return [
     /*
      * manager controller
      */
-    'controller' => '\ctf0\MediaManager\Controllers\MediaController',
+    'controller' => '\ctf0\MediaManager\App\Controllers\MediaController',
 
     /*
      * remove any file special chars except
