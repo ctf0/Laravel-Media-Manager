@@ -31,7 +31,7 @@ export default {
         restrictModeIsOn() {
             return Boolean(this.resrtictPath)
         },
-        restrictIsCurrent() {
+        restrictPathIsCurrent() {
             return this.restrictModeIsOn && this.folders.join('/') == this.resrtictPath
         }
     }

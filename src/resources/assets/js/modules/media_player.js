@@ -12,7 +12,7 @@ export default {
                 keyboard: {focused: false, global: false}
             }
 
-            if (!this.smallScreen || (this.smallScreen && this.activeModal)) {
+            if (!this.isASmallScreen || (this.isASmallScreen && this.activeModal)) {
                 let t = setInterval(() => {
                     let item = document.querySelector('[data-player]')
 

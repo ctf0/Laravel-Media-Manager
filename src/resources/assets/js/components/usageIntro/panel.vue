@@ -4,14 +4,18 @@
         <div class="modal-background gradient-pattern"/>
         <div class="modal-content">
             <div class="__choices">
-                <div class="left" @click="showIntro('touch')">
-                    <span class="icon"><icon name="mobile" scale="15"/></span>
+                <div class="left"
+                     @click.stop="showIntro('touch')">
+                    <span class="icon"><icon name="mobile"
+                                             scale="15"/></span>
                 </div>
                 <div class="mid">
                     <div class="splitter"/>
                 </div>
-                <div class="right" @click="showIntro('desktop')">
-                    <span class="icon"><icon name="desktop" scale="15"/></span>
+                <div class="right"
+                     @click.stop="showIntro('desktop')">
+                    <span class="icon"><icon name="desktop"
+                                             scale="15"/></span>
                 </div>
             </div>
         </div>
@@ -19,7 +23,8 @@
         <div class="__corner">
             <p>MANAGER\\SHORTCUTS</p>
         </div>
-        <button class="modal-close is-large" @click="closePanel()"/>
+        <button class="modal-close is-large"
+                @click.stop="closePanel()"/>
     </div>
 </template>
 

@@ -16,7 +16,7 @@
                         <div v-show="range != 0"
                              class="level-item">
                             <p class="heading is-marginless link"
-                               @click="resetFilter()">
+                               @click.stop="resetFilter()">
                                 <span class="icon"><icon name="times"/></span>
                             </p>
                         </div>
@@ -43,7 +43,7 @@
                 :class="{'is-active': isUsed()}"
                 :disabled="processing"
                 class="btn-plain"
-                @click="update()">
+                @click.stop="update()">
             <span class="icon">
                 <icon :name="processing ? 'spinner' : icon"
                       :pulse="processing"/>

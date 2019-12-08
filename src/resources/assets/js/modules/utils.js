@@ -12,25 +12,6 @@ export default {
         },
 
         /*                Buttons                */
-        item_ops() {
-            return (this.isBulkSelecting() && !this.bulkItemsFilter.length) ||
-                this.isLoading ||
-                !this.selectedFile ||
-                this.IsLocked(this.selectedFile)
-        },
-        lock_btn() {
-            return this.searchItemsCount == 0 ||
-                this.isLoading ||
-                !this.allItemsCount ||
-                this.isBulkSelecting() && !this.bulkItemsCount
-        },
-        vis_btn() {
-            return this.searchItemsCount == 0 ||
-                this.isLoading ||
-                !this.allItemsCount ||
-                !this.isBulkSelecting() && this.selectedFileIs('folder') ||
-                this.isBulkSelecting() && !this.bulkItemsCount
-        },
         reset() {
             this.bulkSelect = false
             this.bulkSelectAll = false
@@ -249,18 +230,18 @@ export default {
         },
 
         /*                Window Size                */
+        smallScreenHelper() {
+            if (!this.isASmallScreen) {
+                this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
+            }
+        },
         checkForSmallScreen() {
             // 1023 = bulma is-hidden-touch
             return document.documentElement.clientWidth <= 1023
         },
-        smallScreenHelper() {
-            if (!this.smallScreen) {
-                this.infoSidebar = typeof this.getLs().infoSidebar !== 'undefined' ? this.getLs().infoSidebar : true
-            }
-        },
         applySmallScreen() {
             this.infoSidebar = false
-            this.smallScreen = true
+            this.isASmallScreen = true
         },
         onResize() {
             if (this.firstRun) {
@@ -281,7 +262,7 @@ export default {
                     if (!this.waitingForUpload) {
                         this.toolBar = true
                     }
-                    this.smallScreen = false
+                    this.isASmallScreen = false
                     this.smallScreenHelper()
                 }
             }

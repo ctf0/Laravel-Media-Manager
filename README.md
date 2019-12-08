@@ -4,11 +4,11 @@
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/v/ctf0/media-manager.svg" alt="Latest Stable Version"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/dt/ctf0/media-manager.svg" alt="Total Downloads"/></a>
     <br>
-    <img src="https://badges.herokuapp.com/browsers?firefox=61&amp;microsoftedge=17&amp;googlechrome=51&amp;safari=10?&amp;iexplore=!?" alt="Browser Status"/>
+    <img src="https://badges.herokuapp.com/browsers?firefox=61&amp;microsoftedge=17&amp;googlechrome=51&amp;safari=10&amp;iexplore=!?" alt="Browser Status"/>
 </h1>
 
 <p align="center">
-    <img alt="main" src="https://user-images.githubusercontent.com/7388088/69991346-288b3480-1550-11ea-84d3-a5928d655d84.png"/>
+    <img alt="main" src="https://user-images.githubusercontent.com/7388088/70385131-c0937e80-1993-11ea-9513-cb5c90f4281b.png"/>
     <img alt="card" src="https://user-images.githubusercontent.com/7388088/46549215-892dcb80-c8d1-11e8-8c23-d8bbfe7a10cc.jpg"/>
     <img alt="img-filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
     <img alt="img-diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>

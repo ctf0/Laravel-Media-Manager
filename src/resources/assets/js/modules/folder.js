@@ -13,7 +13,7 @@ export default {
         goToPrevFolder() {
             EventHub.fire('stopHammerPropagate')
 
-            if (this.restrictIsCurrent) return
+            if (this.restrictPathIsCurrent) return
 
             let length = this.folders.length
 
@@ -36,7 +36,7 @@ export default {
                 if (this.restrictModeIsOn) {
                     if (index == 0) {
                         // go home
-                        prev_folder_name = this.navigationDirs[index]
+                        prev_folder_name = this.pathBarDirsList[index]
                         this.resolveRestrictFolders()
                     } else {
                         // go by index
@@ -56,10 +56,10 @@ export default {
         }
     },
     computed: {
-        navigationDirs() {
+        pathBarDirsList() {
             let folders = this.folders.join('/')
             let rest = this.resrtictPath
-            let list = this.restrictIsCurrent
+            let list = this.restrictPathIsCurrent
                 ? []
                 : this.arrayFilter(folders.replace(rest, '').split('/'))
 

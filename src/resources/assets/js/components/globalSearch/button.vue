@@ -3,7 +3,7 @@
             :disabled="loading || isLoading"
             :title="trans('glbl_search')"
             class="button"
-            @click="done ? showSearchPanel() : init()">
+            @click.stop="done ? showSearchPanel() : init()">
         <span class="icon">
             <icon :spin="loading"
                   name="globe"/>

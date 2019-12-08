@@ -71,7 +71,7 @@
         {{-- name --}}
         <p class="title is-marginless">
             <span class="link"
-                @click="copyLink(selectedFile.path)"
+                @click.stop="copyLink(selectedFile.path)"
                 :title="linkCopied ? trans('copied') : trans('to_cp')"
                 v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
                 @hidden="linkCopied = false">
@@ -104,7 +104,7 @@
                         :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
                         :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}' : '{{ trans('MediaManager::messages.lock') }}'"
                         v-tippy="{arrow: true, hideOnClick: false}"
-                        @click="$refs.lock.click()">
+                        @click.stop="$refs.lock.click()">
                         <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.1"></icon>
                     </span>
                 </div>
@@ -116,7 +116,7 @@
                         :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
                         title="{{ trans('MediaManager::messages.visibility.set') }}"
                         v-tippy
-                        @click="$refs.visibility.click()">
+                        @click.stop="$refs.visibility.click()">
                         <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
                     </span>
                 </div>
@@ -140,8 +140,8 @@
         {{-- move --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops()"
-                @click="moveItem()">
+                :disabled="ops_btn_disable"
+                @click.stop="moveItem()">
                 <span class="icon is-small"><icon name="share"></icon></span>
                 <span>{{ trans('MediaManager::messages.move.main') }}</span>
             </button>
@@ -150,8 +150,8 @@
         {{-- rename --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops()"
-                @click="renameItem()">
+                :disabled="ops_btn_disable"
+                @click.stop="renameItem()">
                 <span class="icon is-small"><icon name="terminal"></icon></span>
                 <span>{{ trans('MediaManager::messages.rename.main') }}</span>
             </button>
@@ -160,8 +160,8 @@
         {{-- editor --}}
         <div class="card-footer-item" v-if="selectedFileIs('image')">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops()"
-                @click="imageEditorCard()">
+                :disabled="ops_btn_disable"
+                @click.stop="imageEditorCard()">
                 <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.editor.main') }}</span>
             </button>
@@ -170,8 +170,8 @@
         {{-- delete --}}
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
-                :disabled="item_ops()"
-                @click="deleteItem()">
+                :disabled="ops_btn_disable"
+                @click.stop="deleteItem()">
                 <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
                 <span>{{ trans('MediaManager::messages.delete.main') }}</span>
             </button>

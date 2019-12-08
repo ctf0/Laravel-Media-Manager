@@ -50,7 +50,7 @@ export default {
                 let contWidth = width - pad
                 let itemWidth = fileslist.firstChild ? fileslist.firstChild.clientWidth : 0
 
-                this.scrollByRows = Math.floor(contWidth / itemWidth)
+                this.scrollByRowItemsCount = Math.floor(contWidth / itemWidth)
             }
         }
     }

@@ -17,11 +17,11 @@ export default {
             let ls = this.getLs()
 
             if (Object.keys(ls).length) {
-                this.randomNames = ls.randomNames || false
+                this.useRandomNamesForUpload = ls.useRandomNamesForUpload || false
                 this.folders = ls.folders || []
-                this.lockedList = ls.lockedList || []
                 this.toolBar = ls.toolBar || true
                 this.selectedFile = ls.selectedFileName || null
+                this.dirBookmarks = ls.dirBookmarks || []
             }
         },
         saveUserPref() {
@@ -34,11 +34,11 @@ export default {
                 const db = new DbWorker()
                 db.addEventListener('message', (e) => resolve(e.data))
                 db.postMessage({
-                    type: type, // get,set,del,clr
+                    type: type, // get,set,del,clr,keys
                     key: key ? encodeURI(key) : null,
                     val: val
                 })
-            })
+            }).then((data) => data)
         }
     },
     computed: {

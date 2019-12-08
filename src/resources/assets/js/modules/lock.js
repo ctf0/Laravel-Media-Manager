@@ -25,10 +25,10 @@ export default {
         },
 
         // form
-        lockFileForm() {
+        lockFileForm(file = this.selectedFile) {
             let list = this.bulkItemsCount
                 ? this.bulkList
-                : [this.selectedFile]
+                : [file]
 
             axios.post(this.routes.lock, {
                 path: this.files.path,
@@ -48,15 +48,14 @@ export default {
                 this.ajaxError()
             })
         },
-        updateLockList(data) {
-            return axios.post(this.routes.locked_list, {
-                path: this.files.path
-            }).then(({data}) => {
-                this.lockedList = data.locked
-            }).catch((err) => {
-                console.error(err)
-                this.ajaxError()
-            })
+        updateLockList() {
+            return axios.post(this.routes.locked_list)
+                .then(({data}) => {
+                    this.lockedList = data.locked
+                }).catch((err) => {
+                    console.error(err)
+                    this.ajaxError()
+                })
         }
     }
 }

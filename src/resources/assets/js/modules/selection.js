@@ -163,7 +163,7 @@ export default {
         // rows
         goToNextRow() {
             let curSelectedIndex = this.currentFileIndex
-            let moveBy = this.scrollByRows
+            let moveBy = this.scrollByRowItemsCount
             this.imageSlideDirection = 'up'
 
             if (curSelectedIndex == this.allItemsCount - 1) {
@@ -178,7 +178,7 @@ export default {
         },
         goToPrevRow() {
             let curSelectedIndex = this.currentFileIndex
-            let moveBy = this.scrollByRows
+            let moveBy = this.scrollByRowItemsCount
 
             if (curSelectedIndex == 0) {
                 this.toggleModal()

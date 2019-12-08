@@ -23,7 +23,7 @@ export default {
                 .map((el) => el.size)
                 .reduce((a, b) => a + b, 0)
 
-            return this.getFileSize(size)
+            return size ? this.getFileSize(size) : 0
         }
     },
     methods: {
@@ -238,7 +238,7 @@ export default {
                     'uploadPreviewNamesList',
                     'uploadPreviewOptionsList'
                 ], [])
-                this.resetInput('selectedUploadPreview')
+                this.resetInput('selectedUploadPreviewName')
             })
         },
 
@@ -268,7 +268,7 @@ export default {
                 let name = container.dataset.name
 
                 if (this.checkForUploadedFile(name)) {
-                    this.selectedUploadPreview = name
+                    this.selectedUploadPreviewName = name
 
                     // illuminate selected preview
                     this.$nextTick(() => {
@@ -297,7 +297,7 @@ export default {
                 axios.post(event.target.action, {
                     path: this.files.path,
                     url: url,
-                    random_names: this.randomNames
+                    random_names: this.useRandomNamesForUpload
                 }).then(({data}) => {
                     this.toggleLoading()
                     this.loadingFiles('hide')

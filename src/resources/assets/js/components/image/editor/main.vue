@@ -6,50 +6,35 @@
             <div class="__top-toolbar">
                 <section class="left">
                     <!-- filters -->
-                    <filters v-if="!showGlitch && !showDiff"
+                    <filters v-if="!showDiff"
                              :reset="!haveFilters()"
                              :apply-filter="applyFilter"
                              :processing="processing"
                              :caman-filters="camanFilters"
                              class="__left-index"/>
-
-                    <!-- glitch -->
-                    <!-- <glitch v-if="showGlitch"
-                            :cropper="imageCropper"
-                            :show-glitch="showGlitch"
-                            :get-cropper-data="getCropperData"
-                            class="__left-index"/> -->
                 </section>
 
                 <div class="right">
-                    <!-- glitch toggle -->
-                    <!-- <button v-show="!showDiff"
-                            :disabled="processing"
-                            :class="{'is-active': showGlitch}"
-                            class="btn-plain"
-                            @click="toggleGlitch()">
-                        <span class="icon"><icon name="glitch" scale="1.5"/></span>
-                    </button> -->
-
                     <!-- diff toggle -->
-                    <button v-if="showDiffBtn()"
-                            v-tippy="{arrow: true, theme: 'mm'}"
-                            :disabled="processing && !imageDiffIsReady || showGlitch"
+                    <button v-tippy="{arrow: true, theme: 'mm'}"
+                            :disabled="(processing && !imageDiffIsReady) || diffDisable"
                             :class="{'is-active': showDiff}"
                             :title="trans('diff')"
                             class="btn-plain"
-                            @click="toggleDiff()">
+                            @click.stop="toggleDiff()">
                         <span class="icon"><icon name="code"/></span>
                     </button>
 
                     <!-- reset filters -->
                     <button v-tippy="{arrow: true, theme: 'mm'}"
-                            :disabled="processing || !haveFilters() && !showGlitch"
+                            :disabled="processing || !haveFilters()"
                             :title="trans('crop_reset_filters')"
                             class="btn-plain"
-                            @click="resetFilters()">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'"
-                                                 :pulse="processing"/></span>
+                            @click.stop="resetFilters()">
+                        <span class="icon">
+                            <icon :name="processing ? 'spinner' : 'times'"
+                                  :pulse="processing"/>
+                        </span>
                     </button>
                 </div>
             </div>
@@ -112,9 +97,11 @@
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_reset')"
                             class="btn-plain"
-                            @click="operations('reset')">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'times'"
-                                                 :pulse="processing"/></span>
+                            @click.stop="operations('reset')">
+                        <span class="icon">
+                            <icon :name="processing ? 'spinner' : 'times'"
+                                  :pulse="processing"/>
+                        </span>
                     </button>
 
                     <!-- clear -->
@@ -122,9 +109,11 @@
                             :disabled="processing || !croppedByUser"
                             :title="trans('clear')"
                             class="btn-plain"
-                            @click="operations('clear')">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'ban'"
-                                                 :pulse="processing"/></span>
+                            @click.stop="operations('clear')">
+                        <span class="icon">
+                            <icon :name="processing ? 'spinner' : 'ban'"
+                                  :pulse="processing"/>
+                        </span>
                     </button>
 
                     <!-- apply -->
@@ -132,9 +121,11 @@
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_apply')"
                             class="btn-plain"
-                            @click="applyChanges()">
-                        <span class="icon"><icon :name="processing ? 'spinner' : 'check'"
-                                                 :pulse="processing"/></span>
+                            @click.stop="applyChanges()">
+                        <span class="icon">
+                            <icon :name="processing ? 'spinner' : 'check'"
+                                  :pulse="processing"/>
+                        </span>
                     </button>
                 </div>
             </div>
@@ -155,7 +146,6 @@ export default {
         filters: require('./filters/index.vue').default,
         presets: require('./filters/presets.vue').default,
         controls: require('./controls.vue').default,
-        // glitch: require('./glitch/index.vue').default,
         imageCompare: require('vue-image-compare2').default
     },
     props: [
@@ -176,7 +166,7 @@ export default {
             diffOriginal: null,
             diffCurrent: null,
             showDiff: false,
-            showGlitch: false,
+            diffDisable: true,
 
             hasChanged: false,
             processing: false,
@@ -210,7 +200,7 @@ export default {
             )
         },
         hiddenBtns() {
-            if (this.showDiff || this.showGlitch) {
+            if (this.showDiff) {
                 return {
                     opacity: 0,
                     visibility: 'hidden',
@@ -356,6 +346,7 @@ export default {
                 this.hasChanged = false
                 this.croppedByUser = false
                 this.reset = true
+                this.diffDisable = true
 
                 cropper.reset() // position, rotation, flip, zoom
                 cropper.clear() // selection
@@ -373,10 +364,7 @@ export default {
 
         // filters
         resetFilters() {
-            if (this.showGlitch) {
-                return EventHub.fire('reset-glitch')
-            }
-
+            this.diffDisable = true
             this.camanFilters = {}
             this.imageCaman.reset()
             this.imageCropper.replace(this.initData, true) // init
@@ -415,9 +403,6 @@ export default {
             return caman.render(function() {
                 cropper.replace(this.toBase64(), true)
             })
-        },
-        toggleGlitch() {
-            this.showGlitch = !this.showGlitch
         },
 
         // save
@@ -471,9 +456,6 @@ export default {
         },
 
         // diff
-        showDiffBtn() {
-            return !this.file.type.includes('gif')
-        },
         toggleDiff() {
             this.showDiff = !this.showDiff
         },
@@ -497,12 +479,12 @@ export default {
                 scaleY: y < 1 ? -y : y // reset flip-vertical
             })
 
-            if (this.haveFilters()) {
-                cropperClone.replace(this.initData, true)
+            cropperClone.replace(this.initData, true)
+
+            // make sure the returned original render is correct
+            setTimeout(() => {
                 this.diffOriginal = this.getCropperData(cropperClone)
-            } else {
-                this.diffOriginal = this.getCropperData(cropperClone)
-            }
+            }, 100)
         },
 
         // utils
@@ -520,6 +502,11 @@ export default {
         }
     },
     watch: {
+        hasChanged(val) {
+            if (val) {
+                this.diffDisable = false
+            }
+        },
         showDiff(val) {
             if (val) {
                 this.processing = true // hide main canvas

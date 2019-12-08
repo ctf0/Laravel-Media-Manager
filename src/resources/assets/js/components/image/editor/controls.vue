@@ -1,14 +1,15 @@
 <template>
     <div>
-        <button v-tippy="{arrow: true, theme: 'mm'}"
-                v-for="item in controlsList"
-                :class="{'is-active': item.mode ? dragModeIs(item.mode) : false}"
+        <button v-for="item in controlsList"
                 :key="item.op"
+                v-tippy="{arrow: true, theme: 'mm'}"
+                :class="{'is-active': item.mode ? dragModeIs(item.mode) : false}"
                 :title="trans(item.trans)"
                 :disabled="processing"
                 class="btn-plain"
-                @click="operations(item.op)">
-            <span class="icon"><icon :name="processing ? 'spinner' : item.icon" :pulse="processing"/></span>
+                @click.stop="operations(item.op)">
+            <span class="icon"><icon :name="processing ? 'spinner' : item.icon"
+                                     :pulse="processing"/></span>
         </button>
     </div>
 </template>

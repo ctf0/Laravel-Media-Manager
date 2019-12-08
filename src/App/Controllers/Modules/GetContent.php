@@ -25,7 +25,7 @@ trait GetContent
 
         return response()->json(
             array_merge(
-                $this->lockList($path),
+                $this->lockList(),
                 [
                     'files'  => [
                         'path'  => $path,
@@ -56,7 +56,7 @@ trait GetContent
 
             if (!preg_grep($pattern, [$path])) {
                 if ($this->GFI) {
-                    $info = $this->getFolderInfo($path);
+                    $info = $this->getFolderInfoFromList($this->getFolderContent($path, true));
                 }
 
                 $list[] = [
@@ -95,7 +95,7 @@ trait GetContent
     }
 
     /**
-     * helpers for folder ops.
+     * get directory data.
      *
      * @param mixed $folder
      * @param mixed $rec
@@ -109,23 +109,12 @@ trait GetContent
         );
     }
 
-    protected function getFolderInfo($folder)
-    {
-        return $this->getFolderInfoFromList(
-            $this->getFolderContent($folder, true)
-        );
-    }
-
-    protected function getFolderInfoFromList($list)
-    {
-        $list = collect($list)->where('type', 'file');
-
-        return [
-            'count' => $list->count(),
-            'size'  => $list->pluck('size')->sum(),
-        ];
-    }
-
+    /**
+     * filter directory data by type.
+     *
+     * @param [type] $list
+     * @param [type] $type
+     */
     protected function getFolderListByType($list, $type)
     {
         $list   = collect($list)->where('type', $type);
@@ -137,8 +126,18 @@ trait GetContent
         return $items;
     }
 
-    protected function getDirectoriesList($location)
+    /**
+     * get folder size.
+     *
+     * @param [type] $list
+     */
+    protected function getFolderInfoFromList($list)
     {
-        return str_replace($location, '', $this->storageDisk->allDirectories($location));
+        $list = collect($list)->where('type', 'file');
+
+        return [
+            'count' => $list->count(),
+            'size'  => $list->pluck('size')->sum(),
+        ];
     }
 }

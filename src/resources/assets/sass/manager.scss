@@ -10,6 +10,12 @@
 @import './modules/usage-intro';
 @import './modules/media_player';
 
+.media-manager {
+    &.top-space {
+        padding-top: 2rem;
+    } // .media-manager.top-space
+} // .media-manager
+
 /*                toolbar                */
 .media-manager__toolbar {
     background-color: darken($active_theme, 2.5%);
@@ -458,7 +464,7 @@
     right: 0;
     top: 0;
     transition: all $anim-time $anim-ease;
-    will-change: width, left, right;
+    will-change: height, width, left, right;
 } // .__stack-files
 
 .__stack-sidebar-hidden {
@@ -470,7 +476,7 @@
     flex-wrap: wrap;
     list-style: none;
     padding: 0.75rem;
-    transition: height $anim-time ease-out;
+    padding-bottom: 5rem;
     user-select: none;
 
     li {
@@ -664,14 +670,13 @@
     position: relative;
     transition: all $anim-time $anim-ease;
     width: 20%;
-    will-change: widht, left, right;
+    will-change: height, width, left, right;
 
     .__sidebar-preview {
         border-bottom: 1px $dashed-border;
         color: darken($active_theme, 50%);
         flex: 0 0 auto;
         text-align: center;
-        transition: height $anim-time ease-out;
 
         .__sidebar-none-selected {
             align-items: center;
@@ -812,11 +817,14 @@
 
 /*                movable                */
 .movable-list {
-    position: relative;
+    background: $white;
+    border-radius: 100vw;
+    box-shadow: 0 15px 30px 0 rgba($black, 0.05), 0 5px 15px 0 rgba($black, 0.08);
 
-    .circle {
-        color: $white;
-    } // .movable-list .circle
+    .icon {
+        height: 2.5rem;
+        width: 2.5rem;
+    } // .movable-list .icon
 
     .counter {
         background: $red;
@@ -825,10 +833,11 @@
         font-size: 0.75rem;
         font-weight: bold;
         line-height: 1;
-        padding: 0.2rem 0.5rem;
+        padding: 0.25rem 0.5rem;
         position: absolute;
-        right: 0;
-        top: 0.1rem;
+        right: -0.5rem;
+        top: -0.5rem;
+        z-index: -1;
 
         &:empty {
             display: none;
@@ -1053,11 +1062,6 @@
     .mm-slide-leave-to {
         transform: translateX(0.7rem);
     } // .__stack-files-reverse .mm-slide-leave-to
-
-    .mm-counter-enter,
-    .mm-counter-leave-to {
-        transform: translateX(-0.7rem);
-    } // .__stack-files-reverse .mm-counter-leave-to
 } // .__stack-files-reverse
 
 /*                Progress bar                */

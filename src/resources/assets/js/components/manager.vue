@@ -39,7 +39,8 @@ export default {
         usageIntroPanel: require('./usageIntro/panel.vue').default,
         uploadPreview: require('./utils/upload-preview.vue').default,
         InfiniteLoading: require('vue-infinite-loading').default,
-        filterAndSorting: require('./utils/filter-sort.vue').default
+        filterAndSorting: require('./toolbar/filter-sort.vue').default,
+        dirBookmarks: require('./toolbar/dir-bookmark.vue').default
     },
     name: 'media-manager',
     mixins: [
@@ -85,7 +86,7 @@ export default {
             disableShortCuts: false,
             firstMeta: false, // for alt + click selection
             firstRun: false, // deffer running logic on init
-            folderWarning: false,
+            folderDeleteWarning: false,
             imageWasEdited: false,
             infoSidebar: false,
             introIsOn: false,
@@ -94,13 +95,13 @@ export default {
             loading_files: false,
             no_files: false,
             no_search: false,
-            randomNames: false,
+            useRandomNamesForUpload: false,
             showProgress: false,
-            smallScreen: false,
+            isASmallScreen: false,
             toolBar: true,
             uploadArea: false,
             waitingForUpload: false,
-            useCopy: false,
+            copyFilesNotMove: false,
             uploadPreviewOptionsPanelIsVisible: false,
             globalSearchPanelIsVisible: false,
 
@@ -116,23 +117,24 @@ export default {
             selectedFile: null,
             global_search_item: null,
             urlToUpload: null,
-            selectedUploadPreview: null,
+            selectedUploadPreviewName: null,
 
+            audioFileMeta: {},
             movableList: [],
             bulkList: [],
             dimensions: [],
             files: [],
-            filterdList: [],
+            filterdFilesList: [],
             folders: [],
             uploadPreviewList: [],
             uploadPreviewNamesList: [],
             uploadPreviewOptionsList: [],
+            dirBookmarks: [],
             player: {
                 item: null,
                 fs: false,
                 playing: false
             },
-            audioFileMeta: {},
             lockedList: [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
@@ -143,7 +145,7 @@ export default {
                 'linear-gradient(141deg, #1f191a 0, #363636 71%, #46403f 100%)'
             ],
             progressCounter: 0,
-            scrollByRows: 0
+            scrollByRowItemsCount: 0
         }
     },
     created() {
@@ -261,12 +263,15 @@ export default {
                 this.global_search_item = data
 
                 this.fileTypeIs(data, 'folder')
-                    ? this.folderWarning = true
-                    : this.folderWarning = false
+                    ? this.folderDeleteWarning = true
+                    : this.folderDeleteWarning = false
 
                 this.deleteItem()
             })
 
+            EventHub.listen('dir-bookmarks-update', (data) => {
+                this.dirBookmarks = data
+            })
         },
 
         shortCuts(e) {
@@ -400,7 +405,7 @@ export default {
                         }
 
                         // toggle file details sidebar
-                        if (key == 't' && !this.smallScreen) {
+                        if (key == 't' && !this.isASmallScreen) {
                             this.toggleInfoSidebar()
                             this.saveUserPref()
                         }
@@ -470,6 +475,7 @@ export default {
                 this.clearUrlQuery()
                 this.clearLs()
                 this.ajaxError(false)
+                this.showNotif('Cache Cleared')
             }
         },
         moveItem() {
@@ -493,14 +499,14 @@ export default {
 
                     if (!this.isBulkSelecting() && this.selectedFile) {
                         this.selectedFileIs('folder')
-                            ? this.folderWarning = true
-                            : this.folderWarning = false
+                            ? this.folderDeleteWarning = true
+                            : this.folderDeleteWarning = false
                     }
 
                     if (this.bulkItemsCount) {
                         this.bulkItemsFilter.some((item) => {
                             if (this.fileTypeIs(item, 'folder')) {
-                                return this.folderWarning = true
+                                return this.folderDeleteWarning = true
                             }
                         })
                     }

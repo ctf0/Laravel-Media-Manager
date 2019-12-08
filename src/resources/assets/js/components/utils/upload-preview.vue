@@ -6,26 +6,13 @@
                      v-model="options.focalPoint">
             <img :src="img">
         </focus-point>
+
         <div v-else
              class="icons-preview">
-            <icon v-if="fileTypeIs(type, 'application')"
-                  name="cogs"
-                  scale="10"/>
-            <icon v-else-if="fileTypeIs(type, 'compressed')"
-                  name="file-archive-o"
-                  scale="10"/>
-            <icon v-else-if="fileTypeIs(type, 'video')"
-                  name="film"
-                  scale="10"/>
-            <icon v-else-if="fileTypeIs(type, 'audio')"
-                  name="music"
-                  scale="10"/>
-            <icon v-else-if="fileTypeIs(type, 'pdf')"
-                  name="file-pdf-o"
-                  scale="10"/>
-            <icon v-else-if="fileTypeIs(type, 'text')"
-                  name="file-text-o"
-                  scale="10"/>
+            <icon-types :file="type"
+                        :file-type-is="fileTypeIs"
+                        :scale="10"
+                        :except="['image']"/>
         </div>
 
         <!-- options -->
@@ -36,7 +23,7 @@
                     class="btn-plain"
                     :class="{'alt': panelIsVisible}"
                     :title="trans('options')"
-                    @click="switchPanel()">
+                    @click.stop="switchPanel()">
                 <span class="icon is-large">
                     <icon>
                         <icon name="circle"
@@ -121,7 +108,7 @@
                         </h3>
                         <!-- add more -->
                         <button class="button is-success"
-                                @click="addToExtra()">
+                                @click.stop="addToExtra()">
                             <span class="icon is-small">
                                 <icon name="plus"
                                       scale="1.2"/>
@@ -150,7 +137,7 @@
                                 <!-- remove -->
                                 <p class="control">
                                     <a class="button is-black"
-                                       @click="removeFromExtra(i)">
+                                       @click.stop="removeFromExtra(i)">
                                         <span class="icon is-small">
                                             <icon name="times"/>
                                         </span>

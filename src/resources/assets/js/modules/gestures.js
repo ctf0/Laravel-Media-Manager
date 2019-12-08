@@ -168,7 +168,7 @@ export default {
                 }
                 // media
                 else if (this.selectedFileIs('video') || this.selectedFileIs('audio')) {
-                    return !this.infoSidebar || this.smallScreen
+                    return !this.infoSidebar || this.isASmallScreen
                         ? this.toggleModal('preview_modal')
                         : this.playMedia()
                 }

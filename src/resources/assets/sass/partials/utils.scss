@@ -52,6 +52,10 @@
     cursor: pointer;
 } // .link
 
+.disabled {
+    cursor: not-allowed;
+} // .disabled
+
 .no-click {
     pointer-events: none;
 } // .no-click

@@ -24,7 +24,7 @@ export default {
                             this.bcDelete(data)
                             break
                         case 'lock':
-                            this.bcLock(data)
+                            this.bcLock()
                             break
                         case 'visibility':
                             this.bcVisibility(data)
@@ -81,7 +81,7 @@ export default {
                 let item = data.item
 
                 if (this.filteredItemsCount) {
-                    this.filterdList.some((e) => {
+                    this.filterdFilesList.some((e) => {
                         if (e.name == item.oldName && e.type == item.type) {
                             e.name = item.newName
 
@@ -102,7 +102,6 @@ export default {
             }
         },
         bcDelete(data) {
-            let selected = this.selectedFile
             let path = data.path || ''
 
             // if user is viewing the same dir
@@ -112,24 +111,19 @@ export default {
                 data.items.map((item) => {
                     let storage_path = item.path
 
-                    this.removeFromLists(storage_path, storage_path == selected.storage_path)
+                    this.removeFromLists(storage_path, storage_path == this.selectedFile.storage_path)
                     this.bcNotif(`${this.trans('delete_success')} "${item.name}"`)
                 })
             }
         },
-        bcLock(data) {
-            let path = data.path || ''
-
-            // if user is viewing the same dir
-            if (path == this.files.path) {
-                this.updateLockList()
-            }
+        bcLock() {
+            this.updateLockList()
         },
         bcVisibility(data) {
             // if user is viewing the same dir
             if (data.path || this.files.path == '') {
                 let files = this.files.items
-                let filterd = this.filteredItemsCount ? this.filterdList : null
+                let filterd = this.filteredItemsCount ? this.filterdFilesList : null
 
                 data.items.map((item) => {
                     files.some((e) => {

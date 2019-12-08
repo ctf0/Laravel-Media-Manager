@@ -32,7 +32,7 @@
             <transition-group name="mm-gs"
                               tag="ul"
                               class="columns is-multiline is-marginless">
-                <li v-for="(item, i) in filterdList"
+                <li v-for="(item, i) in filterdFilesList"
                     :key="`${i}-${item.name}`"
                     class="column is-2">
                     <div class="card">
@@ -48,48 +48,25 @@
 
                             <div v-else
                                  class="glbl_search_panel">
-                                <icon v-if="fileTypeIs(item, 'folder')"
-                                      class="svg-prev-icon"
-                                      name="folder"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'application')"
-                                      class="svg-prev-icon"
-                                      name="cogs"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'video')"
-                                      class="svg-prev-icon"
-                                      name="film"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'audio')"
-                                      class="svg-prev-icon"
-                                      name="music"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'pdf')"
-                                      class="svg-prev-icon"
-                                      name="file-pdf-o"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'text')"
-                                      class="svg-prev-icon"
-                                      name="file-text-o"
-                                      scale="5.0"/>
-                                <icon v-else-if="fileTypeIs(item, 'compressed')"
-                                      class="svg-prev-icon"
-                                      name="file-archive-o"
-                                      scale="5.0"/>
+                                <icon-types :file="item"
+                                            :file-type-is="fileTypeIs"
+                                            :scale="5"
+                                            classes="svg-prev-icon"
+                                            :except="['image']"/>
                             </div>
                         </div>
                         <div class="card-content">
                             <p v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
                                :title="linkCopied ? trans('copied') : trans('to_cp')"
                                class="title is-marginless link"
-                               @click="copyLink(item.path)"
+                               @click.stop="copyLink(item.path)"
                                @hidden="linkCopied = false">
                                 {{ item.name }}
                             </p>
                             <br>
 
                             <p class="subtitle is-marginless link"
-                               @click="goToFolder(item.dir_path, item.name)">
+                               @click.stop="goToFolder(item.dir_path, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
                                 <span v-tippy
                                       :title="trans('go_to_folder')">{{ item.dir_path }}</span>
@@ -99,12 +76,12 @@
                                 <span>{{ item.last_modified_formated }}</span>
                             </time>
                             <p class="subtitle is-marginless link"
-                               @click="deleteItem(item, i)">
+                               @click.stop="deleteItem(item, i)">
                                 <span class="icon"><icon name="times"/></span>
                                 <span>{{ trans('delete') }}</span>
                             </p>
                             <p class="subtitle is-marginless link"
-                               @click="addToMovableList(item)">
+                               @click.stop="addToMovableList(item)">
                                 <span class="icon"><icon name="shopping-cart"/></span>
                                 <span>{{ inMovableList(item) ? trans('added') : trans('add_to_list') }}</span>
                             </p>
@@ -123,7 +100,7 @@
             </transition-group>
         </div>
         <button class="modal-close is-large"
-                @click="closePanel()"/>
+                @click.stop="closePanel()"/>
     </div>
 </template>
 
@@ -153,7 +130,7 @@ export default {
     data() {
         return {
             filesIndex: [],
-            filterdList: [],
+            filterdFilesList: [],
             search: '',
             noData: false,
             linkCopied: false,
@@ -169,7 +146,7 @@ export default {
             })
         },
         listCount() {
-            return this.filterdList.length
+            return this.filterdFilesList.length
         }
     },
     methods: {
@@ -187,7 +164,7 @@ export default {
             })
 
             EventHub.listen('global-search-deleted', (path) => {
-                let list = this.filterdList
+                let list = this.filterdFilesList
 
                 return list.some((e, i) => {
                     if (e.path == path) {
@@ -220,12 +197,12 @@ export default {
             let search = this.search
 
             if (search) {
-                this.filterdList = this.fuseLib.search(search)
+                this.filterdFilesList = this.fuseLib.search(search)
 
                 return this.noData = this.listCount ? false : true
             }
 
-            this.filterdList = []
+            this.filterdFilesList = []
         }, 500),
         ontransitionend() {
             this.noData = this.search && !this.listCount ? true : false

@@ -1,4 +1,4 @@
-$list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-info-out, mm-slide, mm-counter, mm-gs);
+$list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-info-out, mm-slide, mm-gs);
 
 @each $class in $list {
     .#{$class}-enter-active,
@@ -86,10 +86,4 @@ $list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-i
 .mm-slide-enter,
 .mm-slide-leave-to {
     transform: translateX(-0.7rem);
-}
-
-/* counters */
-.mm-counter-enter,
-.mm-counter-leave-to {
-    transform: translateX(0.7rem);
 }

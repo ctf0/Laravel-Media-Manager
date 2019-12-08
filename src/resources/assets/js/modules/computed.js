@@ -5,7 +5,7 @@ export default {
         },
         allFiles() {
             if (this.filteredItemsCount) {
-                return this.filterdList
+                return this.filterdFilesList
             }
 
             return this.files.items
@@ -25,14 +25,42 @@ export default {
             return 0
         },
         filteredItemsCount() {
-            if (typeof this.filterdList !== 'undefined') {
-                return this.filterdList.length
+            if (typeof this.filterdFilesList !== 'undefined') {
+                return this.filterdFilesList.length
             }
 
             return 0
         },
-        sortDir() {
+
+        // sort by dir
+        sortDirection() {
             return this.sortName != 'name' ? -1 : 1
+        },
+
+        // ops
+        ops_btn_disable() {
+            return (this.isBulkSelecting() && !this.bulkItemsFilter.length) ||
+                this.isLoading ||
+                !this.selectedFile ||
+                this.IsLocked(this.selectedFile)
+        },
+        editor_btn_disable() {
+            return this.ops_btn_disable ||
+                !this.selectedFileIs('image') ||
+                this.selectedFile.type.includes('gif')
+        },
+        lock_btn_disable() {
+            return this.searchItemsCount == 0 ||
+                this.isLoading ||
+                !this.allItemsCount ||
+                this.isBulkSelecting() && !this.bulkItemsCount
+        },
+        vis_btn_disable() {
+            return this.searchItemsCount == 0 ||
+                this.isLoading ||
+                !this.allItemsCount ||
+                !this.isBulkSelecting() && this.selectedFileIs('folder') ||
+                this.isBulkSelecting() && !this.bulkItemsCount
         }
     }
 }

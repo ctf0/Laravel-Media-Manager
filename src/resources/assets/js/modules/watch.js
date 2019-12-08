@@ -59,8 +59,8 @@ export default {
         },
 
         // ls
-        randomNames(val) {
-            this.updateLs({'randomNames': val})
+        useRandomNamesForUpload(val) {
+            this.updateLs({'useRandomNamesForUpload': val})
         },
         folders(val) {
             this.updateLs({'folders': val})
@@ -68,8 +68,8 @@ export default {
         toolBar(val) {
             this.updateLs({'toolBar': val})
         },
-        lockedList(val) {
-            this.updateLs({'lockedList': val})
+        dirBookmarks(val) {
+            this.updateLs({'dirBookmarks': val})
         },
 
         // filter
@@ -77,7 +77,7 @@ export default {
             if (val) {
                 this.showFilesOfType(val)
             } else {
-                this.resetInput('filterdList', [])
+                this.resetInput('filterdFilesList', [])
                 this.selectFirst()
             }
         },

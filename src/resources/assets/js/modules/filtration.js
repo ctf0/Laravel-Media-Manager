@@ -39,19 +39,19 @@ export default {
 
             switch (val) {
                 case 'locked':
-                    this.filterdList = files.filter((item) => this.IsLocked(item))
+                    this.filterdFilesList = files.filter((item) => this.IsLocked(item))
                     break
                 case 'selected':
-                    this.filterdList = this.bulkList
+                    this.filterdFilesList = this.bulkList
                     break
                 case 'text':
-                    this.filterdList = files.filter((item) => this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf'))
+                    this.filterdFilesList = files.filter((item) => this.fileTypeIs(item, 'text') || this.fileTypeIs(item, 'pdf'))
                     break
                 case 'application':
-                    this.filterdList = files.filter((item) => this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed'))
+                    this.filterdFilesList = files.filter((item) => this.fileTypeIs(item, 'application') || this.fileTypeIs(item, 'compressed'))
                     break
                 default:
-                    this.filterdList = files.filter((item) => this.fileTypeIs(item, val))
+                    this.filterdFilesList = files.filter((item) => this.fileTypeIs(item, val))
                     break
             }
 

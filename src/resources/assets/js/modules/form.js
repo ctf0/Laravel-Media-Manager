@@ -2,6 +2,7 @@ export default {
     methods: {
         /*                Main                */
         getFiles(prev_folder = null, prev_file = null) {
+            this.files.next = null
             this.resetInput(['sortName', 'filterName', 'selectedFile', 'currentFileIndex'])
             this.noFiles('hide')
             this.destroyPlyr()
@@ -40,13 +41,8 @@ export default {
         },
         loadPaginatedFiles($state) {
             return axios.post(this.files.next, {
-                path: this.clearDblSlash(`/${this.folders.join('/')}`)
+                path: this.files.path || '/'
             }).then(({data}) => {
-                // folder no longer exist
-                if (data.error) {
-                    return this.showNotif(data.error, 'danger')
-                }
-
                 let next_page = data.files.items.next_page_url
 
                 // add extra items
@@ -266,11 +262,15 @@ export default {
         /*                Ops                */
         removeFromLists(path, reset = true) {
             if (this.filteredItemsCount) {
-                this.updateListsRemove(this.filterdList, path)
+                this.updateListsRemove(this.filterdFilesList, path)
             }
 
             if (this.movableItemsCount) {
                 this.updateListsRemove(this.movableList, path)
+            }
+
+            if (this.dirBookmarks.length) {
+                this.updateListsRemove(this.dirBookmarks, path, 'dir')
             }
 
             this.updateListsRemove(this.files.items, path)

@@ -12,9 +12,9 @@ trait Lock
      *
      * @param [type] $dirs
      */
-    public function getLockList(Request $request)
+    public function getLockList()
     {
-        return response()->json($this->lockList($request->path));
+        return response()->json($this->lockList());
     }
 
     /**
@@ -22,11 +22,10 @@ trait Lock
      *
      * @param [type] $path
      */
-    public function lockList($path)
+    public function lockList()
     {
         return [
             'locked' => $this->db->pluck('path'),
-            'dirs'   => $this->getDirectoriesList($path),
         ];
     }
 
@@ -71,8 +70,7 @@ trait Lock
 
         // broadcast
         broadcast(new MediaFileOpsNotifications([
-            'op'      => 'lock',
-            'path'    => $path,
+            'op' => 'lock',
         ]))->toOthers();
 
         return compact('result');

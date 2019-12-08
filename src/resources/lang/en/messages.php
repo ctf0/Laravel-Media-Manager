@@ -3,7 +3,12 @@
 return [
     'space'     => 'Space',
     'backspace' => 'BackSpace',
+    'bookmarks' => [
+        'main'  => 'Bookmarks',
+        'add'   => 'Save Current Path',
+    ],
     'add'       => [
+        'main'       => 'Add',
         'added'      => 'Added',
         'folder'     => 'Add Folder',
         'new_folder' => 'Add New Folder',

@@ -26,6 +26,7 @@ export default {
                     ? [item]
                     : this.delOrMoveList()
             )
+
             this.movableList = uniq(list)
 
             if (this.isBulkSelecting()) {
@@ -35,10 +36,10 @@ export default {
         removeFromMovableList(i) {
             return this.movableList.splice(i, 1)
         },
-        clearMovableList() {
+        clearMovableList(notif = true) {
             this.resetInput('movableList', [])
 
-            return this.showNotif(this.trans('move_clear'))
+            return notif ? this.showNotif(this.trans('move_clear')) : false
         },
         inMovableList(item = this.selectedFile) {
             return item &&
@@ -50,7 +51,7 @@ export default {
         MoveFileForm(event) {
             let hasErrors = false
             let destination = this.files.path
-            let copy = this.useCopy
+            let copy = this.copyFilesNotMove
             let files = this.checkForNestedLockedItems(this.movableItemsFilter)
 
             if (!files.length) {
@@ -86,7 +87,7 @@ export default {
 
                 if (!hasErrors) {
                     // clear all
-                    this.clearMovableList()
+                    this.clearMovableList(false)
                 } else {
                     // remove succeeded items
                     paths.map((p) => {
