@@ -3,7 +3,7 @@
 namespace ctf0\MediaManager\App\Controllers;
 
 use App\Http\Controllers\Controller;
-use League\Flysystem\Plugin\ListWith;
+use Jhofm\FlysystemIterator\Plugin\IteratorPlugin;
 use ctf0\MediaManager\App\Controllers\Moduels\Lock;
 use ctf0\MediaManager\App\Controllers\Moduels\Move;
 use ctf0\MediaManager\App\Controllers\Moduels\Utils;
@@ -64,7 +64,7 @@ class MediaController extends Controller
                                     ->connection($config['database_connection'] ?? 'mediamanager')
                                     ->table($config['table_locked'] ?? 'locked');
 
-        $this->storageDisk->addPlugin(new ListWith());
+        $this->storageDisk->addPlugin(new IteratorPlugin());
     }
 
     /**

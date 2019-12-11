@@ -54,22 +54,20 @@ trait GetContent
             $path = $folder['path'];
             $time = $folder['timestamp'];
 
-            if (!preg_grep($pattern, [$path])) {
-                if ($this->GFI) {
-                    $info = $this->getFolderInfoFromList($this->getFolderContent($path, true));
-                }
-
-                $list[] = [
-                    'name'                   => $folder['basename'],
-                    'type'                   => 'folder',
-                    'path'                   => $this->resolveUrl($path),
-                    'storage_path'           => $path,
-                    'size'                   => isset($info) ? $info['size'] : 0,
-                    'count'                  => isset($info) ? $info['count'] : 0,
-                    'last_modified'          => $time,
-                    'last_modified_formated' => $this->getItemTime($time),
-                ];
+            if ($this->GFI) {
+                $info = $this->getFolderInfoFromList($this->getFolderContent($path, true));
             }
+
+            $list[] = [
+                'name'                   => $folder['basename'],
+                'type'                   => 'folder',
+                'path'                   => $this->resolveUrl($path),
+                'storage_path'           => $path,
+                'size'                   => isset($info) ? $info['size'] : 0,
+                'count'                  => isset($info) ? $info['count'] : 0,
+                'last_modified'          => $time,
+                'last_modified_formated' => $this->getItemTime($time),
+            ];
         }
 
         // files
@@ -77,18 +75,16 @@ trait GetContent
             $path = $file['path'];
             $time = $file['timestamp'];
 
-            if (!preg_grep($pattern, [$path])) {
-                $list[] = [
-                    'name'                   => $file['basename'],
-                    'type'                   => $file['mimetype'],
-                    'path'                   => $this->resolveUrl($path),
-                    'storage_path'           => $path,
-                    'size'                   => $file['size'],
-                    'visibility'             => $file['visibility'],
-                    'last_modified'          => $time,
-                    'last_modified_formated' => $this->getItemTime($time),
-                ];
-            }
+            $list[] = [
+                'name'                   => $file['basename'],
+                'type'                   => $file['mimetype'],
+                'path'                   => $this->resolveUrl($path),
+                'storage_path'           => $path,
+                'size'                   => $file['size'],
+                'visibility'             => $file['visibility'],
+                'last_modified'          => $time,
+                'last_modified_formated' => $this->getItemTime($time),
+            ];
         }
 
         return $list;
@@ -102,10 +98,17 @@ trait GetContent
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        return $this->storageDisk->listWith(
-            ['mimetype', 'visibility', 'timestamp', 'size'],
-            $folder,
-            $rec
+        $pattern = $this->ignoreFiles;
+
+        return $this->storageDisk->createIterator(
+            [
+                'list-with' => ['mimetype', 'visibility', 'timestamp', 'size'],
+                'recursive' => $rec,
+                'filter'    => function ($item) use ($pattern) {
+                    return !preg_grep($pattern, [$item['basename']]);
+                },
+            ],
+            $folder ?: '/'
         );
     }
 

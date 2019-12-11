@@ -141,9 +141,11 @@
         <div class="card-footer-item">
             <button class="button btn-plain is-fullwidth"
                 :disabled="ops_btn_disable"
-                @click.stop="moveItem()">
+                @click.stop="addToMovableList()">
                 <span class="icon is-small"><icon name="share"></icon></span>
-                <span>{{ trans('MediaManager::messages.move.main') }}</span>
+
+                <span v-if="inMovableList()">{{ trans('MediaManager::messages.add.added') }}</span>
+                <span v-else>{{ trans('MediaManager::messages.add.list') }}</span>
             </button>
         </div>
 
