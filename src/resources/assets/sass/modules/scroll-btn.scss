@@ -1,0 +1,34 @@
+@import '../partials/vars';
+
+.scroll-btn {
+    background: $image;
+    border-radius: 100vw;
+    bottom: 1rem;
+    color: $white;
+    position: absolute;
+    right: 1rem;
+    transition: all $anim-time;
+
+    span,
+    span * {
+        pointer-events: none;
+    }
+
+    svg {
+        transition: all $anim-time;
+
+        &.up {
+            transform: rotate(180deg);
+        }
+    }
+
+    &:hover {
+        box-shadow: $shadow_1;
+        transform: translateY(-0.5rem);
+    }
+
+    &:active {
+        box-shadow: $shadow_1;
+        transform: translateY(-0.5rem) scale(0.8);
+    }
+}

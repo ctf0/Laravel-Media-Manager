@@ -39,7 +39,7 @@ export default {
         'sortNameIs',
         'disabled',
         'haveAFileOfType',
-        'translations'
+        'trans'
     ],
     data() {
         return {
@@ -63,9 +63,6 @@ export default {
         }
     },
     methods: {
-        trans(val) {
-            return this.translations[val]
-        },
         haveFileType(val) {
             if (val == 'non') {
                 return true

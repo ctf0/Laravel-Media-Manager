@@ -1,0 +1,80 @@
+@import '../partials/vars';
+
+// https://codepen.io/rahul-rai-the-styleful/pen/JgRoeY
+.circular-menu {
+    bottom: 1rem;
+    left: 1rem;
+    position: absolute;
+
+    .floating-btn {
+        background: $audio;
+        border-radius: 100vw;
+        color: $white;
+        cursor: pointer;
+        text-align: center;
+        transition: all $anim-time $anim-ease;
+
+        &:hover {
+            box-shadow: $shadow_1;
+            transform: translateY(-0.5rem);
+        }
+    }
+
+    .menu-item {
+        background: $audio;
+        border-radius: 100vw;
+        height: 100%;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: all $anim-time $anim-ease;
+        width: 100%;
+        z-index: -1;
+
+        .btn-plain {
+            color: white;
+            height: 100%;
+            width: 100%;
+
+            .icon.is-large {
+                height: 3rem;
+                width: 3rem;
+            }
+        }
+    }
+
+    .items-wrapper {
+        margin: 0;
+        padding: 0;
+    }
+
+    &.active {
+        .floating-btn {
+            &:hover {
+                transform: translateY(-0.5rem) rotate(45deg);
+            }
+        }
+
+        .menu-item {
+            opacity: 1;
+            z-index: 1;
+
+            &:nth-child(1) {
+                transform: translate3d(0, -7rem, 0);
+            }
+
+            &:nth-child(2) {
+                transform: translate3d(3.5rem, -6.25rem, 0);
+            }
+
+            &:nth-child(3) {
+                transform: translate3d(6.25rem, -3.5rem, 0);
+            }
+
+            &:nth-child(4) {
+                transform: translate3d(7rem, 0, 0);
+            }
+        }
+    }
+}

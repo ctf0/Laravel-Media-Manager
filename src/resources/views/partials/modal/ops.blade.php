@@ -24,23 +24,7 @@
             <image-editor route="{{ route('media.uploadCropped') }}"
                 :no-scroll="noScroll"
                 :file="selectedFile"
-                :translations="{{ json_encode([
-                    'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']),
-                    'move' => trans('MediaManager::messages.move.main'),
-                    'save_success' => trans('MediaManager::messages.save.success'),
-                    'diff' => trans('MediaManager::messages.editor.diff'),
-                    'presets' => trans('MediaManager::messages.crop.presets'),
-                    'crop' => trans('MediaManager::messages.crop.main'),
-                    'crop_reset' => trans('MediaManager::messages.crop.reset'),
-                    'crop_reset_filters' => trans('MediaManager::messages.crop.reset_filters'),
-                    'crop_apply' => trans('MediaManager::messages.crop.apply'),
-                    'crop_zoom_in' => trans('MediaManager::messages.crop.zoom_in'),
-                    'crop_zoom_out' => trans('MediaManager::messages.crop.zoom_out'),
-                    'crop_rotate_left' => trans('MediaManager::messages.crop.rotate_left'),
-                    'crop_rotate_right' => trans('MediaManager::messages.crop.rotate_right'),
-                    'crop_flip_horizontal' => trans('MediaManager::messages.crop.flip_horizontal'),
-                    'crop_flip_vertical' => trans('MediaManager::messages.crop.flip_vertical'),
-                ]) }}">
+                :trans="trans">
             </image-editor>
         </div>
         <button class="modal-close is-large" @click.stop="toggleModal()"></button>

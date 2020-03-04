@@ -1,6 +1,6 @@
 <?php
 
-namespace ctf0\MediaManager\App\Controllers\Moduels;
+namespace ctf0\MediaManager\App\Controllers\Modules;
 
 use ZipStream\ZipStream;
 use Illuminate\Http\Request;

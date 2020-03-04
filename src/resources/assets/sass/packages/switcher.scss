@@ -7,79 +7,79 @@
 
         &:disabled {
             & + .switcher {
+                box-shadow: 0 0 0 transparent !important;
                 cursor: not-allowed;
                 opacity: 0.6;
-                box-shadow: 0 0 0 transparent !important;
 
                 &::after {
-                    width: 21px !important;
                     height: 21px !important;
-                } // .form-switcher input[type='checkbox']:disabled + .switcher::after
-            } // .form-switcher input[type='checkbox']:disabled + .switcher
+                    width: 21px !important;
+                }
+            }
 
             &:checked {
                 & + .switcher {
                     &::after {
                         transform: translateX(18px) !important;
-                    } // .form-switcher input[type='checkbox']:disabled:checked + .switcher::after
-                } // .form-switcher input[type='checkbox']:disabled:checked + .switcher
-            } // .form-switcher input[type='checkbox']:disabled:checked
-        } // .form-switcher input[type='checkbox']:disabled
+                    }
+                }
+            }
+        }
 
         &:checked {
             &:disabled {
                 & + .switcher {
                     border-color: darken($active_theme, 5%) !important;
                     box-shadow: 0 0 0 15px $active_theme inset !important;
-                } // .form-switcher input[type='checkbox']:checked:disabled + .switcher
-            } // .form-switcher input[type='checkbox']:checked:disabled
+                }
+            }
 
             & + .switcher {
-                transition: box-shadow $anim-time $anim-ease, border-color $anim-time $anim-ease 0.02s;
-                border-color: $green;
                 background-color: $green;
+                border-color: $green;
                 box-shadow: 0 0 0 12.5px $green inset;
+                transition: box-shadow $anim-time $anim-ease, border-color $anim-time $anim-ease 0.02s;
 
                 &::after {
                     transform: translateX(18px);
-                } // .form-switcher input[type='checkbox']:checked + .switcher::after
+                }
 
                 &:hover {
                     &:active {
                         &::after {
                             transform: translateX(10.65px);
-                        } // .form-switcher input[type='checkbox']:checked + .switcher:hover:active::after
-                    } // .form-switcher input[type='checkbox']:checked + .switcher:hover:active
-                } // .form-switcher input[type='checkbox']:checked + .switcher:hover
-            } // .form-switcher input[type='checkbox']:checked + .switcher
-        } // .form-switcher input[type='checkbox']:checked
-    } // .form-switcher input[type='checkbox']
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     .switcher {
-        position: relative;
-        display: block;
-        width: 43px;
-        height: 25px;
-        padding: 0;
-        cursor: pointer;
-        transition: box-shadow $anim-time $anim-ease 0.02s, border-color $anim-time $anim-ease;
+        background-color: $active_theme;
         border: 2px solid $active_theme;
         border-radius: 100vw;
-        background-color: $active_theme;
+        cursor: pointer;
+        display: block;
+        height: 25px;
+        padding: 0;
+        position: relative;
+        transition: box-shadow $anim-time $anim-ease 0.02s, border-color $anim-time $anim-ease;
+        width: 43px;
 
         &::after {
+            background-color: $white;
+            border-radius: 100vw;
+            box-shadow: 0 1px 3px rgba($black, 0.4);
+            content: '';
+            height: 21px;
+            left: 0;
             position: absolute;
             top: 0;
-            left: 0;
-            width: 21px;
-            height: 21px;
-            content: '';
-            transition: all $anim-time $anim-ease;
             transform: translateX(0);
-            border-radius: 100vw;
-            background-color: $white;
-            box-shadow: 0 1px 3px rgba($black, 0.4);
-        } // .form-switcher .switcher::after
+            transition: all $anim-time $anim-ease;
+            width: 21px;
+        }
 
         &:hover {
             &:active {
@@ -87,16 +87,16 @@
 
                 &::after {
                     width: 28.35px !important;
-                } // .form-switcher .switcher:hover:active::after
-            } // .form-switcher .switcher:hover:active
-        } // .form-switcher .switcher:hover
-    } // .form-switcher .switcher
-} // .form-switcher
+                }
+            }
+        }
+    }
+}
 
 .form-switcher.form-switcher-sm {
     .switcher {
-        width: 31px;
         height: 18px;
+        width: 31px;
 
         &:hover {
             &:active {
@@ -104,60 +104,60 @@
 
                 &::after {
                     width: 18.9px !important;
-                } // .form-switcher.form-switcher-sm .switcher:hover:active::after
-            } // .form-switcher.form-switcher-sm .switcher:hover:active
-        } // .form-switcher.form-switcher-sm .switcher:hover
+                }
+            }
+        }
 
         &::after {
-            width: 14px;
             height: 14px;
-        } // .form-switcher.form-switcher-sm .switcher::after
-    } // .form-switcher.form-switcher-sm .switcher
+            width: 14px;
+        }
+    }
 
     input[type='checkbox'] {
         &:disabled {
             & + .switcher {
                 &::after {
-                    width: 14px !important;
                     height: 14px !important;
-                } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled + .switcher::after
-            } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled + .switcher
+                    width: 14px !important;
+                }
+            }
 
             &:checked {
                 & + .switcher {
                     &::after {
                         transform: translateX(13px) !important;
-                    } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled:checked + .switcher::after
-                } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled:checked + .switcher
-            } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled:checked
-        } // .form-switcher.form-switcher-sm input[type='checkbox']:disabled
+                    }
+                }
+            }
+        }
 
         &:checked {
             & + .switcher {
-                border-color: $green;
                 background-color: $green;
+                border-color: $green;
                 box-shadow: 0 0 0 9px $green inset;
 
                 &::after {
                     transform: translateX(13px);
-                } // .form-switcher.form-switcher-sm input[type='checkbox']:checked + .switcher::after
+                }
 
                 &:hover {
                     &:active {
                         &::after {
                             transform: translateX(8.1px);
-                        } // .form-switcher.form-switcher-sm input[type='checkbox']:checked + .switcher:hover:active::after
-                    } // .form-switcher.form-switcher-sm input[type='checkbox']:checked + .switcher:hover:active
-                } // .form-switcher.form-switcher-sm input[type='checkbox']:checked + .switcher:hover
-            } // .form-switcher.form-switcher-sm input[type='checkbox']:checked + .switcher
-        } // .form-switcher.form-switcher-sm input[type='checkbox']:checked
-    } // .form-switcher.form-switcher-sm input[type='checkbox']
-} // .form-switcher.form-switcher-sm
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 .form-switcher.form-switcher-lg {
     .switcher {
-        width: 53px;
         height: 30px;
+        width: 53px;
 
         &:hover {
             &:active {
@@ -165,61 +165,61 @@
 
                 &::after {
                     width: 35.1px !important;
-                } // .form-switcher.form-switcher-lg .switcher:hover:active::after
-            } // .form-switcher.form-switcher-lg .switcher:hover:active
-        } // .form-switcher.form-switcher-lg .switcher:hover
+                }
+            }
+        }
 
         &::after {
-            width: 26px;
             height: 26px;
-        } // .form-switcher.form-switcher-lg .switcher::after
-    } // .form-switcher.form-switcher-lg .switcher
+            width: 26px;
+        }
+    }
 
     input[type='checkbox'] {
         &:disabled {
             & + .switcher {
                 &::after {
-                    width: 26px !important;
                     height: 26px !important;
-                } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled + .switcher::after
-            } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled + .switcher
+                    width: 26px !important;
+                }
+            }
 
             &:checked {
                 & + .switcher {
                     &::after {
                         transform: translateX(23px) !important;
-                    } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled:checked + .switcher::after
-                } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled:checked + .switcher
-            } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled:checked
-        } // .form-switcher.form-switcher-lg input[type='checkbox']:disabled
+                    }
+                }
+            }
+        }
 
         &:checked {
             & + .switcher {
-                border-color: $green;
                 background-color: $green;
+                border-color: $green;
                 box-shadow: 0 0 0 15px $green inset;
 
                 &::after {
                     transform: translateX(23px);
-                } // .form-switcher.form-switcher-lg input[type='checkbox']:checked + .switcher::after
+                }
 
                 &:hover {
                     &:active {
                         &::after {
                             transform: translateX(13.9px);
-                        } // .form-switcher.form-switcher-lg input[type='checkbox']:checked + .switcher:hover:active::after
-                    } // .form-switcher.form-switcher-lg input[type='checkbox']:checked + .switcher:hover:active
-                } // .form-switcher.form-switcher-lg input[type='checkbox']:checked + .switcher:hover
-            } // .form-switcher.form-switcher-lg input[type='checkbox']:checked + .switcher
-        } // .form-switcher.form-switcher-lg input[type='checkbox']:checked
-    } // .form-switcher.form-switcher-lg input[type='checkbox']
-} // .form-switcher.form-switcher-lg
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @include media('max', 768) {
     .form-switcher.form-switcher-sm-phone {
         .switcher {
-            width: 31px;
             height: 18px;
+            width: 31px;
 
             &:hover {
                 &:active {
@@ -227,60 +227,60 @@
 
                     &::after {
                         width: 18.9px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone .switcher:hover:active::after
-                } // @include media('max', 768) .form-switcher.form-switcher-sm-phone .switcher:hover:active
-            } // @include media('max', 768) .form-switcher.form-switcher-sm-phone .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 14px;
                 height: 14px;
-            } // @include media('max', 768) .form-switcher.form-switcher-sm-phone .switcher::after
-        } // @include media('max', 768) .form-switcher.form-switcher-sm-phone .switcher
+                width: 14px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 14px !important;
                         height: 14px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled + .switcher
+                        width: 14px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(13px) !important;
-                        } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled:checked
-            } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 9px $green inset;
 
                     &::after {
                         transform: translateX(13px);
-                    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(8.1px);
-                            } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked + .switcher
-            } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']:checked
-        } // @include media('max', 768) .form-switcher.form-switcher-sm-phone input[type='checkbox']
-    } // @include media('max', 768) .form-switcher.form-switcher-sm-phone
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     .form-switcher.form-switcher-md-phone {
         .switcher {
-            width: 43px;
             height: 25px;
+            width: 43px;
 
             &:hover {
                 &:active {
@@ -288,60 +288,60 @@
 
                     &::after {
                         width: 28.35px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-md-phone .switcher:hover:active::after
-                } // @include media('max', 768) .form-switcher.form-switcher-md-phone .switcher:hover:active
-            } // @include media('max', 768) .form-switcher.form-switcher-md-phone .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 21px;
                 height: 21px;
-            } // @include media('max', 768) .form-switcher.form-switcher-md-phone .switcher::after
-        } // @include media('max', 768) .form-switcher.form-switcher-md-phone .switcher
+                width: 21px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 21px !important;
                         height: 21px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled + .switcher
+                        width: 21px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(18px) !important;
-                        } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled:checked
-            } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 12.5px $green inset;
 
                     &::after {
                         transform: translateX(18px);
-                    } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(10.65px);
-                            } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked + .switcher
-            } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']:checked
-        } // @include media('max', 768) .form-switcher.form-switcher-md-phone input[type='checkbox']
-    } // @include media('max', 768) .form-switcher.form-switcher-md-phone
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     .form-switcher.form-switcher-lg-phone {
         .switcher {
-            width: 53px;
             height: 30px;
+            width: 53px;
 
             &:hover {
                 &:active {
@@ -349,62 +349,62 @@
 
                     &::after {
                         width: 35.1px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone .switcher:hover:active::after
-                } // @include media('max', 768) .form-switcher.form-switcher-lg-phone .switcher:hover:active
-            } // @include media('max', 768) .form-switcher.form-switcher-lg-phone .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 26px;
                 height: 26px;
-            } // @include media('max', 768) .form-switcher.form-switcher-lg-phone .switcher::after
-        } // @include media('max', 768) .form-switcher.form-switcher-lg-phone .switcher
+                width: 26px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 26px !important;
                         height: 26px !important;
-                    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled + .switcher
+                        width: 26px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(23px) !important;
-                        } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled:checked
-            } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 15px $green inset;
 
                     &::after {
                         transform: translateX(23px);
-                    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(13.9px);
-                            } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked + .switcher
-            } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']:checked
-        } // @include media('max', 768) .form-switcher.form-switcher-lg-phone input[type='checkbox']
-    } // @include media('max', 768) .form-switcher.form-switcher-lg-phone
-} // @include media('max', 768)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @include media('max', 991) {
     .form-switcher.form-switcher-sm-tablet {
         .switcher {
-            width: 31px;
             height: 18px;
+            width: 31px;
 
             &:hover {
                 &:active {
@@ -412,60 +412,60 @@
 
                     &::after {
                         width: 18.9px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet .switcher:hover:active::after
-                } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet .switcher:hover:active
-            } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 14px;
                 height: 14px;
-            } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet .switcher::after
-        } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet .switcher
+                width: 14px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 14px !important;
                         height: 14px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled + .switcher
+                        width: 14px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(13px) !important;
-                        } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled:checked
-            } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 9px $green inset;
 
                     &::after {
                         transform: translateX(13px);
-                    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(8.1px);
-                            } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked + .switcher
-            } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']:checked
-        } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet input[type='checkbox']
-    } // @include media('max', 991) .form-switcher.form-switcher-sm-tablet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     .form-switcher.form-switcher-md-tablet {
         .switcher {
-            width: 43px;
             height: 25px;
+            width: 43px;
 
             &:hover {
                 &:active {
@@ -473,60 +473,60 @@
 
                     &::after {
                         width: 28.35px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet .switcher:hover:active::after
-                } // @include media('max', 991) .form-switcher.form-switcher-md-tablet .switcher:hover:active
-            } // @include media('max', 991) .form-switcher.form-switcher-md-tablet .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 21px;
                 height: 21px;
-            } // @include media('max', 991) .form-switcher.form-switcher-md-tablet .switcher::after
-        } // @include media('max', 991) .form-switcher.form-switcher-md-tablet .switcher
+                width: 21px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 21px !important;
                         height: 21px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled + .switcher
+                        width: 21px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(18px) !important;
-                        } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled:checked
-            } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 12.5px $green inset;
 
                     &::after {
                         transform: translateX(18px);
-                    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(10.65px);
-                            } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked + .switcher
-            } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']:checked
-        } // @include media('max', 991) .form-switcher.form-switcher-md-tablet input[type='checkbox']
-    } // @include media('max', 991) .form-switcher.form-switcher-md-tablet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     .form-switcher.form-switcher-lg-tablet {
         .switcher {
-            width: 53px;
             height: 30px;
+            width: 53px;
 
             &:hover {
                 &:active {
@@ -534,61 +534,61 @@
 
                     &::after {
                         width: 35.1px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet .switcher:hover:active::after
-                } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet .switcher:hover:active
-            } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet .switcher:hover
+                    }
+                }
+            }
 
             &::after {
-                width: 26px;
                 height: 26px;
-            } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet .switcher::after
-        } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet .switcher
+                width: 26px;
+            }
+        }
 
         input[type='checkbox'] {
             &:disabled {
                 & + .switcher {
                     &::after {
-                        width: 26px !important;
                         height: 26px !important;
-                    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled + .switcher::after
-                } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled + .switcher
+                        width: 26px !important;
+                    }
+                }
 
                 &:checked {
                     & + .switcher {
                         &::after {
                             transform: translateX(23px) !important;
-                        } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled:checked + .switcher::after
-                    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled:checked + .switcher
-                } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled:checked
-            } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:disabled
+                        }
+                    }
+                }
+            }
 
             &:checked {
                 & + .switcher {
-                    border-color: $green;
                     background-color: $green;
+                    border-color: $green;
                     box-shadow: 0 0 0 15px $green inset;
 
                     &::after {
                         transform: translateX(23px);
-                    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked + .switcher::after
+                    }
 
                     &:hover {
                         &:active {
                             &::after {
                                 transform: translateX(13.9px);
-                            } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked + .switcher:hover:active::after
-                        } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked + .switcher:hover:active
-                    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked + .switcher:hover
-                } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked + .switcher
-            } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']:checked
-        } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet input[type='checkbox']
-    } // @include media('max', 991) .form-switcher.form-switcher-lg-tablet
-} // @include media('max', 991)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 // extra
 .form-switcher.is-danger {
     .switcher {
-        border: 2px solid $red;
         background-color: $red;
-    } // .form-switcher.is-danger .switcher
-} // .form-switcher.is-danger
+        border: 2px solid $red;
+    }
+}

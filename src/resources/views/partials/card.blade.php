@@ -47,7 +47,15 @@
         </div>
 
         {{-- image --}}
-        <image-preview v-else class="wrapper">
+        <image-preview v-else
+            :show-ops="true"
+            :trans="trans"
+            :ops_btn_disable="ops_btn_disable"
+            :in-movable-list="inMovableList"
+            :rename-item="renameItem"
+            :delete-item="deleteItem"
+            :image-editor-card="imageEditorCard"
+            :add-to-movable-list="addToMovableList">
             <a :href="selectedFile.path"
                 rel="noreferrer noopener"
                 target="_blank"
@@ -135,48 +143,4 @@
             </div>
         </div>
     </div>
-
-    <footer class="card-footer">
-        {{-- move --}}
-        <div class="card-footer-item">
-            <button class="button btn-plain is-fullwidth"
-                :disabled="ops_btn_disable"
-                @click.stop="addToMovableList()">
-                <span class="icon is-small"><icon name="share"></icon></span>
-
-                <span v-if="inMovableList()">{{ trans('MediaManager::messages.add.added') }}</span>
-                <span v-else>{{ trans('MediaManager::messages.add.list') }}</span>
-            </button>
-        </div>
-
-        {{-- rename --}}
-        <div class="card-footer-item">
-            <button class="button btn-plain is-fullwidth"
-                :disabled="ops_btn_disable"
-                @click.stop="renameItem()">
-                <span class="icon is-small"><icon name="terminal"></icon></span>
-                <span>{{ trans('MediaManager::messages.rename.main') }}</span>
-            </button>
-        </div>
-
-        {{-- editor --}}
-        <div class="card-footer-item" v-if="selectedFileIs('image')">
-            <button class="button btn-plain is-fullwidth"
-                :disabled="ops_btn_disable"
-                @click.stop="imageEditorCard()">
-                <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
-                <span>{{ trans('MediaManager::messages.editor.main') }}</span>
-            </button>
-        </div>
-
-        {{-- delete --}}
-        <div class="card-footer-item">
-            <button class="button btn-plain is-fullwidth"
-                :disabled="ops_btn_disable"
-                @click.stop="deleteItem()">
-                <span class="icon is-small"><icon name="trash" scale="1.2"></icon></span>
-                <span>{{ trans('MediaManager::messages.delete.main') }}</span>
-            </button>
-        </div>
-    </footer>
 </v-touch>

@@ -43,6 +43,7 @@ import 'vue-awesome/icons/chevron-down'
 import 'vue-awesome/icons/angle-down'
 import 'vue-awesome/icons/cloud-upload'
 import 'vue-awesome/icons/shopping-cart'
+import 'vue-awesome/icons/cart-plus'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'

@@ -151,7 +151,7 @@ export default {
     props: [
         'file',
         'noScroll',
-        'translations',
+        'trans',
         'route'
     ],
     data() {
@@ -436,7 +436,7 @@ export default {
         saveToDisk(data) {
             const parent = this.$parent
             parent.toggleLoading()
-            parent.showNotif(parent.trans('stand_by'), 'info')
+            parent.showNotif(trans('stand_by'), 'info')
 
             axios.post(this.route, {
                 data: data,
@@ -490,9 +490,6 @@ export default {
         // utils
         dragModeIs(val) {
             return this.dragMode == val
-        },
-        trans(val) {
-            return this.translations[val]
         },
         onDblClick(e) {
             this.dragMode = e.target.dataset.cropperAction || this.dragMode

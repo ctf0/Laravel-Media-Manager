@@ -19,7 +19,7 @@
         <div v-if="img"
              class="options btn-animate"
              :class="{'show': panelIsVisible}">
-            <button v-tippy="{arrow: true, position: 'left'}"
+            <button v-tippy="{arrow: true, placement: 'left'}"
                     class="btn-plain"
                     :class="{'alt': panelIsVisible}"
                     :title="trans('options')"
@@ -342,7 +342,7 @@ export default {
     props: [
         'file',
         'fileTypeIs',
-        'translations'
+        'trans'
     ],
     data() {
         return {
@@ -375,6 +375,7 @@ export default {
         },
         addSpaceToOptBtn() {
             let cont = document.querySelector('.options')
+
             if (cont) {
                 let btn = cont.querySelector('.btn-plain')
                 cont.style.right = `calc((var(--width) * -1) + ${btn.offsetWidth}px)`
@@ -382,9 +383,6 @@ export default {
         },
         switchPanel() {
             return this.panelIsVisible = !this.panelIsVisible
-        },
-        trans(val) {
-            return this.translations[val]
         },
         addToExtra() {
             this.options.extra.push({

@@ -1,19 +1,83 @@
 <template>
-    <div>
+    <div class="wrapper">
         <div data-img-container
              @scroll="updateScrollDir">
             <slot/>
+        </div>
+
+        <div class="goo">
+            <div class="circular-menu"
+                v-if="showOps"
+                :class="{'active' : opsMenu}">
+                <div class="floating-btn"
+                    @click="toggleOpsMenu()">
+                    <span class="icon is-large"><icon name="cog"></icon></span>
+                </div>
+
+                <menu class="items-wrapper">
+                    <!-- move -->
+                    <div class="menu-item">
+                        <button class="button btn-plain"
+                            :disabled="ops_btn_disable"
+                            @click.stop="addToMovableList()">
+                            <span class="icon is-large">
+                                <icon v-if="inMovableList()"
+                                    name="shopping-cart"
+                                    scale="1.2"></icon>
+                                <icon v-else
+                                    name="cart-plus"
+                                    scale="1.2"></icon>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- rename -->
+                    <div class="menu-item">
+                        <button class="button btn-plain"
+                            :disabled="ops_btn_disable"
+                            @click.stop="renameItem()">
+                            <span class="icon is-large">
+                                <icon name="terminal"
+                                    scale="1.2"></icon>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- editor -->
+                    <div class="menu-item">
+                        <button class="button btn-plain"
+                            :disabled="ops_btn_disable"
+                            @click.stop="imageEditorCard()">
+                            <span class="icon is-large">
+                                <icon name="object-ungroup"
+                                    scale="1.2"></icon>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- delete -->
+                    <div class="menu-item">
+                         <button class="button btn-plain"
+                            :disabled="ops_btn_disable"
+                            @click.stop="deleteItem()">
+                            <span class="icon is-large">
+                                <icon name="trash"
+                                    scale="1.2"></icon>
+                            </span>
+                        </button>
+                    </div>
+                </menu>
+            </div>
         </div>
 
         <transition :name="scrollBtn.state ? 'mm-img-nxt' : 'mm-img-prv'"
                     appear>
             <div v-show="scrollBtn.state"
                  class="scroll-btn"
-                 :class="scrollBtn.dir"
                  @click.self.stop="scrollImg">
                 <span class="icon is-large">
                     <icon name="chevron-down"
-                          scale="1"/>
+                          :class="scrollBtn.dir"/>
                 </span>
             </div>
         </transition>
@@ -25,12 +89,23 @@ import debounce from 'lodash/debounce'
 import animateScrollTo from '../../packages/animated-scroll-to'
 
 export default {
+    props: [
+        'trans',
+        'showOps',
+        'ops_btn_disable',
+        'inMovableList',
+        'renameItem',
+        'deleteItem',
+        'imageEditorCard',
+        'addToMovableList'
+    ],
     data() {
         return {
             scrollBtn: {
                 state: false,
                 dir: 'down'
-            }
+            },
+            opsMenu: false
         }
     },
     created() {
@@ -71,60 +146,25 @@ export default {
         },
         getContainer(el) {
             return el.querySelector('[data-img-container]')
+        },
+        toggleOpsMenu(){
+            return this.opsMenu = !this.opsMenu
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../../sass/partials/vars';
+@import '../../../sass/modules/scroll-btn';
+@import '../../../sass/packages/goo';
 
 .wrapper {
     overflow: hidden;
     position: relative;
 
-    > div {
+    > div:first-child {
         max-height: 40vh;
         overflow-y: scroll;
-    }
-
-    .scroll-btn {
-        background: $image;
-        border-radius: 100vw;
-        bottom: 1rem;
-        color: $white;
-        position: absolute;
-        right: 1rem;
-        transition: all $anim-time;
-
-        span,
-        span * {
-            pointer-events: none;
-        }
-
-        &.up {
-            transform: rotate(180deg);
-
-            &:hover {
-                box-shadow: 0 -15px 30px 0 rgba($black, 0.11), 0 -5px 15px 0 rgba($black, 0.08);
-                transform: translateY(-0.7rem) rotate(180deg);
-            }
-
-            &:active {
-                box-shadow: 0 -10px 10px 0 rgba($black, 0.15), 0 -5px 10px 0 rgba($black, 0.1);
-                transform: translateY(-0.7rem) scale(0.8) rotate(180deg);
-            }
-        }
-
-        &:hover {
-            box-shadow: 0 15px 30px 0 rgba($black, 0.11), 0 5px 15px 0 rgba($black, 0.08);
-            transform: translateY(-0.7rem);
-        }
-
-        &:active {
-            box-shadow: 0 10px 10px 0 rgba($black, 0.15), 0 5px 10px 0 rgba($black, 0.1);
-            transform: translateY(-0.7rem) scale(0.8);
-        }
     }
 }
 

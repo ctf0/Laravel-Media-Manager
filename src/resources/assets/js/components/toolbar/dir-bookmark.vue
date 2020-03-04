@@ -14,7 +14,7 @@
                 <div class="tags has-addons">
                     <!-- name -->
                     <span v-if="!isCurrent(item.dir)"
-                          v-tippy="{arrow: true, position: 'left'}"
+                          v-tippy="{arrow: true, placement: 'left'}"
                           :title="goTo(item.dir)"
                           class="tag is-link is-primary link"
                           @click.stop="goToFolder(item.dir)">
@@ -38,7 +38,7 @@
                         <button type="button"
                                 class="button is-small is-light is-primary"
                                 @click.stop="addToBookmarks()">
-                            {{ trans('add_to_list') }}
+                            {{ trans('bm_add_to_list') }}
                         </button>
                     </p>
 
@@ -73,6 +73,7 @@
     .tags {
         flex-wrap: nowrap;
     }
+
 </style>
 
 <script>
@@ -83,7 +84,7 @@ export default {
         'dirBookmarks',
         'disabled',
         'path',
-        'translations'
+        'trans'
     ],
     data() {
         return {
@@ -102,10 +103,6 @@ export default {
         }
     },
     methods: {
-        trans(val) {
-            return this.translations[val]
-        },
-
         // goto
         goToFolder(dir) {
             EventHub.fire('global-search-go-to-folder', {

@@ -4,7 +4,7 @@
         <li class="media link"
             v-for="(one, i) in movableItemsFilter"
             :key="one.path"
-            v-tippy="{arrow: true, position: 'bottom'}"
+            v-tippy="{arrow: true, placement: 'bottom'}"
             title="{{ trans('MediaManager::messages.remove') }}"
             @click.stop="removeFromMovableList(i)">
             <figure class="media-left">

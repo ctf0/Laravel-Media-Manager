@@ -19,36 +19,75 @@
         'locked_list' => route('media.locked_list')
     ]) }}"
     :translations="{{ json_encode([
-        'added' => trans('MediaManager::messages.add.added'),
         'add_to_list' => trans('MediaManager::messages.add.list'),
-        'copy' => trans('MediaManager::messages.copy.main'),
+        'added' => trans('MediaManager::messages.add.added'),
+        'already_exists' => trans('MediaManager::messages.error.already_exists'),
+        'application' => trans('MediaManager::messages.application'),
+        'audio' => trans('MediaManager::messages.audio.main'),
+        'bm_add_to_list' => trans('MediaManager::messages.bookmarks.add'),
+        'bm' => trans('MediaManager::messages.bookmarks.main'),
+        'clear' => trans('MediaManager::messages.clear', ['attr' => 'selection']),
         'copy_success' => trans('MediaManager::messages.copy.success'),
+        'copy' => trans('MediaManager::messages.copy.main'),
         'create_folder_notif' => trans('MediaManager::messages.new.create_folder_notif'),
         'create_success' => trans('MediaManager::messages.create_success'),
+        'crop_apply' => trans('MediaManager::messages.crop.apply'),
+        'crop_flip_horizontal' => trans('MediaManager::messages.crop.flip_horizontal'),
+        'crop_flip_vertical' => trans('MediaManager::messages.crop.flip_vertical'),
+        'crop_reset_filters' => trans('MediaManager::messages.crop.reset_filters'),
+        'crop_reset' => trans('MediaManager::messages.crop.reset'),
+        'crop_rotate_left' => trans('MediaManager::messages.crop.rotate_left'),
+        'crop_rotate_right' => trans('MediaManager::messages.crop.rotate_right'),
+        'crop_zoom_in' => trans('MediaManager::messages.crop.zoom_in'),
+        'crop_zoom_out' => trans('MediaManager::messages.crop.zoom_out'),
+        'crop' => trans('MediaManager::messages.crop.main'),
         'delete_success' => trans('MediaManager::messages.delete.success'),
-        'downloaded' => trans('MediaManager::messages.download.downloaded'),
         'delete' => trans('MediaManager::messages.delete.main'),
+        'description' => trans('MediaManager::messages.description'),
+        'diff' => trans('MediaManager::messages.editor.diff'),
+        'dimension' => trans('MediaManager::messages.dimension'),
+        'downloaded' => trans('MediaManager::messages.download.downloaded'),
+        'editor' => trans('MediaManager::messages.editor.main'),
         'error_altered_fwli' => trans('MediaManager::messages.error.altered_fwli'),
+        'filter_by' => trans('MediaManager::messages.filter.by', ['attr' => '']),
+        'filtration' => trans('MediaManager::messages.filter.filtration'),
         'find' => trans('MediaManager::messages.find'),
+        'focals' => trans('MediaManager::messages.focals'),
+        'folder' => trans('MediaManager::messages.folder'),
         'found' => trans('MediaManager::messages.found'),
-        'glbl_search' => trans('MediaManager::messages.search.glbl'),
         'glbl_search_avail' => trans('MediaManager::messages.search.glbl_avail'),
+        'glbl_search' => trans('MediaManager::messages.search.glbl'),
         'go_to_folder' => trans('MediaManager::messages.go_to_folder'),
-        'move_success' => trans('MediaManager::messages.move.success'),
+        'image' => trans('MediaManager::messages.image'),
+        'last_modified' => trans('MediaManager::messages.last_modified'),
+        'locked' => trans('MediaManager::messages.locked'),
         'move_clear' => trans('MediaManager::messages.move.clear_list'),
+        'move_success' => trans('MediaManager::messages.move.success'),
+        'move' => trans('MediaManager::messages.move.main'),
+        'name' => trans('MediaManager::messages.name'),
         'new_uploads_notif' => trans('MediaManager::messages.upload.new_uploads_notif'),
         'no_val' => trans('MediaManager::messages.no_val'),
+        'non' => trans('MediaManager::messages.non'),
         'nothing_found' => trans('MediaManager::messages.nothing_found'),
+        'open' => trans('MediaManager::messages.open'),
+        'options' => trans('MediaManager::messages.options'),
+        'presets' => trans('MediaManager::messages.crop.presets'),
         'refresh_notif' => trans('MediaManager::messages.refresh_notif'),
         'rename_success' => trans('MediaManager::messages.rename.success'),
-        'save' => trans('MediaManager::messages.save.main'),
+        'rename' => trans('MediaManager::messages.rename.main'),
+        'reset' => trans('MediaManager::messages.crop.reset'),
         'save_success' => trans('MediaManager::messages.save.success'),
+        'save' => trans('MediaManager::messages.save.main'),
+        'selected' => trans('MediaManager::messages.select.selected'),
         'sep_download' => trans('MediaManager::messages.download.sep'),
+        'size' => trans('MediaManager::messages.size'),
+        'sort_by' => trans('MediaManager::messages.sort_by'),
         'stand_by' => trans('MediaManager::messages.stand_by'),
+        'text' => trans('MediaManager::messages.text'),
         'to_cp' => trans('MediaManager::messages.copy.to_cp'),
-        'upload_success' => trans('MediaManager::messages.upload.success'),
         'upload_in_progress' => trans('MediaManager::messages.upload.in_progress'),
-        'already_exists' => trans('MediaManager::messages.error.already_exists'),
+        'upload_success' => trans('MediaManager::messages.upload.success'),
+        'video' => trans('MediaManager::messages.video'),
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -278,23 +317,7 @@
                                 :set-filter-name="setFilterName"
                                 :set-sort-name="setSortName"
                                 :have-a-file-of-type="haveAFileOfType"
-                                :translations="{{ json_encode([
-                                    'filtration' => trans('MediaManager::messages.filter.filtration'),
-                                    'sort_by' => trans('MediaManager::messages.sort_by'),
-                                    'filter_by' => trans('MediaManager::messages.filter.by', ['attr' => '']),
-                                    'image' => trans('MediaManager::messages.image'),
-                                    'video' => trans('MediaManager::messages.video'),
-                                    'audio' => trans('MediaManager::messages.audio.main'),
-                                    'folder' => trans('MediaManager::messages.folder'),
-                                    'text' => trans('MediaManager::messages.text'),
-                                    'application' => trans('MediaManager::messages.application'),
-                                    'locked' => trans('MediaManager::messages.locked'),
-                                    'selected' => trans('MediaManager::messages.select.selected'),
-                                    'non' => trans('MediaManager::messages.non'),
-                                    'name' => trans('MediaManager::messages.name'),
-                                    'size' => trans('MediaManager::messages.size'),
-                                    'last_modified' => trans('MediaManager::messages.last_modified')
-                                ]) }}">
+                                :trans="trans">
                             </filter-and-sorting>
                         </div>
 
@@ -303,13 +326,7 @@
                             <dir-bookmarks :disabled="isLoading"
                                 :dir-bookmarks="dirBookmarks"
                                 :path="files.path"
-                                :translations="{{ json_encode([
-                                    'bm' => trans('MediaManager::messages.bookmarks.main'),
-                                    'add_to_list' => trans('MediaManager::messages.bookmarks.add'),
-                                    'reset' => trans('MediaManager::messages.crop.reset'),
-                                    'added' => trans('MediaManager::messages.add.added'),
-                                    'open' => trans('MediaManager::messages.open'),
-                                ]) }}">
+                                :trans="trans">
                             </dir-bookmarks>
                         </div>
 
@@ -369,7 +386,7 @@
                     {{-- randomNames --}}
                     <div class="form-switcher"
                         title="{{ trans('MediaManager::messages.upload.use_random_names') }}"
-                        v-tippy="{arrow: true, position: 'right'}">
+                        v-tippy="{arrow: true, placement: 'right'}">
                         <input type="checkbox" id="random_names" v-model="useRandomNamesForUpload">
                         <label class="switcher" for="random_names"></label>
                     </div>
@@ -378,7 +395,7 @@
                     <div class="save_link" @click.stop="toggleModal('save_link_modal')" v-if="!restrictUpload()">
                         <span class="icon is-large"
                             title="{{ trans('MediaManager::messages.save.link') }}"
-                            v-tippy="{arrow: true, position: 'left'}">
+                            v-tippy="{arrow: true, placement: 'left'}">
                             <icon>
                                 <icon class="circle" name="circle" scale="2.5"></icon>
                                 <icon class="anchor" name="link"></icon>
@@ -410,7 +427,7 @@
                     {{-- ops --}}
                     <div class="dz-preview-ops btn-animate extra-func-btns">
                         {{-- add more files --}}
-                        <button v-tippy="{arrow: true, position: 'left'}"
+                        <button v-tippy="{arrow: true, placement: 'left'}"
                             title="{{ trans('MediaManager::messages.add.more', ['attr' => null]) }} (u)"
                             @click.stop="toggleUploadPanel()"
                             class="btn-plain">
@@ -422,7 +439,7 @@
                             </span>
                         </button>
                         {{-- upload --}}
-                        <button v-tippy="{arrow: true, position: 'left'}"
+                        <button v-tippy="{arrow: true, placement: 'left'}"
                             title="{{ trans('MediaManager::messages.upload.main') }} (Enter)"
                             ref="process-dropzone"
                             class="btn-plain">
@@ -434,7 +451,7 @@
                             </span>
                         </button>
                         {{-- reset --}}
-                        <button v-tippy="{arrow: true, position: 'left'}"
+                        <button v-tippy="{arrow: true, placement: 'left'}"
                             title="{{ trans('MediaManager::messages.clear', ['attr' => null]) }} (Esc)"
                             ref="clear-dropzone"
                             class="btn-plain">
@@ -457,12 +474,7 @@
                                 :key="file.name"
                                 :file="file"
                                 :file-type-is="fileTypeIs"
-                                :translations="{{ json_encode([
-                                    'options' => trans('MediaManager::messages.options'),
-                                    'dimension' => trans('MediaManager::messages.dimension'),
-                                    'focals' => trans('MediaManager::messages.focals'),
-                                    'description' => trans('MediaManager::messages.description')
-                                ]) }}">
+                                :trans="trans">
                             </upload-preview>
                         </keep-alive>
                     </template>
@@ -505,8 +517,6 @@
                 {{-- gesture --}}
                 <div>
                     <usage-intro-overlay></usage-intro-overlay>
-
-                    {{-- usage-intro btn --}}
                     <usage-intro-btn v-show="!isLoading && !waitingForUpload"></usage-intro-btn>
                 </div>
 
@@ -650,10 +660,9 @@
 
                             {{-- img --}}
                             <image-preview v-else-if="selectedFileIs('image')"
-                                v-tippy="{arrow: true, position: 'left'}"
+                                v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
-                                :key="selectedFile.storage_path"
-                                class="wrapper">
+                                :key="selectedFile.storage_path">
 
                                 <img :src="selectedFile.path"
                                     :alt="selectedFile.name"
@@ -663,7 +672,7 @@
 
                             {{-- video --}}
                             <div v-else-if="selectedFileIs('video')"
-                                v-tippy="{arrow: true, position: 'left'}"
+                                v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 :key="selectedFile.storage_path">
                                 <video controls
@@ -678,7 +687,7 @@
 
                             {{-- audio --}}
                             <div v-else-if="selectedFileIs('audio')"
-                                v-tippy="{arrow: true, position: 'left'}"
+                                v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 :key="selectedFile.storage_path">
                                 <template>
@@ -701,7 +710,7 @@
                             {{-- icons --}}
                             <div key="pdf" v-else-if="selectedFileIs('pdf')"
                                 class="link"
-                                v-tippy="{arrow: true, position: 'left'}"
+                                v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 @click.stop="toggleModal('preview_modal')">
                                 <icon class="svg-prev-icon" name="file-pdf-o" scale="4"></icon>
@@ -709,7 +718,7 @@
 
                             <div key="text" v-else-if="selectedFileIs('text')"
                                 class="link"
-                                v-tippy="{arrow: true, position: 'left'}"
+                                v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 @click.stop="toggleModal('preview_modal')">
                                 <icon class="svg-prev-icon" name="file-text-o" scale="4"></icon>

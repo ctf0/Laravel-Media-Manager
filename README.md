@@ -9,7 +9,7 @@
 
 <p align="center">
     <img alt="main" src="https://user-images.githubusercontent.com/7388088/70385131-c0937e80-1993-11ea-9513-cb5c90f4281b.png"/>
-    <img alt="card" src="https://user-images.githubusercontent.com/7388088/46549215-892dcb80-c8d1-11e8-8c23-d8bbfe7a10cc.jpg"/>
+    <img alt="card" src="https://user-images.githubusercontent.com/7388088/75881844-8fa6d680-5e28-11ea-8a38-09bbce94d68e.png"/>
     <img alt="img-filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
     <img alt="img-diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
 </p>
@@ -45,7 +45,7 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
-    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v1 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval
+    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval
     yarn add worker-loader --dev
     ```
 
@@ -70,130 +70,7 @@
 
 ## Config
 
-- **config/mediaManager.php**
-
-    ```php
-    return [
-        /*
-        * ignore any file starts with "."
-        */
-        'ignore_files' => '/^\..*/',
-
-        /*
-        * filesystem disk
-        */
-        'storage_disk' => env('FILESYSTEM_DRIVER', 'public'),
-
-        /*
-        * manager controller
-        */
-        'controller' => '\ctf0\MediaManager\App\Controllers\MediaController',
-
-        /*
-        * remove any file special chars except
-        * dot .
-        * dash -
-        * underscore _
-        * single quote ''
-        * white space
-        * parentheses ()
-        * comma ,
-        */
-        'allowed_fileNames_chars' => '\._\-\'\s\(\),',
-
-        /*
-        * remove any folder special chars except
-        * dash -
-        * underscore _
-        * white space
-        *
-        * to add & nest folders in one go add '\/'
-        */
-        'allowed_folderNames_chars' => '_-\s',
-
-        /*
-        * disallow uploading files with the following mimetypes
-        * https://www.iana.org/assignments/media-types/media-types.xhtml
-        */
-        'unallowed_mimes' => ['php', 'java'],
-
-        /*
-        * extra mime-types
-        */
-        'extended_mimes' => [
-            // any extra mime-types that doesnt have "image" in it
-            'image' => [
-                'binary/octet-stream', // aws
-            ],
-
-            // any extra mime-types that doesnt have "compressed" in it
-            'archive' => [
-                'application/x-tar',
-                'application/zip',
-            ],
-        ],
-
-        /*
-        * when file names gets cleand up
-        *
-        * put here any global function that
-        * doesnt take arguments
-        */
-        'sanitized_text' => 'uniqid',
-
-        /*
-        * display file last modification time as
-        * http://carbon.nesbot.com/docs/#api-formatting
-        */
-        'last_modified_format' => 'toDateString',
-
-        /*
-        * hide file extension in files list
-        */
-        'hide_files_ext' => true,
-
-        /*
-        * in-order to get the folder items count & size
-        * we need to recursively get all the files inside the folders
-        * which could make the request take longer
-        */
-        'get_folder_info' => true,
-
-        /*
-        * do you want to enable broadcasting the changes
-        * made by one user to others ?
-        *
-        * "laravel-echo" must be installed
-        */
-        'enable_broadcasting' => false,
-
-        /*
-        * show "an itunes like" content ratio bar
-        */
-        'show_ratio_bar' => true,
-
-        /*
-        * preview and remove files b4 uploading
-        */
-        'preview_files_before_upload' => true,
-
-        /*
-        * Database connection
-        */
-        'database_connection' => env('DB_CONNECTION'),
-
-        /*
-        * Locked items table name (defaults to "locked")
-        */
-        'table_locked' => 'locked',
-
-        /*
-        * loaded chunk amount "pagination"
-        */
-        'pagination_amount' => 50,
-    ];
-
-    ```
+- [**config/mediaManager.php**](https://github.com/ctf0/Laravel-Media-Manager/blob/master/src/config/mediaManager.php)
 
 <br>
 
@@ -213,6 +90,7 @@
 - toggle between `random/original` names for uploaded files
 - [asynchronous Updates](https://github.com/ctf0/Laravel-Media-Manager/wiki/Async-Update-The-Manager)
 - bulk selection
+- bookmark visited directories for quicker navigation
 - change item/s visibility
 - update the page url on navigation
 - show audio files info **"artist, album, year, etc.."**
@@ -263,7 +141,7 @@
 >\- to stop interfering with other `keydown` events you can toggle the manager listener through<br>
 >`EventHub.fire('disable-global-keys', true/false)`.
 
-    <br>
+<br>
 
 | navigation           | button                                              | keyboard         | click / tap                  | touch                           |
 |----------------------|-----------------------------------------------------|------------------|------------------------------|---------------------------------|

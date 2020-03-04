@@ -2,7 +2,7 @@
     <div v-tippy="{arrow: true, theme: 'mm'}"
          :title="filterName">
         <section v-if="!isControlable">
-            <button v-tippy="{html: '#contentpopup2', interactive: true, trigger: 'click', theme: 'mm'}"
+            <button v-tippy="{html: '#contentpopup2', interactive: true, reactive: true, trigger: 'click', theme: 'mm', arrow: true}"
                     :class="{'is-active': isUsed()}"
                     :disabled="processing"
                     class="btn-plain">

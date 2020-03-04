@@ -4,17 +4,17 @@ namespace ctf0\MediaManager\App\Controllers;
 
 use App\Http\Controllers\Controller;
 use Jhofm\FlysystemIterator\Plugin\IteratorPlugin;
-use ctf0\MediaManager\App\Controllers\Moduels\Lock;
-use ctf0\MediaManager\App\Controllers\Moduels\Move;
-use ctf0\MediaManager\App\Controllers\Moduels\Utils;
-use ctf0\MediaManager\App\Controllers\Moduels\Delete;
-use ctf0\MediaManager\App\Controllers\Moduels\Rename;
-use ctf0\MediaManager\App\Controllers\Moduels\Upload;
-use ctf0\MediaManager\App\Controllers\Moduels\Download;
-use ctf0\MediaManager\App\Controllers\Moduels\NewFolder;
-use ctf0\MediaManager\App\Controllers\Moduels\GetContent;
-use ctf0\MediaManager\App\Controllers\Moduels\Visibility;
-use ctf0\MediaManager\App\Controllers\Moduels\GlobalSearch;
+use ctf0\MediaManager\App\Controllers\Modules\Lock;
+use ctf0\MediaManager\App\Controllers\Modules\Move;
+use ctf0\MediaManager\App\Controllers\Modules\Utils;
+use ctf0\MediaManager\App\Controllers\Modules\Delete;
+use ctf0\MediaManager\App\Controllers\Modules\Rename;
+use ctf0\MediaManager\App\Controllers\Modules\Upload;
+use ctf0\MediaManager\App\Controllers\Modules\Download;
+use ctf0\MediaManager\App\Controllers\Modules\NewFolder;
+use ctf0\MediaManager\App\Controllers\Modules\GetContent;
+use ctf0\MediaManager\App\Controllers\Modules\Visibility;
+use ctf0\MediaManager\App\Controllers\Modules\GlobalSearch;
 
 class MediaController extends Controller
 {
