@@ -10,6 +10,7 @@ export default {
             return new Promise((resolve) => {
                 if (!this.inModal) {
                     let path = new URLSearchParams(location.search)
+
                     this.folders = path.has('path')
                         ? this.arrayFilter(path.get('path').replace(/#/g, '').split('/'))
                         : []
@@ -23,7 +24,9 @@ export default {
                 let url = this.getUrlWithoutQuery()
                 let folders = this.folders
 
-                history.pushState(null, null,
+                history.pushState(
+                    null,
+                    null,
                     folders.length
                         ? `${url}?path=${folders.join('/')}`
                         : url
@@ -32,7 +35,7 @@ export default {
         },
         urlNavigation(e) {
             if (!this.inModal) {
-                this.getPathFromUrl().then(() => this.getFiles())
+                this.getPathFromUrl().then(this.getFiles())
             }
         }
     }

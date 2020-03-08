@@ -13,20 +13,29 @@ export default {
 
         // restrict
         restrictUpload() {
-            return Boolean(this.restrict.uploadTypes || this.restrict.uploadsize)
+            return Boolean(this.getResrtictedUploadTypes() || this.getResrtictedUploadSize())
         },
         resolveRestrictFolders() {
             return this.folders = this.getRestrictedPathArray()
         },
         getRestrictedPathArray() {
             return this.arrayFilter(this.resrtictPath.split('/'))
+        },
+
+        // getters
+        getResrtictedPath() {
+            return this.restrictions.path
+        },
+        getResrtictedUploadTypes() {
+            return this.restrictions.uploadTypes
+        },
+        getResrtictedUploadSize() {
+            return this.restrictions.uploadSize
         }
     },
     computed: {
         resrtictPath() {
-            let path = this.restrict.path
-
-            return path ? path.replace(/^\/+/, '') : ''
+            return this.getResrtictedPath()?.replace(/^\/+/, '') // remove starting /
         },
         restrictModeIsOn() {
             return Boolean(this.resrtictPath)

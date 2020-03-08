@@ -1,7 +1,0 @@
-- update vue-tippy to v2
-- update the preview card design
-- update laravel to v7
-- centralize translation keys to be called from the main component instead of having them everywhere
-- fix namespace typo
-- remove comments from scss files
-- update rdme

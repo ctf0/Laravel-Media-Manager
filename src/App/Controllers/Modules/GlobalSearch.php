@@ -7,7 +7,7 @@ trait GlobalSearch
     public function globalSearch()
     {
         return collect($this->getFolderContent('/', true))
-                ->reject(function ($item) { // remove unwanted
+                ->reject(function ($item) { // remove unwanted & dirs
                     return preg_grep($this->ignoreFiles, [$item['path']]) || $item['type'] == 'dir';
                 })->map(function ($file) {
                     $path = $file['path'];

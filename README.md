@@ -10,8 +10,6 @@
 <p align="center">
     <img alt="main" src="https://user-images.githubusercontent.com/7388088/70385131-c0937e80-1993-11ea-9513-cb5c90f4281b.png"/>
     <img alt="card" src="https://user-images.githubusercontent.com/7388088/75881844-8fa6d680-5e28-11ea-8a38-09bbce94d68e.png"/>
-    <img alt="img-filter" src="https://user-images.githubusercontent.com/7388088/46004313-dda3a080-c0b2-11e8-814a-af5b3953846f.jpg"/>
-    <img alt="img-diff" src="https://user-images.githubusercontent.com/7388088/46004311-dd0b0a00-c0b2-11e8-82f1-d6c75235690f.jpg"/>
 </p>
 
 - [Installation](#Installation)

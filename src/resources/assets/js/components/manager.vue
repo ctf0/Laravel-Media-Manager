@@ -120,6 +120,11 @@ export default {
             selectedUploadPreviewName: null,
 
             audioFileMeta: {},
+            restrictions: Object.assign({
+                'path': null,
+                'uploadTypes': null,
+                'uploadSize': null
+            }, this.restrict),
             movableList: [],
             bulkList: [],
             dimensions: [],
@@ -201,34 +206,33 @@ export default {
                 this.applySmallScreen()
             }
 
-            // restricted
+            // restrictions
+            EventHub.listen('external_modal_resrtict', (data) => {
+                return this.restrictions = Object.assign(this.restrictions, data)
+            })
+
             if (this.restrictModeIsOn) {
                 this.clearUrlQuery()
                 this.resolveRestrictFolders()
 
-                return this.getFiles().then(() => {
-                    this.fileUpload()
-                    this.$nextTick(() => {
-                        this.onResize()
-                        this.firstRun = true
-                    })
-                })
+                return this.getFiles().then(this.afterInit())
             }
 
             // normal
             this.getPathFromUrl()
-                .then(this.preSaved())
-                .then(() => {
-                    return this.getFiles(null, this.selectedFile).then(() => {
-                        this.fileUpload()
-                        this.$nextTick(() => {
-                            this.onResize()
-                            this.firstRun = true
-                        })
-                    })
-                })
-        },
+                    .then(this.preSaved())
+                    .then(this.getFiles(null, this.selectedFile))
+                    .then(this.updatePageUrl())
+                    .then(this.afterInit())
 
+        },
+        afterInit() {
+            this.fileUpload()
+            this.$nextTick(() => {
+                this.onResize()
+                this.firstRun = true
+            })
+        },
         eventsListener() {
             // check if image was edited
             EventHub.listen('image-edited', (msg) => {
@@ -244,19 +248,15 @@ export default {
             })
 
             // stop listening to shortcuts
-            EventHub.listen('disable-global-keys', (val) => {
-                this.disableShortCuts = val
-            })
+            EventHub.listen('disable-global-keys', (data) => this.disableShortCuts = data)
 
             // global-search
-            EventHub.listen('toggle-global-search', (data) => {
-                this.globalSearchPanelIsVisible = data
-            })
+            EventHub.listen('toggle-global-search', (data) => this.globalSearchPanelIsVisible = data)
 
             EventHub.listen('global-search-go-to-folder', (data) => {
                 this.folders = this.arrayFilter(data.dir.split('/'))
 
-                return this.getFiles(null, data.name).then(() => this.updatePageUrl())
+                return this.getFiles(null, data.name).then(this.updatePageUrl())
             })
 
             EventHub.listen('global-search-delete-item', (data) => {
@@ -269,9 +269,8 @@ export default {
                 this.deleteItem()
             })
 
-            EventHub.listen('dir-bookmarks-update', (data) => {
-                this.dirBookmarks = data
-            })
+            // bookmark
+            EventHub.listen('dir-bookmarks-update', (data) => this.dirBookmarks = data)
         },
 
         shortCuts(e) {

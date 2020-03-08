@@ -20,8 +20,8 @@ export default {
         },
         uploadPreviewListSize() {
             let size = this.uploadPreviewList
-                .map((el) => el.size)
-                .reduce((a, b) => a + b, 0)
+                    .map((el) => el.size)
+                    .reduce((a, b) => a + b, 0)
 
             return size ? this.getFileSize(size) : 0
         }
@@ -37,8 +37,8 @@ export default {
             let queueFix = false
             let last = null
             let uploadPreview = '#uploadPreview'
-            let uploadSize = this.restrict.uploadSize ? this.restrict.uploadSize : 256
-            let uploadTypes = this.restrict.uploadTypes ? this.restrict.uploadTypes.join(',') : null
+            let uploadSize = this.getResrtictedUploadSize() || 256
+            let uploadTypes = this.getResrtictedUploadTypes()?.join(',') || null
             let autoProcess = this.config.previewFilesBeforeUpload
                 ? {
                     autoProcessQueue: false,
@@ -273,6 +273,7 @@ export default {
                     // illuminate selected preview
                     this.$nextTick(() => {
                         let active = document.querySelector('.is-previewing')
+
                         if (active) active.classList.remove('is-previewing')
                         box.classList.add('is-previewing')
                     })

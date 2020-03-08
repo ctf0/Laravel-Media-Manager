@@ -6,7 +6,7 @@ export default {
                 this.folders.push(folder.name)
 
                 this.$nextTick(() => {
-                    this.getFiles().then(() => this.updatePageUrl())
+                    this.getFiles().then(this.updatePageUrl())
                 })
             }
         },
@@ -24,7 +24,7 @@ export default {
                 this.folders = folders.splice(0, index)
 
                 this.$nextTick(() => {
-                    this.getFiles(prev_folder_name).then(() => this.updatePageUrl())
+                    this.getFiles(prev_folder_name).then(this.updatePageUrl())
                 })
             }
         },
@@ -50,7 +50,7 @@ export default {
                 }
 
                 this.$nextTick(() => {
-                    this.getFiles(prev_folder_name).then(() => this.updatePageUrl())
+                    this.getFiles(prev_folder_name).then(this.updatePageUrl())
                 })
             }
         }
