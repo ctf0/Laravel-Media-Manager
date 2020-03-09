@@ -74,35 +74,36 @@ class MediaManagerServiceProvider extends ServiceProvider
      */
     protected function viewComp()
     {
-        $data = [];
-
-        // base url
+        $data   = [];
         $config = $this->app['config']->get('mediaManager');
-        $url    = $this->app['filesystem']
-                    ->disk($config['storage_disk'])
-                    ->url('/');
 
-        $data['base_url'] = preg_replace('/\/+$/', '/', $url);
+        if ($config) {
+            // base url
+            $url = $this->app['filesystem']
+                        ->disk($config['storage_disk'])
+                        ->url('/');
+            $data['base_url'] = preg_replace('/\/+$/', '/', $url);
 
-        // upload panel bg patterns
-        $pattern_path = public_path('assets/vendor/MediaManager/patterns');
+            // upload panel bg patterns
+            $pattern_path = public_path('assets/vendor/MediaManager/patterns');
 
-        if ($this->file->exists($pattern_path)) {
-            $patterns = collect(
-                $this->file->allFiles($pattern_path)
-            )->map(function ($item) {
-                $name = str_replace('\\', '/', $item->getPathName());
+            if ($this->file->exists($pattern_path)) {
+                $patterns = collect(
+                    $this->file->allFiles($pattern_path)
+                )->map(function ($item) {
+                    $name = str_replace('\\', '/', $item->getPathName());
 
-                return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $name);
+                    return preg_replace('/.*\/patterns/', '/assets/vendor/MediaManager/patterns', $name);
+                });
+
+                $data['patterns'] = json_encode($patterns);
+            }
+
+            // share
+            view()->composer('MediaManager::_manager', function ($view) use ($data) {
+                $view->with($data);
             });
-
-            $data['patterns'] = json_encode($patterns);
         }
-
-        // share
-        view()->composer('MediaManager::_manager', function ($view) use ($data) {
-            $view->with($data);
-        });
     }
 
     /**

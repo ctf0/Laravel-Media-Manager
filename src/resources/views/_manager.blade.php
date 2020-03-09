@@ -93,7 +93,7 @@
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
     :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
     :restrict="{{ isset($restrict) ? json_encode($restrict) : '{}' }}"
-    :user-id="{{ config('mediaManager.enable_broadcasting') ? auth()->user()->id : 0 }}"
+    :user-id="{{ config('mediaManager.enable_broadcasting') ? optional(auth()->user())->id : 0 }}"
     :upload-panel-img-list="{{ $patterns ?: '[]' }}">
 
     <div class="media-manager"
