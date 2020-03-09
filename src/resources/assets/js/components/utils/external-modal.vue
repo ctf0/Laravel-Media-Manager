@@ -33,9 +33,10 @@ export default {
             }
         }
     },
-    mounted() {
+    created() {
         EventHub.fire('external_modal_resrtict', this.restrict)
-
+    },
+    mounted() {
         if (this.old) {
             this.updateParent(this.old)
         }
