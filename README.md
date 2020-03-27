@@ -1,7 +1,7 @@
 <h1 align="center">
     Laravel Media Manager
     <br>
-    <img src="https://img.shields.io/badge/Laravel-v6+-red" alt="Browser Status"/>
+    <a href="https://packagist.org/packages/laravel/laravel"><img src="https://img.shields.io/badge/Laravel-v6+-red" alt="Browser Status"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/v/ctf0/media-manager.svg" alt="Latest Stable Version"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/dt/ctf0/media-manager.svg" alt="Total Downloads"/></a>
     <br>
