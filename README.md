@@ -1,6 +1,7 @@
 <h1 align="center">
     Laravel Media Manager
     <br>
+    <img src="https://img.shields.io/badge/Laravel-v6+-red" alt="Browser Status"/>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/v/ctf0/media-manager.svg" alt="Latest Stable Version"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/dt/ctf0/media-manager.svg" alt="Total Downloads"/></a>
     <br>
@@ -24,14 +25,6 @@
 
 - `composer require ctf0/media-manager`
 
-- (Laravel < 5.5) add the service provider to `config/app.php`
-
-    ```php
-    'providers' => [
-        ctf0\MediaManager\MediaManagerServiceProvider::class,
-    ]
-    ```
-
 - publish the package assets with
 
     `php artisan vendor:publish --provider="ctf0\MediaManager\MediaManagerServiceProvider"`
@@ -43,7 +36,7 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
-    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval
+    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval annyang
     yarn add worker-loader --dev
     ```
 
@@ -54,10 +47,7 @@
     // app.js
     window.Vue = require('vue')
 
-    // Laravel < v5.7
-    require('../vendor/MediaManager/js/manager')
-    // Laravel > v5.7
-    // require('../assets/vendor/MediaManager/js/manager')
+    require('../assets/vendor/MediaManager/js/manager')
 
     new Vue({
         el: '#app'

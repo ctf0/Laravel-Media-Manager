@@ -68,7 +68,7 @@
                             <p class="subtitle is-marginless link"
                                @click.stop="goToFolder(item.dir_path, item.name)">
                                 <span class="icon"><icon name="folder"/></span>
-                                <span v-tippy
+                                <span v-tippy="{arrow: true}"
                                       :title="trans('go_to_folder')">{{ item.dir_path }}</span>
                             </p>
                             <time>

@@ -1,3 +1,0 @@
-- use restrict from modal "issues/139"
-- fix not updating the page url on manager startup
-- update wiki

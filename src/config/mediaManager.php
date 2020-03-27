@@ -35,6 +35,7 @@ return [
      * white space
      *
      * to add & nest folders in one go add '\/'
+     * avoid using '#' as browser interpret it as an anchor
      */
     'allowed_folderNames_chars' => '_\-\s',
 

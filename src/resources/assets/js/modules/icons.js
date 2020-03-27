@@ -44,6 +44,7 @@ import 'vue-awesome/icons/angle-down'
 import 'vue-awesome/icons/cloud-upload'
 import 'vue-awesome/icons/shopping-cart'
 import 'vue-awesome/icons/cart-plus'
+import 'vue-awesome/icons/microphone'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'

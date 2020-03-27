@@ -1,5 +1,5 @@
 <template>
-    <button v-tippy
+    <button v-tippy="{arrow: true}"
             :disabled="loading || isLoading"
             :title="trans('glbl_search')"
             class="button"
@@ -30,15 +30,15 @@ export default {
             this.loading = true
 
             axios.get(this.route)
-                .then(({data}) => {
-                    this.loading = false
-                    this.done = true
-                    EventHub.fire('global-search-index', data)
-                    this.showNotif(this.trans('glbl_search_avail'))
+                    .then(({data}) => {
+                        this.loading = false
+                        this.done = true
+                        EventHub.fire('global-search-index', data)
+                        this.showNotif(this.trans('glbl_search_avail'))
 
-                }).catch((err) => {
-                    console.error(err)
-                })
+                    }).catch((err) => {
+                        console.error(err)
+                    })
         },
         showSearchPanel() {
             EventHub.fire('toggle-global-search', true)

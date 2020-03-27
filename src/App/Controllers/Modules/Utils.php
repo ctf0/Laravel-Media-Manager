@@ -59,7 +59,7 @@ trait Utils
 
     protected function getItemTime($time)
     {
-        return Carbon::createFromTimestamp($time)->{$this->LMF}();
+        return $time ? Carbon::createFromTimestamp($time)->{$this->LMF}() : null;
     }
 
     /**

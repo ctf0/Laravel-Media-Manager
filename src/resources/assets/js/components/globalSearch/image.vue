@@ -12,7 +12,7 @@
 
 <style scoped>
     img {
-        background-color: black;
+        background-color: $black;
     }
 
 </style>

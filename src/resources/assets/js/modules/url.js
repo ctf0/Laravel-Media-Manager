@@ -1,7 +1,11 @@
 export default {
     methods: {
         getUrlWithoutQuery() {
-            return location.href.replace(location.search, '')
+            let params = new URLSearchParams(location.search)
+
+            return params.has('path')
+                ? location.href.replace(new RegExp(`[?&]path=${params.get('path')}`), '')
+                : location.href
         },
         clearUrlQuery() {
             history.replaceState(null, null, this.getUrlWithoutQuery())
@@ -9,10 +13,10 @@ export default {
         getPathFromUrl() {
             return new Promise((resolve) => {
                 if (!this.inModal) {
-                    let path = new URLSearchParams(location.search)
+                    let params = new URLSearchParams(location.search)
 
-                    this.folders = path.has('path')
-                        ? this.arrayFilter(path.get('path').replace(/#/g, '').split('/'))
+                    this.folders = params.has('path')
+                        ? this.arrayFilter(params.get('path').replace(/#/g, '').split('/'))
                         : []
                 }
 
@@ -21,15 +25,22 @@ export default {
         },
         updatePageUrl() {
             if (!this.inModal && !this.restrictModeIsOn) {
-                let url = this.getUrlWithoutQuery()
+                let full_url = this.getUrlWithoutQuery()
+                let current_qs = new URL(full_url).search
+                let params = new URLSearchParams(current_qs)
+                let base = full_url.replace(current_qs, '')
                 let folders = this.folders
+
+                if (folders.length) {
+                    params.append('path', folders.join('/'))
+                }
 
                 history.pushState(
                     null,
                     null,
-                    folders.length
-                        ? `${url}?path=${folders.join('/')}`
-                        : url
+                    current_qs
+                        ? `${base}?${params.toString()}`
+                        : full_url
                 )
             }
         },

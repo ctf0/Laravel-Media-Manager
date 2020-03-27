@@ -47,24 +47,20 @@ trait GetContent
         $dirList        = $this->getFolderContent($dir);
         $storageFolders = $this->getFolderListByType($dirList, 'dir');
         $storageFiles   = $this->getFolderListByType($dirList, 'file');
-        $pattern        = $this->ignoreFiles;
 
         // folders
         foreach ($storageFolders as $folder) {
             $path = $folder['path'];
-            $time = $folder['timestamp'];
-
-            if ($this->GFI) {
-                $info = $this->getFolderInfoFromList($this->getFolderContent($path, true));
-            }
+            $time = $folder['timestamp'] ?? null;
+            $info = $this->GFI ? $this->getFolderInfoFromList($this->getFolderContent($path, true)) : [];
 
             $list[] = [
                 'name'                   => $folder['basename'],
                 'type'                   => 'folder',
+                'size'                   => $info['size'] ?? 0,
+                'count'                  => $info['count'] ?? 0,
                 'path'                   => $this->resolveUrl($path),
                 'storage_path'           => $path,
-                'size'                   => isset($info) ? $info['size'] : 0,
-                'count'                  => isset($info) ? $info['count'] : 0,
                 'last_modified'          => $time,
                 'last_modified_formated' => $this->getItemTime($time),
             ];
@@ -73,15 +69,15 @@ trait GetContent
         // files
         foreach ($storageFiles as $file) {
             $path = $file['path'];
-            $time = $file['timestamp'];
+            $time = $file['timestamp'] ?? null;
 
             $list[] = [
                 'name'                   => $file['basename'],
                 'type'                   => $file['mimetype'],
-                'path'                   => $this->resolveUrl($path),
-                'storage_path'           => $path,
                 'size'                   => $file['size'],
                 'visibility'             => $file['visibility'],
+                'path'                   => $this->resolveUrl($path),
+                'storage_path'           => $path,
                 'last_modified'          => $time,
                 'last_modified_formated' => $this->getItemTime($time),
             ];

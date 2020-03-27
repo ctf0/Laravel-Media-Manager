@@ -28,19 +28,20 @@ import Watchers from '../modules/watch'
 
 export default {
     components: {
+        containerClickOverlay: require('./utils/container-click-overlay.vue').default,
         contentRatio: require('./utils/ratio.vue').default,
+        dirBookmarks: require('./toolbar/dir-bookmark.vue').default,
+        filterAndSorting: require('./toolbar/filter-sort.vue').default,
         globalSearchBtn: require('./globalSearch/button.vue').default,
         globalSearchPanel: require('./globalSearch/panel.vue').default,
         imageEditor: require('./image/editor/main.vue').default,
         imageIntersect: require('./image/lazyLoading.vue').default,
         imagePreview: require('./image/preview.vue').default,
-        usageIntroOverlay: require('./usageIntro/overlay.vue').default,
+        InfiniteLoading: require('vue-infinite-loading').default,
+        uploadPreview: require('./utils/upload-preview.vue').default,
         usageIntroBtn: require('./usageIntro/button.vue').default,
         usageIntroPanel: require('./usageIntro/panel.vue').default,
-        uploadPreview: require('./utils/upload-preview.vue').default,
-        InfiniteLoading: require('vue-infinite-loading').default,
-        filterAndSorting: require('./toolbar/filter-sort.vue').default,
-        dirBookmarks: require('./toolbar/dir-bookmark.vue').default
+        voiceSearch: require('./search-by-voice.vue').default
     },
     name: 'media-manager',
     mixins: [
@@ -172,9 +173,11 @@ export default {
         window.addEventListener('popstate', this.urlNavigation)
         document.addEventListener('keydown', this.shortCuts)
     },
+    beforeMount() {
+        this.eventsListener()
+    },
     mounted() {
         this.init()
-        this.eventsListener()
     },
     updated: debounce(function() {
         if (this.firstRun) {
@@ -200,40 +203,12 @@ export default {
         this.noScroll('remove')
     },
     methods: {
-        init() {
-            // small screen stuff
-            if (this.checkForSmallScreen()) {
-                this.applySmallScreen()
-            }
-
+        eventsListener() {
             // restrictions
             EventHub.listen('external_modal_resrtict', (data) => {
                 return this.restrictions = Object.assign(this.restrictions, data)
             })
 
-            if (this.restrictModeIsOn) {
-                this.clearUrlQuery()
-                this.resolveRestrictFolders()
-
-                return this.getFiles().then(this.afterInit())
-            }
-
-            // normal
-            this.getPathFromUrl()
-                    .then(this.preSaved())
-                    .then(this.getFiles(null, this.selectedFile))
-                    .then(this.updatePageUrl())
-                    .then(this.afterInit())
-
-        },
-        afterInit() {
-            this.fileUpload()
-            this.$nextTick(() => {
-                this.onResize()
-                this.firstRun = true
-            })
-        },
-        eventsListener() {
             // check if image was edited
             EventHub.listen('image-edited', (msg) => {
                 this.imageWasEdited = true
@@ -271,6 +246,36 @@ export default {
 
             // bookmark
             EventHub.listen('dir-bookmarks-update', (data) => this.dirBookmarks = data)
+        },
+
+        init() {
+            // small screen stuff
+            if (this.checkForSmallScreen()) {
+                this.applySmallScreen()
+            }
+
+            // restrictions
+            if (this.restrictModeIsOn) {
+                this.clearUrlQuery()
+                this.resolveRestrictFolders()
+
+                return this.getFiles().then(this.afterInit())
+            }
+
+            // normal
+            this.getPathFromUrl()
+                    .then(this.preSaved())
+                    .then(this.getFiles(null, this.selectedFile))
+                    .then(this.updatePageUrl())
+                    .then(this.afterInit())
+
+        },
+        afterInit() {
+            this.fileUpload()
+            this.$nextTick(() => {
+                this.onResize()
+                this.firstRun = true
+            })
         },
 
         shortCuts(e) {

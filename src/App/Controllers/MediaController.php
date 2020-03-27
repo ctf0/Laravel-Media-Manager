@@ -61,8 +61,8 @@ class MediaController extends Controller
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
         $this->baseUrl         = $this->storageDisk->url('/');
         $this->db              = app('db')
-                                    ->connection($config['database_connection'] ?? 'mediamanager')
-                                    ->table($config['table_locked'] ?? 'locked');
+                                    ->connection($config['database_connection'])
+                                    ->table($config['table_locked']);
 
         $this->storageDisk->addPlugin(new IteratorPlugin());
     }

@@ -1,27 +1,29 @@
 <template>
-    <div :class="{'active': show}" class="gesture-overlay"/>
+    <div :class="{'active': show}"
+         class="gesture-overlay"/>
 </template>
 
 <style scoped lang="scss">
     @import '../../../sass/partials/vars';
 
     .gesture-overlay {
-        position: absolute;
-        z-index: 10;
-        top: 0;
-        right: 0;
+        background-color: rgba($blue, 0.25);
         bottom: 0;
         left: 0;
-        visibility: hidden;
         opacity: 0;
-        transition: all 0.2s;
-        background-color: rgba($blue, 0.25);
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: all $anim-time;
+        visibility: hidden;
+        z-index: 10;
     }
 
     .active {
-        visibility: visible;
         opacity: 1;
+        visibility: visible;
     }
+
 </style>
 
 <script>

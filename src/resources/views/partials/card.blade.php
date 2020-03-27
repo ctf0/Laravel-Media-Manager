@@ -92,7 +92,7 @@
                 rel="noreferrer noopener"
                 target="_blank"
                 title="{{ trans('MediaManager::messages.public_url') }}"
-                v-tippy>
+                v-tippy="{arrow: true}">
                 <icon name="search" scale="1.1"></icon>
             </a>
         </p>
@@ -123,7 +123,7 @@
                         class="icon is-large link"
                         :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
                         title="{{ trans('MediaManager::messages.visibility.set') }}"
-                        v-tippy
+                        v-tippy="{arrow: true}"
                         @click.stop="$refs.visibility.click()">
                         <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
                     </span>
@@ -135,7 +135,7 @@
                 <div class="level-item">
                     <span class="icon is-large link is-black"
                         title="{{ trans('MediaManager::messages.download.file') }}"
-                        v-tippy
+                        v-tippy="{arrow: true}"
                         @click.prevent="saveFile(selectedFile)">
                         <icon name="download" scale="1.1"></icon>
                     </span>

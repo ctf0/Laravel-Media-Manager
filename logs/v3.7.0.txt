@@ -1,0 +1,9 @@
+- add voice search, plz test and reply back
+- add new npm-dep "annyang"
+- fix not able to scroll the files container on touch screen
+- fix timestamp issue for cloud disks "https://github.com/ctf0/Laravel-Media-Manager/issues/143"
+- fix url update "https://github.com/ctf0/Laravel-Media-Manager/issues/142"
+- make sure all tooltips have the same styles
+- hide folder info if 'get_folder_info' is false
+- stop supporting laravel v5
+- some cleanups

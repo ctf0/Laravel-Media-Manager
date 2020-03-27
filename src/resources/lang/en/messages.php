@@ -175,4 +175,8 @@ return [
         'set'     => 'Change Visibility',
         'success' => '":attr" Visibility Was Updated',
     ],
+    'voice' => [
+        'start' => 'Say Something',
+        'stop'  => 'Turn Microphone Off',
+    ],
 ];
