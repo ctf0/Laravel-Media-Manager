@@ -436,7 +436,7 @@ export default {
         saveToDisk(data) {
             const parent = this.$parent
             parent.toggleLoading()
-            parent.showNotif(trans('stand_by'), 'info')
+            parent.showNotif(this.trans('stand_by'), 'info')
 
             axios.post(this.route, {
                 data: data,
