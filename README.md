@@ -178,7 +178,7 @@
 | type            | event-name                                         | description                                                                |
 |-----------------|----------------------------------------------------|----------------------------------------------------------------------------|
 | [JS][js]        |                                                    |                                                                            |
-|                 | modal-show                                         | when modal is showen                                                       |
+|                 | modal-show                                         | when modal is shown                                                        |
 |                 | modal-hide                                         | when modal is hidden                                                       |
 |                 | file_selected *([when inside modal][modal])*       | get selected file url                                                      |
 |                 | multi_file_selected *([when inside modal][modal])* | get bulk selected files urls                                               |

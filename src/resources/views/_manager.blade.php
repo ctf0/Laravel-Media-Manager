@@ -825,11 +825,11 @@
                                                 <tr>
                                                     <td class="t-key">{{ trans('MediaManager::messages.download.folder') }}:</td>
                                                     <td class="t-val">
-                                                        <form action="{{ route('media.folder_download') }}"method="post" @submit.prevent="ZipDownload($event)">
+                                                        <form action="{{ route('media.folder_download') }}" method="post" @submit.prevent="ZipDownload($event)">
                                                             {{ csrf_field() }}
                                                             <input type="hidden" name="folders" :value="files.path">
                                                             <input type="hidden" name="name" :value="selectedFile.name">
-                                                            <button type="submit" class="btn-plain zip":disabled="config.gfi && selectedFile.count == 0">
+                                                            <button type="submit" class="btn-plain zip" :disabled="config.gfi && selectedFile.count == 0">
                                                                 <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                             </button>
                                                         </form>
@@ -887,7 +887,7 @@
                                                             {{ csrf_field() }}
                                                             <input type="hidden" name="list" :value="JSON.stringify(bulkList)">
                                                             <input type="hidden" name="name" :value="folders.length ? folders[folders.length - 1] : 'media_manager'">
-                                                            <button type="submit" class="btn-plain zip":disabled="hasFolder()">
+                                                            <button type="submit" class="btn-plain zip" :disabled="hasFolder()">
                                                                 <span class="icon"><icon name="archive" scale="1.2"></icon></span>
                                                             </button>
                                                         </form>
