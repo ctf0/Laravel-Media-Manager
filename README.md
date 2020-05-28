@@ -33,6 +33,9 @@
     + package routes to `routes/web.php`
     + package assets compiling to `webpack.mix.js`
 
+- run migration
+    `php artisan migrate`
+
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
