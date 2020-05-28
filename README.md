@@ -33,6 +33,12 @@
     + package routes to `routes/web.php`
     + package assets compiling to `webpack.mix.js`
 
+- for [lock/unlock](https://github.com/ctf0/Laravel-Media-Manager/wiki/Lock-Files-&-Folder) item/s we use a db "sqlite" but if you prefer to use something else you should run the migration 
+    
+    ```bash
+    php artisan migrate
+    ```
+
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
