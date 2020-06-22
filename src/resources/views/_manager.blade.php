@@ -96,7 +96,7 @@
     :hide-path="{{ isset($hidePath) ? json_encode($hidePath) : '[]' }}"
     :restrict="{{ isset($restrict) ? json_encode($restrict) : '{}' }}"
     :user-id="{{ config('mediaManager.enable_broadcasting') ? optional(auth()->user())->id : 0 }}"
-    :upload-panel-img-list="{{ $patterns ?: '[]' }}">
+    :upload-panel-img-list="{{ (isset($patterns)) ? $patterns : '[]' }}">
 
     <div class="media-manager"
         :class="[
