@@ -12,15 +12,18 @@
 </template>
 
 <script>
+// chrome: only works on https
+// or
+// chrome://flags/#unsafely-treat-insecure-origin-as-secure
 import annyang from 'annyang'
 
 export default {
     props: ['trans', 'searchFor'],
     data() {
         return {
-            run: false,
+            run        : false,
             isSupported: true,
-            transcript: null
+            transcript : null
         }
     },
     created() {
@@ -30,12 +33,18 @@ export default {
         }
     },
     mounted() {
-        annyang.addCallback('result', (phrases) => {
-            this.$parent.searchFor = phrases[0]
-        })
+        if (this.isSupported) {
+            annyang.addCallback('result', (phrases) => {
+                // console.log(phrases)
+
+                this.$parent.searchFor = phrases[0]
+            })
+        }
     },
     beforeDestroy() {
-        annyang.removeCallback()
+        if (this.isSupported) {
+            annyang.removeCallback()
+        }
     },
     methods: {
         toggle() {
