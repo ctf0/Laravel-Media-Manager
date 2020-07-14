@@ -119,6 +119,7 @@ trait Download
     {
         $options = new Archive();
         // $options->setZeroHeader(true);
+        // $options->setEnableZip64(false)
         $options->setContentType('application/octet-stream');
         $options->setSendHttpHeaders(true);
         $options->setHttpHeaderCallback('header');
