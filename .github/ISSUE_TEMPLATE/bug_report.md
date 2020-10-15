@@ -8,6 +8,7 @@ assignees: ''
 ---
 
 <!--- For Demo Issues, Plz Open It On The Demo Repo -->
+<!--- tickets not following the below template will be closed immediatly -->
 <!--- you can put ur answers in place of the 3 dots ... -->
 
 > What version of Laravel are you using? (nothing lower than v6).
