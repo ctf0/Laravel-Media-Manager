@@ -8,6 +8,7 @@
                     <!-- filters -->
                     <filters v-if="!showDiff"
                              :reset="!haveFilters()"
+                             :trans="trans"
                              :apply-filter="applyFilter"
                              :processing="processing"
                              :caman-filters="camanFilters"
@@ -136,16 +137,16 @@
 <style lang="scss" src="../../../../sass/modules/image-editor.scss"></style>
 
 <script>
-import omit from 'lodash/omit'
-import isEmpty from 'lodash/isEmpty'
+import omit      from 'lodash/omit'
+import isEmpty   from 'lodash/isEmpty'
 import cloneDeep from 'lodash/cloneDeep'
-import Cropper from 'cropperjs'
+import Cropper   from 'cropperjs'
 
 export default {
     components: {
-        filters: require('./filters/index.vue').default,
-        presets: require('./filters/presets.vue').default,
-        controls: require('./controls.vue').default,
+        filters     : require('./filters/index.vue').default,
+        presets     : require('./filters/presets.vue').default,
+        controls    : require('./controls.vue').default,
         imageCompare: require('vue-image-compare2').default
     },
     props: [
@@ -156,22 +157,22 @@ export default {
     ],
     data() {
         return {
-            url: this.file.path,
-            imageCropper: null,
-            dragMode: 'move',
-            rotation: 45,
+            url          : this.file.path,
+            imageCropper : null,
+            dragMode     : 'move',
+            rotation     : 45,
             croppedByUser: false,
-            initData: null,
+            initData     : null,
 
             diffOriginal: null,
-            diffCurrent: null,
-            showDiff: false,
-            diffDisable: true,
+            diffCurrent : null,
+            showDiff    : false,
+            diffDisable : true,
 
-            hasChanged: false,
-            processing: false,
-            reset: false,
-            imageCaman: null,
+            hasChanged  : false,
+            processing  : false,
+            reset       : false,
+            imageCaman  : null,
             camanFilters: {}
         }
     },
@@ -202,8 +203,8 @@ export default {
         hiddenBtns() {
             if (this.showDiff) {
                 return {
-                    opacity: 0,
-                    visibility: 'hidden',
+                    opacity         : 0,
+                    visibility      : 'hidden',
                     'pointer-events': 'none'
                 }
             }
@@ -243,13 +244,13 @@ export default {
             let image = document.querySelector('#cropper')
 
             this.imageCropper = new Cropper(image, {
-                viewMode: 1,
-                dragMode: this.dragMode,
-                guides: false,
-                highlight: false,
-                autoCrop: false,
+                viewMode                : 1,
+                dragMode                : this.dragMode,
+                guides                  : false,
+                highlight               : false,
+                autoCrop                : false,
                 toggleDragModeOnDblclick: true,
-                responsive: false
+                responsive              : false
             })
 
             image.addEventListener('ready', () => {
@@ -414,14 +415,14 @@ export default {
                 cropper.crop()
                 cropper.setCropBoxData({
                     height: cropper.getContainerData().height,
-                    left: 0,
-                    top: 0,
-                    width: cropper.getContainerData().width
+                    left  : 0,
+                    top   : 0,
+                    width : cropper.getContainerData().width
                 })
             }
 
             let url = cropper.getCroppedCanvas({
-                fillColor: type.includes('png') ? 'transparent' : '#fff',
+                fillColor            : type.includes('png') ? 'transparent' : '#fff',
                 imageSmoothingQuality: 'high'
             }).toDataURL(type)
 
@@ -439,9 +440,9 @@ export default {
             parent.showNotif(this.trans('stand_by'), 'info')
 
             axios.post(this.route, {
-                data: data,
-                path: parent.files.path,
-                name: this.file.name,
+                data     : data,
+                path     : parent.files.path,
+                name     : this.file.name,
                 mime_type: this.file.type
             }).then(({data}) => {
                 parent.toggleLoading()

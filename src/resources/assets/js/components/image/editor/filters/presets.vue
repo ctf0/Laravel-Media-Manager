@@ -13,12 +13,14 @@
                         v-tippy="{arrow: true, theme: 'mm'}"
                         :disabled="processing"
                         :class="{'is-active': isUsed(item)}"
-                        :title="item"
+                        :title="getTitle(item)"
                         class="btn-plain"
                         @click.stop="apply(item)">
                     <span v-show="processing"
-                          class="icon is-small"><icon :pulse="processing"
-                                                      name="spinner"/></span>
+                          class="icon is-small">
+                        <icon :pulse="processing"
+                              name="spinner"/>
+                    </span>
                     <span v-show="!processing">{{ truncate(item) }}</span>
                 </button>
             </div>
@@ -27,8 +29,9 @@
 </template>
 
 <script>
-import chunk from 'lodash/chunk'
+import chunk     from 'lodash/chunk'
 import camelCase from 'lodash/camelCase'
+import snakeCase from 'lodash/snakeCase'
 
 export default {
     props: [
@@ -74,7 +77,10 @@ export default {
             return this.camanFilters.hasOwnProperty(camelCase(name))
         },
         apply(name) {
-            this.applyFilter(camelCase(name), null)
+            return this.applyFilter(camelCase(name), null)
+        },
+        getTitle(str) {
+            return this.trans(snakeCase(str))
         }
     }
 }

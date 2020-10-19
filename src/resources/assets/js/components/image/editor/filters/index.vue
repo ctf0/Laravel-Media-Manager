@@ -7,6 +7,7 @@
                   :step="item.step"
                   :icon="item.icon"
                   :filter-name="item.filterName"
+                  :trans="trans"
                   :reset="reset"
                   :apply-filter="applyFilter"
                   :processing="processing"
@@ -23,6 +24,7 @@ export default {
     },
     props: [
         'processing',
+        'trans',
         'reset',
         'applyFilter',
         'camanFilters'
@@ -31,101 +33,101 @@ export default {
         return {
             filtersList: [
                 {
-                    step: 1,
-                    min: -100,
-                    max: 100,
-                    icon: 'sun-o',
+                    step      : 1,
+                    min       : -100,
+                    max       : 100,
+                    icon      : 'sun-o',
                     filterName: 'brightness'
                 },
                 {
-                    step: 1,
-                    min: -100,
-                    max: 100,
-                    icon: 'adjust',
+                    step      : 1,
+                    min       : -100,
+                    max       : 100,
+                    icon      : 'adjust',
                     filterName: 'contrast'
                 },
                 {
-                    step: 1,
-                    min: -100,
-                    max: 100,
-                    icon: 'low-vision',
+                    step      : 1,
+                    min       : -100,
+                    max       : 100,
+                    icon      : 'low-vision',
                     filterName: 'saturation'
                 },
                 {
-                    step: 1,
-                    min: -100,
-                    max: 100,
-                    icon: 'flash',
+                    step      : 1,
+                    min       : -100,
+                    max       : 100,
+                    icon      : 'flash',
                     filterName: 'vibrance'
                 },
                 {
-                    step: 1,
-                    min: -100,
-                    max: 100,
-                    icon: 'thermometer-half',
+                    step      : 1,
+                    min       : -100,
+                    max       : 100,
+                    icon      : 'thermometer-half',
                     filterName: 'exposure'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    icon: 'eyedropper',
+                    step      : 1,
+                    min       : 0,
+                    max       : 100,
+                    icon      : 'eyedropper',
                     filterName: 'hue'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    icon: 'lemon-o',
+                    step      : 1,
+                    min       : 0,
+                    max       : 100,
+                    icon      : 'lemon-o',
                     filterName: 'sepia'
                 },
                 {
-                    step: 0.1,
-                    min: 0,
-                    max: 10,
-                    icon: 'flask',
+                    step      : 0.1,
+                    min       : 0,
+                    max       : 10,
+                    icon      : 'flask',
                     filterName: 'gamma'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    icon: 'dot-circle-o',
+                    step      : 1,
+                    min       : 0,
+                    max       : 100,
+                    icon      : 'dot-circle-o',
                     filterName: 'noise'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    icon: 'scissors',
+                    step      : 1,
+                    min       : 0,
+                    max       : 100,
+                    icon      : 'scissors',
                     filterName: 'clip'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    icon: 'diamond',
+                    step      : 1,
+                    min       : 0,
+                    max       : 100,
+                    icon      : 'diamond',
                     filterName: 'sharpen'
                 },
                 {
-                    step: 1,
-                    min: 0,
-                    max: 20,
-                    icon: 'glass',
+                    step      : 1,
+                    min       : 0,
+                    max       : 20,
+                    icon      : 'glass',
                     filterName: 'stackBlur'
                 },
                 {
-                    step: null,
-                    min: null,
-                    max: null,
-                    icon: 'shield',
+                    step      : null,
+                    min       : null,
+                    max       : null,
+                    icon      : 'shield',
                     filterName: 'greyscale'
                 },
                 {
-                    step: null,
-                    min: null,
-                    max: null,
-                    icon: 'cube',
+                    step      : null,
+                    min       : null,
+                    max       : null,
+                    icon      : 'cube',
                     filterName: 'invert'
                 }
             ],

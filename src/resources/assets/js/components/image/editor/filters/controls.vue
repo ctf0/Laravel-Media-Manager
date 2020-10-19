@@ -1,13 +1,15 @@
 <template>
     <div v-tippy="{arrow: true, theme: 'mm'}"
-         :title="filterName">
+         :title="getTitle(filterName)">
         <section v-if="!isControlable">
             <button v-tippy="{html: '#contentpopup2', interactive: true, reactive: true, trigger: 'click', theme: 'mm', arrow: true}"
                     :class="{'is-active': isUsed()}"
                     :disabled="processing"
                     class="btn-plain">
-                <span class="icon"><icon :name="processing ? 'spinner' : icon"
-                                         :pulse="processing"/></span>
+                <span class="icon">
+                    <icon :name="processing ? 'spinner' : icon"
+                          :pulse="processing"/>
+                </span>
             </button>
 
             <div id="contentpopup2">
@@ -17,7 +19,9 @@
                              class="level-item">
                             <p class="heading is-marginless link"
                                @click.stop="resetFilter()">
-                                <span class="icon"><icon name="times"/></span>
+                                <span class="icon">
+                                    <icon name="times"/>
+                                </span>
                             </p>
                         </div>
                     </transition>
@@ -53,10 +57,12 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
+import debounce  from 'lodash/debounce'
+import snakeCase from 'lodash/snakeCase'
 
 export default {
     props: [
+        'trans',
         'filterName',
         'icon',
         'max',
@@ -70,7 +76,7 @@ export default {
     ],
     data() {
         return {
-            range: 0,
+            range   : 0,
             wasReset: false
         }
     },
@@ -133,6 +139,9 @@ export default {
                 perc = parseFloat((val * 100 / max).toFixed(2)) + '%'
                 this.$refs.range.style.setProperty('--length', perc)
             }
+        },
+        getTitle(str) {
+            return this.trans(snakeCase(str))
         },
         update: debounce(function(val = null) {
             this.applyFilter(this.filterName, val)

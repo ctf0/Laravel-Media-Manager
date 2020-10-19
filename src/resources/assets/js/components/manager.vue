@@ -1,49 +1,49 @@
 <style lang="scss" scoped src="../../sass/packages/bulma.scss"></style>
 
 <script>
-import debounce from 'lodash/debounce'
+import debounce    from 'lodash/debounce'
 import Vue2Filters from 'vue2-filters'
 
-import Broadcast from '../modules/broadcast'
-import BulkSelect from '../modules/bulk'
-import Cache from '../modules/cache'
-import Computed from '../modules/computed'
-import Download from '../modules/download'
-import Form from '../modules/form'
-import Folder from '../modules/folder'
-import Gestures from '../modules/gestures'
-import Image from '../modules/image'
+import Broadcast      from '../modules/broadcast'
+import BulkSelect     from '../modules/bulk'
+import Cache          from '../modules/cache'
+import Computed       from '../modules/computed'
+import Download       from '../modules/download'
+import Form           from '../modules/form'
+import Folder         from '../modules/folder'
+import Gestures       from '../modules/gestures'
+import Image          from '../modules/image'
 import ItemFiltration from '../modules/filtration'
 import ItemVisibility from '../modules/visibility'
-import LockItem from '../modules/lock'
-import Movable from '../modules/movable'
-import MediaPlayer from '../modules/media_player'
-import Restriction from '../modules/restriction'
-import Scroll from '../modules/scroll'
-import Selection from '../modules/selection'
-import Url from '../modules/url'
-import Upload from '../modules/upload'
-import Utilities from '../modules/utils'
-import Watchers from '../modules/watch'
+import LockItem       from '../modules/lock'
+import Movable        from '../modules/movable'
+import MediaPlayer    from '../modules/media_player'
+import Restriction    from '../modules/restriction'
+import Scroll         from '../modules/scroll'
+import Selection      from '../modules/selection'
+import Url            from '../modules/url'
+import Upload         from '../modules/upload'
+import Utilities      from '../modules/utils'
+import Watchers       from '../modules/watch'
 
 export default {
     components: {
         containerClickOverlay: require('./utils/container-click-overlay.vue').default,
-        contentRatio: require('./utils/ratio.vue').default,
-        dirBookmarks: require('./toolbar/dir-bookmark.vue').default,
-        filterAndSorting: require('./toolbar/filter-sort.vue').default,
-        globalSearchBtn: require('./globalSearch/button.vue').default,
-        globalSearchPanel: require('./globalSearch/panel.vue').default,
-        imageEditor: require('./image/editor/main.vue').default,
-        imageIntersect: require('./image/lazyLoading.vue').default,
-        imagePreview: require('./image/preview.vue').default,
-        InfiniteLoading: require('vue-infinite-loading').default,
-        uploadPreview: require('./utils/upload-preview.vue').default,
-        usageIntroBtn: require('./usageIntro/button.vue').default,
-        usageIntroPanel: require('./usageIntro/panel.vue').default,
-        voiceSearch: require('./search-by-voice.vue').default
+        contentRatio         : require('./utils/ratio.vue').default,
+        dirBookmarks         : require('./toolbar/dir-bookmark.vue').default,
+        filterAndSorting     : require('./toolbar/filter-sort.vue').default,
+        globalSearchBtn      : require('./globalSearch/button.vue').default,
+        globalSearchPanel    : require('./globalSearch/panel.vue').default,
+        imageEditor          : require('./image/editor/main.vue').default,
+        imageIntersect       : require('./image/lazyLoading.vue').default,
+        imagePreview         : require('./image/preview.vue').default,
+        InfiniteLoading      : require('vue-infinite-loading').default,
+        uploadPreview        : require('./utils/upload-preview.vue').default,
+        usageIntroBtn        : require('./usageIntro/button.vue').default,
+        usageIntroPanel      : require('./usageIntro/panel.vue').default,
+        voiceSearch          : require('./search-by-voice.vue').default
     },
-    name: 'media-manager',
+    name  : 'media-manager',
     mixins: [
         Vue2Filters.mixin,
         Broadcast,
@@ -81,67 +81,67 @@ export default {
     ],
     data() {
         return {
-            ajax_error: false,
-            bulkSelect: false,
-            bulkSelectAll: false,
-            disableShortCuts: false,
-            firstMeta: false, // for alt + click selection
-            firstRun: false, // deffer running logic on init
-            folderDeleteWarning: false,
-            imageWasEdited: false,
-            infoSidebar: false,
-            introIsOn: false,
-            isLoading: false,
-            linkCopied: false,
-            loading_files: false,
-            no_files: false,
-            no_search: false,
-            useRandomNamesForUpload: false,
-            showProgress: false,
-            isASmallScreen: false,
-            toolBar: true,
-            uploadArea: false,
-            waitingForUpload: false,
-            copyFilesNotMove: false,
+            ajax_error                        : false,
+            bulkSelect                        : false,
+            bulkSelectAll                     : false,
+            disableShortCuts                  : false,
+            firstMeta                         : false, // for alt + click selection
+            firstRun                          : false, // deffer running logic on init
+            folderDeleteWarning               : false,
+            imageWasEdited                    : false,
+            infoSidebar                       : false,
+            introIsOn                         : false,
+            isLoading                         : false,
+            linkCopied                        : false,
+            loading_files                     : false,
+            no_files                          : false,
+            no_search                         : false,
+            useRandomNamesForUpload           : false,
+            showProgress                      : false,
+            isASmallScreen                    : false,
+            toolBar                           : true,
+            uploadArea                        : false,
+            waitingForUpload                  : false,
+            copyFilesNotMove                  : false,
             uploadPreviewOptionsPanelIsVisible: false,
-            globalSearchPanelIsVisible: false,
+            globalSearchPanelIsVisible        : false,
 
-            activeModal: null,
-            currentFileIndex: null,
-            filterName: null,
-            sortName: null,
-            imageSlideDirection: null,
-            newFilename: null,
-            newFolderName: null,
-            searchFor: null,
-            searchItemsCount: null,
-            selectedFile: null,
-            global_search_item: null,
-            urlToUpload: null,
+            activeModal              : null,
+            currentFileIndex         : null,
+            filterName               : null,
+            sortName                 : null,
+            imageSlideDirection      : null,
+            newFilename              : null,
+            newFolderName            : null,
+            searchFor                : null,
+            searchItemsCount         : null,
+            selectedFile             : null,
+            global_search_item       : null,
+            urlToUpload              : null,
             selectedUploadPreviewName: null,
 
             audioFileMeta: {},
-            restrictions: Object.assign({
-                'path': null,
+            restrictions : Object.assign({
+                'path'       : null,
                 'uploadTypes': null,
-                'uploadSize': null
+                'uploadSize' : null
             }, this.restrict),
-            movableList: [],
-            bulkList: [],
-            dimensions: [],
-            files: [],
-            filterdFilesList: [],
-            folders: [],
-            uploadPreviewList: [],
-            uploadPreviewNamesList: [],
+            movableList             : [],
+            bulkList                : [],
+            dimensions              : [],
+            files                   : [],
+            filterdFilesList        : [],
+            folders                 : [],
+            uploadPreviewList       : [],
+            uploadPreviewNamesList  : [],
             uploadPreviewOptionsList: [],
-            dirBookmarks: [],
-            player: {
-                item: null,
-                fs: false,
+            dirBookmarks            : [],
+            player                  : {
+                item   : null,
+                fs     : false,
                 playing: false
             },
-            lockedList: [],
+            lockedList          : [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0, #209cee 71%, #3287f5 100%)',
@@ -150,7 +150,7 @@ export default {
                 'linear-gradient(141deg, #ff0561 0, #ff3860 71%, #ff5257 100%)',
                 'linear-gradient(141deg, #1f191a 0, #363636 71%, #46403f 100%)'
             ],
-            progressCounter: 0,
+            progressCounter      : 0,
             scrollByRowItemsCount: 0
         }
     },
@@ -264,10 +264,10 @@ export default {
 
             // normal
             this.getPathFromUrl()
-                    .then(this.preSaved())
-                    .then(this.getFiles(null, this.selectedFile))
-                    .then(this.updatePageUrl())
-                    .then(this.afterInit())
+                .then(this.preSaved())
+                .then(this.getFiles(null, this.selectedFile))
+                .then(this.updatePageUrl())
+                .then(this.afterInit())
 
         },
         afterInit() {
@@ -286,7 +286,7 @@ export default {
                 if (!this.activeModal && !this.waitingForUpload) {
                     // when search is not focused
                     if (!this.isFocused('search', e)) {
-                        // when no bulk selecting
+                        // when no bulk selection
                         if (!this.isBulkSelecting()) {
                             // open folder
                             if (key == 'enter' && this.selectedFile) {
