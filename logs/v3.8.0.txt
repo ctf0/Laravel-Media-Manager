@@ -1,0 +1,6 @@
+- use laravel mix v6
+- change minimum version for laravel to v7
+- remove `worker-loader` & use wp native worker support instead
+- add `buffer & process` to dev deps
+- update demo repo with the new changes
+- add new wiki for v6 upgrade https://github.com/ctf0/Laravel-Media-Manager/wiki/Laravel-Mix-V6

@@ -1,6 +1,6 @@
 /*                Libs                */
-import Vue2Filters from 'vue2-filters'
 import VueClipboard from 'vue-clipboard2'
+import Vue2Filters  from 'vue2-filters'
 
 Vue.use(Vue2Filters)
 Vue.use(VueClipboard)
@@ -27,8 +27,8 @@ Vue.use(VueTouch)
 // axios
 window.axios = require('axios')
 axios.defaults.headers.common = {
-    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-CSRF-TOKEN'     : document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    'X-Requested-With' : 'XMLHttpRequest'
 }
 axios.interceptors.response.use(
     (response) => response,
@@ -44,8 +44,8 @@ axios.interceptors.response.use(
 
 // vue-awesome
 require('./modules/icons')
-Vue.component('icon', require('vue-awesome/components/Icon').default)
-Vue.component('iconTypes', require('./components/utils/icon-types.vue').default)
+Vue.component('Icon', require('vue-awesome/components/Icon').default)
+Vue.component('IconTypes', require('./components/utils/icon-types.vue').default)
 
 /*                Components                */
 Vue.component('MediaManager', require('./components/manager.vue').default)

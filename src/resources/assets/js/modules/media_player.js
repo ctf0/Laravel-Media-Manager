@@ -1,15 +1,22 @@
-import Plyr from 'plyr'
-import AudioWorker from 'worker-loader!../webworkers/audio'
 import omit from 'lodash/omit'
+import Plyr from 'plyr'
+
+const AudioWorker = new Worker(
+    new URL('../webworkers/audio.js', import.meta.url),
+    {
+        name: 'audio'
+        /* webpackEntryOptions: { filename: "workers/[name].js" } */
+    }
+)
 
 export default {
     methods: {
         initPlyr() {
             let options = {
-                debug: false,
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-                tooltips: {controls: true, seek: true},
-                keyboard: {focused: false, global: false}
+                debug    : false,
+                controls : ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                tooltips : {controls: true, seek: true},
+                keyboard : {focused: false, global: false}
             }
 
             if (!this.isASmallScreen || (this.isASmallScreen && this.activeModal)) {
@@ -44,9 +51,9 @@ export default {
         destroyPlyr() {
             if (this.player.item) this.player.item.destroy()
             this.player = {
-                item: null,
-                fs: false,
-                playing: false
+                item    : null,
+                fs      : false,
+                playing : false
             }
         },
         playMedia() {
@@ -68,15 +75,14 @@ export default {
                 // cover could be corrupted when loaded from cache
                 // so we have to refetch it
                 // also to save space we cache all except 'cover'
-                const audio = new AudioWorker()
-                audio.addEventListener('message', ({data}) => {
+                AudioWorker.onmessage = ({data}) => {
                     if (!cache) {
                         this.db('set', url, omit(data, ['cover']))
                     }
 
                     this.audioFileMeta = data
-                })
-                audio.postMessage(url)
+                }
+                AudioWorker.postMessage(url)
             })
         },
         checkAudioData() {

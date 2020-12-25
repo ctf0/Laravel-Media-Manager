@@ -1,7 +1,7 @@
 <h1 align="center">
     Laravel Media Manager
     <br>
-    <a href="https://packagist.org/packages/laravel/laravel"><img src="https://img.shields.io/badge/Laravel-v6+-red" alt="Browser Status"/></a>
+    <a href="https://packagist.org/packages/laravel/laravel"><img src="https://img.shields.io/badge/Laravel-v7+-red" alt="Browser Status"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/v/ctf0/media-manager.svg" alt="Latest Stable Version"/></a>
     <a href="https://packagist.org/packages/ctf0/media-manager"><img src="https://img.shields.io/packagist/dt/ctf0/media-manager.svg" alt="Total Downloads"/></a>
     <br>
@@ -43,7 +43,7 @@
 
     ```bash
     yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval annyang
-    yarn add worker-loader --dev
+    yarn add buffer process --dev
     ```
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
@@ -64,7 +64,7 @@
 
 ## Config
 
-- [**config/mediaManager.php**](https://github.com/ctf0/Laravel-Media-Manager/blob/master/src/config/mediaManager.php)
+- [**config/mediaManager.php**](./src/config/mediaManager.php)
 
 <br>
 
@@ -138,7 +138,7 @@
 <br>
 
 | navigation           | button                                              | keyboard         | click / tap                  | touch                           |
-|----------------------|-----------------------------------------------------|------------------|------------------------------|---------------------------------|
+| -------------------- | --------------------------------------------------- | ---------------- | ---------------------------- | ------------------------------- |
 |                      | toggle upload panel *(toolbar)*                     | u                |                              |                                 |
 |                      | refresh *(toolbar)*                                 | r                | hold *"clear cache"*         | pinch in *(items container)*    |
 |                      | [move/show movable list][movable] *(toolbar)*       | m / p            |                              |                                 |
@@ -182,7 +182,7 @@
 ## Events
 
 | type            | event-name                                         | description                                                                |
-|-----------------|----------------------------------------------------|----------------------------------------------------------------------------|
+| --------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
 | [JS][js]        |                                                    |                                                                            |
 |                 | modal-show                                         | when modal is shown                                                        |
 |                 | modal-hide                                         | when modal is hidden                                                       |

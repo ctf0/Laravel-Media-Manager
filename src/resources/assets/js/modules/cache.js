@@ -1,4 +1,10 @@
-import DbWorker from 'worker-loader!../webworkers/db'
+const DbWorker = new Worker(
+    new URL('../webworkers/db.js', import.meta.url),
+    {
+        name: 'db'
+        /* webpackEntryOptions: { filename: "workers/[name].js" } */
+    }
+)
 
 export default {
     methods: {
@@ -31,12 +37,11 @@ export default {
         /*                idb                */
         db(type, key = null, val = null) {
             return new Promise((resolve) => {
-                const db = new DbWorker()
-                db.addEventListener('message', (e) => resolve(e.data))
-                db.postMessage({
-                    type: type, // get,set,del,clr,keys
-                    key: key ? encodeURI(key) : null,
-                    val: val
+                DbWorker.onmessage = (e) => resolve(e.data)
+                DbWorker.postMessage({
+                    type : type, // get,set,del,clr,keys
+                    key  : key ? encodeURI(key) : null,
+                    val  : val
                 })
             }).then((data) => data)
         }
