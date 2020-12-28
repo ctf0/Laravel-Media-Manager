@@ -11,9 +11,9 @@ assignees: ''
 <!--- tickets not following the below template will be closed immediatly -->
 <!--- you can put ur answers in place of the 3 dots ... -->
 
-> What version of Laravel are you using? (nothing lower than v6).
+Laravel version `php artisan -v`:
+Manager version `composer info ctf0/media-manager`:
 
-...
 
 > is it an issue related to installation or usage ?
 
