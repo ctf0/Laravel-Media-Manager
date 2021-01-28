@@ -123,8 +123,5 @@ class MediaManagerServiceProvider extends ServiceProvider
      *
      * @return [type] [description]
      */
-    public function register()
-    {
-        $this->app->register(PackageChangeLogServiceProvider::class);
-    }
+    public function register() {}
 }
