@@ -48,10 +48,16 @@
 
 - add this one liner to your main js file and run `npm run watch` to compile your `js/css` files.
     + if you are having issues [Check](https://ctf0.wordpress.com/2017/09/12/laravel-mix-es6/).
+    + also check [mix v6 notes](https://github.com/ctf0/Laravel-Media-Manager/wiki/Laravel-Mix-V6)
 
     ```js
     // app.js
+
+    // mix v5
     window.Vue = require('vue')
+
+    // mix v6
+    import Vue from 'vue'
 
     require('../assets/vendor/MediaManager/js/manager')
 

@@ -45,8 +45,8 @@ trait GetContent
     {
         $list           = [];
         $dirList        = $this->getFolderContent($dir);
-        $storageFolders = array_filter($this->getFolderListByType($dirList, 'dir'), 'ignoreFiles');
-        $storageFiles   = array_filter($this->getFolderListByType($dirList, 'file'), 'ignoreFiles');
+        $storageFolders = array_filter($this->getFolderListByType($dirList, 'dir'), [$this, 'ignoreFiles']);
+        $storageFiles   = array_filter($this->getFolderListByType($dirList, 'file'), [$this, 'ignoreFiles']);
 
         // folders
         foreach ($storageFolders as $folder) {
