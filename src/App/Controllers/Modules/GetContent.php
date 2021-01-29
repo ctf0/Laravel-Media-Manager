@@ -27,7 +27,7 @@ trait GetContent
             array_merge(
                 $this->lockList(),
                 [
-                    'files'  => [
+                    'files' => [
                         'path'  => $path,
                         'items' => $this->paginate($this->getData($path), $this->paginationAmount),
                     ],
@@ -45,8 +45,8 @@ trait GetContent
     {
         $list           = [];
         $dirList        = $this->getFolderContent($dir);
-        $storageFolders = $this->getFolderListByType($dirList, 'dir');
-        $storageFiles   = $this->getFolderListByType($dirList, 'file');
+        $storageFolders = array_filter($this->getFolderListByType($dirList, 'dir'), [$this, 'ignoreFiles']);
+        $storageFiles   = array_filter($this->getFolderListByType($dirList, 'file'), [$this, 'ignoreFiles']);
 
         // folders
         foreach ($storageFolders as $folder) {
@@ -94,18 +94,16 @@ trait GetContent
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        $pattern = $this->ignoreFiles;
-
-        return $this->storageDisk->createIterator(
-            [
-                'list-with' => ['mimetype', 'visibility', 'timestamp', 'size'],
-                'recursive' => $rec,
-                'filter'    => function ($item) use ($pattern) {
-                    return !preg_grep($pattern, [$item['basename']]);
-                },
-            ],
-            $folder ?: '/'
+        return $this->storageDisk->listWith(
+            ['mimetype', 'visibility', 'timestamp', 'size'],
+            $folder,
+            $rec
         );
+    }
+
+    protected function ignoreFiles($item)
+    {
+        return !preg_grep($this->ignoreFiles, [$item['basename']]);
     }
 
     /**

@@ -1,35 +1,36 @@
-const db = require('idb-keyval')
-const store = new db.Store('ctf0-Media_Manager', 'media_manager')
+import {clear, createStore, del, get, keys, set} from 'idb-keyval'
+
+const store = createStore('ctf0-Media_Manager', 'media_manager')
 
 onmessage = (e) => {
     let {type, key, val} = e.data
 
     switch (type) {
         case 'get':
-            db.get(key, store)
+            get(key, store)
                 .then((res) => postMessage(res))
             break
 
         case 'set':
-            db.set(key, val, store)
+            set(key, val, store)
                 .then(() => postMessage(true))
                 .catch(() => postMessage(false))
             break
 
         case 'del':
-            db.del(key, store)
+            del(key, store)
                 .then(() => postMessage(true))
                 .catch(() => postMessage(false))
             break
 
         case 'clr':
-            db.clear(store)
+            clear(store)
                 .then(() => postMessage(true))
                 .catch(() => postMessage(false))
             break
 
         case 'keys':
-            db.keys(store)
+            keys(store)
                 .then((res) => postMessage(res))
                 .catch(() => postMessage(false))
             break

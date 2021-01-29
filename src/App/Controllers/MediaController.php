@@ -3,7 +3,7 @@
 namespace ctf0\MediaManager\App\Controllers;
 
 use App\Http\Controllers\Controller;
-use Jhofm\FlysystemIterator\Plugin\IteratorPlugin;
+use League\Flysystem\Plugin\ListWith;
 use ctf0\MediaManager\App\Controllers\Modules\Lock;
 use ctf0\MediaManager\App\Controllers\Modules\Move;
 use ctf0\MediaManager\App\Controllers\Modules\Utils;
@@ -47,15 +47,15 @@ class MediaController extends Controller
     {
         $config = app('config')->get('mediaManager');
 
-        $this->fileSystem           = $config['storage_disk'];
-        $this->ignoreFiles          = $config['ignore_files'];
-        $this->fileChars            = $config['allowed_fileNames_chars'];
-        $this->folderChars          = $config['allowed_folderNames_chars'];
-        $this->sanitizedText        = $config['sanitized_text'];
-        $this->unallowedMimes       = $config['unallowed_mimes'];
-        $this->LMF                  = $config['last_modified_format'];
-        $this->GFI                  = $config['get_folder_info']   ?? true;
-        $this->paginationAmount     = $config['pagination_amount'] ?? 50;
+        $this->fileSystem       = $config['storage_disk'];
+        $this->ignoreFiles      = $config['ignore_files'];
+        $this->fileChars        = $config['allowed_fileNames_chars'];
+        $this->folderChars      = $config['allowed_folderNames_chars'];
+        $this->sanitizedText    = $config['sanitized_text'];
+        $this->unallowedMimes   = $config['unallowed_mimes'];
+        $this->LMF              = $config['last_modified_format'];
+        $this->GFI              = $config['get_folder_info']   ?? true;
+        $this->paginationAmount = $config['pagination_amount'] ?? 50;
 
         $this->storageDisk     = app('filesystem')->disk($this->fileSystem);
         $this->storageDiskInfo = app('config')->get("filesystems.disks.{$this->fileSystem}");
@@ -64,7 +64,7 @@ class MediaController extends Controller
                                     ->connection($config['database_connection'])
                                     ->table($config['table_locked']);
 
-        $this->storageDisk->addPlugin(new IteratorPlugin());
+        $this->storageDisk->addPlugin(new ListWith());
     }
 
     /**
