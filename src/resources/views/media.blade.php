@@ -8,7 +8,7 @@
     <title>{{ trans('MediaManager::messages.title') }}</title>
 
     {{-- Styles --}}
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
 </head>
 <body>
     <section id="app" v-cloak>

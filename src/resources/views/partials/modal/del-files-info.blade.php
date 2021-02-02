@@ -4,8 +4,8 @@
     <template v-if="bulkItemsFilter.length <= 8">
         <div class="media" v-for="one in bulkItemsFilter" :key="one.path">
             <figure class="media-left">
-                <span class="icon has-text-link">
-                    <icon-types :file="selectedFile" :file-type-is="fileTypeIs"/>
+                <span class="icon has-text-link full-height full-width">
+                    <icon-types :file="one" :file-type-is="fileTypeIs"/>
                 </span>
             </figure>
             <div class="media-content">
@@ -22,7 +22,9 @@
     <template v-else>
         <div class="media">
             <figure class="media-left">
-                <span class="icon has-text-link"><icon name="archive" scale="1.5"></icon></span>
+                <span class="icon has-text-link full-height full-width">
+                    <icon name="archive" scale="1.5"></icon>
+                </span>
             </figure>
             <div class="media-content">
                 <p class="title is-4">
@@ -45,7 +47,7 @@
     <template v-if="selectedFile">
         <div class="media">
             <figure class="media-left">
-                <span class="icon has-text-link">
+                <span class="icon has-text-link full-height full-width">
                     <icon-types :file="selectedFile" :file-type-is="fileTypeIs" :scale="1.8"/>
                 </span>
             </figure>
