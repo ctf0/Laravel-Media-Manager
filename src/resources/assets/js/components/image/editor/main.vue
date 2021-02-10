@@ -134,20 +134,18 @@
     </div>
 </template>
 
-<style lang="scss" src="../../../../sass/modules/image-editor.scss"></style>
-
 <script>
-import omit      from 'lodash/omit'
-import isEmpty   from 'lodash/isEmpty'
-import cloneDeep from 'lodash/cloneDeep'
 import Cropper   from 'cropperjs'
+import cloneDeep from 'lodash/cloneDeep'
+import isEmpty   from 'lodash/isEmpty'
+import omit      from 'lodash/omit'
 
 export default {
     components: {
-        filters     : require('./filters/index.vue').default,
-        presets     : require('./filters/presets.vue').default,
-        controls    : require('./controls.vue').default,
-        imageCompare: require('vue-image-compare2').default
+        filters      : require('./filters/index.vue').default,
+        presets      : require('./filters/presets.vue').default,
+        controls     : require('./controls.vue').default,
+        imageCompare : require('vue-image-compare2').default
     },
     props: [
         'file',
@@ -157,23 +155,23 @@ export default {
     ],
     data() {
         return {
-            url          : this.file.path,
-            imageCropper : null,
-            dragMode     : 'move',
-            rotation     : 45,
-            croppedByUser: false,
-            initData     : null,
+            url           : this.file.path,
+            imageCropper  : null,
+            dragMode      : 'move',
+            rotation      : 45,
+            croppedByUser : false,
+            initData      : null,
 
-            diffOriginal: null,
-            diffCurrent : null,
-            showDiff    : false,
-            diffDisable : true,
+            diffOriginal : null,
+            diffCurrent  : null,
+            showDiff     : false,
+            diffDisable  : true,
 
-            hasChanged  : false,
-            processing  : false,
-            reset       : false,
-            imageCaman  : null,
-            camanFilters: {}
+            hasChanged   : false,
+            processing   : false,
+            reset        : false,
+            imageCaman   : null,
+            camanFilters : {}
         }
     },
     // make cropperjs rotation follow the new value
@@ -183,7 +181,7 @@ export default {
         },
         ranges() {
             let final = []
-            let list = Array.from(Array(this.angles).keys())
+            let list  = Array.from(Array(this.angles).keys())
             list.shift() // remove 0
 
             list.forEach((item) => {
@@ -203,9 +201,9 @@ export default {
         hiddenBtns() {
             if (this.showDiff) {
                 return {
-                    opacity         : 0,
-                    visibility      : 'hidden',
-                    'pointer-events': 'none'
+                    'opacity'        : 0,
+                    'visibility'     : 'hidden',
+                    'pointer-events' : 'none'
                 }
             }
 
@@ -244,13 +242,13 @@ export default {
             let image = document.querySelector('#cropper')
 
             this.imageCropper = new Cropper(image, {
-                viewMode                : 1,
-                dragMode                : this.dragMode,
-                guides                  : false,
-                highlight               : false,
-                autoCrop                : false,
-                toggleDragModeOnDblclick: true,
-                responsive              : false
+                viewMode                 : 1,
+                dragMode                 : this.dragMode,
+                guides                   : false,
+                highlight                : false,
+                autoCrop                 : false,
+                toggleDragModeOnDblclick : true,
+                responsive               : false
             })
 
             image.addEventListener('ready', () => {
@@ -265,11 +263,11 @@ export default {
 
                 switch (e.detail.action) {
                     case 'move':
-                        break
                     case 'crop':
                         this.croppedByUser = true
-                        this.hasChanged = true
+                        this.hasChanged    = true
                         break
+
                     case 'zoom':
                         this.hasChanged = true
                         break
@@ -292,33 +290,41 @@ export default {
                     this.dragMode = action
                     cropper.setDragMode(action)
                     break
+
                 case 'zoom-in':
                     cropper.zoom(0.1)
 
                     return this.hasChanged = true
+
                 case 'zoom-out':
                     cropper.zoom(-0.1)
 
                     return this.hasChanged = true
-                case 'rotate-left':
+
+                case 'undo':
                     cropper.rotate(-this.rotation)
                     break
-                case 'rotate-right':
+
+                case 'redo':
                     cropper.rotate(this.rotation)
                     break
+
                 case 'flip-horizontal':
                     this.ranges.includes(getData.rotate)
                         ? cropper.scaleY(-getData.scaleY)
                         : cropper.scaleX(-getData.scaleX)
                     break
+
                 case 'flip-vertical':
                     this.ranges.includes(getData.rotate)
                         ? cropper.scaleX(-getData.scaleX)
                         : cropper.scaleY(-getData.scaleY)
                     break
+
                 case 'reset':
                     this.resetAll()
                     break
+
                 case 'clear':
                     this.croppedByUser = false
                     cropper.clear()
@@ -343,11 +349,11 @@ export default {
             this.$nextTick(() => {
                 let cropper = this.imageCropper
 
-                this.dragMode = cropper.options.dragMode
-                this.hasChanged = false
+                this.dragMode      = cropper.options.dragMode
+                this.hasChanged    = false
                 this.croppedByUser = false
-                this.reset = true
-                this.diffDisable = true
+                this.reset         = true
+                this.diffDisable   = true
 
                 cropper.reset() // position, rotation, flip, zoom
                 cropper.clear() // selection
@@ -365,7 +371,7 @@ export default {
 
         // filters
         resetFilters() {
-            this.diffDisable = true
+            this.diffDisable  = true
             this.camanFilters = {}
             this.imageCaman.reset()
             this.imageCropper.replace(this.initData, true) // init
@@ -377,7 +383,7 @@ export default {
             this.hasChanged = true
 
             let filters = this.camanFilters
-            let caman = this.imageCaman
+            let caman   = this.imageCaman
 
             // make nullable filters switchable
             if (!val && filters.hasOwnProperty(name)) {
@@ -398,7 +404,7 @@ export default {
             this.renderImage()
         },
         renderImage() {
-            let caman = this.imageCaman
+            let caman   = this.imageCaman
             let cropper = this.imageCropper
 
             return caman.render(function() {
@@ -414,16 +420,16 @@ export default {
             if (!this.croppedByUser) {
                 cropper.crop()
                 cropper.setCropBoxData({
-                    height: cropper.getContainerData().height,
-                    left  : 0,
-                    top   : 0,
-                    width : cropper.getContainerData().width
+                    height : cropper.getContainerData().height,
+                    left   : 0,
+                    top    : 0,
+                    width  : cropper.getContainerData().width
                 })
             }
 
             let url = cropper.getCroppedCanvas({
-                fillColor            : type.includes('png') ? 'transparent' : '#fff',
-                imageSmoothingQuality: 'high'
+                fillColor             : type.includes('png') ? 'transparent' : '#fff',
+                imageSmoothingQuality : 'high'
             }).toDataURL(type)
 
             // reset the auto crop selection we made
@@ -440,10 +446,10 @@ export default {
             parent.showNotif(this.trans('stand_by'), 'info')
 
             axios.post(this.route, {
-                data     : data,
-                path     : parent.files.path,
-                name     : this.file.name,
-                mime_type: this.file.type
+                data      : data,
+                path      : parent.files.path,
+                name      : this.file.name,
+                mime_type : this.file.type
             }).then(({data}) => {
                 parent.toggleLoading()
                 data.success
@@ -471,13 +477,13 @@ export default {
              * otherwise we wont be able to reset to the original image without extra work
              */
             let cropperClone = cloneDeep(this.imageCropper)
-            let getData = cropperClone.getData()
-            let x = getData.scaleX
-            let y = getData.scaleY
+            let getData      = cropperClone.getData()
+            let x            = getData.scaleX
+            let y            = getData.scaleY
             cropperClone.setData({
-                rotate: 0, // reset rotation
-                scaleX: x < 1 ? -x : x, // reset flip-horizontal
-                scaleY: y < 1 ? -y : y // reset flip-vertical
+                rotate : 0, // reset rotation
+                scaleX : x < 1 ? -x : x, // reset flip-horizontal
+                scaleY : y < 1 ? -y : y // reset flip-vertical
             })
 
             cropperClone.replace(this.initData, true)
@@ -521,16 +527,16 @@ export default {
                  */
                 this.renderImage()
 
-                this.processing = false
-                this.diffOriginal = null
-                this.diffCurrent = null
+                this.processing                   = false
+                this.diffOriginal                 = null
+                this.diffCurrent                  = null
                 this.$refs.editor.style.marginTop = ''
             }
         },
         imageDiffIsReady(val) {
             if (val) {
                 let t = setInterval(() => {
-                    let diff = document.querySelector('.__diff').offsetHeight
+                    let diff   = document.querySelector('.__diff').offsetHeight
                     let canvas = document.querySelector('.__cropper').offsetHeight
 
                     if (diff) {
@@ -546,3 +552,5 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" src="../../../../sass/modules/image-editor.scss"></style>

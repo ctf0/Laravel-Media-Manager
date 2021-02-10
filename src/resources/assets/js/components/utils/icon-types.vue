@@ -17,36 +17,36 @@ export default {
     ],
     data() {
         return {
-            iconScale: this.scale || 1.2,
-            exclude: this.except || [],
-            list: [
+            iconScale : this.scale || 1.2,
+            exclude   : this.except || [],
+            list      : [
                 {
-                    type: 'folder',
-                    icon: 'folder'
+                    type : 'folder',
+                    icon : 'folder'
                 },
                 {
-                    type: 'application',
-                    icon: 'cogs'
+                    type : 'application',
+                    icon : 'cogs'
                 },
                 {
-                    type: 'compressed',
-                    icon: 'file-archive-o'
+                    type : 'compressed',
+                    icon : 'regular/file-archive'
                 },
                 {
-                    type: 'image',
-                    icon: 'image'
+                    type : 'image',
+                    icon : 'image'
                 },
                 {
-                    type: 'video',
-                    icon: 'film'
+                    type : 'video',
+                    icon : 'film'
                 },
                 {
-                    type: 'audio',
-                    icon: 'music'
+                    type : 'audio',
+                    icon : 'music'
                 },
                 {
-                    type: 'text',
-                    icon: 'file-text-o'
+                    type : 'text',
+                    icon : 'regular/file-alt'
                 }
             ]
         }

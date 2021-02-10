@@ -1,12 +1,12 @@
 import 'vue-awesome/icons/shopping-basket'
 import 'vue-awesome/icons/map'
-import 'vue-awesome/icons/map-o'
+import 'vue-awesome/icons/regular/map'
 import 'vue-awesome/icons/folder'
-import 'vue-awesome/icons/folder-open-o'
-import 'vue-awesome/icons/refresh'
+import 'vue-awesome/icons/regular/folder-open'
+import 'vue-awesome/icons/sync'
 import 'vue-awesome/icons/share'
 import 'vue-awesome/icons/terminal'
-import 'vue-awesome/icons/trash'
+import 'vue-awesome/icons/regular/trash-alt'
 import 'vue-awesome/icons/minus'
 import 'vue-awesome/icons/plus'
 import 'vue-awesome/icons/puzzle-piece'
@@ -14,34 +14,34 @@ import 'vue-awesome/icons/image'
 import 'vue-awesome/icons/music'
 import 'vue-awesome/icons/times'
 import 'vue-awesome/icons/search'
-import 'vue-awesome/icons/globe'
+import 'vue-awesome/icons/globe-americas'
 import 'vue-awesome/icons/angle-double-right'
 import 'vue-awesome/icons/angle-double-left'
 import 'vue-awesome/icons/bars'
-import 'vue-awesome/icons/clone'
-import 'vue-awesome/icons/file-pdf-o'
+import 'vue-awesome/icons/regular/clone'
+import 'vue-awesome/icons/regular/file-pdf'
 import 'vue-awesome/icons/power-off'
-import 'vue-awesome/icons/file-text-o'
+import 'vue-awesome/icons/regular/file-alt'
 import 'vue-awesome/icons/download'
-import 'vue-awesome/icons/warning'
+import 'vue-awesome/icons/exclamation-triangle'
 import 'vue-awesome/icons/archive'
-import 'vue-awesome/icons/unlock'
+import 'vue-awesome/icons/lock-open'
 import 'vue-awesome/icons/lock'
 import 'vue-awesome/icons/eye'
 import 'vue-awesome/icons/eye-slash'
 import 'vue-awesome/icons/film'
-import 'vue-awesome/icons/object-ungroup'
+import 'vue-awesome/icons/regular/object-ungroup'
 import 'vue-awesome/icons/circle'
 import 'vue-awesome/icons/link'
 import 'vue-awesome/icons/spinner'
 import 'vue-awesome/icons/key'
 import 'vue-awesome/icons/cogs'
 import 'vue-awesome/icons/cog'
-import 'vue-awesome/icons/clock-o'
-import 'vue-awesome/icons/file-archive-o'
+import 'vue-awesome/icons/regular/clock'
+import 'vue-awesome/icons/regular/file-archive'
 import 'vue-awesome/icons/chevron-down'
 import 'vue-awesome/icons/angle-down'
-import 'vue-awesome/icons/cloud-upload'
+import 'vue-awesome/icons/cloud-upload-alt'
 import 'vue-awesome/icons/shopping-cart'
 import 'vue-awesome/icons/cart-plus'
 import 'vue-awesome/icons/microphone'
@@ -49,49 +49,49 @@ import 'vue-awesome/icons/microphone'
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'
 import 'vue-awesome/icons/check'
-import 'vue-awesome/icons/arrows'
+import 'vue-awesome/icons/arrows-alt'
 import 'vue-awesome/icons/search-plus'
 import 'vue-awesome/icons/search-minus'
-import 'vue-awesome/icons/rotate-left'
-import 'vue-awesome/icons/rotate-right'
-import 'vue-awesome/icons/arrows-h'
-import 'vue-awesome/icons/arrows-v'
+import 'vue-awesome/icons/undo'
+import 'vue-awesome/icons/redo'
+import 'vue-awesome/icons/arrows-alt-h'
+import 'vue-awesome/icons/arrows-alt-v'
 import 'vue-awesome/icons/code'
 import 'vue-awesome/icons/arrow-left'
 import 'vue-awesome/icons/arrow-right'
 // filters
-import 'vue-awesome/icons/sun-o'
+import 'vue-awesome/icons/regular/sun'
 import 'vue-awesome/icons/adjust'
-import 'vue-awesome/icons/flash'
+import 'vue-awesome/icons/bolt'
 import 'vue-awesome/icons/thermometer-half'
-import 'vue-awesome/icons/eyedropper'
-import 'vue-awesome/icons/lemon-o'
+import 'vue-awesome/icons/eye-dropper'
+import 'vue-awesome/icons/regular/lemon'
 import 'vue-awesome/icons/flask'
-import 'vue-awesome/icons/dot-circle-o'
-import 'vue-awesome/icons/scissors'
-import 'vue-awesome/icons/diamond'
-import 'vue-awesome/icons/glass'
+import 'vue-awesome/icons/regular/dot-circle'
+import 'vue-awesome/icons/cut'
+import 'vue-awesome/icons/regular/gem'
+import 'vue-awesome/icons/glass-martini'
 import 'vue-awesome/icons/cube'
-import 'vue-awesome/icons/shield'
+import 'vue-awesome/icons/shield-alt'
 import 'vue-awesome/icons/low-vision'
 
 // custom
 import Icon from 'vue-awesome/components/Icon'
 Icon.register({
     pill: {
-        width: 21,
-        height: 27,
-        d: 'M3.500, 25.187 C0.152, 23.254 -0.995, 18.973 0.938, 15.625 C0.938, 15.625 7.938, 3.500 7.938, 3.500 C9.871, 0.152 14.152, -0.995 17.500, 0.938 C20.848, 2.871 21.995, 7.152 20.062, 10.500 C20.062, 10.500 13.062, 22.625 13.062, 22.625 C11.129, 25.973 6.848, 27.120 3.500, 25.187 ZM15.201, 1.920 C13.527, 0.954 11.386, 1.527 10.420, 3.201 C9.903, 4.097 9.839, 5.123 10.136, 6.034 C10.225, 5.681 10.345, 5.332 10.536, 5.000 C11.640, 3.087 14.087, 2.432 16.000, 3.536 C16.331, 3.727 16.610, 3.970 16.863, 4.232 C16.665, 3.294 16.097, 2.437 15.201, 1.920 ZM14.830, 15.562 C14.830, 15.562 6.170, 10.563 6.170, 10.563 C6.170, 10.563 2.670, 16.625 2.670, 16.625 C1.289, 19.016 2.109, 22.074 4.500, 23.455 C6.891, 24.835 9.949, 24.016 11.330, 21.625 C11.330, 21.625 14.830, 15.562 14.830, 15.562 ZM5.866, 23.089 C5.090, 22.641 4.601, 21.895 4.437, 21.081 C4.505, 21.126 4.562, 21.181 4.634, 21.223 C6.547, 22.327 8.994, 21.672 10.098, 19.759 C10.139, 19.687 10.161, 19.610 10.198, 19.537 C10.463, 20.325 10.412, 21.214 9.964, 21.991 C9.136, 23.426 7.301, 23.917 5.866, 23.089 Z'
+        width  : 21,
+        height : 27,
+        d      : 'M3.500, 25.187 C0.152, 23.254 -0.995, 18.973 0.938, 15.625 C0.938, 15.625 7.938, 3.500 7.938, 3.500 C9.871, 0.152 14.152, -0.995 17.500, 0.938 C20.848, 2.871 21.995, 7.152 20.062, 10.500 C20.062, 10.500 13.062, 22.625 13.062, 22.625 C11.129, 25.973 6.848, 27.120 3.500, 25.187 ZM15.201, 1.920 C13.527, 0.954 11.386, 1.527 10.420, 3.201 C9.903, 4.097 9.839, 5.123 10.136, 6.034 C10.225, 5.681 10.345, 5.332 10.536, 5.000 C11.640, 3.087 14.087, 2.432 16.000, 3.536 C16.331, 3.727 16.610, 3.970 16.863, 4.232 C16.665, 3.294 16.097, 2.437 15.201, 1.920 ZM14.830, 15.562 C14.830, 15.562 6.170, 10.563 6.170, 10.563 C6.170, 10.563 2.670, 16.625 2.670, 16.625 C1.289, 19.016 2.109, 22.074 4.500, 23.455 C6.891, 24.835 9.949, 24.016 11.330, 21.625 C11.330, 21.625 14.830, 15.562 14.830, 15.562 ZM5.866, 23.089 C5.090, 22.641 4.601, 21.895 4.437, 21.081 C4.505, 21.126 4.562, 21.181 4.634, 21.223 C6.547, 22.327 8.994, 21.672 10.098, 19.759 C10.139, 19.687 10.161, 19.610 10.198, 19.537 C10.463, 20.325 10.412, 21.214 9.964, 21.991 C9.136, 23.426 7.301, 23.917 5.866, 23.089 Z'
     },
     pref: {
-        height: 26,
-        width: 26,
-        d: 'M25.567, 14.005 C25.567, 14.005 22.847, 16.726 22.847, 16.726 C22.283, 17.289 21.370, 17.289 20.806, 16.726 C20.243, 16.162 20.243, 15.249 20.806, 14.685 C20.806, 14.685 22.507, 12.985 22.507, 12.985 C22.507, 12.985 20.806, 11.285 20.806, 11.285 C20.243, 10.721 20.243, 9.808 20.806, 9.244 C21.370, 8.681 22.283, 8.681 22.847, 9.244 C22.847, 9.244 25.567, 11.965 25.567, 11.965 C26.131, 12.528 26.131, 13.442 25.567, 14.005 ZM13.000, 18.000 C10.238, 18.000 8.000, 15.761 8.000, 13.000 C8.000, 10.238 10.238, 8.000 13.000, 8.000 C15.761, 8.000 18.000, 10.238 18.000, 13.000 C18.000, 15.761 15.761, 18.000 13.000, 18.000 ZM13.000, 11.000 C11.895, 11.000 11.000, 11.895 11.000, 13.000 C11.000, 14.104 11.895, 15.000 13.000, 15.000 C14.104, 15.000 15.000, 14.104 15.000, 13.000 C15.000, 11.895 14.104, 11.000 13.000, 11.000 ZM14.685, 5.163 C14.685, 5.163 12.985, 3.463 12.985, 3.463 C12.985, 3.463 11.285, 5.163 11.285, 5.163 C10.721, 5.727 9.807, 5.727 9.244, 5.163 C8.681, 4.600 8.681, 3.686 9.244, 3.123 C9.244, 3.123 11.965, 0.402 11.965, 0.402 C12.528, -0.161 13.441, -0.161 14.005, 0.402 C14.005, 0.402 16.726, 3.123 16.726, 3.123 C17.289, 3.686 17.289, 4.600 16.726, 5.163 C16.162, 5.727 15.249, 5.727 14.685, 5.163 ZM5.163, 16.726 C4.600, 17.289 3.686, 17.289 3.123, 16.726 C3.123, 16.726 0.402, 14.005 0.402, 14.005 C-0.161, 13.442 -0.161, 12.528 0.402, 11.965 C0.402, 11.965 3.123, 9.244 3.123, 9.244 C3.686, 8.681 4.600, 8.681 5.163, 9.244 C5.727, 9.808 5.727, 10.721 5.163, 11.285 C5.163, 11.285 3.463, 12.985 3.463, 12.985 C3.463, 12.985 5.163, 14.685 5.163, 14.685 C5.727, 15.249 5.727, 16.162 5.163, 16.726 ZM11.285, 20.806 C11.285, 20.806 12.985, 22.507 12.985, 22.507 C12.985, 22.507 14.685, 20.806 14.685, 20.806 C15.249, 20.243 16.162, 20.243 16.726, 20.806 C17.289, 21.370 17.289, 22.283 16.726, 22.847 C16.726, 22.847 14.005, 25.567 14.005, 25.567 C13.441, 26.131 12.528, 26.131 11.965, 25.567 C11.965, 25.567 9.244, 22.847 9.244, 22.847 C8.681, 22.283 8.681, 21.370 9.244, 20.806 C9.807, 20.243 10.721, 20.243 11.285, 20.806 Z'
+        height : 26,
+        width  : 26,
+        d      : 'M25.567, 14.005 C25.567, 14.005 22.847, 16.726 22.847, 16.726 C22.283, 17.289 21.370, 17.289 20.806, 16.726 C20.243, 16.162 20.243, 15.249 20.806, 14.685 C20.806, 14.685 22.507, 12.985 22.507, 12.985 C22.507, 12.985 20.806, 11.285 20.806, 11.285 C20.243, 10.721 20.243, 9.808 20.806, 9.244 C21.370, 8.681 22.283, 8.681 22.847, 9.244 C22.847, 9.244 25.567, 11.965 25.567, 11.965 C26.131, 12.528 26.131, 13.442 25.567, 14.005 ZM13.000, 18.000 C10.238, 18.000 8.000, 15.761 8.000, 13.000 C8.000, 10.238 10.238, 8.000 13.000, 8.000 C15.761, 8.000 18.000, 10.238 18.000, 13.000 C18.000, 15.761 15.761, 18.000 13.000, 18.000 ZM13.000, 11.000 C11.895, 11.000 11.000, 11.895 11.000, 13.000 C11.000, 14.104 11.895, 15.000 13.000, 15.000 C14.104, 15.000 15.000, 14.104 15.000, 13.000 C15.000, 11.895 14.104, 11.000 13.000, 11.000 ZM14.685, 5.163 C14.685, 5.163 12.985, 3.463 12.985, 3.463 C12.985, 3.463 11.285, 5.163 11.285, 5.163 C10.721, 5.727 9.807, 5.727 9.244, 5.163 C8.681, 4.600 8.681, 3.686 9.244, 3.123 C9.244, 3.123 11.965, 0.402 11.965, 0.402 C12.528, -0.161 13.441, -0.161 14.005, 0.402 C14.005, 0.402 16.726, 3.123 16.726, 3.123 C17.289, 3.686 17.289, 4.600 16.726, 5.163 C16.162, 5.727 15.249, 5.727 14.685, 5.163 ZM5.163, 16.726 C4.600, 17.289 3.686, 17.289 3.123, 16.726 C3.123, 16.726 0.402, 14.005 0.402, 14.005 C-0.161, 13.442 -0.161, 12.528 0.402, 11.965 C0.402, 11.965 3.123, 9.244 3.123, 9.244 C3.686, 8.681 4.600, 8.681 5.163, 9.244 C5.727, 9.808 5.727, 10.721 5.163, 11.285 C5.163, 11.285 3.463, 12.985 3.463, 12.985 C3.463, 12.985 5.163, 14.685 5.163, 14.685 C5.727, 15.249 5.727, 16.162 5.163, 16.726 ZM11.285, 20.806 C11.285, 20.806 12.985, 22.507 12.985, 22.507 C12.985, 22.507 14.685, 20.806 14.685, 20.806 C15.249, 20.243 16.162, 20.243 16.726, 20.806 C17.289, 21.370 17.289, 22.283 16.726, 22.847 C16.726, 22.847 14.005, 25.567 14.005, 25.567 C13.441, 26.131 12.528, 26.131 11.965, 25.567 C11.965, 25.567 9.244, 22.847 9.244, 22.847 C8.681, 22.283 8.681, 21.370 9.244, 20.806 C9.807, 20.243 10.721, 20.243 11.285, 20.806 Z'
     },
     desktop: {
-        height: 72,
-        width: 90,
-        paths: [
+        height : 72,
+        width  : 90,
+        paths  : [
             {
                 d: 'm84.68.56h-79.36c-2.93977172.00551553-5.32000517 2.39022311-5.32 5.33v46.69c.00550306 2.9358724 2.38412759 5.3144969 5.32 5.32h31.46v4.5c.0014433.8471475-.2722874 1.6718489-.78 2.35l-3.28 4.36c-.3274215.4412156-.3794159 1.0288913-.1345469 1.5207401.2448689.4918488.7451344.8045797 1.2945469.8092599h22.25c.5494125-.0046802 1.049678-.3174111 1.2945469-.8092599.244869-.4918488.1928746-1.0795245-.1345469-1.5207401l-3.29-4.36c-.5112826-.6768965-.7885602-1.5017096-.79-2.35v-4.5h31.47c2.9358724-.0055031 5.3144969-2.3841276 5.32-5.32v-46.69c.0000052-2.93977689-2.3802283-5.32448447-5.32-5.33zm-33 65.94 1.53 2h-16.43l1.53-2c.8885236-1.1822932 1.3692791-2.6210508 1.37-4.1v-4.5h10.64v4.5c.0007209 1.4789492.4814764 2.9177068 1.37 4.1zm35.42-13.92c-.0054795 1.3342528-1.0857472 2.4145205-2.42 2.42h-79.36c-1.3342528-.0054795-2.41452045-1.0857472-2.42-2.42v-46.69c0-1.33652909 1.08347091-2.42 2.42-2.42h79.36c1.3365291 0 2.42 1.08347091 2.42 2.42z'
             },
@@ -110,9 +110,9 @@ Icon.register({
         ]
     },
     laptop: {
-        height: 60,
-        width: 90,
-        paths: [
+        height : 60,
+        width  : 90,
+        paths  : [
             {
                 d: 'm39.63 28.56 4.81-4.81c.425074-.5836248.3559972-1.3910642-.1620329-1.8940061-.5180302-.5029419-1.3271582-.5481285-1.8979671-.1059939l-4.8 4.8c-.4148987.4109913-.5427446 1.0307734-.3243475 1.5723982s.7404066.8993684 1.3243475.9076018c.400097-.003987.7804967-.1742611 1.05-.47z'
             },
@@ -146,9 +146,9 @@ Icon.register({
         ]
     },
     mobile: {
-        height: 90,
-        width: 52,
-        paths: [
+        height : 90,
+        width  : 52,
+        paths  : [
             {
                 d: 'm19.87 9.34h12.26c.8008129 0 1.45-.64918711 1.45-1.45s-.6491871-1.45-1.45-1.45h-12.26c-.8008129 0-1.45.64918711-1.45 1.45s.6491871 1.45 1.45 1.45z'
             },

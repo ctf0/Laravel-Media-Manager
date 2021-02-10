@@ -28,52 +28,52 @@ export default {
         return {
             controlsList: [
                 {
-                    trans: 'move',
-                    op   : 'move',
-                    mode : 'move',
-                    icon : 'arrows'
+                    trans : 'move',
+                    op    : 'move',
+                    mode  : 'move',
+                    icon  : 'arrows-alt'
                 },
                 {
-                    trans: 'crop',
-                    op   : 'crop',
-                    mode : 'crop',
-                    icon : 'crop'
+                    trans : 'crop',
+                    op    : 'crop',
+                    mode  : 'crop',
+                    icon  : 'crop'
                 },
                 {
-                    trans: 'crop_zoom_in',
-                    op   : 'zoom-in',
-                    mode : null,
-                    icon : 'search-plus'
+                    trans : 'crop_zoom_in',
+                    op    : 'zoom-in',
+                    mode  : null,
+                    icon  : 'search-plus'
                 },
                 {
-                    trans: 'crop_zoom_out',
-                    op   : 'zoom-out',
-                    mode : null,
-                    icon : 'search-minus'
+                    trans : 'crop_zoom_out',
+                    op    : 'zoom-out',
+                    mode  : null,
+                    icon  : 'search-minus'
                 },
                 {
-                    trans: 'crop_rotate_left',
-                    op   : 'rotate-left',
-                    mode : null,
-                    icon : 'rotate-left'
+                    trans : 'crop_rotate_left',
+                    op    : 'undo',
+                    mode  : null,
+                    icon  : 'undo'
                 },
                 {
-                    trans: 'crop_rotate_right',
-                    op   : 'rotate-right',
-                    mode : null,
-                    icon : 'rotate-right'
+                    trans : 'crop_rotate_right',
+                    op    : 'redo',
+                    mode  : null,
+                    icon  : 'redo'
                 },
                 {
-                    trans: 'crop_flip_horizontal',
-                    op   : 'flip-horizontal',
-                    mode : null,
-                    icon : 'arrows-h'
+                    trans : 'crop_flip_horizontal',
+                    op    : 'flip-horizontal',
+                    mode  : null,
+                    icon  : 'arrows-alt-h'
                 },
                 {
-                    trans: 'crop_flip_vertical',
-                    op   : 'flip-vertical',
-                    mode : null,
-                    icon : 'arrows-v'
+                    trans : 'crop_flip_vertical',
+                    op    : 'flip-vertical',
+                    mode  : null,
+                    icon  : 'arrows-alt-v'
                 }
             ]
         }

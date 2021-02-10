@@ -42,7 +42,7 @@
 - [install dependencies](https://github.com/ctf0/Laravel-Media-Manager/wiki/Packages-In-Use)
 
     ```bash
-    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome@v2 vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval annyang
+    yarn add vue vue-ls vue-infinite-loading vue-image-compare2 vue-tippy@v2 vue2-filters vue-input-autowidth vue-notif vue-clipboard2 vue-awesome vue-touch@next vue-focuspoint-component axios dropzone cropperjs keycode lottie-web plyr fuse.js music-metadata-browser idb-keyval annyang
     yarn add buffer process --dev
     ```
 

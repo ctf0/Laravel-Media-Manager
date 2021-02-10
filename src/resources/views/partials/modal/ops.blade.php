@@ -145,7 +145,7 @@
                 <p class="modal-card-title">
                     <transition :name="copyFilesNotMove ? 'mm-info-in' : 'mm-info-out'" mode="out-in">
                         <span class="icon" :key="copyFilesNotMove ? 1 : 2">
-                            <icon :name="copyFilesNotMove ? 'clone' : 'share'"></icon>
+                            <icon :name="copyFilesNotMove ? 'regular/clone' : 'share'"></icon>
                         </span>
                     </transition>
 
@@ -232,7 +232,7 @@
 
                     {{-- deleting folder warning --}}
                     <h5 v-show="folderDeleteWarning" class="__modal-folder-warning">
-                        <span class="icon is-medium"><icon name="warning" scale="1.2"></icon></span>
+                        <span class="icon is-medium"><icon name="exclamation-triangle" scale="1.2"></icon></span>
                         <span>{{ trans('MediaManager::messages.delete.folder') }}</span>
                     </h5>
                 </section>

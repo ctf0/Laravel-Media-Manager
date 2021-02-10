@@ -6,27 +6,27 @@
         </div>
 
         <div class="goo">
-            <div class="circular-menu"
-                v-if="showOps"
-                :class="{'active' : opsMenu}">
+            <div v-if="showOps"
+                 class="circular-menu"
+                 :class="{'active' : opsMenu}">
                 <div class="floating-btn"
-                    @click="toggleOpsMenu()">
-                    <span class="icon is-large"><icon name="cog"></icon></span>
+                     @click="toggleOpsMenu()">
+                    <span class="icon is-large"><icon name="cog"/></span>
                 </div>
 
                 <menu class="items-wrapper">
                     <!-- move -->
                     <div class="menu-item">
                         <button class="button btn-plain"
-                            :disabled="ops_btn_disable"
-                            @click.stop="addToMovableList()">
+                                :disabled="ops_btn_disable"
+                                @click.stop="addToMovableList()">
                             <span class="icon is-large">
                                 <icon v-if="inMovableList()"
-                                    name="shopping-cart"
-                                    scale="1.2"></icon>
+                                      name="shopping-cart"
+                                      scale="1.2"/>
                                 <icon v-else
-                                    name="cart-plus"
-                                    scale="1.2"></icon>
+                                      name="cart-plus"
+                                      scale="1.2"/>
                             </span>
                         </button>
                     </div>
@@ -34,11 +34,11 @@
                     <!-- rename -->
                     <div class="menu-item">
                         <button class="button btn-plain"
-                            :disabled="ops_btn_disable"
-                            @click.stop="renameItem()">
+                                :disabled="ops_btn_disable"
+                                @click.stop="renameItem()">
                             <span class="icon is-large">
                                 <icon name="terminal"
-                                    scale="1.2"></icon>
+                                      scale="1.2"/>
                             </span>
                         </button>
                     </div>
@@ -46,23 +46,23 @@
                     <!-- editor -->
                     <div class="menu-item">
                         <button class="button btn-plain"
-                            :disabled="ops_btn_disable"
-                            @click.stop="imageEditorCard()">
+                                :disabled="ops_btn_disable"
+                                @click.stop="imageEditorCard()">
                             <span class="icon is-large">
-                                <icon name="object-ungroup"
-                                    scale="1.2"></icon>
+                                <icon name="regular/object-ungroup"
+                                      scale="1.2"/>
                             </span>
                         </button>
                     </div>
 
                     <!-- delete -->
                     <div class="menu-item">
-                         <button class="button btn-plain"
-                            :disabled="ops_btn_disable"
-                            @click.stop="deleteItem()">
+                        <button class="button btn-plain"
+                                :disabled="ops_btn_disable"
+                                @click.stop="deleteItem()">
                             <span class="icon is-large">
-                                <icon name="trash"
-                                    scale="1.2"></icon>
+                                <icon name="regular/trash-alt"
+                                      scale="1.2"/>
                             </span>
                         </button>
                     </div>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
+import debounce        from 'lodash/debounce'
 import animateScrollTo from '../../packages/animated-scroll-to'
 
 export default {
@@ -102,8 +102,8 @@ export default {
     data() {
         return {
             scrollBtn: {
-                state: false,
-                dir: 'down'
+                state : false,
+                dir   : 'down'
             },
             opsMenu: false
         }
@@ -125,8 +125,8 @@ export default {
                 return this.scrollBtn.state = item.scrollHeight > item.offsetHeight
             }
         },
-        updateScrollDir: debounce(function (e) {
-            let item = e.target
+        updateScrollDir: debounce(function(e) {
+            let item   = e.target
             let margin = 3
 
             return this.scrollBtn.dir = (item.scrollTop + item.clientHeight) >= (item.scrollHeight - margin)
@@ -137,17 +137,17 @@ export default {
             let item = this.getContainer(e.target.parentNode)
 
             return animateScrollTo(item, {
-                speed: 250,
-                maxDuration: 500,
-                offset: this.scrollBtn.dir == 'up' ? -item.scrollHeight : item.scrollHeight,
-                element: item,
-                useKeys: true
+                speed       : 250,
+                maxDuration : 500,
+                offset      : this.scrollBtn.dir == 'up' ? -item.scrollHeight : item.scrollHeight,
+                element     : item,
+                useKeys     : true
             })
         },
         getContainer(el) {
             return el.querySelector('[data-img-container]')
         },
-        toggleOpsMenu(){
+        toggleOpsMenu() {
             return this.opsMenu = !this.opsMenu
         }
     }

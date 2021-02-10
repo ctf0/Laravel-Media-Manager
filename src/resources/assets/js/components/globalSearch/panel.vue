@@ -72,7 +72,7 @@
                                       :title="trans('go_to_folder')">{{ item.dir_path }}</span>
                             </p>
                             <time>
-                                <span class="icon"><icon name="clock-o"/></span>
+                                <span class="icon"><icon name="regular/clock"/></span>
                                 <span>{{ item.last_modified_formated }}</span>
                             </time>
                             <p class="subtitle is-marginless link"
@@ -107,9 +107,9 @@
 <style scoped lang="scss" src="../../../sass/modules/global-search.scss"></style>
 
 <script>
-import debounce from 'lodash/debounce'
+import debounce          from 'lodash/debounce'
 import VueInputAutowidth from 'vue-input-autowidth'
-import panels from '../../mixins/panels'
+import panels            from '../../mixins/panels'
 
 export default {
     components: {
@@ -118,8 +118,8 @@ export default {
     directives: {
         VueInputAutowidth
     },
-    mixins: [panels],
-    props: [
+    mixins : [panels],
+    props  : [
         'trans',
         'fileTypeIs',
         'noScroll',
@@ -129,20 +129,20 @@ export default {
     ],
     data() {
         return {
-            filesIndex: [],
-            filterdFilesList: [],
-            search: '',
-            noData: false,
-            linkCopied: false,
-            firstRun: false,
-            showPanel: false
+            filesIndex       : [],
+            filterdFilesList : [],
+            search           : '',
+            noData           : false,
+            linkCopied       : false,
+            firstRun         : false,
+            showPanel        : false
         }
     },
     computed: {
         fuseLib() {
             return new Fuse(this.filesIndex, {
-                keys: ['name'],
-                threshold: 0.4
+                keys      : ['name'],
+                threshold : 0.4
             })
         },
         listCount() {
@@ -181,19 +181,19 @@ export default {
             EventHub.fire('global-search-delete-item', item)
         },
         closePanel() {
-            this.search = ''
+            this.search    = ''
             this.showPanel = false
             EventHub.fire('toggle-global-search', false)
         },
         goToFolder(dir, name) {
             EventHub.fire('global-search-go-to-folder', {
-                dir: dir,
-                name: name
+                dir  : dir,
+                name : name
             })
 
             this.closePanel()
         },
-        getList: debounce(function () {
+        getList: debounce(function() {
             let search = this.search
 
             if (search) {
@@ -205,7 +205,7 @@ export default {
             this.filterdFilesList = []
         }, 500),
         ontransitionend() {
-            this.noData = this.search && !this.listCount ? true : false
+            this.noData   = this.search && !this.listCount ? true : false
             this.firstRun = true
         }
     },
@@ -217,7 +217,7 @@ export default {
                 this.$nextTick(() => this.$refs.search.focus())
             } else {
                 this.$nextTick(() => {
-                    this.noData = false
+                    this.noData   = false
                     this.firstRun = false
                 })
             }

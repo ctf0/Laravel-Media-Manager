@@ -113,7 +113,7 @@
                         :title="IsLocked(selectedFile) ? '{{ trans('MediaManager::messages.unlock') }}' : '{{ trans('MediaManager::messages.lock') }}'"
                         v-tippy="{arrow: true, hideOnClick: false}"
                         @click.stop="$refs.lock.click()">
-                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'" scale="1.1"></icon>
+                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'lock-open'" scale="1.1"></icon>
                     </span>
                 </div>
 

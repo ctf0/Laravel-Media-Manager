@@ -121,7 +121,7 @@
         'sharpen' => trans('MediaManager::messages.editor.sharpen'),
         'stack_blur' => trans('MediaManager::messages.editor.stack_blur'),
         'greyscale' => trans('MediaManager::messages.editor.greyscale'),
-        'invert' => trans('MediaManager::messages.editor.invert'),
+        'invert' => trans('MediaManager::messages.editor.invert')
     ]) }}"
     :in-modal="{{ isset($modal) ? 'true' : 'false' }}"
     :hide-ext="{{ isset($hideExt) ? json_encode($hideExt) : '[]' }}"
@@ -227,7 +227,7 @@
                                     v-tippy="{arrow: true}"
                                     title="e"
                                     @click.stop="imageEditor()">
-                                    <span class="icon"><icon name="object-ungroup" scale="1.2"></icon></span>
+                                    <span class="icon"><icon name="regular/object-ungroup" scale="1.2"></icon></span>
                                     <span>{{ trans('MediaManager::messages.editor.main') }}</span>
                                 </button>
                             </div>
@@ -240,7 +240,7 @@
                                     v-tippy="{arrow: true}"
                                     title="d / del"
                                     @click.stop="deleteItem()">
-                                    <span class="icon"><icon name="trash"></icon></span>
+                                    <span class="icon"><icon name="regular/trash-alt"></icon></span>
                                     <span>{{ trans('MediaManager::messages.delete.main') }}</span>
                                 </button>
                             </div>
@@ -261,7 +261,7 @@
                                     @tap="refresh()"
                                     @hold="clearAll()">
                                     <span class="icon">
-                                        <icon name="refresh" :spin="isLoading"></icon>
+                                        <icon name="sync" :spin="isLoading"></icon>
                                     </span>
                                 </v-touch>
                             </div>
@@ -275,7 +275,7 @@
                                     title="(L) ock"
                                     @click.stop="lockFileForm()">
                                     <span class="icon">
-                                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'unlock'"></icon>
+                                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'lock-open'"></icon>
                                     </span>
                                 </button>
                             </div>
@@ -476,7 +476,7 @@
                             <span class="icon is-large">
                                 <icon>
                                     <icon name="circle" scale="2.5"></icon>
-                                    <icon class="icon-btn" name="cloud-upload"/>
+                                    <icon class="icon-btn" name="cloud-upload-alt"/>
                                 </icon>
                             </span>
                         </button>
@@ -630,7 +630,7 @@
                                     :title="linkCopied ? trans('copied') : trans('to_cp')"
                                     v-tippy="{arrow: true, hideOnClick: false}"
                                     @hidden="linkCopied = false">
-                                    <icon name="clone" scale="0.9"></icon>
+                                    <icon name="regular/clone" scale="0.9"></icon>
                                 </div>
 
                                 <div class="__box-data">
@@ -647,11 +647,11 @@
                                         <span v-else class="icon is-large">
                                             <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
-                                            <icon v-else-if="fileTypeIs(file, 'compressed')" name="file-archive-o" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'compressed')" name="regular/file-archive" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
                                             <icon v-else-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
-                                            <icon v-else-if="fileTypeIs(file, 'pdf')" name="file-pdf-o" scale="2.6"></icon>
-                                            <icon v-else-if="fileTypeIs(file, 'text')" name="file-text-o" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'pdf')" name="regular/file-pdf" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'text')" name="regular/file-alt" scale="2.6"></icon>
                                         </span>
                                     </div>
 
@@ -755,7 +755,7 @@
                                 v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 @click.stop="toggleModal('preview_modal')">
-                                <icon class="svg-prev-icon" name="file-pdf-o" scale="4"></icon>
+                                <icon class="svg-prev-icon" name="regular/file-pdf" scale="4"></icon>
                             </div>
 
                             <div key="text" v-else-if="selectedFileIs('text')"
@@ -763,7 +763,7 @@
                                 v-tippy="{arrow: true, placement: 'left'}"
                                 title="{{ trans('MediaManager::messages.space') }}"
                                 @click.stop="toggleModal('preview_modal')">
-                                <icon class="svg-prev-icon" name="file-text-o" scale="4"></icon>
+                                <icon class="svg-prev-icon" name="regular/file-alt" scale="4"></icon>
                             </div>
 
                             <icon-types v-else
@@ -1004,7 +1004,7 @@
                                         <span class="level-item m-l-5 is-marginless">{{ trans('MediaManager::messages.library') }}</span>
                                     </a>
                                     <p v-else class="p-l-0 level">
-                                        <span class="icon level-item is-marginless"><icon name="map-o"></icon></span>
+                                        <span class="icon level-item is-marginless"><icon name="regular/map"></icon></span>
                                         <span class="level-item m-l-5 is-marginless">{{ trans('MediaManager::messages.library') }}</span>
                                     </p>
                                 </li>
@@ -1012,7 +1012,7 @@
                                 <li v-for="(folder, index) in pathBarDirsList" :key="`${index}-${folder}`">
                                     <p v-if="isLastItemByIndex(index, pathBarDirsList) || isBulkSelecting() || isLoading"
                                         class="level">
-                                        <span class="icon level-item is-marginless"><icon name="folder-open-o"></icon></span>
+                                        <span class="icon level-item is-marginless"><icon name="regular/folder-open"></icon></span>
                                         <span class="level-item m-l-5 is-marginless">@{{ folder }}</span>
                                     </p>
                                     <a v-else
@@ -1080,11 +1080,11 @@
 </media-manager>
 
 {{-- styles --}}
-@push('styles')
+@push ('styles')
     <link rel="stylesheet" href="{{ asset('assets/vendor/MediaManager/style.css') }}"/>
 @endpush
 
 {{-- scripts --}}
-@push('scripts')
+@push ('scripts')
     <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
 @endpush
