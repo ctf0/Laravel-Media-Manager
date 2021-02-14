@@ -45,5 +45,11 @@
         "post-package-install": [
             "@php artisan vendor:publish --provider=\"ctf0\\MediaManager\\MediaManagerServiceProvider\""
         ]
-    }
+    },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/ctf0"
+        }
+    ]
 }

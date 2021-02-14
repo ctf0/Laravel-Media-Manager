@@ -218,3 +218,9 @@
 > [Demo](https://github.com/ctf0/demos/tree/media-manager)
 
 - visit `localhost:8000/media`
+
+<br>
+
+### Security
+
+If you discover any security-related issues, please email [ctf0-dev@protonmail.com](mailto:ctf0-dev@protonmail.com).
