@@ -43,7 +43,14 @@ trait Upload
                     // check for mime type
                     if (Str::contains($file_type, $this->unallowedMimes)) {
                         throw new Exception(
-                            trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
+                            trans('MediaManager::messages.not_allowed_file_ext')
+                        );
+                    }
+
+                    // check for extension
+                    if (Str::contains($ext_only, $this->unallowedExt)) {
+                        throw new Exception(
+                            trans('MediaManager::messages.not_allowed_file_ext')
                         );
                     }
 
@@ -59,9 +66,9 @@ trait Upload
 
                     // fire event
                     event('MMFileUploaded', [
-                        'file_path'  => $full_path,
-                        'mime_type'  => $file_type,
-                        'options'    => $file_options,
+                        'file_path' => $full_path,
+                        'mime_type' => $file_type,
+                        'options'   => $file_options,
                     ]);
 
                     $broadcast = true;
@@ -122,8 +129,17 @@ trait Upload
                     );
                 }
 
+                // data is valid
+                try {
+                    $data = base64_decode($data);
+                } catch (\Throwable $th) {
+                    throw new Exception(
+                        trans('MediaManager::messages.error.no_file')
+                    );
+                }
+
                 // save file
-                $this->storageDisk->put($destination, base64_decode($data));
+                $this->storageDisk->put($destination, $data);
 
                 // fire event
                 event('MMFileSaved', [
@@ -182,10 +198,12 @@ trait Upload
             $file_type   = image_type_to_mime_type(@exif_imagetype($url));
 
             try {
+                $ignore = array_merge($this->unallowedMimes, ['application/octet-stream']);
+
                 // check for mime type
-                if (Str::contains($file_type, $this->unallowedMimes)) {
+                if (Str::contains($file_type, $ignore)) {
                     throw new Exception(
-                        trans('MediaManager::messages.not_allowed_file_ext', ['attr' => $file_type])
+                        trans('MediaManager::messages.not_allowed_file_ext')
                     );
                 }
 
@@ -196,8 +214,17 @@ trait Upload
                     );
                 }
 
+                // data is valid
+                try {
+                    $data = file_get_contents($url);
+                } catch (\Throwable $th) {
+                    throw new Exception(
+                        trans('MediaManager::messages.error.no_file')
+                    );
+                }
+
                 // save file
-                $this->storageDisk->put($destination, file_get_contents($url));
+                $this->storageDisk->put($destination, $data);
 
                 // fire event
                 event('MMFileSaved', [
@@ -218,7 +245,7 @@ trait Upload
             } catch (Exception $e) {
                 $result = [
                     'success' => false,
-                    'message' => "\"$file_name\" " . $e->getMessage(),
+                    'message' => $e->getMessage(),
                 ];
             }
         } else {

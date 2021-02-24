@@ -117,6 +117,7 @@ return [
         'moving'         => 'There Seems To Be A Problem Moving This File/Folder, Make Sure You Have The Correct Permissions',
         'moving_cloud'   => 'Cloud Folders Can\'t Be "Renamed, Moved Or Copied"',
         'move_into_self' => 'Folder Can\'t Be "Moved Or Copied" Into It Self',
+        'no_file'        => 'No File To Upload',
     ],
     'filter' => [
         'main'       => 'Filter',
@@ -153,7 +154,7 @@ return [
     'no_files_in_folder'   => 'No Files In This Folder',
     'no_val'               => 'Maybe You Should Add Something First !!!',
     'non'                  => 'Non',
-    'not_allowed_file_ext' => 'Files Of Type ":attr" Are Not Allowed',
+    'not_allowed_file_ext' => 'File Type Is Not Allowed',
     'nothing_found'        => 'Nothing Found',
     'open'                 => 'Open',
     'pdf'                  => 'Your Browser Does Not Support Pdfs, Please Download The Pdf To View It',

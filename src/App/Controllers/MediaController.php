@@ -42,6 +42,7 @@ class MediaController extends Controller
     protected $storageDisk;
     protected $storageDiskInfo;
     protected $unallowedMimes;
+    protected $unallowedExt;
 
     public function __construct()
     {
@@ -53,6 +54,7 @@ class MediaController extends Controller
         $this->folderChars      = $config['allowed_folderNames_chars'];
         $this->sanitizedText    = $config['sanitized_text'];
         $this->unallowedMimes   = $config['unallowed_mimes'];
+        $this->unallowedExt     = $config['unallowed_ext'];
         $this->LMF              = $config['last_modified_format'];
         $this->GFI              = $config['get_folder_info']   ?? true;
         $this->paginationAmount = $config['pagination_amount'] ?? 50;

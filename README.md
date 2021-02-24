@@ -85,7 +85,7 @@
     + using the upload panel
     + drag & drop anywhere
     + click & hold on an empty area **"items container"**
-    + from a url
+    + from a url **"images only"**
 - [preview files before uploading](https://github.com/ctf0/Laravel-Media-Manager/wiki/Preview-Files-Before-Uploading)
 - toggle between `random/original` names for uploaded files
 - [asynchronous Updates](https://github.com/ctf0/Laravel-Media-Manager/wiki/Async-Update-The-Manager)
