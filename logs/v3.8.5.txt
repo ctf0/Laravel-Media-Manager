@@ -1,1 +1,0 @@
-- update vue-awesome to v4, make sure to update it in your package.json

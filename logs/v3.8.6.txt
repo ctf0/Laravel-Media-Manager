@@ -1,0 +1,6 @@
+a couple of vulnerabilities were detected
+
+- Server-Side Request Forgery (SSRF) in Upload image from URL.  "CVE-2021-27566"
+- Bypass a restricted File Upload. "CVE-2021-27567"
+
+thanx to Jorge Gutierrez ❤️
