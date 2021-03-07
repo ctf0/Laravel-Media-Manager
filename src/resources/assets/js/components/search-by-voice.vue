@@ -22,14 +22,15 @@ export default {
     data() {
         return {
             run        : false,
-            isSupported: true,
+            isSupported: false,
             transcript : null
         }
     },
     created() {
-        if (!annyang) {
-            this.isSupported = false
-            console.error('Speech Recognition is not supported')
+        if (annyang) {
+            this.isSupported = true
+        } else {
+            // console.error('Speech Recognition is not supported')
         }
     },
     mounted() {
@@ -66,7 +67,7 @@ export default {
     },
     watch: {
         searchFor(val) {
-            if (!val) {
+            if (!val && this.isSupported) {
                 this.transcript = null
                 this.stop()
             }
