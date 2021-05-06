@@ -107,19 +107,16 @@
 <style scoped lang="scss" src="../../../sass/modules/global-search.scss"></style>
 
 <script>
+import Fuse              from 'fuse.js'
 import debounce          from 'lodash/debounce'
-import VueInputAutowidth from 'vue-input-autowidth'
 import panels            from '../../mixins/panels'
+import VueInputAutowidth from 'vue-input-autowidth'
 
 export default {
     components: {
         imageIntersect: require('./image.vue').default
     },
-    directives: {
-        VueInputAutowidth
-    },
-    mixins : [panels],
-    props  : [
+    props: [
         'trans',
         'fileTypeIs',
         'noScroll',
@@ -127,6 +124,15 @@ export default {
         'addToMovableList',
         'inMovableList'
     ],
+    directives: {
+        autowidth: {
+            beforeMount : VueInputAutowidth.bind,
+            mounted     : VueInputAutowidth.inserted,
+            updated     : VueInputAutowidth.componentUpdated,
+            unmounted   : VueInputAutowidth.unbind
+        }
+    },
+    mixins: [panels],
     data() {
         return {
             filesIndex       : [],
@@ -166,6 +172,8 @@ export default {
             EventHub.listen('global-search-deleted', (path) => {
                 let list = this.filterdFilesList
 
+                console.log(list)
+
                 return list.some((e, i) => {
                     if (e.path == path) {
                         list.splice(i, 1)
@@ -198,6 +206,10 @@ export default {
 
             if (search) {
                 this.filterdFilesList = this.fuseLib.search(search)
+
+                this.filterdFilesList = this.filterdFilesList.map((e) => {
+                    return e.item
+                })
 
                 return this.noData = this.listCount ? false : true
             }

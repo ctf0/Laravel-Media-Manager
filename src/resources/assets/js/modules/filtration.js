@@ -66,7 +66,11 @@ export default {
         },
         fileTypeIs(item, val) {
             let mimes = this.config.mimeTypes
-            let type = item.type || item
+            let type  = item.hasOwnProperty('type')
+                ? item.type
+                : item.hasOwnProperty('item')
+                    ? item.item.type
+                    : item
 
             if (type) {
                 if (val == 'image' && mimes.image.includes(type)) {
