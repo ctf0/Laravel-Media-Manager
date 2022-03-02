@@ -21,7 +21,6 @@
         "php": "^7.4 || ^8.0",
         "illuminate/support": ">=7.0 <10.0",
         "maennchen/zipstream-php": ">=1.0",
-        "ctf0/package-changelog": "*"
     },
     "autoload": {
         "psr-4": {
