@@ -9,17 +9,25 @@
         "manager",
         "laravel",
         "gui",
-        "MediaManager"
+        "MediaManager",
+        "laravel9",
+        "laravel 9",
+        "php8"
     ],
     "authors": [
         {
             "name": "Muah",
             "email": "muah003@gmail.com"
+        },
+        {
+            "name": "Alejandro T",
+            "email": "alexchirolde@gmail.com"
         }
     ],
     "require": {
-        "illuminate/support": ">=7.0 <9.0",
-        "maennchen/zipstream-php": ">=1.0",
+        "illuminate/support": "^9.14.1",
+        "league/flysystem": "^3.0",
+        "maennchen/zipstream-php": ">=2.0",
         "ctf0/package-changelog": "*"
     },
     "suggest": {
