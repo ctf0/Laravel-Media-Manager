@@ -94,7 +94,7 @@ trait GetContent
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        return $this->storageDisk->listContents($folder)->map(function ($attributes) {
+        return $this->storageDisk->listContents($folder, $rec)->map(function ($attributes) {
             $path = $attributes->path();
             $name = substr($path, strrpos($path, '/'));
             $extension = substr($name, strrpos($name, '.') + 1);
