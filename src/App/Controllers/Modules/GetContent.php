@@ -108,7 +108,6 @@ trait GetContent
                 'size' => $attributes->isFile() ? $attributes->fileSize() : 0,
                 'type' => $attributes->isFile() ? 'file' : 'dir',
                 'mimetype' => $attributes->isFile() ? ($this->storageDisk->mimeType($path)) : 'folder',
-                'etag' => $attributes->extraMetadata()['ETag'] ?? null,
                 'visibility' => $attributes->visibility()
             ];
         })->toArray();
