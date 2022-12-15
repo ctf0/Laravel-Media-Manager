@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "illuminate/support": "^9.14.1",
+        "illuminate/support": "^9.0",
         "league/flysystem": "^3.0",
         "maennchen/zipstream-php": ">=2.0",
         "ctf0/package-changelog": "*"
