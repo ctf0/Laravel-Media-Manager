@@ -9,7 +9,10 @@
         "manager",
         "laravel",
         "gui",
-        "MediaManager"
+        "MediaManager",
+        "laravel9",
+        "laravel 9",
+        "php8"
     ],
     "authors": [
         {
@@ -18,12 +21,10 @@
         }
     ],
     "require": {
-        "illuminate/support": ">=7.0 <9.0",
-        "maennchen/zipstream-php": ">=1.0",
+        "illuminate/support": "^9.0",
+        "league/flysystem": "^3.0",
+        "maennchen/zipstream-php": ">=2.0",
         "ctf0/package-changelog": "*"
-    },
-    "suggest": {
-        "league/flysystem-cached-adapter": "Required to use the Flysystem cache (~1.0)."
     },
     "autoload": {
         "psr-4": {
