@@ -49,8 +49,8 @@
     },
     "funding": [
         {
-            "type": "patreon",
-            "url": "https://www.patreon.com/ctf0"
+            "type": "github",
+            "url": "https://github.com/sponsors/ctf0"
         }
     ]
 }
