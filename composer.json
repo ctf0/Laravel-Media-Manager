@@ -9,10 +9,7 @@
         "manager",
         "laravel",
         "gui",
-        "MediaManager",
-        "laravel9",
-        "laravel 9",
-        "php8"
+        "MediaManager"
     ],
     "authors": [
         {
@@ -21,7 +18,7 @@
         }
     ],
     "require": {
-        "illuminate/support": "^10.0",
+        "illuminate/support": "^9.0 || ^10.0",
         "league/flysystem": "^3.12",
         "maennchen/zipstream-php": "^2.4",
         "ctf0/package-changelog": "*"
