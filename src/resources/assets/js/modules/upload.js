@@ -172,6 +172,18 @@ export default {
                 sending: function (file, xhr, formData) {
                     uploadProgress += parseFloat(100 / allFiles)
                     manager.progressCounter = `${Math.round(uploadProgress)}%`
+                    
+                    //fix if Dropzone doesnt find the form. This only happens if you use direct drag and drop on the div (__stack-container).
+                    if (!formData.has('upload_path')) {
+                        try {
+                            let path = document.querySelector("#new-upload input[name='upload_path']").value;
+                            if (path !== '') {
+                                formData.append('upload_path', path);
+                            }
+                        } catch (error) {
+                            console.debug(error);
+                        }
+                    }
 
                     // send files custom options
                     formData.append('custom_attrs', JSON.stringify(manager.uploadPreviewOptionsList))
