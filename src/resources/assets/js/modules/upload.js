@@ -176,7 +176,7 @@ export default {
                     //fix if Dropzone doesnt find the form. This only happens if you use direct drag and drop on the div (__stack-container).
                     if (!formData.has('upload_path')) {
                         try {
-                            let path = document.querySelector('#new-upload input[name=\'login\']').value;
+                            let path = document.querySelector('#new-upload input[name=\'upload_path\']').value;
                             if (path !== '') {
                                 formData.append('upload_path', path);
                             }
